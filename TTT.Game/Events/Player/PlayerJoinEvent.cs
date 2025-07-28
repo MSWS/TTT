@@ -8,5 +8,5 @@ namespace TTT.Game.Events.Player;
 /// </summary>
 /// <param name="player"></param>
 public class PlayerJoinEvent(IPlayer player) : PlayerEvent(player) {
-  public override string Id => "core.event.player.join";
+  public override string Id => "basegame.event.player.join";
 }

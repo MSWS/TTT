@@ -7,7 +7,7 @@ namespace TTT.Game.Events.Player;
 
 public class PlayerDamagedEvent(IOnlinePlayer player, IOnlinePlayer? attacker,
   int dmgDealt, int hpLeft) : PlayerEvent(player), ICancelableEvent {
-  public override string Id => "core.event.player.damaged";
+  public override string Id => "basegame.event.player.damaged";
   public bool IsCanceled { get; set; } = false;
   public IOnlinePlayer? Attacker { get; private set; } = attacker;
 

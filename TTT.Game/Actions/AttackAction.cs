@@ -9,7 +9,7 @@ public class AttackAction(IPlayer attacker, IPlayer? target, string weapon,
   public int Damage { get; } = damage;
   public IPlayer Player { get; } = attacker;
   public IPlayer? Other { get; } = target;
-  public string Id => "core.action.attack";
+  public string Id => "basegame.action.attack";
   public string Verb => "attacked";
   public string Details => $"for {Damage} damage with {Weapon}";
 }

@@ -5,7 +5,7 @@ using TTT.Api.Player;
 namespace TTT.Game.Events.Player;
 
 public class PlayerDeathEvent(IPlayer player) : PlayerEvent(player) {
-  public override string Id => "core.event.player.death";
+  public override string Id => "basegame.event.player.death";
 
   public IPlayer? Assister { get; private set; } = null;
   public IPlayer? Killer { get; private set; } = null;

@@ -1,6 +1,6 @@
 using TTT.Api.Player;
 
-namespace TTT.Api;
+namespace TTT.Api.Messages;
 
 public interface IOnlineMessenger : IMessenger {
   Task<bool> IMessenger.Message(IPlayer player, string message) {
@@ -12,4 +12,13 @@ public interface IOnlineMessenger : IMessenger {
   }
 
   Task<bool> Message(IOnlinePlayer player, string message);
+
+  async Task<bool> MessageAll(IPlayerFinder finder, string message) {
+    var tasks = finder.GetAllPlayers()
+     .Select(onlinePlayer => Message(onlinePlayer, message))
+     .ToList();
+
+    var results = await Task.WhenAll(tasks);
+    return results.All(r => r);
+  }
 }

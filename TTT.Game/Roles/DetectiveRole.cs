@@ -4,13 +4,10 @@ using TTT.Api.Player;
 
 namespace TTT.Game.Roles;
 
-public class DetectiveRole : IRole {
-  public const string ID = "core.role.detective";
-  public string Id => ID;
-  public string Name => "Detective";
-  public Color Color => Color.DodgerBlue;
-
-  public IPlayer? FindPlayerToAssign(ISet<IOnlinePlayer> players) {
-    return players.FirstOrDefault(p => p.Roles.Count == 0);
-  }
+public class DetectiveRole(float targetRatio = 1f / 8f)
+  : RatioBasedRole(targetRatio) {
+  public const string ID = "basegame.role.detective";
+  public override string Id => ID;
+  public override string Name => "Detective";
+  public override Color Color => Color.DodgerBlue;
 }

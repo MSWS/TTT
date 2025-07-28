@@ -5,7 +5,7 @@ using TTT.Api.Player;
 namespace TTT.Game.Roles;
 
 public class SpectatorRole : IRole {
-  public string Id => "core.role.spectator";
+  public string Id => "basegame.role.spectator";
   public string Name => "Spectator";
   public Color Color => Color.Gray;
 

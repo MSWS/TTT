@@ -27,4 +27,8 @@
       <PackageReference Include="xunit.v3" Version="3.0.0" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Game\Roles\" />
+    </ItemGroup>
+
 </Project>

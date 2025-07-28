@@ -5,7 +5,7 @@ using TTT.Api.Player;
 namespace TTT.Game.Roles;
 
 public class InnocentRole : IRole {
-  public const string ID = "core.role.innocent";
+  public const string ID = "basegame.role.innocent";
   public string Id => ID;
   public string Name => "Innocent";
   public Color Color => Color.LimeGreen;
