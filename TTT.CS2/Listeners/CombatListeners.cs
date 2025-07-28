@@ -22,4 +22,13 @@ public class CombatListeners(IEventBus bus,
     bus.Dispatch(new PlayerDeathEvent(converter, ev));
     return HookResult.Continue;
   }
+
+  [GameEventHandler]
+  public HookResult OnPlayerHurt(EventPlayerHurt ev, GameEventInfo _) {
+    var player = ev.Userid;
+    if (player == null) return HookResult.Continue;
+
+    bus.Dispatch(new PlayerDamagedEvent(converter, ev));
+    return HookResult.Continue;
+  }
 }
