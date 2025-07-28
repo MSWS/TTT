@@ -1,3 +1,5 @@
+using TTT.Api.Player;
+
 namespace TTT.Api;
 
 public interface IMessenger {

@@ -1,13 +1,18 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+
     <PropertyGroup>
         <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
     </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\TTT.Api\TTT.Api.csproj"/>
+        <ProjectReference Include="..\TTT.Game\TTT.Game.csproj" />
+    </ItemGroup>
+
     <ItemGroup>
         <Compile Include="..\GitVersionInformation.g.cs"/>
     </ItemGroup>
-    <ItemGroup>
-        <PackageReference Include="CounterStrikeSharp.API" Version="1.0.328"/>
-    </ItemGroup>
+
 </Project>

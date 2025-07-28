@@ -14,7 +14,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\TTT.Api\TTT.Api.csproj" />
-      <ProjectReference Include="..\TTT.Core\TTT.Core.csproj" />
+      <ProjectReference Include="..\TTT.Plugin\TTT.Plugin.csproj" />
     </ItemGroup>
 
     <ItemGroup>

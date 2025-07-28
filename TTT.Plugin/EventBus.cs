@@ -1,7 +1,7 @@
 using System.Reflection;
 using TTT.Api.Events;
 
-namespace TTT.Core.Events;
+namespace TTT.Core;
 
 public class EventBus : IEventBus {
   private readonly Dictionary<Type, List<(object listener, MethodInfo method)>>

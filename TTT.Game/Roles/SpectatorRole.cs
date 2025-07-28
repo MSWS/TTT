@@ -1,5 +1,6 @@
 using System.Drawing;
 using TTT.Api;
+using TTT.Api.Player;
 
 namespace TTT.Core.Roles;
 
@@ -9,5 +10,4 @@ public class SpectatorRole : IRole {
   public Color Color => Color.Gray;
 
   public IPlayer? FindPlayerToAssign(ISet<IOnlinePlayer> players) => null;
-  public bool ConflictsWith(IRole other) => true;
 }

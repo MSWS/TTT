@@ -1,0 +1,25 @@
+using CounterStrikeSharp.API.Core;
+using CounterStrikeSharp.API.Core.Attributes.Registration;
+using GitVersion;
+using TTT.Api;
+using TTT.Api.Events;
+using TTT.Api.Events.Player;
+
+namespace TTT.CS2.Listeners;
+
+public class CombatListeners(IEventBus bus,
+  IPlayerConverter<CCSPlayerController> converter) : IPluginModule {
+  public void Dispose() { }
+  public string Name => "CombatListeners";
+  public string Version => GitVersionInformation.FullSemVer;
+  public void Start() { }
+
+  [GameEventHandler]
+  public HookResult OnPlayerDeath(EventPlayerDeath ev, GameEventInfo _) {
+    var player = ev.Userid;
+    if (player == null) return HookResult.Continue;
+
+    bus.Dispatch(new PlayerDeathEvent(converter, ev));
+    return HookResult.Continue;
+  }
+}

@@ -7,7 +7,7 @@ using TTT.Api;
 namespace TTT.Core;
 
 public class TTT(IServiceProvider provider) : BasePlugin {
-  public override string ModuleName => "TTT.Core";
+  public override string ModuleName => "TTT.Plugin";
 
   public override string ModuleVersion
     => $"{GitVersionInformation.BranchName}-{GitVersionInformation.FullSemVer}-{GitVersionInformation.BuildMetaDataPadded}";

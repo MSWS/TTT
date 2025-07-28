@@ -1,4 +1,4 @@
-namespace TTT.Api;
+namespace TTT.Api.Player;
 
 public interface IPlayer {
   /// <summary>

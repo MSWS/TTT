@@ -1,15 +1,17 @@
+using TTT.Api.Player;
+
 namespace TTT.Api;
 
 public interface IAction {
   IPlayer Player { get; }
-  IPlayer? Target { get; }
+  IPlayer? Other { get; }
   string Id { get; }
   string Verb { get; }
   string Details { get; }
 
   string Format() {
-    return Target is not null ?
-      $"{Player} {Verb} {Target} {Details}" :
+    return Other is not null ?
+      $"{Player} {Verb} {Other} {Details}" :
       $"{Player} {Verb} {Details}";
   }
 }
