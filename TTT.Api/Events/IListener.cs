@@ -1,3 +1,3 @@
 namespace TTT.Api.Events;
 
-public interface IListener;
+public interface IListener : IDisposable;

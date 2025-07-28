@@ -1,0 +1,19 @@
+using TTT.Api.Events;
+
+namespace TTT.Test.Core.Event;
+
+public class PriorityEventListener(IEventBus bus) : IListener {
+  private readonly List<uint> fireOrders = [];
+  public List<uint> FireOrders => [..fireOrders];
+
+  [EventHandler(Priority = Priority.HIGH)]
+  public void OnEventHighPriority(TestEvent e) => fireOrders.Add(Priority.HIGH);
+
+  [EventHandler(Priority = Priority.LOW)]
+  public void OnEventLowPriority(TestEvent e) => fireOrders.Add(Priority.LOW);
+
+  [EventHandler(Priority = Priority.DEFAULT)]
+  public void OnEvent(TestEvent e) => fireOrders.Add(Priority.DEFAULT);
+
+  public void Dispose() { bus.UnregisterListener(this); }
+}

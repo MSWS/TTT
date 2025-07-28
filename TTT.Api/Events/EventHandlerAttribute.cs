@@ -2,15 +2,14 @@ namespace TTT.Api.Events;
 
 [AttributeUsage(AttributeTargets.Method)]
 public class EventHandlerAttribute : Attribute {
-  public uint Priority => Events.Priority.PRIORITY_DEFAULT;
-  public bool IgnoreCanceled => false;
+  public uint Priority { get; set; } = TTT.Api.Events.Priority.DEFAULT;
+  public bool IgnoreCanceled { get; set; } = false;
 }
 
 public static class Priority {
-  public const uint PRIORITY_VERY_HIGH = 20;
-  public const uint PRIORITY_HIGH = 40;
-  public const uint PRIORITY_NORMAL = 60;
-  public const uint PRIORITY_LOW = 80;
-  public const uint PRIORITY_VERY_LOW = 100;
-  public const uint PRIORITY_DEFAULT = 50;
+  public const uint VERY_HIGH = 20;
+  public const uint HIGH = 40;
+  public const uint DEFAULT = 60;
+  public const uint LOW = 80;
+  public const uint VERY_LOW = 100;
 }
