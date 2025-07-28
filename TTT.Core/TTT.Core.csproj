@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="CounterStrikeSharp.API" Version="1.0.328"/>
+    </ItemGroup>
+    <ItemGroup>
+        <Compile Remove="tools\**"/>
+    </ItemGroup>
+    <ItemGroup>
+        <EmbeddedResource Remove="tools\**"/>
+    </ItemGroup>
+    <ItemGroup>
+        <None Remove="tools\**"/>
+    </ItemGroup>
+    <ItemGroup>
+        <Compile Include="..\GitVersionInformation.g.cs"/>
+    </ItemGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\TTT.Api\TTT.Api.csproj" />
+    </ItemGroup>
+
+
+</Project>

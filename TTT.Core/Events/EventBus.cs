@@ -1,0 +1,67 @@
+using System.Reflection;
+using TTT.Api.Events;
+
+namespace TTT.Core.Events;
+
+public class EventBus : IEventBus {
+  private readonly Dictionary<Type, List<(object listener, MethodInfo method)>>
+    handlers = new();
+
+  public void RegisterListener(IListener listener) {
+    var methods = listener.GetType()
+     .GetMethods(BindingFlags.Instance | BindingFlags.Public
+        | BindingFlags.NonPublic);
+
+    var dirtyTypes = new HashSet<Type>();
+
+    foreach (var method in methods) {
+      var attr = method.GetCustomAttribute<EventHandlerAttribute>();
+      if (attr == null) continue;
+
+      var parameters = method.GetParameters();
+      if (parameters.Length != 1
+        || !typeof(Event).IsAssignableFrom(parameters[0].ParameterType))
+        continue;
+
+      var eventType = parameters[0].ParameterType;
+      if (!handlers.ContainsKey(eventType)) handlers[eventType] = [];
+
+      handlers[eventType].Add((listener, method));
+      dirtyTypes.Add(eventType);
+    }
+
+    // Sort handlers by priority
+    foreach (var type in dirtyTypes) {
+      handlers[type]
+       .Sort((a, b) => {
+          var aPriority = a.method.GetCustomAttribute<EventHandlerAttribute>()
+          ?.Priority ?? Priority.DEFAULT;
+          var bPriority = b.method.GetCustomAttribute<EventHandlerAttribute>()
+          ?.Priority ?? Priority.DEFAULT;
+          return aPriority.CompareTo(bPriority);
+        });
+    }
+  }
+
+  public void UnregisterListener(IListener listener) {
+    foreach (var kvp in handlers) {
+      kvp.Value.RemoveAll(h => h.listener == listener);
+      if (kvp.Value.Count == 0) handlers.Remove(kvp.Key);
+    }
+  }
+
+  public void Dispatch(Event ev) {
+    var type = ev.GetType();
+    if (!handlers.TryGetValue(type, out var list)) return;
+    ICancelableEvent? cancelable           = null;
+    if (ev is ICancelableEvent) cancelable = (ICancelableEvent)ev;
+
+    foreach (var (listener, method) in list) {
+      if (cancelable is { IsCanceled: true } && method
+       .GetCustomAttribute<EventHandlerAttribute>()
+      ?.IgnoreCanceled == true) { continue; }
+
+      method.Invoke(listener, [ev]);
+    }
+  }
+}
