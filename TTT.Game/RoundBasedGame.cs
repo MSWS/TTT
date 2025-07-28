@@ -25,11 +25,18 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
 
   public ICollection<IPlayer> Players { get; } = new List<IPlayer>();
 
-  public DateTime? StartedAt { get; } = null;
-  public DateTime? FinishedAt { get; } = null;
-  public SortedDictionary<DateTime, ISet<IAction>> Actions { get; } = new();
+  public DateTime? StartedAt { get; protected set; } = null;
+  public DateTime? FinishedAt { get; protected set; } = null;
+
+  public SortedDictionary<DateTime, ISet<IAction>> Actions {
+    get;
+    protected set;
+  } = new();
 
   private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
+
+  private readonly IRoleAssigner assigner =
+    provider.GetRequiredService<IRoleAssigner>();
 
   private readonly IPlayerFinder finder =
     provider.GetRequiredService<IPlayerFinder>();
@@ -37,7 +44,7 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
   private readonly IOnlineMessenger? onlineMessenger =
     provider.GetService<IOnlineMessenger>();
 
-  private List<IRole> roles = [
+  private readonly List<IRole> roles = [
     new InnocentRole(), new TraitorRole(), new DetectiveRole()
   ];
 
@@ -71,28 +78,9 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
 
   private void startRound() {
     CurrentState = State.IN_PROGRESS;
-    assignRoles();
-  }
 
-  private void assignRoles() {
-    var roleAssigned = false;
-    var shuffledPlayers =
-      finder.GetAllPlayers().OrderBy(_ => Guid.NewGuid()).ToHashSet();
+    StartedAt = DateTime.Now;
 
-    do {
-      foreach (var role in roles) {
-        var player = role.FindPlayerToAssign(shuffledPlayers);
-        if (player is null) continue;
-
-        var ev = new PlayerRoleAssignEvent(player, role);
-        bus.Dispatch(ev);
-
-        player.Roles.Add(ev.Role);
-        roleAssigned = true;
-
-        onlineMessenger?.BackgroundMsgAll(finder,
-          $"{player.Name} has been assigned the role of {role.Name}.");
-      }
-    } while (roleAssigned);
+    assigner.AssignRoles(finder.GetAllPlayers(), roles);
   }
 }

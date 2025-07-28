@@ -1,0 +1,32 @@
+using System.Collections;
+using TTT.Api;
+using TTT.Api.Events;
+using TTT.Api.Messages;
+using TTT.Api.Player;
+using TTT.Game.Events.Player;
+
+namespace TTT.CS2;
+
+public class RoleAssigner(IEventBus bus, IOnlineMessenger onlineMessenger,
+  IPlayerFinder finder) : IRoleAssigner {
+  public void AssignRoles(ISet<IOnlinePlayer> players, IList<IRole> roles) {
+    var shuffled     = players.OrderBy(_ => Guid.NewGuid()).ToHashSet();
+    var roleAssigned = false;
+    do {
+      foreach (var role in roles) {
+        var player = role.FindPlayerToAssign(shuffled);
+        if (player is null) continue;
+
+        var ev = new PlayerRoleAssignEvent(player, role);
+        bus.Dispatch(ev);
+
+        player.Roles.Add(ev.Role);
+
+        roleAssigned = true;
+
+        onlineMessenger?.BackgroundMsgAll(finder,
+          $"{player.Name} has been assigned the role of {role.Name}.");
+      }
+    } while (roleAssigned);
+  }
+}
