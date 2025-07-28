@@ -1,17 +1,17 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
-    </PropertyGroup>
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
 
-    <ItemGroup>
-        <Folder Include="Events\"/>
-    </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Events\"/>
+  </ItemGroup>
 
-    <ItemGroup>
-        <ProjectReference Include="..\TTT.Api\TTT.Api.csproj"/>
-    </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TTT.Api\TTT.Api.csproj"/>
+  </ItemGroup>
 
 </Project>

@@ -1,4 +1,3 @@
-using System.Collections;
 using TTT.Api.Player;
 
 namespace TTT.Api;

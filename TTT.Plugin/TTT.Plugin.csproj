@@ -1,35 +1,33 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="CounterStrikeSharp.API" Version="1.0.328"/>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="tools\**"/>
+    <EmbeddedResource Remove="tools\**"/>
+    <None Remove="tools\**"/>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TTT.Api\TTT.Api.csproj"/>
+    <ProjectReference Include="..\TTT.CS2\TTT.CS2.csproj"/>
+  </ItemGroup>
+
+
+  <Target Name="GenerateGitVersionInformation" BeforeTargets="BeforeBuild">
     <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
-        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+      <GitVersionCmd Condition="'$(OS)' == 'Windows_NT'">dotnet-gitversion "$(ProjectDir)" &gt; "$(ProjectDir)gitversion.json"</GitVersionCmd>
+      <GitVersionCmd Condition="'$(OS)' != 'Windows_NT'">dotnet-gitversion "$(ProjectDir)" &gt; "$(ProjectDir)/gitversion.json"</GitVersionCmd>
+
+      <RunGeneratorCmd Condition="'$(OS)' == 'Windows_NT'">dotnet run --project "..\tools\GenerateGitVersion\GenerateGitVersion.csproj"</RunGeneratorCmd>
+      <RunGeneratorCmd Condition="'$(OS)' != 'Windows_NT'">dotnet run --project "../tools/GenerateGitVersion/GenerateGitVersion.csproj"</RunGeneratorCmd>
     </PropertyGroup>
-    <ItemGroup>
-        <PackageReference Include="CounterStrikeSharp.API" Version="1.0.328"/>
-    </ItemGroup>
-    <ItemGroup>
-        <Compile Remove="tools\**"/>
-    </ItemGroup>
-    <ItemGroup>
-        <EmbeddedResource Remove="tools\**"/>
-    </ItemGroup>
-    <ItemGroup>
-        <None Remove="tools\**"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ProjectReference Include="..\TTT.Api\TTT.Api.csproj"/>
-        <ProjectReference Include="..\TTT.CS2\TTT.CS2.csproj"/>
-    </ItemGroup>
-
-
-    <Target Name="GenerateGitVersionInformation" BeforeTargets="BeforeBuild">
-        <!-- Run dotnet-gitversion -->
-        <Exec Command="dotnet-gitversion &quot;$(ProjectDir)&quot; > &quot;$(ProjectDir)gitversion.json&quot;"/>
-
-        <!-- Run the generator project -->
-        <Exec Command="dotnet run --project &quot;../tools/GenerateGitVersion/GenerateGitVersion.csproj&quot;"/>
-    </Target>
+  </Target>
 
 </Project>

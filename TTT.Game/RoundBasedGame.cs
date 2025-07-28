@@ -4,12 +4,26 @@ using TTT.Api.Events;
 using TTT.Api.Messages;
 using TTT.Api.Player;
 using TTT.Game.Events.Game;
-using TTT.Game.Events.Player;
 using TTT.Game.Roles;
 
 namespace TTT.Game;
 
 public class RoundBasedGame(IServiceProvider provider) : IGame {
+  private readonly IRoleAssigner assigner =
+    provider.GetRequiredService<IRoleAssigner>();
+
+  private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
+
+  private readonly IPlayerFinder finder =
+    provider.GetRequiredService<IPlayerFinder>();
+
+  private readonly IOnlineMessenger? onlineMessenger =
+    provider.GetService<IOnlineMessenger>();
+
+  private readonly List<IRole> roles = [
+    new InnocentRole(), new TraitorRole(), new DetectiveRole()
+  ];
+
   private State currentState = State.WAITING;
 
   public State CurrentState {
@@ -25,28 +39,13 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
 
   public ICollection<IPlayer> Players { get; } = new List<IPlayer>();
 
-  public DateTime? StartedAt { get; protected set; } = null;
+  public DateTime? StartedAt { get; protected set; }
   public DateTime? FinishedAt { get; protected set; } = null;
 
   public SortedDictionary<DateTime, ISet<IAction>> Actions {
     get;
     protected set;
   } = new();
-
-  private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
-
-  private readonly IRoleAssigner assigner =
-    provider.GetRequiredService<IRoleAssigner>();
-
-  private readonly IPlayerFinder finder =
-    provider.GetRequiredService<IPlayerFinder>();
-
-  private readonly IOnlineMessenger? onlineMessenger =
-    provider.GetService<IOnlineMessenger>();
-
-  private readonly List<IRole> roles = [
-    new InnocentRole(), new TraitorRole(), new DetectiveRole()
-  ];
 
   public void Start() {
     onlineMessenger?.BackgroundMsgAll(finder,

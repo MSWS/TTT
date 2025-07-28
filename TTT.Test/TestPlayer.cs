@@ -4,6 +4,7 @@ using TTT.Api.Player;
 namespace TTT.Test;
 
 public class TestPlayer(string id, string name) : IOnlinePlayer {
+  private readonly List<string> weapons = [];
   public TestPlayer() : this("314159", "Test Player") { }
 
   public List<string> Messages { get; } = [];
@@ -14,8 +15,6 @@ public class TestPlayer(string id, string name) : IOnlinePlayer {
   public int MaxHealth { get; set; }
   public int Armor { get; set; }
   public bool IsAlive { get; set; }
-
-  private readonly List<string> weapons = [];
 
   public void GiveWeapon(string weaponId) { weapons.Add(weaponId); }
 
