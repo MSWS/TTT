@@ -13,12 +13,14 @@ public abstract class EventModifiedMessenger(IEventBus bus) : IMessenger {
     return SendMessage(player, messageEvent.Message);
   }
 
-  abstract protected Task<bool> SendMessage(IPlayer player, string message);
-
   // Allow for overriding in derived classes
-  public virtual Task<bool> BackgroundMsg(IPlayer player, string message)
-    => Message(player, message);
+  public virtual Task<bool> BackgroundMsg(IPlayer player, string message) {
+    return Message(player, message);
+  }
 
-  public virtual Task<bool> ScreenMsg(IPlayer player, string message)
-    => Message(player, message);
+  public virtual Task<bool> ScreenMsg(IPlayer player, string message) {
+    return Message(player, message);
+  }
+
+  abstract protected Task<bool> SendMessage(IPlayer player, string message);
 }

@@ -14,6 +14,8 @@ public class PlayerListeners(IEventBus bus,
 
   public void Start() { }
 
+  public void Dispose() { }
+
   [GameEventHandler]
   public HookResult OnPlayerConnect(EventPlayerConnectFull ev,
     GameEventInfo _) {
@@ -35,6 +37,4 @@ public class PlayerListeners(IEventBus bus,
     bus.Dispatch(new PlayerLeaveEvent(gamePlayer));
     return HookResult.Continue;
   }
-
-  public void Dispose() { }
 }

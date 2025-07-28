@@ -1,6 +1,4 @@
 using System.Drawing;
-using TTT.Api;
-using TTT.Api.Player;
 
 namespace TTT.Game.Roles;
 

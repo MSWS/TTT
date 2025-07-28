@@ -31,7 +31,7 @@ public class EventBus : IEventBus {
     }
 
     // Sort handlers by priority
-    foreach (var type in dirtyTypes) {
+    foreach (var type in dirtyTypes)
       handlers[type]
        .Sort((a, b) => {
           var aPriority = a.method.GetCustomAttribute<EventHandlerAttribute>()
@@ -40,7 +40,6 @@ public class EventBus : IEventBus {
           ?.Priority ?? Priority.DEFAULT;
           return aPriority.CompareTo(bPriority);
         });
-    }
   }
 
   public void UnregisterListener(IListener listener) {
@@ -59,7 +58,8 @@ public class EventBus : IEventBus {
     foreach (var (listener, method) in list) {
       if (cancelable is { IsCanceled: true } && method
        .GetCustomAttribute<EventHandlerAttribute>()
-      ?.IgnoreCanceled == true) { continue; }
+      ?.IgnoreCanceled == true)
+        continue;
 
       method.Invoke(listener, [ev]);
     }

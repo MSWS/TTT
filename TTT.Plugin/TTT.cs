@@ -7,12 +7,11 @@ using TTT.Api;
 namespace TTT.Plugin;
 
 public class TTT(IServiceProvider provider) : BasePlugin {
+  private IServiceScope scope = null!;
   public override string ModuleName => "TTT.Plugin";
 
   public override string ModuleVersion
     => $"{GitVersionInformation.BranchName}-{GitVersionInformation.FullSemVer}-{GitVersionInformation.BuildMetaDataPadded}";
-
-  private IServiceScope scope = null!;
 
   public override void Load(bool hotReload) {
     Logger.LogInformation($"{ModuleName} {ModuleVersion} Starting...");

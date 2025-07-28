@@ -9,15 +9,6 @@ public class MessageModificationTest(IEventBus bus, IMessenger messenger) {
   private const string ORIGINAL_MESSAGE = "Original Message";
   private const string MODIFIED_MESSAGE = "Modified Message";
 
-  private class MessageModifyListener(IEventBus bus) : IListener {
-    public void Dispose() => bus.UnregisterListener(this);
-
-    [EventHandler]
-    public void OnMessage(PlayerMessageEvent ev) {
-      ev.Message = MODIFIED_MESSAGE;
-    }
-  }
-
   [Fact]
   public void TestMessageModification() {
     // Arrange
@@ -31,5 +22,14 @@ public class MessageModificationTest(IEventBus bus, IMessenger messenger) {
     // Assert
     Assert.Single(player.Messages);
     Assert.Equal(MODIFIED_MESSAGE, player.Messages[0]);
+  }
+
+  private class MessageModifyListener(IEventBus bus) : IListener {
+    public void Dispose() { bus.UnregisterListener(this); }
+
+    [EventHandler]
+    public void OnMessage(PlayerMessageEvent ev) {
+      ev.Message = MODIFIED_MESSAGE;
+    }
   }
 }

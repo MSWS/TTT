@@ -6,34 +6,24 @@ using TTT.Game.Events.Game;
 namespace TTT.Game;
 
 public class RoundBasedGame(IEventBus bus) : IGame {
-  public ICollection<IPlayer> Players { get; } = new List<IPlayer>();
-
-  public DateTime? StartedAt { get; } = null;
-  public DateTime? FinishedAt { get; } = null;
-  public SortedDictionary<DateTime, ISet<IAction>> Actions { get; } = new();
-
-  public void Start() {
-    
-  }
-
   public enum State {
     /// <summary>
-    /// Waiting for players to join.
+    ///   Waiting for players to join.
     /// </summary>
     WAITING,
 
     /// <summary>
-    /// Waiting for the countdown to finish before starting the game.
+    ///   Waiting for the countdown to finish before starting the game.
     /// </summary>
     COUNTDOWN,
 
     /// <summary>
-    /// Currently playing the game.
+    ///   Currently playing the game.
     /// </summary>
     IN_PROGRESS,
 
     /// <summary>
-    /// Game has finished.
+    ///   Game has finished.
     /// </summary>
     FINISHED
   }
@@ -50,4 +40,12 @@ public class RoundBasedGame(IEventBus bus) : IGame {
 
     get => currentState;
   }
+
+  public ICollection<IPlayer> Players { get; } = new List<IPlayer>();
+
+  public DateTime? StartedAt { get; } = null;
+  public DateTime? FinishedAt { get; } = null;
+  public SortedDictionary<DateTime, ISet<IAction>> Actions { get; } = new();
+
+  public void Start() { }
 }

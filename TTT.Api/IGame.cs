@@ -4,8 +4,8 @@ namespace TTT.Api;
 
 public interface IGame {
   /// <summary>
-  /// The list of players in the game.
-  /// Spectators are not included in this list.
+  ///   The list of players in the game.
+  ///   Spectators are not included in this list.
   /// </summary>
   ICollection<IPlayer> Players { get; }
 
@@ -14,8 +14,8 @@ public interface IGame {
   SortedDictionary<DateTime, ISet<IAction>> Actions { get; }
 
   /// <summary>
-  /// Attempts to start a game.
-  /// Depending on implementation, this may start a countdown or immediately start the game.
+  ///   Attempts to start a game.
+  ///   Depending on implementation, this may start a countdown or immediately start the game.
   /// </summary>
   void Start();
 }

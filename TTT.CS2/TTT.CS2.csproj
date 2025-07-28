@@ -8,7 +8,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\TTT.Api\TTT.Api.csproj"/>
-        <ProjectReference Include="..\TTT.Game\TTT.Game.csproj" />
+        <ProjectReference Include="..\TTT.Game\TTT.Game.csproj"/>
     </ItemGroup>
 
     <ItemGroup>

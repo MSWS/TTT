@@ -1,5 +1,4 @@
 ﻿using System.Text.Json;
-using System.IO;
 
 var jsonPath = Path.Combine(Directory.GetCurrentDirectory(), "gitversion.json");
 var outputPath = Path.Combine(Directory.GetCurrentDirectory(),
@@ -26,11 +25,11 @@ foreach (var property in json.EnumerateObject()) {
         $"    public const string {name} = \"{value.GetString()?.Replace("\"", "\\\"")}\";";
       break;
     case JsonValueKind.Number:
-      if (value.TryGetInt32(out int intVal))
+      if (value.TryGetInt32(out var intVal))
         line = $"    public const int {name} = {intVal};";
-      else if (value.TryGetInt64(out long longVal))
+      else if (value.TryGetInt64(out var longVal))
         line = $"    public const long {name} = {longVal}L;";
-      else if (value.TryGetDouble(out double dblVal))
+      else if (value.TryGetDouble(out var dblVal))
         line = $"    public const double {name} = {dblVal};";
       else
         continue; // Skip if unknown number type
