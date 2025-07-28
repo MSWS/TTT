@@ -1,7 +1,7 @@
 using TTT.Api;
 using TTT.Api.Player;
 
-namespace TTT.Core.Actions;
+namespace TTT.Game.Actions;
 
 public class AttackAction(IPlayer attacker, IPlayer? target, string weapon,
   int damage) : IAction {

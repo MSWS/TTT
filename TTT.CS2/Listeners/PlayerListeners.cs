@@ -3,7 +3,7 @@ using CounterStrikeSharp.API.Core.Attributes.Registration;
 using GitVersion;
 using TTT.Api;
 using TTT.Api.Events;
-using TTT.Api.Events.Player;
+using TTT.Game.Events.Player;
 
 namespace TTT.CS2.Listeners;
 

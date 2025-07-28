@@ -1,7 +1,9 @@
 using CounterStrikeSharp.API.Core;
+using TTT.Api;
+using TTT.Api.Events;
 using TTT.Api.Player;
 
-namespace TTT.Api.Events.Player;
+namespace TTT.Game.Events.Player;
 
 public class PlayerDamagedEvent(IOnlinePlayer player, IOnlinePlayer? attacker,
   int dmgDealt, int hpLeft) : PlayerEvent(player), ICancelableEvent {

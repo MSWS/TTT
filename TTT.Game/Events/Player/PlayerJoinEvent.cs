@@ -1,6 +1,6 @@
 using TTT.Api.Player;
 
-namespace TTT.Api.Events.Player;
+namespace TTT.Game.Events.Player;
 
 /// <summary>
 /// Indicates that a player has joined the server.

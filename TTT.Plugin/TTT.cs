@@ -4,7 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using TTT.Api;
 
-namespace TTT.Core;
+namespace TTT.Plugin;
 
 public class TTT(IServiceProvider provider) : BasePlugin {
   public override string ModuleName => "TTT.Plugin";

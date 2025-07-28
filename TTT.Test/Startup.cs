@@ -1,7 +1,8 @@
 using Microsoft.Extensions.DependencyInjection;
 using TTT.Api.Events;
 using TTT.Api.Player;
-using TTT.Core;
+using TTT.Game;
+using TTT.Plugin;
 using TTT.Test.Fakes;
 
 namespace TTT.Test;

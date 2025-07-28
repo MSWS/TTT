@@ -2,7 +2,7 @@ using System.Drawing;
 using TTT.Api;
 using TTT.Api.Player;
 
-namespace TTT.Core.Roles;
+namespace TTT.Game.Roles;
 
 public class SpectatorRole : IRole {
   public string Id => "core.role.spectator";

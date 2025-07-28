@@ -1,7 +1,7 @@
 using TTT.Api;
 using TTT.Api.Player;
 
-namespace TTT.Core.Actions;
+namespace TTT.Game.Actions;
 
 public class DeathAction(IPlayer victim, IPlayer? killer) : IAction {
   public IPlayer Player { get; } = victim;

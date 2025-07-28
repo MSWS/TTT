@@ -2,7 +2,7 @@ using System.Drawing;
 using TTT.Api;
 using TTT.Api.Player;
 
-namespace TTT.Core.Roles;
+namespace TTT.Game.Roles;
 
 public class InnocentRole : IRole {
   public const string ID = "core.role.innocent";

@@ -1,7 +1,8 @@
 using CounterStrikeSharp.API.Core;
+using TTT.Api;
 using TTT.Api.Player;
 
-namespace TTT.Api.Events.Player;
+namespace TTT.Game.Events.Player;
 
 public class PlayerDeathEvent(IPlayer player) : PlayerEvent(player) {
   public override string Id => "core.event.player.death";
