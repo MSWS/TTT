@@ -19,11 +19,16 @@
         <None Remove="tools\**"/>
     </ItemGroup>
     <ItemGroup>
-        <Compile Include="..\GitVersionInformation.g.cs"/>
-    </ItemGroup>
-    <ItemGroup>
-      <ProjectReference Include="..\TTT.Api\TTT.Api.csproj" />
+        <ProjectReference Include="..\TTT.Api\TTT.Api.csproj"/>
     </ItemGroup>
 
+
+    <Target Name="GenerateGitVersionInformation" BeforeTargets="BeforeBuild">
+        <!-- Run dotnet-gitversion -->
+        <Exec Command="dotnet-gitversion &quot;$(ProjectDir)&quot; > &quot;$(ProjectDir)gitversion.json&quot;"/>
+
+        <!-- Run the generator project -->
+        <Exec Command="dotnet run --project &quot;../tools/GenerateGitVersion/GenerateGitVersion.csproj&quot;"/>
+    </Target>
 
 </Project>

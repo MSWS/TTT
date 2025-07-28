@@ -11,8 +11,5 @@ public interface IRole {
   string Name { get; }
   Color Color { get; }
 
-  bool ConflictsWith(IRole other) => false;
-  bool RequiresRole(IRole other) => false;
-
-  T? FindPlayerToAssign<T>(T player);
+  IPlayer? FindPlayerToAssign(ISet<IOnlinePlayer> players);
 }

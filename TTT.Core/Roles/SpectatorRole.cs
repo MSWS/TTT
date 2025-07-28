@@ -8,5 +8,6 @@ public class SpectatorRole : IRole {
   public string Name => "Spectator";
   public Color Color => Color.Gray;
 
-  public T? FindPlayerToAssign<T>(T player) => default;
+  public IPlayer? FindPlayerToAssign(ISet<IOnlinePlayer> players) => null;
+  public bool ConflictsWith(IRole other) => true;
 }

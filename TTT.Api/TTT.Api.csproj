@@ -7,4 +7,9 @@
     <ItemGroup>
         <Compile Include="..\GitVersionInformation.g.cs"/>
     </ItemGroup>
+    <ItemGroup>
+      <Reference Include="CounterStrikeSharp.API">
+        <HintPath>..\..\..\..\..\..\.nuget\packages\counterstrikesharp.api\1.0.328\lib\net8.0\CounterStrikeSharp.API.dll</HintPath>
+      </Reference>
+    </ItemGroup>
 </Project>
