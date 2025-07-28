@@ -9,7 +9,7 @@ public abstract class RatioBasedRole(float targetRatio) : IRole {
   public abstract string Name { get; }
   public abstract Color Color { get; }
 
-  public IPlayer? FindPlayerToAssign(ISet<IOnlinePlayer> players) {
+  public IOnlinePlayer? FindPlayerToAssign(ISet<IOnlinePlayer> players) {
     var currentCount = players.Count(p => p.Roles.Any(r => r.Id == Id));
     var ratio        = currentCount / (float)players.Count;
     if (ratio >= targetRatio) return null;

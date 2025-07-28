@@ -12,5 +12,5 @@ public interface IRole {
   string Name { get; }
   Color Color { get; }
 
-  IPlayer? FindPlayerToAssign(ISet<IOnlinePlayer> players);
+  IOnlinePlayer? FindPlayerToAssign(ISet<IOnlinePlayer> players);
 }

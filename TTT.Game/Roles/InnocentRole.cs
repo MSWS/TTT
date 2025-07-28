@@ -10,7 +10,7 @@ public class InnocentRole : IRole {
   public string Name => "Innocent";
   public Color Color => Color.LimeGreen;
 
-  public IPlayer? FindPlayerToAssign(ISet<IOnlinePlayer> players) {
+  public IOnlinePlayer? FindPlayerToAssign(ISet<IOnlinePlayer> players) {
     return players.FirstOrDefault(p => p.Roles.Count == 0);
   }
 }

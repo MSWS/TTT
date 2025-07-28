@@ -9,7 +9,7 @@ public class SpectatorRole : IRole {
   public string Name => "Spectator";
   public Color Color => Color.Gray;
 
-  public IPlayer? FindPlayerToAssign(ISet<IOnlinePlayer> players) {
+  public IOnlinePlayer? FindPlayerToAssign(ISet<IOnlinePlayer> players) {
     return null;
   }
 }
