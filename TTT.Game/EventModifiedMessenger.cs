@@ -9,8 +9,9 @@ public abstract class EventModifiedMessenger(IEventBus bus) : IMessenger {
   public Task<bool> Message(IPlayer player, string message) {
     var messageEvent = new PlayerMessageEvent(player, message);
     bus.Dispatch(messageEvent);
-    if (messageEvent.IsCanceled) return Task.FromResult(false);
-    return SendMessage(player, messageEvent.Message);
+    return messageEvent.IsCanceled ?
+      Task.FromResult(false) :
+      SendMessage(player, messageEvent.Message);
   }
 
   // Allow for overriding in derived classes

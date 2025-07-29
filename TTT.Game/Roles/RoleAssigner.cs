@@ -4,14 +4,15 @@ using TTT.Api.Messages;
 using TTT.Api.Player;
 using TTT.Game.Events.Player;
 
-namespace TTT.CS2;
+namespace TTT.Game.Roles;
 
 public class RoleAssigner(IEventBus bus, IOnlineMessenger onlineMessenger,
   IPlayerFinder finder) : IRoleAssigner {
   public void AssignRoles(ISet<IOnlinePlayer> players, IList<IRole> roles) {
-    var shuffled     = players.OrderBy(_ => Guid.NewGuid()).ToHashSet();
-    var roleAssigned = false;
+    var  shuffled = players.OrderBy(_ => Guid.NewGuid()).ToHashSet();
+    bool roleAssigned;
     do {
+      roleAssigned = false;
       foreach (var role in roles) {
         var player = role.FindPlayerToAssign(shuffled);
         if (player is null) continue;

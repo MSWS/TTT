@@ -1,3 +1,5 @@
+using System.Reactive.Concurrency;
+using System.Reactive.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using TTT.Api;
 using TTT.Api.Events;
@@ -20,21 +22,26 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
   private readonly IOnlineMessenger? onlineMessenger =
     provider.GetService<IOnlineMessenger>();
 
+  private readonly IDelayer delayer = provider.GetRequiredService<IDelayer>();
+
+  private readonly IScheduler scheduler =
+    provider.GetRequiredService<IScheduler>();
+
   private readonly List<IRole> roles = [
     new InnocentRole(), new TraitorRole(), new DetectiveRole()
   ];
 
-  private State currentState = State.WAITING;
+  private State state = State.WAITING;
 
-  public State CurrentState {
+  public State State {
     set {
       var ev = new GameStateUpdateEvent(this, value);
       bus.Dispatch(ev);
       if (ev.IsCanceled) return;
-      currentState = value;
+      state = value;
     }
 
-    get => currentState;
+    get => state;
   }
 
   public ICollection<IPlayer> Players { get; } = new List<IPlayer>();
@@ -47,7 +54,7 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
     protected set;
   } = new();
 
-  public void Start() {
+  public IObservable<long> Start() {
     onlineMessenger?.BackgroundMsgAll(finder,
       "Attempting to start the game...");
 
@@ -56,30 +63,38 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
     if (players.Count < 2) {
       onlineMessenger?.BackgroundMsgAll(finder,
         "Not enough players to start the game.");
-      return;
+      return Observable.Empty<long>();
     }
 
-    if (CurrentState != State.WAITING) {
+    if (State != State.WAITING) {
       onlineMessenger?.BackgroundMsgAll(finder, "Game is already in progress.");
-      return;
+      return Observable.Empty<long>();
     }
 
-    CurrentState = State.COUNTDOWN;
-
+    State = State.COUNTDOWN;
     onlineMessenger?.MessageAll(finder, "Game is starting in 5 seconds...");
 
-    Task.Delay(5000)
-     .ContinueWith(_ => {
-        if (CurrentState != State.COUNTDOWN) return;
-        startRound();
-      });
+    var timer = Observable.Timer(TimeSpan.FromSeconds(5), scheduler);
+
+    timer.Subscribe(_ => {
+      if (State != State.COUNTDOWN) return;
+      startRound();
+    });
+
+    return timer;
   }
 
   private void startRound() {
-    CurrentState = State.IN_PROGRESS;
+    var players = finder.GetAllPlayers();
 
+    if (players.Count < 2) {
+      onlineMessenger?.BackgroundMsgAll(finder,
+        "Not enough players to start the game.");
+      return;
+    }
+
+    State     = State.IN_PROGRESS;
     StartedAt = DateTime.Now;
-
     assigner.AssignRoles(finder.GetAllPlayers(), roles);
   }
 }

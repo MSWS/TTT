@@ -7,11 +7,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Events\"/>
+    <Folder Include="Events\" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\TTT.Api\TTT.Api.csproj"/>
+    <ProjectReference Include="..\TTT.Api\TTT.Api.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Reactive.Testing" Version="6.0.1" />
+    <PackageReference Include="System.Reactive" Version="6.0.1" />
   </ItemGroup>
 
 </Project>
