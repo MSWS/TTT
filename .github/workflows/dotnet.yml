@@ -46,7 +46,6 @@ jobs:
         run: "dotnet run --no-build --no-restore --project TTT.Test/TTT.Test.csproj -- --coverage --coverage-output ../../../../coverage.xml --coverage-output-format cobertura"
       - name: Code Coverage Summary Report
         uses: irongut/CodeCoverageSummary@v1.3.0
-        if: ${{ matrix.dotnet-version == '9.0.x' }}
         with:
           filename: 'TTT.Test/coverage.xml'
           badge: true
