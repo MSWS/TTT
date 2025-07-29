@@ -1,5 +1,13 @@
 name: .NET Build and Test
-on: [ push ]
+on:
+  push:
+    branches:
+      - dev
+      - main
+    paths:
+      - 'TTT.*/**'
+      - '.github/workflows/dotnet.yml'
+
 jobs:
   build:
     runs-on: ubuntu-latest
