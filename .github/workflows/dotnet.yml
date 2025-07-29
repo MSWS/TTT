@@ -38,12 +38,8 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.0.x'
-      - name: Restore dependencies
-        run: dotnet restore
-#      - name: Build
-#        run: dotnet build --no-restore
       - name: Run tests
-        run: dotnet run --no-build --no-restore --project TTT.Test/TTT.Test.csproj -- --coverage --coverage-output coverage.xml --coverage-output-format cobertura
+        run: "dotnet run --no-build --no-restore --project TTT.Test/TTT.Test.csproj -- --coverage --coverage-output coverage.xml --coverage-output-format cobertura"
       - name: Code Coverage Summary Report
         uses: irongut/CodeCoverageSummary@v1.3.0
         if: ${{ matrix.dotnet-version == '9.0.x' }}
