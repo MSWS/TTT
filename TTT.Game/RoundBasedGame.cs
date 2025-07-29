@@ -42,7 +42,9 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
     get => state;
   }
 
-  public ICollection<IPlayer> Players { get; } = new List<IPlayer>();
+  public ICollection<IPlayer> Players => players;
+
+  private readonly List<IPlayer> players = [];
 
   public DateTime? StartedAt { get; protected set; }
   public DateTime? FinishedAt { get; protected set; } = null;
@@ -52,13 +54,13 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
     protected set;
   } = new();
 
-  public IObservable<long> Start(TimeSpan countdown) {
+  public IObservable<long> Start(TimeSpan? countdown = null) {
     onlineMessenger?.BackgroundMsgAll(finder,
       "Attempting to start the game...");
 
-    var players = finder.GetAllPlayers();
+    var online = finder.GetOnline();
 
-    if (players.Count < 2) {
+    if (online.Count < 2) {
       onlineMessenger?.BackgroundMsgAll(finder,
         "Not enough players to start the game.");
       return Observable.Empty<long>();
@@ -69,10 +71,17 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
       return Observable.Empty<long>();
     }
 
-    State = State.COUNTDOWN;
-    onlineMessenger?.MessageAll(finder, "Game is starting in 5 seconds...");
+    if (countdown == null) {
+      onlineMessenger?.BackgroundMsgAll(finder,
+        "Starting game without countdown.");
+      startRound();
+      return Observable.Empty<long>();
+    }
 
-    var timer = Observable.Timer(TimeSpan.FromSeconds(5), scheduler);
+    onlineMessenger?.BackgroundMsgAll(finder,
+      $"Game is starting in {countdown.Value.TotalSeconds} seconds...");
+    State = State.COUNTDOWN;
+    var timer = Observable.Timer(countdown.Value, scheduler);
 
     timer.Subscribe(_ => {
       if (State != State.COUNTDOWN) {
@@ -88,9 +97,9 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
   }
 
   private void startRound() {
-    var players = finder.GetAllPlayers();
+    var online = finder.GetOnline();
 
-    if (players.Count < 2) {
+    if (online.Count < 2) {
       onlineMessenger?.BackgroundMsgAll(finder,
         "Not enough players to start the game.");
       State = State.WAITING;
@@ -99,6 +108,7 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
 
     State     = State.IN_PROGRESS;
     StartedAt = DateTime.Now;
-    assigner.AssignRoles(finder.GetAllPlayers(), roles);
+    assigner.AssignRoles(finder.GetOnline(), roles);
+    players.AddRange(finder.GetOnline());
   }
 }

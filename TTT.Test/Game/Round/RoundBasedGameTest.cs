@@ -78,4 +78,52 @@ public class RoundBasedGameTest(IServiceProvider provider) {
 
     Assert.Equal(State.WAITING, game.State);
   }
+
+  [Fact]
+  public void StartRound_StartsImmediately_IfNoCountdown() {
+    var game = new RoundBasedGame(provider);
+
+    finder.addPlayer(TestPlayer.Random());
+    finder.addPlayer(TestPlayer.Random());
+
+    game.Start();
+
+    Assert.Equal(State.IN_PROGRESS, game.State);
+  }
+
+  [Fact]
+  public void StartRound_NotAssignsRoles_IfNotStarted() {
+    var game = new RoundBasedGame(provider);
+
+    finder.addPlayer(TestPlayer.Random());
+    finder.addPlayer(TestPlayer.Random());
+
+    // Do not start the game
+    Assert.Empty(game.Players);
+
+    foreach (var player in game.Players) {
+      if (player is not IOnlinePlayer testPlayer)
+        throw new InvalidOperationException("Player is not an online player.");
+
+      Assert.Empty(testPlayer.Roles);
+    }
+  }
+
+  [Fact]
+  public void StartRound_AssignsRoles_OnStart() {
+    var game = new RoundBasedGame(provider);
+
+    finder.addPlayer(TestPlayer.Random());
+    finder.addPlayer(TestPlayer.Random());
+
+    game.Start();
+
+    Assert.Equal(2, game.Players.Count);
+    foreach (var player in game.Players) {
+      if (player is not IOnlinePlayer testPlayer)
+        throw new InvalidOperationException("Player is not an online player.");
+
+      Assert.Equal(1, testPlayer.Roles.Count);
+    }
+  }
 }

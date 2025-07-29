@@ -4,16 +4,16 @@ public interface IPlayerFinder {
   public void addPlayer(IOnlinePlayer player);
   public void removePlayer(IPlayer player);
 
-  ISet<IOnlinePlayer> GetAllPlayers();
+  ISet<IOnlinePlayer> GetOnline();
 
   IOnlinePlayer? GetPlayerById(string id) {
     return string.IsNullOrEmpty(id) ?
       null :
-      GetAllPlayers().FirstOrDefault(p => p.Id == id);
+      GetOnline().FirstOrDefault(p => p.Id == id);
   }
 
   IOnlinePlayer? GetPlayerByName(string name) {
-    var matches = GetAllPlayers().Where(p => p.Name.Contains(name)).ToList();
+    var matches = GetOnline().Where(p => p.Name.Contains(name)).ToList();
     return matches.Count == 1 ? matches[0] : null;
   }
 }

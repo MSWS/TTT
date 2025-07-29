@@ -19,7 +19,7 @@ public class PlayerJoinGameStartListener(IEventBus bus, IPlayerFinder finder,
   [EventHandler]
   public void OnJoin(PlayerJoinEvent ev) {
     if (games.ActiveGame is not null) return;
-    var playerCount = finder.GetAllPlayers().Count;
+    var playerCount = finder.GetOnline().Count;
     if (playerCount < 2) return;
 
     _ = messenger.MessageAll(finder,

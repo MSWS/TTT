@@ -14,7 +14,7 @@ public interface IOnlineMessenger : IMessenger {
   Task<bool> Message(IOnlinePlayer player, string message);
 
   async Task<bool> MessageAll(IPlayerFinder finder, string message) {
-    var tasks = finder.GetAllPlayers()
+    var tasks = finder.GetOnline()
      .Select(onlinePlayer => Message(onlinePlayer, message))
      .ToList();
 
@@ -23,7 +23,7 @@ public interface IOnlineMessenger : IMessenger {
   }
 
   async Task<bool> BackgroundMsgAll(IPlayerFinder finder, string message) {
-    var tasks = finder.GetAllPlayers()
+    var tasks = finder.GetOnline()
      .Select(onlinePlayer => BackgroundMsg(onlinePlayer, message))
      .ToList();
 
@@ -32,7 +32,7 @@ public interface IOnlineMessenger : IMessenger {
   }
 
   async Task<bool> ScreenMsgAll(IPlayerFinder finder, string message) {
-    var tasks = finder.GetAllPlayers()
+    var tasks = finder.GetOnline()
      .Select(onlinePlayer => ScreenMsg(onlinePlayer, message))
      .ToList();
 

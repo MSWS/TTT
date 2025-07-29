@@ -17,5 +17,5 @@ public class FakePlayerFinder(IEventBus bus) : IPlayerFinder {
     bus.Dispatch(new PlayerLeaveEvent(player));
   }
 
-  public ISet<IOnlinePlayer> GetAllPlayers() { return players; }
+  public ISet<IOnlinePlayer> GetOnline() { return players; }
 }
