@@ -21,8 +21,11 @@
   <PropertyGroup>
     <PublishBaseDirectory>$(MSBuildThisFileDirectory)/../build</PublishBaseDirectory>
     <PublishDir>$(PublishBaseDirectory)/TTT</PublishDir>
-  </PropertyGroup>
 
+    <PublishRelease>false</PublishRelease>
+    <PublishSelfContained>false</PublishSelfContained>
+    <PublishDocumentationFile>true</PublishDocumentationFile>
+  </PropertyGroup>
 
   <Target Name="GenerateGitVersionInformation" BeforeTargets="BeforeBuild">
     <PropertyGroup>
@@ -32,6 +35,10 @@
       <RunGeneratorCmd Condition="'$(OS)' == 'Windows_NT'">dotnet run --project "..\tools\GenerateGitVersion\GenerateGitVersion.csproj"</RunGeneratorCmd>
       <RunGeneratorCmd Condition="'$(OS)' != 'Windows_NT'">dotnet run --project "../tools/GenerateGitVersion/GenerateGitVersion.csproj"</RunGeneratorCmd>
     </PropertyGroup>
+  </Target>
+
+  <Target Name="ZipOutputPath" AfterTargets="Publish">
+    <ZipDirectory Overwrite="true" SourceDirectory="$(PublishDir)\" DestinationFile="$(PublishBaseDirectory)\TTT.zip"/>
   </Target>
 
 </Project>

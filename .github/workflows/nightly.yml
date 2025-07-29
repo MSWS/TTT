@@ -33,9 +33,9 @@ jobs:
           cache: true
 
       - run: |
-          dotnet restore
-          dotnet build
-          dotnet publish --no-build --no-restore
+          dotnet restore TTT.Plugin/TTT.Plugin.csproj
+          dotnet build TTT.Plugin/TTT.Plugin.csproj --no-restore
+          dotnet publish TTT.Plugin/TTT.Plugin.csproj --no-build --no-restore
 
       - uses: actions/upload-artifact@v4.0.0
         with:
