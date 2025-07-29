@@ -18,6 +18,10 @@
     <ProjectReference Include="..\TTT.Api\TTT.Api.csproj"/>
     <ProjectReference Include="..\TTT.CS2\TTT.CS2.csproj"/>
   </ItemGroup>
+  <PropertyGroup>
+    <PublishBaseDirectory>$(MSBuildThisFileDirectory)/../build</PublishBaseDirectory>
+    <PublishDir>$(PublishBaseDirectory)/TTT</PublishDir>
+  </PropertyGroup>
 
 
   <Target Name="GenerateGitVersionInformation" BeforeTargets="BeforeBuild">
