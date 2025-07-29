@@ -20,5 +20,6 @@ public interface IGame {
   ///   Attempts to start a game.
   ///   Depending on implementation, this may start a countdown or immediately start the game.
   /// </summary>
-  IObservable<long> Start();
+  /// <param name="countdown"></param>
+  IObservable<long> Start(TimeSpan countdown);
 }

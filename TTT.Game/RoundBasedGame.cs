@@ -52,7 +52,7 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
     protected set;
   } = new();
 
-  public IObservable<long> Start() {
+  public IObservable<long> Start(TimeSpan countdown) {
     onlineMessenger?.BackgroundMsgAll(finder,
       "Attempting to start the game...");
 

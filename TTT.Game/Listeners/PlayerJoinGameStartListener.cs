@@ -26,6 +26,6 @@ public class PlayerJoinGameStartListener(IEventBus bus, IPlayerFinder finder,
       $"There are {playerCount} players online, starting the game...");
 
     var game = games.CreateGame();
-    game?.Start();
+    game?.Start(TimeSpan.FromSeconds(5));
   }
 }

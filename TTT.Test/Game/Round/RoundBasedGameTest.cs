@@ -20,7 +20,7 @@ public class RoundBasedGameTest(IServiceProvider provider) {
     finder.addPlayer(TestPlayer.Random());
     finder.addPlayer(TestPlayer.Random());
 
-    game.Start();
+    game.Start(TimeSpan.FromSeconds(5));
 
     scheduler.AdvanceBy(TimeSpan.FromSeconds(5).Ticks);
     Assert.Equal(State.IN_PROGRESS, game.State);
@@ -34,7 +34,7 @@ public class RoundBasedGameTest(IServiceProvider provider) {
 
     for (var i = 0; i < players; i++) finder.addPlayer(TestPlayer.Random());
 
-    game.Start();
+    game.Start(TimeSpan.FromSeconds(5));
 
     scheduler.AdvanceBy(TimeSpan.FromSeconds(5).Ticks);
 
@@ -48,7 +48,7 @@ public class RoundBasedGameTest(IServiceProvider provider) {
     finder.addPlayer(TestPlayer.Random());
     finder.addPlayer(TestPlayer.Random());
 
-    game.Start();
+    game.Start(TimeSpan.FromSeconds(5));
 
     // Advance by less than the delay time
     scheduler.AdvanceBy(TimeSpan.FromSeconds(4).Ticks);
@@ -66,7 +66,7 @@ public class RoundBasedGameTest(IServiceProvider provider) {
     finder.addPlayer(player1);
     finder.addPlayer(player2);
 
-    game.Start();
+    game.Start(TimeSpan.FromSeconds(5));
 
     scheduler.AdvanceBy(TimeSpan.FromSeconds(3).Ticks);
 
