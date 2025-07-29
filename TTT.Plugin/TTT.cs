@@ -11,10 +11,10 @@ public class TTT(IServiceProvider provider) : BasePlugin {
   public override string ModuleName => "TTT.Plugin";
 
   public override string ModuleVersion
-    => $"{GitVersionInformation.BranchName}-{GitVersionInformation.FullSemVer}-{GitVersionInformation.BuildMetaDataPadded}";
+    => $"{GitVersionInformation.BranchName}-{GitVersionInformation.FullSemVer}-{GitVersionInformation.BuildMetaData}";
 
   public override void Load(bool hotReload) {
-    Logger.LogInformation($"{ModuleName} {ModuleVersion} Starting...");
+    Logger.LogInformation($"{ModuleName} {ModuleVersion} Starting... ");
 
     scope = provider.CreateScope();
     var modules = scope.ServiceProvider.GetServices<ITerrorModule>().ToList();

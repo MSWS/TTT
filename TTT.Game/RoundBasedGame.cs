@@ -22,8 +22,6 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
   private readonly IOnlineMessenger? onlineMessenger =
     provider.GetService<IOnlineMessenger>();
 
-  private readonly IDelayer delayer = provider.GetRequiredService<IDelayer>();
-
   private readonly IScheduler scheduler =
     provider.GetRequiredService<IScheduler>();
 

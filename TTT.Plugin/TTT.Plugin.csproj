@@ -8,6 +8,10 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="CounterStrikeSharp.API" Version="1.0.328"/>
+    <PackageReference Include="GitVersion.MsBuild" Version="6.3.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="tools\**"/>
@@ -26,16 +30,6 @@
     <PublishSelfContained>false</PublishSelfContained>
     <PublishDocumentationFile>true</PublishDocumentationFile>
   </PropertyGroup>
-
-  <Target Name="GenerateGitVersionInformation" BeforeTargets="BeforeBuild">
-    <PropertyGroup>
-      <GitVersionCmd Condition="'$(OS)' == 'Windows_NT'">dotnet-gitversion "$(ProjectDir)" &gt; "$(ProjectDir)gitversion.json"</GitVersionCmd>
-      <GitVersionCmd Condition="'$(OS)' != 'Windows_NT'">dotnet-gitversion "$(ProjectDir)" &gt; "$(ProjectDir)/gitversion.json"</GitVersionCmd>
-
-      <RunGeneratorCmd Condition="'$(OS)' == 'Windows_NT'">dotnet run --project "..\tools\GenerateGitVersion\GenerateGitVersion.csproj"</RunGeneratorCmd>
-      <RunGeneratorCmd Condition="'$(OS)' != 'Windows_NT'">dotnet run --project "../tools/GenerateGitVersion/GenerateGitVersion.csproj"</RunGeneratorCmd>
-    </PropertyGroup>
-  </Target>
 
   <Target Name="ZipOutputPath" AfterTargets="Publish">
     <ZipDirectory Overwrite="true" SourceDirectory="$(PublishDir)\" DestinationFile="$(PublishBaseDirectory)\TTT.zip"/>
