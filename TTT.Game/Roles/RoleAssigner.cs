@@ -19,9 +19,10 @@ public class RoleAssigner(IEventBus bus, IOnlineMessenger onlineMessenger,
 
         var ev = new PlayerRoleAssignEvent(player, role);
         bus.Dispatch(ev);
+        
+        if (ev.IsCanceled) continue;
 
         player.Roles.Add(ev.Role);
-
         roleAssigned = true;
 
         onlineMessenger?.BackgroundMsgAll(finder,

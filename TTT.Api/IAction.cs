@@ -9,7 +9,7 @@ public interface IAction {
   string Verb { get; }
   string Details { get; }
 
-  string Format() {
+  public string Format() {
     return Other is not null ?
       $"{Player} {Verb} {Other} {Details}" :
       $"{Player} {Verb} {Details}";

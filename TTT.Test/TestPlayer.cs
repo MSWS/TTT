@@ -26,4 +26,6 @@ public class TestPlayer(string id, string name) : IOnlinePlayer {
     return new TestPlayer(new Random().NextInt64().ToString(),
       "Test Player " + Guid.NewGuid());
   }
+
+  public override string ToString() { return $"TEST[{id}|{name}]"; }
 }
