@@ -4,21 +4,23 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <DebugSymbols>false</DebugSymbols>
+    <DebugType>none</DebugType>
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Events\" />
+    <Folder Include="Events\"/>
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\TTT.Api\TTT.Api.csproj" />
+    <ProjectReference Include="..\TTT.Api\TTT.Api.csproj"/>
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Reactive.Testing" Version="6.0.1" />
-    <PackageReference Include="System.Reactive" Version="6.0.1" />
+    <PackageReference Include="Microsoft.Reactive.Testing" Version="6.0.1"/>
+    <PackageReference Include="System.Reactive" Version="6.0.1"/>
   </ItemGroup>
-  
+
   <ItemGroup>
     <Compile Include="..\GitVersionInformation.g.cs"/>
   </ItemGroup>
