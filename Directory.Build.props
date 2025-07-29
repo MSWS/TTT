@@ -1,0 +1,15 @@
+<Project>
+  <ItemGroup>
+    <PackageReference Include="CounterStrikeSharp.API" Version="1.0.328"/>
+    <PackageReference Include="System.Reactive" Version="6.0.1"/>
+  </ItemGroup>
+  <ItemGroup Condition="'$(OS)' == 'Windows_NT'">
+    <PackageReference Include="GitVersion.MsBuild" Version="6.3.0" Condition="'$(OS)' == 'Windows_NT'">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup Condition="'$(OS)' != 'Windows_NT'">
+    <Compile Include="../GitVersionInformation.g.cs"/>
+  </ItemGroup>
+</Project>

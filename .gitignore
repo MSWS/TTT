@@ -56,3 +56,5 @@ obj
 packages
 *.user
 build
+GitVersionInformation.g.cs
+gitversion.json

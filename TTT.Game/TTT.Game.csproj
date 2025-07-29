@@ -7,20 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Events\"/>
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\TTT.Api\TTT.Api.csproj"/>
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="GitVersion.MsBuild" Version="6.3.0">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="Microsoft.Reactive.Testing" Version="6.0.1"/>
-    <PackageReference Include="System.Reactive" Version="6.0.1"/>
   </ItemGroup>
 
 </Project>

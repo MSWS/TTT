@@ -1,4 +1,5 @@
 using CounterStrikeSharp.API.Core;
+using GitVersion;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using TTT.Api;

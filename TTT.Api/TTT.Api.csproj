@@ -4,12 +4,10 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
-  <ItemGroup>
-    <PackageReference Include="CounterStrikeSharp.API" Version="1.0.328"/>
-    <PackageReference Include="GitVersion.MsBuild" Version="6.3.0" Condition="'$(OS)' == 'Windows_NT'">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="System.Reactive" Version="6.0.1"/>
-  </ItemGroup>
+  <Target Name="GenerateGitVersionInformation" BeforeTargets="BeforeBuild" Condition="'$(OS)' != 'Windows_NT'">
+    <PropertyGroup>
+      <GitVersionCmd>dotnet-gitversion "$(ProjectDir)" &gt; "$(ProjectDir)/gitversion.json"</GitVersionCmd>
+      <RunGeneratorCmd>dotnet run --project "Versioning/GenerateGitVersion.csproj"</RunGeneratorCmd>
+    </PropertyGroup>
+  </Target>
 </Project>
