@@ -1,8 +1,8 @@
 namespace TTT.Api.Player;
 
 public interface IPlayerFinder {
-  internal protected void addPlayer(IOnlinePlayer player);
-  internal protected void removePlayer(IOnlinePlayer player);
+  public void addPlayer(IOnlinePlayer player);
+  public void removePlayer(IPlayer player);
 
   ISet<IOnlinePlayer> GetAllPlayers();
 

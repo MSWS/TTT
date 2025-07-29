@@ -1,3 +1,4 @@
+using System.Reactive.Linq;
 using TTT.Api.Player;
 
 namespace TTT.Api;
@@ -17,5 +18,5 @@ public interface IGame {
   ///   Attempts to start a game.
   ///   Depending on implementation, this may start a countdown or immediately start the game.
   /// </summary>
-  void Start();
+  IObservable<long> Start();
 }
