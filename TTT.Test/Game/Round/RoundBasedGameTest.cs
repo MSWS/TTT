@@ -57,4 +57,27 @@ public class RoundBasedGameTest(IServiceProvider provider) {
 
     Assert.Equal(State.COUNTDOWN, game.State);
   }
+
+  [Fact]
+  public void StartRound_Stops_IfPlayerLeaves() {
+    var game = new RoundBasedGame(provider);
+
+    var player1 = TestPlayer.Random();
+    var player2 = TestPlayer.Random();
+
+    finder.addPlayer(player1);
+    finder.addPlayer(player2);
+
+    game.Start();
+
+    scheduler.AdvanceBy(TimeSpan.FromSeconds(3).Ticks);
+
+    // Simulate player leaving
+    finder.removePlayer(player1);
+
+    // Advance time to trigger the game logic
+    scheduler.AdvanceBy(TimeSpan.FromSeconds(2).Ticks);
+
+    Assert.Equal(State.WAITING, game.State);
+  }
 }

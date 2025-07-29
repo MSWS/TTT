@@ -23,5 +23,6 @@ public class Startup {
     services.AddScoped<IRoleAssigner, RoleAssigner>();
     services.AddScoped<TestScheduler>();
     services.AddScoped<IScheduler>(s => s.GetRequiredService<TestScheduler>());
+    services.AddScoped<IGameManager, GameManager>();
   }
 }

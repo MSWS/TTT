@@ -75,7 +75,12 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
     var timer = Observable.Timer(TimeSpan.FromSeconds(5), scheduler);
 
     timer.Subscribe(_ => {
-      if (State != State.COUNTDOWN) return;
+      if (State != State.COUNTDOWN) {
+        onlineMessenger?.BackgroundMsgAll(finder,
+          "Game countdown was interrupted.");
+        return;
+      }
+
       startRound();
     });
 
@@ -88,6 +93,7 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
     if (players.Count < 2) {
       onlineMessenger?.BackgroundMsgAll(finder,
         "Not enough players to start the game.");
+      State = State.WAITING;
       return;
     }
 
