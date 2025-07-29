@@ -54,12 +54,11 @@ jobs:
           output: 'both'
       - name: Add Coverage PR Comment
         uses: marocchino/sticky-pull-request-comment@v2
-        if: github.event_name == 'pull_request' && matrix.dotnet-version == '9.0.x'
+        if: github.event_name == 'pull_request'
         with:
           recreate: true
           path: code-coverage-results.md
       - name: Export Code Coverage
-        if: ${{ matrix.dotnet-version == '9.0.x' }}
         run: echo "CODE_COVERAGE=$(tail -n 1 code-coverage-results.md | grep -oP '(?<=\*\*Summary\*\* \|\s\*\*)[0-9]+(?=%)')" >> $GITHUB_ENV
       - name: Create Test Coverage Badge
         uses: Schneegans/dynamic-badges-action@v1.7.0
