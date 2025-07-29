@@ -1,6 +1,7 @@
 using CounterStrikeSharp.API.Core;
 using Microsoft.Extensions.DependencyInjection;
 using TTT.Api;
+using TTT.Api.Player;
 
 namespace TTT.CS2;
 

@@ -4,12 +4,6 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-    <TrimMode>link</TrimMode>
-    <PublishSingleFile>false</PublishSingleFile>
-    <DebugType>embedded</DebugType>
-    <EmbedAllSources>true</EmbedAllSources>
-    <IncludeSymbolsInPackage>false</IncludeSymbolsInPackage>
-    <IncludeSourceInPackage>false</IncludeSourceInPackage>
   </PropertyGroup>
 
   <ItemGroup>

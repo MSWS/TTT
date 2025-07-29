@@ -1,6 +1,4 @@
-using TTT.Api.Player;
-
-namespace TTT.Api;
+namespace TTT.Api.Player;
 
 public interface IPlayerConverter<in T> : ITerrorModule {
   public IPlayer GetPlayer(T player);

@@ -24,7 +24,7 @@ public class PlayerJoinGameStartListener(IEventBus bus, IPlayerFinder finder,
     game?.Start();
   }
 
-  public string Name => "PlayerJoinGameStartListener";
+  public string Name => nameof(PlayerJoinGameStartListener);
   public string Version => GitVersionInformation.FullSemVer;
 
   public void Start() { bus.RegisterListener(this); }
