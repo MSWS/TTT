@@ -1,7 +1,7 @@
 using TTT.Api.Events;
 using Xunit;
 
-namespace TTT.Test.Core.Event;
+namespace TTT.Test.Game.Event;
 
 public class EventBusTest(IEventBus bus) {
   [Fact]

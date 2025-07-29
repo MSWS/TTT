@@ -1,6 +1,6 @@
 using TTT.Api.Events;
 
-namespace TTT.Test.Core.Event;
+namespace TTT.Test.Game.Event;
 
 public class CancelableEventListener(IEventBus bus, bool cancelEvent)
   : IListener {

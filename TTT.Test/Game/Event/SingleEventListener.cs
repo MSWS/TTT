@@ -1,6 +1,6 @@
 using TTT.Api.Events;
 
-namespace TTT.Test.Core.Event;
+namespace TTT.Test.Game.Event;
 
 public class SingleEventListener(IEventBus bus) : IListener {
   public int fired { get; private set; }

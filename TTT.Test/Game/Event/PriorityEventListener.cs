@@ -1,6 +1,6 @@
 using TTT.Api.Events;
 
-namespace TTT.Test.Core.Event;
+namespace TTT.Test.Game.Event;
 
 public class PriorityEventListener(IEventBus bus) : IListener {
   private readonly List<uint> fireOrders = [];
