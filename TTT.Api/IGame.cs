@@ -1,4 +1,3 @@
-using System.Reactive.Linq;
 using TTT.Api.Player;
 using TTT.Game;
 
@@ -15,11 +14,11 @@ public interface IGame {
   DateTime? FinishedAt { get; }
   SortedDictionary<DateTime, ISet<IAction>> Actions { get; }
 
+  State State { get; set; }
+
   /// <summary>
   ///   Attempts to start a game.
   ///   Depending on implementation, this may start a countdown or immediately start the game.
   /// </summary>
   IObservable<long> Start();
-  
-  State State { get; set; }
 }

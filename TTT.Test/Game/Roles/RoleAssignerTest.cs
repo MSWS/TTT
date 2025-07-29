@@ -12,26 +12,6 @@ public class RoleAssignerTest(IEventBus bus, IOnlineMessenger messenger,
   IPlayerFinder finder) {
   private readonly RoleAssigner assigner = new(bus, messenger, finder);
 
-  private class RoleNever : IRole {
-    public string Id { get; } = "test.role.never";
-    public string Name { get; } = "Never Assigned";
-    public Color Color { get; } = Color.Red;
-
-    public IOnlinePlayer? FindPlayerToAssign(ISet<IOnlinePlayer> players) {
-      return null;
-    }
-  }
-
-  private class RoleAlways : IRole {
-    public string Id { get; } = "test.role.always";
-    public string Name { get; } = "Always Assigned";
-    public Color Color { get; } = Color.Green;
-
-    public IOnlinePlayer? FindPlayerToAssign(ISet<IOnlinePlayer> players) {
-      return players.FirstOrDefault(p => p.Roles.All(r => r.Id != Id));
-    }
-  }
-
   [Fact]
   public void AssignRole_Finishes_WithNoRoles() {
     HashSet<IOnlinePlayer> players = [TestPlayer.Random(), TestPlayer.Random()];
@@ -94,5 +74,25 @@ public class RoleAssignerTest(IEventBus bus, IOnlineMessenger messenger,
     Assert.Equal(innos, assignedInnos);
     Assert.Equal(traitors, assignedTraitors);
     Assert.Equal(detectives, assignedDetectives);
+  }
+
+  private class RoleNever : IRole {
+    public string Id { get; } = "test.role.never";
+    public string Name { get; } = "Never Assigned";
+    public Color Color { get; } = Color.Red;
+
+    public IOnlinePlayer? FindPlayerToAssign(ISet<IOnlinePlayer> players) {
+      return null;
+    }
+  }
+
+  private class RoleAlways : IRole {
+    public string Id { get; } = "test.role.always";
+    public string Name { get; } = "Always Assigned";
+    public Color Color { get; } = Color.Green;
+
+    public IOnlinePlayer? FindPlayerToAssign(ISet<IOnlinePlayer> players) {
+      return players.FirstOrDefault(p => p.Roles.All(r => r.Id != Id));
+    }
   }
 }

@@ -1,12 +1,10 @@
-﻿using System.Reactive.Concurrency;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Reactive.Testing;
 using TTT.Api;
 using TTT.Api.Events;
 using TTT.Api.Messages;
 using TTT.Api.Player;
 using TTT.Game;
-using TTT.Game.Events.Player;
 using TTT.Game.Listeners;
 using Xunit;
 
@@ -18,11 +16,11 @@ public class JoinStartTest(IServiceProvider provider) {
   private readonly IPlayerFinder finder =
     provider.GetRequiredService<IPlayerFinder>();
 
-  private readonly IOnlineMessenger messenger =
-    provider.GetRequiredService<IOnlineMessenger>();
-
   private readonly IGameManager games =
     provider.GetRequiredService<IGameManager>();
+
+  private readonly IOnlineMessenger messenger =
+    provider.GetRequiredService<IOnlineMessenger>();
 
   private readonly TestScheduler scheduler =
     provider.GetRequiredService<TestScheduler>();

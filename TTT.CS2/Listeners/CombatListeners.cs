@@ -1,6 +1,5 @@
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Core.Attributes.Registration;
-using GitVersion;
 using TTT.Api;
 using TTT.Api.Events;
 using TTT.Api.Player;

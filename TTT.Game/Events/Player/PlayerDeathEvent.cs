@@ -1,5 +1,4 @@
 using CounterStrikeSharp.API.Core;
-using TTT.Api;
 using TTT.Api.Player;
 
 namespace TTT.Game.Events.Player;

@@ -22,12 +22,12 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
   private readonly IOnlineMessenger? onlineMessenger =
     provider.GetService<IOnlineMessenger>();
 
-  private readonly IScheduler scheduler =
-    provider.GetRequiredService<IScheduler>();
-
   private readonly List<IRole> roles = [
     new InnocentRole(), new TraitorRole(), new DetectiveRole()
   ];
+
+  private readonly IScheduler scheduler =
+    provider.GetRequiredService<IScheduler>();
 
   private State state = State.WAITING;
 

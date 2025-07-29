@@ -12,11 +12,11 @@ public interface IRole : IEquatable<IRole> {
   string Name { get; }
   Color Color { get; }
 
-  IOnlinePlayer? FindPlayerToAssign(ISet<IOnlinePlayer> players);
-
   bool IEquatable<IRole>.Equals(IRole? other) {
     if (other is null) return false;
     if (ReferenceEquals(this, other)) return true;
     return Id == other.Id;
   }
+
+  IOnlinePlayer? FindPlayerToAssign(ISet<IOnlinePlayer> players);
 }

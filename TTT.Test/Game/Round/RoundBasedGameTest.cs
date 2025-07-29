@@ -1,6 +1,4 @@
-﻿using System.Reactive.Concurrency;
-using System.Reactive.Linq;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Reactive.Testing;
 using TTT.Api.Player;
 using TTT.Game;
