@@ -41,7 +41,7 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore TTT.Test/TTT.Test.csproj
       - name: Run tests
-        run: dotnet run --no-build --no-restore TTT.Test/TTT.Tes.csproj -- --coverage --coverage-output coverage.xml --coverage-output-format cobertura
+        run: dotnet run --no-build --no-restore TTT.Test/TTT.Test.csproj -- --coverage --coverage-output coverage.xml --coverage-output-format cobertura
       - name: Code Coverage Summary Report
         uses: irongut/CodeCoverageSummary@v1.3.0
         if: ${{ matrix.dotnet-version == '9.0.x' }}
