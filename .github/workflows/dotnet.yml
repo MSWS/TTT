@@ -20,7 +20,7 @@ jobs:
           show-progress: true
           
       - name: Install dotnet-gitversion
-        run: dotnet tool install --global dotnet-gitversion
+        run: dotnet tool install dotnet-gitversion
         
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
