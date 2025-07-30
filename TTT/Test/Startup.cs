@@ -29,7 +29,9 @@ public class Startup {
     services.AddScoped<IScheduler>(s => s.GetRequiredService<TestScheduler>());
     services.AddScoped<IGameManager, GameManager>();
     services.AddScoped<IStringLocalizerFactory, JsonLocalizerFactory>();
-    services.AddTransient<IStringLocalizer, StringLocalizer>();
+    services.AddScoped<StringLocalizer>();
+    services.AddTransient<IMsgLocalizer>(s
+      => s.GetRequiredService<StringLocalizer>());
 
     services.AddModBehavior<GenericInitTester>();
     services.AddModBehavior<PluginInitTester>();

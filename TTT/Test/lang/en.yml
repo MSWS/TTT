@@ -1,2 +1,2 @@
-﻿"BASIC_TEST": "Foobar"
-"PLACEHOLDER_TEST": "Placeholder: {0}"
+﻿BASIC_TEST: "Foobar"
+PLACEHOLDER_TEST: "Placeholder: {0}"

@@ -28,15 +28,15 @@ jobs:
 
       - name: Build
         run: dotnet build --no-restore
-        
+
       - name: Copy Lang Folder
         run: |
           mkdir -p build_output/lang/
           cp -r TTT/Test/lang/* build_output/lang/
-        
+
       - name: Publish Test Project
         run: dotnet publish TTT/Test/Test.csproj --no-restore --no-build -o build_output -c Debug
-        
+
       - uses: actions/upload-artifact@v4
         with:
           name: build_output
@@ -61,7 +61,6 @@ jobs:
           path: build_output
 
       - name: Run tests
-#        run: "dotnet run --no-build --no-restore --project TTT/Test/Test.csproj -- --coverage --coverage-output $GITHUB_WORKSPACE/coverage.xml --coverage-output-format cobertura"
         run: "dotnet ./build_output/Test.dll --coverage --coverage-output $GITHUB_WORKSPACE/coverage.xml --coverage-output-format cobertura"
 
       - name: Code Coverage Summary Report
@@ -95,6 +94,6 @@ jobs:
           valColorRange: ${{ env.CODE_COVERAGE }}
           maxColorRange: 100
           minColorRange: 33
-          
+
       - name: Write to Job Summary
         run: cat code-coverage-results.md >> $GITHUB_STEP_SUMMARY
