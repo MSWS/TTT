@@ -37,9 +37,9 @@ jobs:
           versionSpec: '6.3.x'
 
       - run: |
-          dotnet restore TTT.Plugin/TTT.Plugin.csproj
-          dotnet build TTT.Plugin/TTT.Plugin.csproj --no-restore
-          dotnet publish TTT.Plugin/TTT.Plugin.csproj --no-build --no-restore
+          dotnet restore TTT/Plugin/Plugin.csproj
+          dotnet build TTT/Plugin/Plugin.csproj --no-restore
+          dotnet publish TTT/Plugin/Plugin.csproj --no-build --no-restore
 
       - uses: actions/upload-artifact@v4.0.0
         with:
