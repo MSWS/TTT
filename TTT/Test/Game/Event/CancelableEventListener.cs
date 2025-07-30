@@ -1,4 +1,4 @@
-using TTT.Api.Events;
+using TTT.API.Events;
 
 namespace TTT.Test.Game.Event;
 

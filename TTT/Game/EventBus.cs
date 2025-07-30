@@ -1,5 +1,5 @@
 using System.Reflection;
-using TTT.Api.Events;
+using TTT.API.Events;
 
 namespace TTT.Game;
 

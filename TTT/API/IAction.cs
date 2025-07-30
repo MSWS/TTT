@@ -1,6 +1,6 @@
-using TTT.Api.Player;
+using TTT.API.Player;
 
-namespace TTT.Api;
+namespace TTT.API;
 
 public interface IAction {
   IPlayer Player { get; }

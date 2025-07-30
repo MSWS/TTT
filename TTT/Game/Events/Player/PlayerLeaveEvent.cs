@@ -1,4 +1,4 @@
-using TTT.Api.Player;
+using TTT.API.Player;
 
 namespace TTT.Game.Events.Player;
 

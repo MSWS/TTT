@@ -1,11 +1,11 @@
 using System.Reactive.Concurrency;
 using CounterStrikeSharp.API.Core;
-using Microsoft.Extensions.DependencyInjection;
-using TTT.Api.Events;
 using TTT.CS2;
+using Microsoft.Extensions.DependencyInjection;
+using TTT.API.Events;
 using TTT.Game;
 
-namespace TTT.Plugin;
+namespace Plugin;
 
 public class TTTServiceCollection : IPluginServiceCollection<TTT> {
   public void ConfigureServices(IServiceCollection serviceCollection) {

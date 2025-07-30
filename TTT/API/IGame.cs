@@ -1,7 +1,6 @@
-using TTT.Api.Player;
-using TTT.Game;
+using TTT.API.Player;
 
-namespace TTT.Api;
+namespace TTT.API;
 
 public interface IGame {
   /// <summary>

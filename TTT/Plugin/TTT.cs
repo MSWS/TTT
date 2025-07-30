@@ -1,9 +1,9 @@
 using CounterStrikeSharp.API.Core;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using TTT.Api;
+using TTT.API;
 
-namespace TTT.Plugin;
+namespace Plugin;
 
 public class TTT(IServiceProvider provider) : BasePlugin {
   private IServiceScope scope = null!;

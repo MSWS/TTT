@@ -1,6 +1,6 @@
-using TTT.Api.Player;
+using TTT.API.Player;
 
-namespace TTT.Api.Messages;
+namespace TTT.API.Messages;
 
 public interface IOnlineMessenger : IMessenger {
   Task<bool> IMessenger.Message(IPlayer player, string message) {

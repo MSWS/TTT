@@ -1,7 +1,7 @@
-﻿using TTT.Api;
-using TTT.Api.Events;
-using TTT.Api.Messages;
-using TTT.Api.Player;
+﻿using TTT.API;
+using TTT.API.Events;
+using TTT.API.Messages;
+using TTT.API.Player;
 using TTT.Game.Events.Player;
 
 namespace TTT.Game.Listeners;

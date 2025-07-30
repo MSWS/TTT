@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using TTT.Api.Events;
+using TTT.API.Events;
 
 namespace TTT.Game;
 

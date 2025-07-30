@@ -1,4 +1,4 @@
-namespace TTT.Api.Events;
+namespace TTT.API.Events;
 
 public interface IEventBus {
   void RegisterListener(IListener listener);

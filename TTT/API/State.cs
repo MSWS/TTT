@@ -1,4 +1,4 @@
-namespace TTT.Game;
+namespace TTT.API;
 
 public enum State {
   /// <summary>

@@ -1,6 +1,6 @@
-using TTT.Api.Player;
+using TTT.API.Player;
 
-namespace TTT.Api.Messages;
+namespace TTT.API.Messages;
 
 public interface IMessenger {
   /// <summary>
@@ -8,6 +8,5 @@ public interface IMessenger {
   /// </summary>
   /// <param name="player">The player to send the message to.</param>
   /// <param name="message">The message to send</param>
-  /// <typeparam name="T"></typeparam>
   Task<bool> Message(IPlayer player, string message);
 }

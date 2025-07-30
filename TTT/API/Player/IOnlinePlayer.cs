@@ -1,4 +1,4 @@
-namespace TTT.Api.Player;
+namespace TTT.API.Player;
 
 public interface IOnlinePlayer : IPlayer {
   ICollection<IRole> Roles { get; }

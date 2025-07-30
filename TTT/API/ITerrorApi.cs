@@ -1,4 +1,4 @@
-namespace TTT.Api;
+namespace TTT.API;
 
 public interface ITerrorApi : ITerrorModule {
   IServiceProvider Services { get; }

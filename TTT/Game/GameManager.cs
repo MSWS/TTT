@@ -1,4 +1,4 @@
-﻿using TTT.Api;
+﻿using TTT.API;
 
 namespace TTT.Game;
 

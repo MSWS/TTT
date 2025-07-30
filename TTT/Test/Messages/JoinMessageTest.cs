@@ -1,5 +1,5 @@
-using TTT.Api.Events;
-using TTT.Api.Messages;
+using TTT.API.Events;
+using TTT.API.Messages;
 using TTT.Game.Events.Player;
 using TTT.Test.Fakes;
 using Xunit;

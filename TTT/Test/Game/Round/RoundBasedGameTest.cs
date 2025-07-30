@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Reactive.Testing;
-using TTT.Api.Player;
+using TTT.API;
+using TTT.API.Player;
 using TTT.Game;
 using Xunit;
 

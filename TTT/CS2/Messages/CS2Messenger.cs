@@ -1,7 +1,7 @@
 using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
-using TTT.Api.Events;
-using TTT.Api.Player;
+using TTT.API.Events;
+using TTT.API.Player;
 using TTT.Game;
 
 namespace TTT.CS2.Messages;

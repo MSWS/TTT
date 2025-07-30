@@ -1,4 +1,4 @@
-namespace TTT.Api.Events;
+namespace TTT.API.Events;
 
 [AttributeUsage(AttributeTargets.Method)]
 public class EventHandlerAttribute : Attribute {

@@ -1,5 +1,5 @@
-using TTT.Api;
-using TTT.Api.Events;
+using TTT.API;
+using TTT.API.Events;
 
 namespace TTT.Game.Events.Game;
 

@@ -1,5 +1,5 @@
-using TTT.Api.Events;
-using TTT.Api.Player;
+using TTT.API.Events;
+using TTT.API.Player;
 using TTT.Game.Events.Player;
 
 namespace TTT.Test.Fakes;

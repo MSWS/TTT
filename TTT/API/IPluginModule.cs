@@ -1,6 +1,6 @@
 using CounterStrikeSharp.API.Core;
 
-namespace TTT.Api;
+namespace TTT.API;
 
 public interface IPluginModule : ITerrorModule {
   void Start(BasePlugin? plugin) { Start(); }

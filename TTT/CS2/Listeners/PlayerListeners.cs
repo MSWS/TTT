@@ -1,8 +1,8 @@
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Core.Attributes.Registration;
-using TTT.Api;
-using TTT.Api.Events;
-using TTT.Api.Player;
+using TTT.API;
+using TTT.API.Events;
+using TTT.API.Player;
 using TTT.Game.Events.Player;
 
 namespace TTT.CS2.Listeners;
