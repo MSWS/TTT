@@ -10,6 +10,7 @@ on:
     paths:
       - 'TTT.*/**'
       - '.github/workflows/nightly.yml'
+      - 'Directory.Build.props'
   schedule:
     - cron: '15 0 * * 3' # Every Wednesday at 00:15 UTC
 
