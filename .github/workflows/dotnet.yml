@@ -23,6 +23,11 @@ jobs:
         uses: gittools/actions/gitversion/setup@v4.0.1
         with:
           versionSpec: '6.3.x'
+          
+      - name: Run GitVersion
+        run: |
+          dotnet-gitversion > gitversion.json
+          dotnet run --project Versioning/Versioning.csproj
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
@@ -43,6 +48,11 @@ jobs:
           fetch-depth: 0
           fetch-tags: true
           show-progress: true
+          
+      - name: Install GitVersion
+        uses: gittools/actions/gitversion/setup@v4.0.1
+        with:
+          versionSpec: '6.3.x'
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
