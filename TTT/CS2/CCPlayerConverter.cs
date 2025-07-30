@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using CounterStrikeSharp.API.Core;
 using TTT.Api;
 using TTT.Api.Player;
