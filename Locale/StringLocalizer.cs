@@ -55,7 +55,7 @@ public partial class StringLocalizer : IStringLocalizer, IMsgLocalizer {
         // in our case, so we trim the value when we have a prefix.
         var replacement = getString(trimmedKey).Value;
         value = value.Replace(key,
-          trimmedKey == "prefix" ? replacement : replacement.Trim());
+          trimmedKey == "PREFIX" ? replacement : replacement.Trim());
       } catch (NullReferenceException) {
         // Key doesn't exist, move on
       }
@@ -100,6 +100,12 @@ public partial class StringLocalizer : IStringLocalizer, IMsgLocalizer {
     while ((trailingIndex =
       value.IndexOf("'s", trailingIndex + 1, StringComparison.Ordinal)) != -1) {
       var startingWordBoundary = value[..trailingIndex].LastIndexOf(' ');
+      if (startingWordBoundary == -1
+        || startingWordBoundary + 2 > value.Length) {
+        if (value.EndsWith("s's")) value = value[..^1];
+        break;
+      }
+
       var endingWordBoundary = value.IndexOf(' ', trailingIndex + 2);
       var word = value[(startingWordBoundary + 1)..endingWordBoundary];
       var filteredWord = word.Where(c => char.IsLetterOrDigit(c) || c == '\'')
@@ -113,5 +119,5 @@ public partial class StringLocalizer : IStringLocalizer, IMsgLocalizer {
     return value;
   }
 
-  public string this[IMsg msg] => localizer[msg.Key, msg.Args];
+  public string this[IMsg msg] => getString(msg.Key, msg.Args);
 }
