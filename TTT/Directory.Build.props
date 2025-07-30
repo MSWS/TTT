@@ -11,7 +11,7 @@
     </PackageReference>
   </ItemGroup>
 
-  <ItemGroup Condition="'$(OS)' != 'Windows_NT'">
+  <ItemGroup Condition="'$(OS)' != 'Windows_NT' And '$(CI)' != 'true'">
     <Compile Include="../../GitVersionInformation.g.cs" />
   </ItemGroup>
 
