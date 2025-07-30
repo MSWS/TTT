@@ -3,10 +3,12 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Reactive.Testing;
 using TTT.API;
 using TTT.API.Events;
+using TTT.API.Extensions;
 using TTT.API.Messages;
 using TTT.API.Player;
 using TTT.Game;
 using TTT.Game.Roles;
+using TTT.Test.Abstract;
 using TTT.Test.Fakes;
 
 namespace TTT.Test;
@@ -24,5 +26,8 @@ public class Startup {
     services.AddScoped<TestScheduler>();
     services.AddScoped<IScheduler>(s => s.GetRequiredService<TestScheduler>());
     services.AddScoped<IGameManager, GameManager>();
+
+    services.AddModBehavior<GenericInitTester>();
+    services.AddModBehavior<PluginInitTester>();
   }
 }

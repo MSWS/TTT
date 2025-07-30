@@ -58,3 +58,4 @@ packages
 build
 GitVersionInformation.g.cs
 gitversion.json
+build_output
