@@ -19,8 +19,10 @@ jobs:
           fetch-tags: true
           show-progress: true
           
-      - name: Install dotnet-gitversion
-        run: dotnet tool install dotnet-gitversion
+      - name: Install GitVersion
+        uses: gittools/actions/gitversion/setup@v4.0.1
+        with:
+          versionSpec: '6.3.x'
         
       - name: Setup .NET
         uses: actions/setup-dotnet@v4

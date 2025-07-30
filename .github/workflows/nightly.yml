@@ -32,8 +32,10 @@ jobs:
         with:
           dotnet-version: 8.0.x
 
-      - name: Install dotnet-gitversion
-        run: dotnet tool install --global dotnet-gitversion
+      - name: Install GitVersion
+        uses: gittools/actions/gitversion/setup@v4.0.1
+        with:
+          versionSpec: '6.3.x'
 
       - run: |
           dotnet restore TTT.Plugin/TTT.Plugin.csproj
