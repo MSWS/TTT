@@ -16,8 +16,8 @@ public static class TestMsgs {
   public static IMsg TRAILING_PLURALS(string s)
     => MsgFactory.Create(nameof(TRAILING_PLURALS), s);
 
-  public static IMsg TRAILING_PLURALS_APO
-    => MsgFactory.Create(nameof(TRAILING_PLURALS_APO));
+  public static IMsg TRAILING_PLURALS_APO(string s)
+    => MsgFactory.Create(nameof(TRAILING_PLURALS_APO), s);
 
   public static IMsg TRAILING_PLURALS_CONSTANT
     => MsgFactory.Create(nameof(TRAILING_PLURALS_CONSTANT));
@@ -25,9 +25,11 @@ public static class TestMsgs {
   public static IMsg TRAILING_PLURALS_CONSTANT_APO
     => MsgFactory.Create(nameof(TRAILING_PLURALS_CONSTANT_APO));
 
-
   public static IMsg TRAILING_PLURALS_IMPROPER_CONSTANT
     => MsgFactory.Create(nameof(TRAILING_PLURALS_IMPROPER_CONSTANT));
+
+  public static IMsg TRAILING_PLURALS_IMPROPER_CONSTANT_APO
+    => MsgFactory.Create(nameof(TRAILING_PLURALS_IMPROPER_CONSTANT_APO));
 
   public static IMsg TRAILING_PLURALS_DOUBLE(int amo, string obj)
     => MsgFactory.Create(nameof(TRAILING_PLURALS_DOUBLE), amo, obj);
@@ -36,11 +38,18 @@ public static class TestMsgs {
 
   public static IMsg PREFIX_TEST => MsgFactory.Create(nameof(PREFIX_TEST));
 
-  public static IMsg TRAILING_TEST => MsgFactory.Create(nameof(TRAILING_TEST));
+  public static IMsg WHITESPACE_SUFFIX
+    => MsgFactory.Create(nameof(WHITESPACE_SUFFIX));
+
+  public static IMsg WHITESPACE_PREFIX
+    => MsgFactory.Create(nameof(WHITESPACE_PREFIX));
 
   public static IMsg PREFIX_TEST_TRAILING
     => MsgFactory.Create(nameof(PREFIX_TEST_TRAILING));
 
-  public static IMsg NON_PREFIX_SUBSTITUTION
-    => MsgFactory.Create(nameof(NON_PREFIX_SUBSTITUTION));
+  public static IMsg SUFFIX_TEST_TRAILING
+    => MsgFactory.Create(nameof(SUFFIX_TEST_TRAILING));
+
+  public static IMsg BOTH_TEST_TRAILING
+    => MsgFactory.Create(nameof(BOTH_TEST_TRAILING));
 }
