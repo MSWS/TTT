@@ -29,6 +29,11 @@ jobs:
       - name: Build
         run: dotnet build --no-restore
         
+      - name: Copy Lang Folder
+        run: |
+          mkdir -p build_output/lang/
+          cp -r TTT/Test/lang/* build_output/lang/
+        
       - name: Publish Test Project
         run: dotnet publish TTT/Test/Test.csproj --no-restore --no-build -o build_output -c Debug
         
