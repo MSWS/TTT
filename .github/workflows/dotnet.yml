@@ -1,9 +1,6 @@
 name: .NET Build and Test
 on:
   push:
-    branches:
-      - dev
-      - main
     paths:
       - 'TTT/**'
       - '.github/workflows/dotnet.yml'
