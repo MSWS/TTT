@@ -35,7 +35,7 @@
 
   <Target Name="PreprocessYaml" BeforeTargets="BeforeBuild">
     <Exec Command="dotnet build $(MSBuildThisFileDirectory)..\..\Locale\Locale.csproj"/>
-    <Exec Command="$(MSBuildThisFileDirectory)..\..\Locale\bin\Debug\net8.0\Locale.exe lang/en.yml"/>
+    <Exec Command="dotnet $(MSBuildThisFileDirectory)..\..\Locale\bin\Debug\net8.0\Locale.dll lang/en.yml"/>
   </Target>
 
 </Project>
