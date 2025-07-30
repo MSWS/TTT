@@ -5,9 +5,8 @@ on:
       - dev
       - main
     paths:
-      - 'TTT.*/**'
+      - 'TTT/**'
       - '.github/workflows/dotnet.yml'
-      - 'Directory.Build.props'
 
 jobs:
   build:
