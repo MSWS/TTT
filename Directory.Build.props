@@ -17,6 +17,6 @@
 
   <Target Name="GenerateGitVersionInformation" BeforeTargets="BeforeCompile" Condition="'$(OS)' != 'Windows_NT'">
     <Exec Command="dotnet-gitversion '$(ProjectDir)' &gt; '$(ProjectDir)/gitversion.json'" />
-    <Exec Command="dotnet run --project 'Versioning/GenerateGitVersion.csproj'" />
+    <Exec Command="dotnet run --project 'Versioning/Versioning.csproj'" />
   </Target>
 </Project>
