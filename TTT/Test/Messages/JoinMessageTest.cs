@@ -1,5 +1,6 @@
 using TTT.API.Events;
 using TTT.API.Messages;
+using TTT.API.Player;
 using TTT.Game.Events.Player;
 using TTT.Test.Fakes;
 using Xunit;
@@ -7,7 +8,7 @@ using Xunit;
 namespace TTT.Test.Messages;
 
 public class JoinMessageTest(IEventBus bus, IMessenger msg,
-  FakePlayerFinder finder) {
+  IPlayerFinder finder) {
   [Fact]
   public void TestJoinMessage() {
     // Arrange
@@ -16,7 +17,7 @@ public class JoinMessageTest(IEventBus bus, IMessenger msg,
     bus.RegisterListener(listener);
 
     // Act
-    finder.addPlayer(player);
+    finder.AddPlayer(player);
 
     // Assert
     Assert.Single(player.Messages);

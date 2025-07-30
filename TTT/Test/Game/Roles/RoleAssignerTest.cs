@@ -1,14 +1,15 @@
-﻿using System.Drawing;
+﻿using Microsoft.Extensions.DependencyModel;
 using TTT.API;
 using TTT.API.Events;
 using TTT.API.Messages;
 using TTT.API.Player;
+using TTT.API.Role;
 using TTT.Game.Roles;
 using Xunit;
 
 namespace TTT.Test.Game.Roles;
 
-public class RoleAssignerTest(IEventBus bus, IOnlineMessenger messenger,
+public partial class RoleAssignerTest(IEventBus bus, IOnlineMessenger messenger,
   IPlayerFinder finder) {
   private readonly RoleAssigner assigner = new(bus, messenger, finder);
 
@@ -16,7 +17,7 @@ public class RoleAssignerTest(IEventBus bus, IOnlineMessenger messenger,
   public void AssignRole_Finishes_WithNoRoles() {
     HashSet<IOnlinePlayer> players = [TestPlayer.Random(), TestPlayer.Random()];
 
-    assigner.AssignRoles(players, [new RoleNever()]);
+    assigner.AssignRoles(players, [new TestRoles.RoleNever()]);
     Assert.Empty(players.SelectMany(p => p.Roles));
   }
 
@@ -32,9 +33,10 @@ public class RoleAssignerTest(IEventBus bus, IOnlineMessenger messenger,
   public void AssignRole_AssignsToAllPlayers() {
     HashSet<IOnlinePlayer> players = [TestPlayer.Random(), TestPlayer.Random()];
 
-    assigner.AssignRoles(players, [new RoleAlways()]);
+    assigner.AssignRoles(players, [new TestRoles.RoleGreedy()]);
     Assert.Equal(2, players.SelectMany(p => p.Roles).Count());
-    Assert.All(players, p => Assert.Equal([new RoleAlways()], p.Roles));
+    Assert.All(players,
+      p => Assert.Equal([new TestRoles.RoleGreedy()], p.Roles));
   }
 
   // https://www.desmos.com/calculator/d2s9wkztda
@@ -76,23 +78,19 @@ public class RoleAssignerTest(IEventBus bus, IOnlineMessenger messenger,
     Assert.Equal(detectives, assignedDetectives);
   }
 
-  private class RoleNever : IRole {
-    public string Id { get; } = "test.role.never";
-    public string Name { get; } = "Never Assigned";
-    public Color Color { get; } = Color.Red;
+  [Fact]
+  public void AssignRole_DoesNotAssign_IfCanceled() {
+    bus.RegisterListener(new RoleAssignCanceler(bus));
 
-    public IOnlinePlayer? FindPlayerToAssign(ISet<IOnlinePlayer> players) {
-      return null;
-    }
-  }
+    var players = new HashSet<IOnlinePlayer> {
+      TestPlayer.Random(), TestPlayer.Random()
+    };
 
-  private class RoleAlways : IRole {
-    public string Id { get; } = "test.role.always";
-    public string Name { get; } = "Always Assigned";
-    public Color Color { get; } = Color.Green;
+    assigner.AssignRoles(players,
+      [new TestRoles.RoleA(), new TestRoles.RoleB()]);
 
-    public IOnlinePlayer? FindPlayerToAssign(ISet<IOnlinePlayer> players) {
-      return players.FirstOrDefault(p => p.Roles.All(r => r.Id != Id));
+    foreach (var player in players) {
+      Assert.Equal([new TestRoles.RoleB()], player.Roles);
     }
   }
 }

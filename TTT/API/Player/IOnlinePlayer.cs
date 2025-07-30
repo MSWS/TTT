@@ -1,3 +1,5 @@
+using TTT.API.Role;
+
 namespace TTT.API.Player;
 
 public interface IOnlinePlayer : IPlayer {

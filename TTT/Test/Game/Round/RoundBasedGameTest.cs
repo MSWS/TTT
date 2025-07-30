@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Reactive.Testing;
 using TTT.API;
+using TTT.API.Game;
 using TTT.API.Player;
 using TTT.Game;
 using Xunit;
@@ -18,8 +19,8 @@ public class RoundBasedGameTest(IServiceProvider provider) {
   public void Start_StartsGame_WithPlayers() {
     var game = new RoundBasedGame(provider);
 
-    finder.addPlayer(TestPlayer.Random());
-    finder.addPlayer(TestPlayer.Random());
+    finder.AddPlayer(TestPlayer.Random());
+    finder.AddPlayer(TestPlayer.Random());
 
     game.Start(TimeSpan.FromSeconds(5));
 
@@ -33,7 +34,7 @@ public class RoundBasedGameTest(IServiceProvider provider) {
   public void Start_DoesNotStart_WithoutPlayers(int players) {
     var game = new RoundBasedGame(provider);
 
-    for (var i = 0; i < players; i++) finder.addPlayer(TestPlayer.Random());
+    for (var i = 0; i < players; i++) finder.AddPlayer(TestPlayer.Random());
 
     game.Start(TimeSpan.FromSeconds(5));
 
@@ -46,8 +47,8 @@ public class RoundBasedGameTest(IServiceProvider provider) {
   public void Start_DoesNotImmediatelyStart_WithoutDelay() {
     var game = new RoundBasedGame(provider);
 
-    finder.addPlayer(TestPlayer.Random());
-    finder.addPlayer(TestPlayer.Random());
+    finder.AddPlayer(TestPlayer.Random());
+    finder.AddPlayer(TestPlayer.Random());
 
     game.Start(TimeSpan.FromSeconds(5));
 
@@ -64,15 +65,15 @@ public class RoundBasedGameTest(IServiceProvider provider) {
     var player1 = TestPlayer.Random();
     var player2 = TestPlayer.Random();
 
-    finder.addPlayer(player1);
-    finder.addPlayer(player2);
+    finder.AddPlayer(player1);
+    finder.AddPlayer(player2);
 
     game.Start(TimeSpan.FromSeconds(5));
 
     scheduler.AdvanceBy(TimeSpan.FromSeconds(3).Ticks);
 
     // Simulate player leaving
-    finder.removePlayer(player1);
+    finder.RemovePlayer(player1);
 
     // Advance time to trigger the game logic
     scheduler.AdvanceBy(TimeSpan.FromSeconds(2).Ticks);
@@ -84,8 +85,8 @@ public class RoundBasedGameTest(IServiceProvider provider) {
   public void StartRound_StartsImmediately_IfNoCountdown() {
     var game = new RoundBasedGame(provider);
 
-    finder.addPlayer(TestPlayer.Random());
-    finder.addPlayer(TestPlayer.Random());
+    finder.AddPlayer(TestPlayer.Random());
+    finder.AddPlayer(TestPlayer.Random());
 
     game.Start();
 
@@ -96,8 +97,8 @@ public class RoundBasedGameTest(IServiceProvider provider) {
   public void StartRound_NotAssignsRoles_IfNotStarted() {
     var game = new RoundBasedGame(provider);
 
-    finder.addPlayer(TestPlayer.Random());
-    finder.addPlayer(TestPlayer.Random());
+    finder.AddPlayer(TestPlayer.Random());
+    finder.AddPlayer(TestPlayer.Random());
 
     // Do not start the game
     Assert.Empty(game.Players);
@@ -114,8 +115,8 @@ public class RoundBasedGameTest(IServiceProvider provider) {
   public void StartRound_AssignsRoles_OnStart() {
     var game = new RoundBasedGame(provider);
 
-    finder.addPlayer(TestPlayer.Random());
-    finder.addPlayer(TestPlayer.Random());
+    finder.AddPlayer(TestPlayer.Random());
+    finder.AddPlayer(TestPlayer.Random());
 
     game.Start();
 
@@ -126,5 +127,30 @@ public class RoundBasedGameTest(IServiceProvider provider) {
 
       Assert.Equal(1, testPlayer.Roles.Count);
     }
+  }
+
+  [Fact]
+  public void StartRound_AvoidsStarting_IfAlreadyInProgress() {
+    var game = new RoundBasedGame(provider);
+
+    finder.AddPlayer(TestPlayer.Random());
+    finder.AddPlayer(TestPlayer.Random());
+
+    game.Start(TimeSpan.FromSeconds(5));
+    scheduler.AdvanceBy(TimeSpan.FromSeconds(5).Ticks);
+
+    var result = game.Start(TimeSpan.FromSeconds(5));
+
+    Assert.Null(result);
+  }
+  
+  [Fact]
+  public void EndGame_ShouldDoNothing_WhenNotInProgress() {
+    var game = new RoundBasedGame(provider);
+    
+    game.EndGame();
+    
+    Assert.Equal(State.WAITING, game.State);
+    Assert.Null(game.FinishedAt);
   }
 }

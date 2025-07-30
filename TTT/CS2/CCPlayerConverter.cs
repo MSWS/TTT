@@ -1,3 +1,4 @@
+using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using TTT.API;
 using TTT.API.Player;
@@ -23,6 +24,16 @@ public class CCPlayerConverter : IPluginModule,
     var newPlayer = new CS2Player(player);
     playerCache[newPlayer.Id] = newPlayer;
     return newPlayer;
+  }
+
+  public CCSPlayerController? GetPlayer(IPlayer player) {
+    if (!ulong.TryParse(player.Id, out var steamId)) return null;
+    var gamePlayer = Utilities.GetPlayerFromSteamId(steamId);
+
+    if (gamePlayer is { IsValid: true }) return gamePlayer;
+
+    var bot = Utilities.GetPlayerFromIndex((int)steamId);
+    return bot is { IsValid: true } ? bot : null;
   }
 
   public void Dispose() { playerCache.Clear(); }

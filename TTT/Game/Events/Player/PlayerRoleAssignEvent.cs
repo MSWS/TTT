@@ -1,6 +1,7 @@
 using TTT.API;
 using TTT.API.Events;
 using TTT.API.Player;
+using TTT.API.Role;
 
 namespace TTT.Game.Events.Player;
 

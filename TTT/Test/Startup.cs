@@ -4,8 +4,10 @@ using Microsoft.Reactive.Testing;
 using TTT.API;
 using TTT.API.Events;
 using TTT.API.Extensions;
+using TTT.API.Game;
 using TTT.API.Messages;
 using TTT.API.Player;
+using TTT.API.Role;
 using TTT.Game;
 using TTT.Game.Roles;
 using TTT.Test.Abstract;
@@ -17,11 +19,9 @@ public class Startup {
   public void ConfigureServices(IServiceCollection services) {
     services.AddScoped<IEventBus, EventBus>();
     services.AddScoped<IPlayerFinder, FakePlayerFinder>();
-    services.AddScoped<FakePlayerFinder>();
-    services.AddScoped<FakeMessenger>();
-    services.AddScoped<IOnlineMessenger>(s
-      => s.GetRequiredService<FakeMessenger>());
-    services.AddScoped<IMessenger>(s => s.GetRequiredService<FakeMessenger>());
+    services.AddScoped<IOnlineMessenger, FakeMessenger>();
+    services.AddScoped<IMessenger>(s
+      => s.GetRequiredService<IOnlineMessenger>());
     services.AddScoped<IRoleAssigner, RoleAssigner>();
     services.AddScoped<TestScheduler>();
     services.AddScoped<IScheduler>(s => s.GetRequiredService<TestScheduler>());

@@ -2,6 +2,7 @@ using TTT.API;
 using TTT.API.Events;
 using TTT.API.Messages;
 using TTT.API.Player;
+using TTT.API.Role;
 using TTT.Game.Events.Player;
 
 namespace TTT.Game.Roles;

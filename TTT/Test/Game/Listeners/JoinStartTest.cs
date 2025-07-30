@@ -2,6 +2,7 @@
 using Microsoft.Reactive.Testing;
 using TTT.API;
 using TTT.API.Events;
+using TTT.API.Game;
 using TTT.API.Messages;
 using TTT.API.Player;
 using TTT.Game.Listeners;
@@ -30,8 +31,8 @@ public class JoinStartTest(IServiceProvider provider) {
       new PlayerJoinGameStartListener(bus, finder, messenger, games);
     listener.Start();
 
-    finder.addPlayer(TestPlayer.Random());
-    finder.addPlayer(TestPlayer.Random());
+    finder.AddPlayer(TestPlayer.Random());
+    finder.AddPlayer(TestPlayer.Random());
 
     Assert.NotNull(games.ActiveGame);
     Assert.Equal(State.COUNTDOWN, games.ActiveGame?.State);
@@ -49,8 +50,8 @@ public class JoinStartTest(IServiceProvider provider) {
 
     var player1 = TestPlayer.Random();
     var player2 = TestPlayer.Random();
-    finder.addPlayer(player1);
-    finder.addPlayer(player2);
+    finder.AddPlayer(player1);
+    finder.AddPlayer(player2);
 
     Assert.NotEmpty(player1.Messages);
     Assert.NotEmpty(player2.Messages);

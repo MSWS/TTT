@@ -1,4 +1,5 @@
 ﻿using TTT.API;
+using TTT.API.Game;
 using TTT.Test.Fakes;
 using Xunit;
 

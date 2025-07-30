@@ -1,6 +1,6 @@
 using TTT.API.Player;
 
-namespace TTT.API;
+namespace TTT.API.Game;
 
 public interface IAction {
   IPlayer Player { get; }

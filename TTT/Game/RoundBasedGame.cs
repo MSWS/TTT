@@ -3,8 +3,10 @@ using System.Reactive.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using TTT.API;
 using TTT.API.Events;
+using TTT.API.Game;
 using TTT.API.Messages;
 using TTT.API.Player;
+using TTT.API.Role;
 using TTT.Game.Events.Game;
 using TTT.Game.Roles;
 
@@ -54,7 +56,7 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
     protected set;
   } = new();
 
-  public IObservable<long> Start(TimeSpan? countdown = null) {
+  public IObservable<long>? Start(TimeSpan? countdown = null) {
     onlineMessenger?.BackgroundMsgAll(finder,
       "Attempting to start the game...");
 
@@ -63,13 +65,10 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
     if (online.Count < 2) {
       onlineMessenger?.BackgroundMsgAll(finder,
         "Not enough players to start the game.");
-      return Observable.Empty<long>();
+      return null;
     }
 
-    if (State != State.WAITING) {
-      onlineMessenger?.BackgroundMsgAll(finder, "Game is already in progress.");
-      return Observable.Empty<long>();
-    }
+    if (State != State.WAITING) return null;
 
     if (countdown == null) {
       onlineMessenger?.BackgroundMsgAll(finder,
@@ -96,6 +95,23 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
     return timer;
   }
 
+  public void EndGame(IRole? winningTeam = null) {
+    if (!((IGame)this).IsInProgress()) {
+      Dispose();
+      State = State.WAITING;
+      return;
+    }
+
+    FinishedAt = DateTime.Now;
+    State      = State.FINISHED;
+
+    if (winningTeam == null)
+      onlineMessenger?.MessageAll(finder,
+        "The game was canceled or ended without a winning team.");
+    else
+      onlineMessenger?.MessageAll(finder, $"{winningTeam.Name} won the game!");
+  }
+
   private void startRound() {
     var online = finder.GetOnline();
 
@@ -110,5 +126,11 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
     StartedAt = DateTime.Now;
     assigner.AssignRoles(finder.GetOnline(), roles);
     players.AddRange(finder.GetOnline());
+  }
+
+  public void Dispose() {
+    players.Clear();
+    roles.Clear();
+    Actions.Clear();
   }
 }

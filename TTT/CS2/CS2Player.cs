@@ -2,6 +2,7 @@ using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using TTT.API;
 using TTT.API.Player;
+using TTT.API.Role;
 
 namespace TTT.CS2;
 

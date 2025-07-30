@@ -1,7 +1,7 @@
 using System.Drawing;
 using TTT.API.Player;
 
-namespace TTT.API;
+namespace TTT.API.Role;
 
 /// <summary>
 ///   Represents a role that can be assigned to a player.

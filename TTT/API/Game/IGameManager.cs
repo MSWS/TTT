@@ -1,4 +1,4 @@
-﻿namespace TTT.API;
+﻿namespace TTT.API.Game;
 
 public interface IGameManager {
   IGame? ActiveGame { get; }

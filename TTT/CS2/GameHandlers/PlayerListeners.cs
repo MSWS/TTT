@@ -5,7 +5,7 @@ using TTT.API.Events;
 using TTT.API.Player;
 using TTT.Game.Events.Player;
 
-namespace TTT.CS2.Listeners;
+namespace TTT.CS2.GameHandlers;
 
 public class PlayerListeners(IEventBus bus,
   IPlayerConverter<CCSPlayerController> converter) : IPluginModule {
