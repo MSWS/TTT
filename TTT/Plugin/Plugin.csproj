@@ -3,11 +3,12 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <RootNamespace>TTT.Plugin</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\TTT.Api\TTT.Api.csproj"/>
-    <ProjectReference Include="..\TTT.CS2\TTT.CS2.csproj"/>
+    <ProjectReference Include="..\API\API.csproj" />
+    <ProjectReference Include="..\CS2\CS2.csproj" />
   </ItemGroup>
 
   <PropertyGroup>
