@@ -8,6 +8,9 @@ public static class TestMsgs {
   public static IMsg SINGLE_SUBSTITUTION(string name)
     => MsgFactory.Create(nameof(SINGLE_SUBSTITUTION), name);
 
+  public static IMsg FLOAT_FORMATTING(float value)
+    => MsgFactory.Create(nameof(FLOAT_FORMATTING), value);
+
   public static IMsg CONSTANT_S => MsgFactory.Create(nameof(CONSTANT_S));
 
   public static IMsg TRAILING_PLURALS(string s)

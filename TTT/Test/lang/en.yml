@@ -1,5 +1,6 @@
 ﻿CONSTANT: "Foobar"
 SINGLE_SUBSTITUTION: "Placeholder: {0}"
+FLOAT_FORMATTING: "Float: {0:.2f}"
 CONSTANT_S: "%s%"
 TRAILING_PLURALS: "{0}%s%"
 TRAILING_PLURALS_APO: "{0}'%s%"
