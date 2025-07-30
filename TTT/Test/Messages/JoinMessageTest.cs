@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Localization;
 using TTT.API.Events;
 using TTT.API.Messages;
 using TTT.API.Player;

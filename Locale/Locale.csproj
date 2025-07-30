@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <RootNamespace>TTT.Locale</RootNamespace>
+    <OutputType>Exe</OutputType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CounterStrikeSharp.API" Version="1.0.328"/>
+    <PackageReference Include="Microsoft.Extensions.Localization.Abstractions" Version="8.0.3"/>
+    <PackageReference Include="YamlDotNet" Version="16.3.0"/>
+  </ItemGroup>
+
+</Project>

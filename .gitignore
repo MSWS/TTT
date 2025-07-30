@@ -59,3 +59,4 @@ build
 GitVersionInformation.g.cs
 gitversion.json
 build_output
+**/lang/*.json
