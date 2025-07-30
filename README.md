@@ -21,4 +21,5 @@ converts `dotnet-gitversion` to the `GitVersionInformation` that is used.
 1. `git clone ...`
 2. `dotnet restore`
 3. `dotnet build`
-4. `dotnet test` (Optional)
+4. Convert all `lang/en.yml` -> `lang/en.json` (Required for testing, refer to [Locale](./Locale/Locale.csproj))
+5. `dotnet test` (Optional)
