@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <PropertyGroup>
-    <PublishBaseDirectory>$(MSBuildThisFileDirectory)/../build</PublishBaseDirectory>
+    <PublishBaseDirectory>$(MSBuildThisFileDirectory)/../../build</PublishBaseDirectory>
     <PublishDir>$(PublishBaseDirectory)/TTT</PublishDir>
   </PropertyGroup>
 
