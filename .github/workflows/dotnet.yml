@@ -57,9 +57,7 @@ jobs:
 
       - name: Run tests
 #        run: "dotnet run --no-build --no-restore --project TTT/Test/Test.csproj -- --coverage --coverage-output $GITHUB_WORKSPACE/coverage.xml --coverage-output-format cobertura"
-        run: |
-          chmod +x build_output/Test.dll
-          build_output/Test.dll --no-build --no-restore -- --coverage --coverage-output $GITHUB_WORKSPACE/coverage.xml --coverage-output-format cobertura
+        run: "dotnet ./build_output/Test.dll --coverage --coverage-output $GITHUB_WORKSPACE/coverage.xml --coverage-output-format cobertura"
 
       - name: Code Coverage Summary Report
         uses: irongut/CodeCoverageSummary@v1.3.0
