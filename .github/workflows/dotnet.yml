@@ -29,8 +29,8 @@ jobs:
       - name: Build
         run: dotnet build --no-restore
         
-      - name: Publish
-        run: dotnet publish --no-restore -c Release -o build_output    
+      - name: Publish Test Project
+        run: dotnet publish TTT.Test/TTT.Test.csproj --no-restore --no-build -o build_output
         
       - uses: actions/upload-artifact@v4
         with:
