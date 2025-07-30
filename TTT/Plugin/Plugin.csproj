@@ -7,8 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\API\API.csproj" />
-    <ProjectReference Include="..\CS2\CS2.csproj" />
+    <ProjectReference Include="..\API\API.csproj"/>
+    <ProjectReference Include="..\CS2\CS2.csproj"/>
   </ItemGroup>
 
   <PropertyGroup>
@@ -21,8 +21,8 @@
       <ZipVersion>$(GitVersion_FullSemVer)</ZipVersion>
     </PropertyGroup>
     <ZipDirectory Overwrite="true"
-                  SourceDirectory="$(PublishDir)\"
-                  DestinationFile="$(PublishBaseDirectory)\TTT-$(ZipVersion).zip"/>
+                  SourceDirectory="$(PublishDir)/"
+                  DestinationFile="$(PublishBaseDirectory)/TTT-$(ZipVersion).zip"/>
   </Target>
 
 
