@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using TTT.API;
 
-namespace Plugin;
+namespace TTT.Plugin;
 
 public class TTT(IServiceProvider provider) : BasePlugin {
   private IServiceScope scope = null!;

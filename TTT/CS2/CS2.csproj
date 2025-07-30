@@ -6,7 +6,7 @@
     <Nullable>enable</Nullable>
     <RootNamespace>TTT.CS2</RootNamespace>
   </PropertyGroup>
-  
+
   <ItemGroup>
     <ProjectReference Include="..\API\API.csproj"/>
     <ProjectReference Include="..\Game\Game.csproj"/>

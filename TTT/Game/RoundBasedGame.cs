@@ -22,6 +22,8 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
   private readonly IOnlineMessenger? onlineMessenger =
     provider.GetService<IOnlineMessenger>();
 
+  private readonly List<IPlayer> players = [];
+
   private readonly List<IRole> roles = [
     new InnocentRole(), new TraitorRole(), new DetectiveRole()
   ];
@@ -43,8 +45,6 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
   }
 
   public ICollection<IPlayer> Players => players;
-
-  private readonly List<IPlayer> players = [];
 
   public DateTime? StartedAt { get; protected set; }
   public DateTime? FinishedAt { get; protected set; } = null;

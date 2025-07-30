@@ -1,11 +1,10 @@
-﻿using CounterStrikeSharp.API.Core;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 
 namespace TTT.API.Extensions;
 
 /// <summary>
-///  We use this to register all instances of <see cref="ITerrorModule" /> under
-///  its interface, allowing us to get the list of all modules simply using ITerrorModule.
+///   We use this to register all instances of <see cref="ITerrorModule" /> under
+///   its interface, allowing us to get the list of all modules simply using ITerrorModule.
 /// </summary>
 public static class ServiceCollectionExtensions {
   public static void AddPluginBehavior<TExtension>(
@@ -40,10 +39,9 @@ public static class ServiceCollectionExtensions {
     //	the extension will be fetched and kept as a singleton for the duration
     //	until "Unload" is called.
 
-    if (typeof(IPluginModule).IsAssignableFrom(typeof(TExtension))) {
+    if (typeof(IPluginModule).IsAssignableFrom(typeof(TExtension)))
       collection.AddTransient<IPluginModule>(provider
         => (provider.GetRequiredService<TExtension>() as IPluginModule)!);
-    }
 
 
     collection.AddScoped<TExtension>();

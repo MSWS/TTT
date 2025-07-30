@@ -6,9 +6,9 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
-  
-<!--  <Target Name="GenerateGitVersionInformation" BeforeTargets="BeforeCompile" Condition="'$(OS)' != 'Windows_NT'">-->
-<!--    <Exec Command="dotnet-gitversion '$(ProjectDir)' &gt; '$(ProjectDir)/gitversion.json'" />-->
-<!--    <Exec Command="dotnet run &#45;&#45;project 'Versioning/Versioning.csproj'" />-->
-<!--  </Target>-->
+
+  <!--  <Target Name="GenerateGitVersionInformation" BeforeTargets="BeforeCompile" Condition="'$(OS)' != 'Windows_NT'">-->
+  <!--    <Exec Command="dotnet-gitversion '$(ProjectDir)' &gt; '$(ProjectDir)/gitversion.json'" />-->
+  <!--    <Exec Command="dotnet run &#45;&#45;project 'Versioning/Versioning.csproj'" />-->
+  <!--  </Target>-->
 </Project>
