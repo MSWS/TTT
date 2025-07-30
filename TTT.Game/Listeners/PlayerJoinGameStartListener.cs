@@ -1,5 +1,4 @@
-﻿using GitVersion;
-using TTT.Api;
+﻿using TTT.Api;
 using TTT.Api.Events;
 using TTT.Api.Messages;
 using TTT.Api.Player;

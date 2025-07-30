@@ -1,5 +1,4 @@
 using CounterStrikeSharp.API.Core;
-using GitVersion;
 using TTT.Api;
 using TTT.Api.Player;
 

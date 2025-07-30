@@ -4,10 +4,4 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
-  <Target Name="GenerateGitVersionInformation" BeforeTargets="BeforeBuild" Condition="'$(OS)' != 'Windows_NT'">
-    <PropertyGroup>
-      <GitVersionCmd>dotnet-gitversion "$(ProjectDir)" &gt; "$(ProjectDir)/gitversion.json"</GitVersionCmd>
-      <RunGeneratorCmd>dotnet run --project "Versioning/GenerateGitVersion.csproj"</RunGeneratorCmd>
-    </PropertyGroup>
-  </Target>
 </Project>

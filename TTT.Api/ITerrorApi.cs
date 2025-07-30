@@ -1,5 +1,3 @@
-using GitVersion;
-
 namespace TTT.Api;
 
 public interface ITerrorApi : ITerrorModule {
