@@ -30,7 +30,7 @@ jobs:
         run: dotnet build --no-restore
         
       - name: Publish Test Project
-        run: dotnet publish TTT/Test/Test.csproj --no-restore --no-build -o build_output
+        run: dotnet publish TTT/Test/Test.csproj --no-restore --no-build -o build_output -c Debug
         
       - uses: actions/upload-artifact@v4
         with:
