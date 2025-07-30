@@ -9,9 +9,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Locale\Locale.csproj"/>
+    <ProjectReference Include="..\..\Locale\Locale.csproj" />
     <ProjectReference Include="..\API\API.csproj"/>
-    <ProjectReference Include="..\Locale\Locale.csproj"/>
     <ProjectReference Include="..\Plugin\Plugin.csproj"/>
   </ItemGroup>
 
