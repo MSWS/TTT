@@ -27,5 +27,5 @@ public class TestPlayer(string id, string name) : IOnlinePlayer {
       "Test Player " + Guid.NewGuid());
   }
 
-  public override string ToString() { return $"TEST[{id}|{name}]"; }
+  public override string ToString() { return $"TEST[{Id}|{Name}]"; }
 }
