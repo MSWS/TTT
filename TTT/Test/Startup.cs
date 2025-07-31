@@ -34,6 +34,7 @@ public class Startup {
       => s.GetRequiredService<StringLocalizer>());
     services.AddScoped<IInventoryManager, FakeInventoryManager>();
     services.AddTransient<IStorage<GameConfig>, FakeConfig>();
+    services.AddScoped<IPermissionManager, FakePermissionManager>();
 
     services.AddModBehavior<GenericInitTester>();
     services.AddModBehavior<PluginInitTester>();
