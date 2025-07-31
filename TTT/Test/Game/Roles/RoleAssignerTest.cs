@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.DependencyModel;
-using TTT.API;
-using TTT.API.Events;
+﻿using TTT.API.Events;
 using TTT.API.Messages;
 using TTT.API.Player;
 using TTT.API.Role;
@@ -9,7 +7,7 @@ using Xunit;
 
 namespace TTT.Test.Game.Roles;
 
-public partial class RoleAssignerTest(IEventBus bus, IOnlineMessenger messenger,
+public class RoleAssignerTest(IEventBus bus, IOnlineMessenger messenger,
   IPlayerFinder finder) {
   private readonly RoleAssigner assigner = new(bus, messenger, finder);
 
@@ -89,8 +87,7 @@ public partial class RoleAssignerTest(IEventBus bus, IOnlineMessenger messenger,
     assigner.AssignRoles(players,
       [new TestRoles.RoleA(), new TestRoles.RoleB()]);
 
-    foreach (var player in players) {
+    foreach (var player in players)
       Assert.Equal([new TestRoles.RoleB()], player.Roles);
-    }
   }
 }

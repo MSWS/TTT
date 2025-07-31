@@ -2,7 +2,6 @@ using System.Reactive.Concurrency;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Localization;
 using Microsoft.Reactive.Testing;
-using TTT.API;
 using TTT.API.Events;
 using TTT.API.Extensions;
 using TTT.API.Game;

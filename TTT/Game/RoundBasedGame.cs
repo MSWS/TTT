@@ -1,7 +1,6 @@
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using Microsoft.Extensions.DependencyInjection;
-using TTT.API;
 using TTT.API.Events;
 using TTT.API.Game;
 using TTT.API.Messages;
@@ -20,13 +19,19 @@ public class RoundBasedGame : IGame {
 
   private readonly IPlayerFinder finder;
 
-  private readonly IOnlineMessenger? onlineMessenger;
-
   private readonly IMsgLocalizer? localizer;
+
+  private readonly IOnlineMessenger? onlineMessenger;
 
   private readonly List<IPlayer> players = [];
 
   private readonly IServiceProvider provider;
+
+  private readonly List<IRole> roles;
+
+  private readonly IScheduler scheduler;
+
+  private State state = State.WAITING;
 
   public RoundBasedGame(IServiceProvider provider) {
     this.provider   = provider;
@@ -42,12 +47,6 @@ public class RoundBasedGame : IGame {
     ];
   }
 
-  private readonly List<IRole> roles;
-
-  private readonly IScheduler scheduler;
-
-  private State state = State.WAITING;
-
   public State State {
     set {
       var ev = new GameStateUpdateEvent(this, value);
@@ -62,7 +61,7 @@ public class RoundBasedGame : IGame {
   public ICollection<IPlayer> Players => players;
 
   public DateTime? StartedAt { get; protected set; }
-  public DateTime? FinishedAt { get; protected set; } = null;
+  public DateTime? FinishedAt { get; protected set; }
 
   public SortedDictionary<DateTime, ISet<IAction>> Actions {
     get;
@@ -125,6 +124,12 @@ public class RoundBasedGame : IGame {
       onlineMessenger?.MessageAll(finder, $"{winningTeam.Name} won the game!");
   }
 
+  public void Dispose() {
+    players.Clear();
+    roles.Clear();
+    Actions.Clear();
+  }
+
   private void startRound() {
     var online = finder.GetOnline();
 
@@ -139,11 +144,5 @@ public class RoundBasedGame : IGame {
     StartedAt = DateTime.Now;
     assigner.AssignRoles(finder.GetOnline(), roles);
     players.AddRange(finder.GetOnline());
-  }
-
-  public void Dispose() {
-    players.Clear();
-    roles.Clear();
-    Actions.Clear();
   }
 }

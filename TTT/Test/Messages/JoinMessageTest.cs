@@ -1,9 +1,7 @@
-using Microsoft.Extensions.Localization;
 using TTT.API.Events;
 using TTT.API.Messages;
 using TTT.API.Player;
 using TTT.Game.Events.Player;
-using TTT.Test.Fakes;
 using Xunit;
 
 namespace TTT.Test.Messages;

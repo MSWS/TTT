@@ -1,5 +1,4 @@
-﻿using TTT.API.Role;
-using TTT.Game.Roles;
+﻿using TTT.Game.Roles;
 using TTT.Locale;
 using Xunit;
 

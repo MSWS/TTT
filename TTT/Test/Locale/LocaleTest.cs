@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Localization;
-using TTT.Locale;
+﻿using TTT.Locale;
 using Xunit;
 
 namespace TTT.Test.Locale;

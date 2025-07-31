@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Locale\Locale.csproj" />
+    <ProjectReference Include="..\..\Locale\Locale.csproj"/>
     <ProjectReference Include="..\API\API.csproj"/>
   </ItemGroup>
 

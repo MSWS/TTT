@@ -25,5 +25,5 @@ public interface IGame : IDisposable {
 
   void EndGame(IRole? winningTeam = null);
 
-  bool IsInProgress() => State is State.COUNTDOWN or State.IN_PROGRESS;
+  bool IsInProgress() { return State is State.COUNTDOWN or State.IN_PROGRESS; }
 }

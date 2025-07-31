@@ -1,5 +1,4 @@
 using System.Drawing;
-using Microsoft.Extensions.Localization;
 using TTT.Locale;
 
 namespace TTT.Game.Roles;
