@@ -29,6 +29,8 @@ jobs:
       - name: Copy Locales
         run: |
           mkdir -p build_output/lang/
+          pwd
+          ls -la TTT/lang/
           cp TTT/lang/*.json build_output/lang/
 
       - name: Publish Test Project
