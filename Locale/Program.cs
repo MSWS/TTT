@@ -54,12 +54,11 @@ public static class Program {
   }
 
   private static void ValidateInputFiles(string[] inputPaths) {
-    foreach (var input in inputPaths) {
+    foreach (var input in inputPaths)
       if (!File.Exists(input)) {
         Console.Error.WriteLine($"Error: File not found - {input}");
         Environment.Exit(2);
       }
-    }
   }
 
   private static Dictionary<string, string>
@@ -79,10 +78,9 @@ public static class Program {
       }
 
       foreach (var (k, v) in parsed) {
-        if (merged.TryGetValue(k, out var existing) && existing != v) {
+        if (merged.TryGetValue(k, out var existing) && existing != v)
           Console.Error.WriteLine(
             $"Warning: Duplicate key '{k}' found in {input}, overwriting value.");
-        }
 
         merged[k] = v; // Overwrite if duplicate
       }
@@ -94,9 +92,8 @@ public static class Program {
   private static void WriteJsonOutput(Dictionary<string, string> merged,
     string outputPath) {
     var dir = Path.GetDirectoryName(outputPath);
-    if (!string.IsNullOrEmpty(dir) && !Directory.Exists(dir)) {
+    if (!string.IsNullOrEmpty(dir) && !Directory.Exists(dir))
       Directory.CreateDirectory(dir);
-    }
 
     var json = JsonSerializer.Serialize(merged, opts);
     File.WriteAllText(outputPath, json);
