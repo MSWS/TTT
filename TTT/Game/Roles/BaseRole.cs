@@ -17,6 +17,9 @@ public abstract class BaseRole(IServiceProvider provider) : IRole {
   protected readonly IMsgLocalizer? Localizer =
     provider.GetService<IMsgLocalizer>();
 
+  protected readonly IInventoryManager Inventory =
+    provider.GetRequiredService<IInventoryManager>();
+
   protected readonly IServiceProvider Provider = provider;
   public abstract string Id { get; }
   public abstract string Name { get; }

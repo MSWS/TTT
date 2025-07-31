@@ -32,6 +32,7 @@ public class Startup {
     services.AddScoped<StringLocalizer>();
     services.AddTransient<IMsgLocalizer>(s
       => s.GetRequiredService<StringLocalizer>());
+    services.AddScoped<IInventoryManager, FakeInventoryManager>();
     services.AddTransient<IStorage<GameConfig>, FakeConfig>();
 
     services.AddModBehavior<GenericInitTester>();

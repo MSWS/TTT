@@ -19,7 +19,7 @@ public static class TestMsgs {
   public static IMsg TRAILING_PLURALS_IMPROPER_CONSTANT_APO
     => MsgFactory.Create(nameof(TRAILING_PLURALS_IMPROPER_CONSTANT_APO));
 
-  public static IMsg PREFIX => MsgFactory.Create(nameof(PREFIX));
+  public static IMsg TEST_PREFIX => MsgFactory.Create(nameof(TEST_PREFIX));
 
   public static IMsg PREFIX_TEST => MsgFactory.Create(nameof(PREFIX_TEST));
 
