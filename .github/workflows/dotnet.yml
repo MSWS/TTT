@@ -29,9 +29,7 @@ jobs:
       - name: Copy Locales
         run: |
           mkdir -p build_output/lang/
-          pwd
-          ls -la TTT/lang/
-          cp TTT/lang/*.json build_output/lang/
+          cp lang/*.json build_output/lang/
 
       - name: Publish Test Project
         run: dotnet publish TTT/Test/Test.csproj --no-restore --no-build -o build_output -c Debug
