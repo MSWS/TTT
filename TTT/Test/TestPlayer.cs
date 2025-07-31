@@ -18,16 +18,6 @@ public class TestPlayer(string id, string name) : IOnlinePlayer {
   public int Armor { get; set; }
   public bool IsAlive { get; set; }
 
-  public void GiveWeapon(string weaponId) { weapons.Add(weaponId); }
-
-  public void RemoveWeapon(string weaponId) { weapons.Remove(weaponId); }
-
-  public void RemoveAllWeapons() { weapons.Clear(); }
-  public bool HasFlags(params string[] queryFlags) =>
-    queryFlags.All(flags.Contains);
-  public bool InGroups(params string[] queryGroups) =>
-    queryGroups.All(groups.Contains);
-
   public static TestPlayer Random() {
     return new TestPlayer(new Random().NextInt64().ToString(),
       "Test Player " + Guid.NewGuid());

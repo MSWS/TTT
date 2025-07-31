@@ -3,6 +3,7 @@ using TTT.API.Player;
 namespace TTT.API.Command;
 
 public interface ICommand : IPluginModule {
+  string Name { get; }
 
   string? Description => null;
   string[] Usage => [];
