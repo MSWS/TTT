@@ -61,13 +61,17 @@ public class CommandManager(IServiceProvider provider) : ICommandManager {
 
     var result = await command.Execute(executor, info);
 
-    if (result == CommandResult.PLAYER_ONLY)
-      info.ReplySync(localizer[GameMsgs.GENERIC_PLAYER_ONLY]);
-
-    if (result == CommandResult.PRINT_USAGE)
-      foreach (var usage in command.Usage)
-        info.ReplySync(
-          localizer[GameMsgs.GENERIC_USAGE($"{info.Args[0]} {usage}")]);
+    switch (result) {
+      case CommandResult.PLAYER_ONLY:
+        info.ReplySync(localizer[GameMsgs.GENERIC_PLAYER_ONLY]);
+        break;
+      case CommandResult.PRINT_USAGE: {
+        foreach (var usage in command.Usage)
+          info.ReplySync(
+            localizer[GameMsgs.GENERIC_USAGE($"{info.Args[0]} {usage}")]);
+        break;
+      }
+    }
 
     return result;
   }
