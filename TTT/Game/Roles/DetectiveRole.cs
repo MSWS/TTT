@@ -11,8 +11,11 @@ public class DetectiveRole(IServiceProvider provider)
   public const string ID = "basegame.role.detective";
   public override string Id => ID;
 
+  private readonly IMsgLocalizer? localizer =
+    provider.GetService<IMsgLocalizer>();
+
   public override string Name
-    => Localizer?[GameMsgs.ROLE_DETECTIVE] ?? nameof(DetectiveRole);
+    => localizer?[GameMsgs.ROLE_DETECTIVE] ?? nameof(DetectiveRole);
 
   public override Color Color => Color.DodgerBlue;
 

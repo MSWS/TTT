@@ -9,8 +9,11 @@ public class InnocentRole(IServiceProvider provider) : BaseRole(provider) {
   public const string ID = "basegame.role.innocent";
   public override string Id => ID;
 
+  private readonly IMsgLocalizer? localizer =
+    provider.GetService<IMsgLocalizer>();
+
   public override string Name
-    => Localizer?[GameMsgs.ROLE_INNOCENT] ?? nameof(InnocentRole);
+    => localizer?[GameMsgs.ROLE_INNOCENT] ?? nameof(InnocentRole);
 
   public override Color Color => Color.LimeGreen;
 
