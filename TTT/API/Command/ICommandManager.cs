@@ -18,6 +18,9 @@ public interface ICommandManager {
   /// <param name="command">True if the command was successfully unregistered.</param>
   bool UnregisterCommand(ICommand command);
 
+  bool CanExecute(IOnlinePlayer? executor,
+    ICommand command);
+  
   /// <summary>
   ///   Attempts to process a command.
   /// </summary>

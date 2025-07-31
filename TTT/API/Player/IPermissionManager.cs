@@ -1,8 +1,6 @@
-using TTT.API.Player;
+namespace TTT.API.Player;
 
-namespace TTT.API;
-
-public interface IPermissionManager<in T> where T : IPlayer {
-  bool HasFlags(T player, params string[] flags);
-  bool InGroups(T player, params string[] groups);
+public interface IPermissionManager {
+  bool HasFlags(IPlayer player, params string[] flags);
+  bool InGroups(IPlayer player, params string[] groups);
 }

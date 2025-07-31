@@ -9,7 +9,5 @@ public interface ICommand : IPluginModule {
   string[] RequiredGroups => [];
   string[] Aliases => [Name];
 
-  bool CanExecute(IOnlinePlayer? executor);
-
   Task<CommandResult> Execute(IOnlinePlayer? executor, ICommandInfo info);
 }
