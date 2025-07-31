@@ -17,10 +17,8 @@ public class RoleAssignerTest(IServiceProvider provider) {
   private readonly IPlayerFinder finder =
     provider.GetRequiredService<IPlayerFinder>();
 
-  private readonly RoleAssigner assigner = new(
-    provider.GetRequiredService<IEventBus>(),
-    provider.GetRequiredService<IOnlineMessenger>(),
-    provider.GetRequiredService<IPlayerFinder>());
+  private readonly IRoleAssigner assigner =
+    provider.GetRequiredService<IRoleAssigner>();
 
   [Fact]
   public void AssignRole_Finishes_WithNoRoles() {
