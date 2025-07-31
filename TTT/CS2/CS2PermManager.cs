@@ -20,6 +20,6 @@ public class CS2PermManager(IPlayerConverter<CCSPlayerController> converter)
 
     var adminData = AdminManager.GetPlayerAdminData(gamePlayer);
     if (adminData == null) return false;
-    return !groups.Any(g => adminData.Groups.Contains(g));
+    return groups.All(g => adminData.Groups.Contains(g));
   }
 }
