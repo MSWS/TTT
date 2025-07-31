@@ -6,11 +6,11 @@ namespace TTT.CS2;
 
 public class CS2PlayerFinder(IPlayerConverter<CCSPlayerController> players)
   : IPlayerFinder {
-  public void AddPlayer(IOnlinePlayer player) {
+  public IOnlinePlayer AddPlayer(IOnlinePlayer player) {
     throw new InvalidOperationException("Cannot call this within the game.");
   }
 
-  public void RemovePlayer(IPlayer player) {
+  public IPlayer RemovePlayer(IPlayer player) {
     throw new InvalidOperationException("Cannot call this within the game.");
   }
 

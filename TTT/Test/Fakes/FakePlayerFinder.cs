@@ -7,14 +7,16 @@ namespace TTT.Test.Fakes;
 public class FakePlayerFinder(IEventBus bus) : IPlayerFinder {
   private readonly HashSet<IOnlinePlayer> players = [];
 
-  public void AddPlayer(IOnlinePlayer player) {
+  public IOnlinePlayer AddPlayer(IOnlinePlayer player) {
     players.Add(player);
     bus.Dispatch(new PlayerJoinEvent(player));
+    return player;
   }
 
-  public void RemovePlayer(IPlayer player) {
+  public IPlayer RemovePlayer(IPlayer player) {
     players.RemoveWhere(p => p.Id == player.Id);
     bus.Dispatch(new PlayerLeaveEvent(player));
+    return player;
   }
 
   public ISet<IOnlinePlayer> GetOnline() { return players; }

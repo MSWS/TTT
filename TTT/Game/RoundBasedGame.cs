@@ -13,22 +13,35 @@ using TTT.Game.Roles;
 namespace TTT.Game;
 
 public class RoundBasedGame(IServiceProvider provider) : IGame {
+  #region classDeps
+
   private readonly IRoleAssigner assigner =
     provider.GetRequiredService<IRoleAssigner>();
 
   private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
 
-  private readonly GameConfig config = provider
-   .GetRequiredService<IStorage<GameConfig>>()
-   .Load()
-   .GetAwaiter()
-   .GetResult();
+  private readonly IScheduler scheduler =
+    provider.GetRequiredService<IScheduler>();
 
   private readonly IPlayerFinder finder =
     provider.GetRequiredService<IPlayerFinder>();
 
   private readonly IOnlineMessenger? onlineMessenger =
     provider.GetService<IOnlineMessenger>();
+
+  #endregion
+
+  public ICollection<IPlayer> Players => players;
+
+  public DateTime? StartedAt { get; protected set; }
+  public DateTime? FinishedAt { get; protected set; }
+
+  public IRole? WinningRole { get; set; }
+
+  public SortedDictionary<DateTime, ISet<IAction>> Actions {
+    get;
+    protected set;
+  } = new();
 
   private readonly List<IPlayer> players = [];
 
@@ -37,8 +50,11 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
     new DetectiveRole(provider)
   ];
 
-  private readonly IScheduler scheduler =
-    provider.GetRequiredService<IScheduler>();
+  private readonly GameConfig config = provider
+   .GetRequiredService<IStorage<GameConfig>>()
+   .Load()
+   .GetAwaiter()
+   .GetResult();
 
   private State state = State.WAITING;
 
@@ -53,15 +69,6 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
     get => state;
   }
 
-  public ICollection<IPlayer> Players => players;
-
-  public DateTime? StartedAt { get; protected set; }
-  public DateTime? FinishedAt { get; protected set; }
-
-  public SortedDictionary<DateTime, ISet<IAction>> Actions {
-    get;
-    protected set;
-  } = new();
 
   public IObservable<long>? Start(TimeSpan? countdown = null) {
     onlineMessenger?.BackgroundMsgAll(finder,
