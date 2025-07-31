@@ -1,3 +1,4 @@
+using System.Diagnostics.Tracing;
 using TTT.API.Events;
 using TTT.API.Role;
 using TTT.Game.Events.Player;
@@ -11,13 +12,24 @@ public class PlayerDeathListener(IServiceProvider provider)
 
   [EventHandler]
   public void OnKill(PlayerDeathEvent ev) {
-    if (Games.ActiveGame is null) return;
+    if (!Games.IsGameActive()) return;
 
     var endGame = getWinningTeam(out var winningTeam);
 
     if (!endGame) return;
 
-    Games.ActiveGame.EndGame(winningTeam);
+    Games.ActiveGame?.EndGame(winningTeam);
+  }
+
+  [EventHandler]
+  public void OnLeave(PlayerLeaveEvent ev) {
+    if (!Games.IsGameActive()) return;
+
+    var endGame = getWinningTeam(out var winningTeam);
+
+    if (!endGame) return;
+
+    Games.ActiveGame?.EndGame(winningTeam);
   }
 
   private bool getWinningTeam(out IRole? winningTeam) {

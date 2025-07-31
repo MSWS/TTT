@@ -20,8 +20,11 @@ public class EventBus : IEventBus {
 
       var parameters = method.GetParameters();
       if (parameters.Length != 1
-        || !typeof(Event).IsAssignableFrom(parameters[0].ParameterType))
-        continue;
+        || !typeof(Event).IsAssignableFrom(parameters[0].ParameterType)) {
+        throw new InvalidOperationException(
+          $"Method {method.Name} in {listener.GetType().Name} "
+          + "must have exactly one parameter of type Event or its subclass.");
+      }
 
       var eventType = parameters[0].ParameterType;
       if (!handlers.ContainsKey(eventType)) handlers[eventType] = [];
