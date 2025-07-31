@@ -23,9 +23,10 @@ public class TestPlayer(string id, string name) : IOnlinePlayer {
   public void RemoveWeapon(string weaponId) { weapons.Remove(weaponId); }
 
   public void RemoveAllWeapons() { weapons.Clear(); }
-  //TODO: Test Flags and Groups
-  public bool HasFlags(params string[] flags) { throw new NotImplementedException(); }
-  public bool InGroups(params string[] groups) { throw new NotImplementedException(); }
+  public bool HasFlags(params string[] queryFlags) =>
+    queryFlags.All(flags.Contains);
+  public bool InGroups(params string[] queryGroups) =>
+    queryGroups.All(groups.Contains);
 
   public static TestPlayer Random() {
     return new TestPlayer(new Random().NextInt64().ToString(),
