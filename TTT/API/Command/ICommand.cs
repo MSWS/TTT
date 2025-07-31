@@ -10,11 +10,7 @@ public interface ICommand : IPluginModule {
   string[] RequiredGroups => [];
   string[] Aliases => [Name];
 
-  bool CanExecute(IOnlinePlayer? executor) {
-    if (executor == null) return true;
-    return RequiredFlags.All(flag => executor.HasFlags(flag)) 
-        || RequiredGroups.Any(group => executor.InGroups(group));
-  }
+  bool CanExecute(IOnlinePlayer? executor);
 
   Task<CommandResult> Execute(IOnlinePlayer? executor, ICommandInfo info);
 }

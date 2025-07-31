@@ -57,7 +57,9 @@ public partial class StringLocalizer : IStringLocalizer, IMsgLocalizer {
         // in our case, so we trim the value when we have a prefix.
         var replacement = getString(trimmedKey).Value;
         value = value.Replace(key,
-          trimmedKey == "PREFIX" ? replacement : replacement.Trim());
+          trimmedKey.Contains("PREFIX", StringComparison.OrdinalIgnoreCase) ?
+            replacement :
+            replacement.Trim());
       } catch (NullReferenceException) {
         // Key doesn't exist, move on
       }

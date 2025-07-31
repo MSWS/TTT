@@ -14,7 +14,6 @@ namespace TTT.CS2;
 ///   Note that slot numbers are not guaranteed to be stable across server restarts.
 /// </summary>
 public class CS2Player : IOnlinePlayer {
-  
   protected CS2Player(string id, string name) {
     Id   = id;
     Name = name;
@@ -33,9 +32,9 @@ public class CS2Player : IOnlinePlayer {
   public CS2Player(CCSPlayerController player) {
     Id   = GetKey(player);
     Name = player.PlayerName;
-    
   }
 
+  // TODO: Can we make this public?
   private CCSPlayerController? Player {
     get {
       var player = Utilities.GetPlayerFromSteamId(ulong.Parse(Id))
@@ -43,10 +42,6 @@ public class CS2Player : IOnlinePlayer {
       return player is not { IsValid: true } ? null : player;
     }
   }
-
-  private AdminData? AdminData => AdminManager.GetPlayerAdminData(Player);
-  private static char UserChar => PermissionCharacters.UserPermissionChar;
-  private static char GroupChar => PermissionCharacters.GroupPermissionChar;
 
   public string Id { get; }
   public string Name { get; }
@@ -88,71 +83,12 @@ public class CS2Player : IOnlinePlayer {
     }
   }
 
-  public bool IsAlive { get; set; }
-  public void GiveWeapon(string weaponId) { Player?.GiveNamedItem(weaponId); }
+  public bool IsAlive {
+    get => Player?.Pawn.Value != null && Player.PawnIsAlive;
 
-  public void RemoveWeapon(string weaponId) {
-    if (!IsAlive) return;
-
-    var pawn = Player?.PlayerPawn.Value;
-
-    if (pawn == null || pawn.WeaponServices == null) return;
-
-    var matchedWeapon =
-      pawn.WeaponServices.MyWeapons.FirstOrDefault(x
-        => x.Value?.DesignerName == weaponId);
-
-    if (matchedWeapon?.Value == null || !matchedWeapon.IsValid) return;
-    pawn.WeaponServices.ActiveWeapon.Raw = matchedWeapon.Raw;
-
-    // Make them equip the desired weapon
-    var activeWeaponEntity =
-      pawn.WeaponServices.ActiveWeapon.Value?.As<CBaseEntity>();
-
-    Player?.DropActiveWeapon();
-
-    // TODO: Verify 1f is required here (and not 0.1 or similar)
-    activeWeaponEntity?.AddEntityIOEvent("Kill", activeWeaponEntity, null, "",
-      1f);
-  }
-
-  public void RemoveAllWeapons() { Player?.RemoveWeapons(); }
-  
-  public bool HasFlags(params string[] flags) {
-    if (AdminData == null) return false;
-
-    if (Player != null)
-      return AdminManager.PlayerHasPermissions(new SteamID(Id), flags);
-
-    foreach (var flag in flags) {
-      if (!flag.StartsWith(UserChar))
-        throw new ArgumentException(
-          $"Expected flag ${flag} to start with {UserChar}");
-
-      var slashIndex = flag.IndexOf('/', StringComparison.Ordinal);
-
-      if (slashIndex == -1)
-        throw new ArgumentException(
-          $"Expected flag ${flag} to contain a / character");
-
-      var domain     = flag[1..slashIndex];
-      var permission = flag[(slashIndex + 1)..];
-
-      if (permission.Length == 0)
-        throw new ArgumentException(
-          $"Expected flag ${flag} to contain a permission after / character");
-
-      if (!AdminData.Flags.TryGetValue(domain, out var perms)) return false;
-      if (perms.Contains("root")) return true;
-      if (!perms.Any(p => permission.StartsWith(p))) return false;
-    }
-
-    return true;
-  }
-
-  public bool InGroups(params string[] groups) {
-    return AdminData != null 
-      && groups.All(g => AdminData.Groups.Contains(g));
+    set
+      => throw new NotSupportedException(
+        "Setting IsAlive is not supported in CS2.");
   }
 
   public static string GetKey(CCSPlayerController player) {

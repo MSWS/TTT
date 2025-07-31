@@ -21,8 +21,8 @@ public class TraitorRole(IServiceProvider provider)
 
     if (balanceConfig.TraitorWeapons == null) return;
 
-    player.RemoveAllWeapons();
+    Inventory.RemoveAllWeapons(player);
     foreach (var weapon in balanceConfig.TraitorWeapons)
-      player.GiveWeapon(weapon);
+      Inventory.GiveWeapon(player, weapon);
   }
 }

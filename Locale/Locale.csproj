@@ -14,7 +14,7 @@
     <PackageReference Include="YamlDotNet" Version="16.3.0"/>
   </ItemGroup>
 
-  <Target Name="PreprocessYaml" AfterTargets="Build">
+  <Target Name="PreprocessYaml" AfterTargets="Build;VSTest">
     <PropertyGroup>
       <LocaleDllPath>$(MSBuildProjectDirectory)\bin\$(Configuration)\net8.0\$(AssemblyName).dll</LocaleDllPath>
       <MasterJsonPath>$(MSBuildProjectDirectory)\..\lang\en.json</MasterJsonPath>
