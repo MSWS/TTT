@@ -1,7 +1,4 @@
-﻿using TTT.API.Storage;
-using TTT.Game.Roles;
-
-namespace TTT.Game;
+﻿namespace TTT.Game;
 
 public record GameConfig {
   public BalanceConfig BalanceCfg { get; init; } = new();
@@ -25,8 +22,11 @@ public record GameConfig {
   }
 
   public record RoundConfig {
-    public TimeSpan RoundDuration(int players)
-      => TimeSpan.FromSeconds(players switch {
+    public TimeSpan CountDownDuration { get; init; } = TimeSpan.FromSeconds(10);
+    public int MinimumPlayers { get; init; } = 2;
+
+    public TimeSpan RoundDuration(int players) {
+      return TimeSpan.FromSeconds(players switch {
         < 4  => 60,
         < 6  => 90,
         < 8  => 120,
@@ -36,9 +36,6 @@ public record GameConfig {
         < 30 => 240,
         _    => 300
       });
-
-
-    public TimeSpan CountDownDuration { get; init; } = TimeSpan.FromSeconds(10);
-    public int MinimumPlayers { get; init; } = 2;
+    }
   }
 }

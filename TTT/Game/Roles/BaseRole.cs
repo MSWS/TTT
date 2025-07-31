@@ -8,19 +8,19 @@ using TTT.Locale;
 namespace TTT.Game.Roles;
 
 public abstract class BaseRole(IServiceProvider provider) : IRole {
-  public abstract string Id { get; }
-  public abstract string Name { get; }
-  public abstract Color Color { get; }
-
-  protected readonly IServiceProvider Provider = provider;
-  protected readonly IMsgLocalizer? Localizer =
-    provider.GetService<IMsgLocalizer>();
-
   protected readonly GameConfig Config = provider
    .GetRequiredService<IStorage<GameConfig>>()
    .Load()
    .GetAwaiter()
    .GetResult();
+
+  protected readonly IMsgLocalizer? Localizer =
+    provider.GetService<IMsgLocalizer>();
+
+  protected readonly IServiceProvider Provider = provider;
+  public abstract string Id { get; }
+  public abstract string Name { get; }
+  public abstract Color Color { get; }
 
   public abstract IOnlinePlayer?
     FindPlayerToAssign(ISet<IOnlinePlayer> players);

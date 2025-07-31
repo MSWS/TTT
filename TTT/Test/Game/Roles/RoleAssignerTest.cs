@@ -9,16 +9,16 @@ using Xunit;
 namespace TTT.Test.Game.Roles;
 
 public class RoleAssignerTest(IServiceProvider provider) {
-  private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
+  private readonly IRoleAssigner assigner =
+    provider.GetRequiredService<IRoleAssigner>();
 
-  private readonly IOnlineMessenger messenger =
-    provider.GetRequiredService<IOnlineMessenger>();
+  private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
 
   private readonly IPlayerFinder finder =
     provider.GetRequiredService<IPlayerFinder>();
 
-  private readonly IRoleAssigner assigner =
-    provider.GetRequiredService<IRoleAssigner>();
+  private readonly IOnlineMessenger messenger =
+    provider.GetRequiredService<IOnlineMessenger>();
 
   [Fact]
   public void AssignRole_Finishes_WithNoRoles() {

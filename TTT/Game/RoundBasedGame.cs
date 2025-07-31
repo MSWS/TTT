@@ -9,20 +9,26 @@ using TTT.API.Role;
 using TTT.API.Storage;
 using TTT.Game.Events.Game;
 using TTT.Game.Roles;
-using TTT.Locale;
 
 namespace TTT.Game;
 
-public class RoundBasedGame : IGame {
-  private readonly IRoleAssigner assigner;
+public class RoundBasedGame(IServiceProvider provider) : IGame {
+  private readonly IRoleAssigner assigner =
+    provider.GetRequiredService<IRoleAssigner>();
 
-  private readonly IEventBus bus;
+  private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
 
-  private readonly IPlayerFinder finder;
+  private readonly GameConfig config = provider
+   .GetRequiredService<IStorage<GameConfig>>()
+   .Load()
+   .GetAwaiter()
+   .GetResult();
 
-  private readonly IMsgLocalizer? localizer;
+  private readonly IPlayerFinder finder =
+    provider.GetRequiredService<IPlayerFinder>();
 
-  private readonly IOnlineMessenger? onlineMessenger;
+  private readonly IOnlineMessenger? onlineMessenger =
+    provider.GetService<IOnlineMessenger>();
 
   private readonly List<IPlayer> players = [];
 
@@ -31,33 +37,10 @@ public class RoundBasedGame : IGame {
     new DetectiveRole(provider)
   ];
 
-  private readonly GameConfig config;
-
-  private readonly GameConfig config = provider
-   .GetRequiredService<IStorage<GameConfig>>()
-   .Load()
-   .GetAwaiter()
-   .GetResult();
+  private readonly IScheduler scheduler =
+    provider.GetRequiredService<IScheduler>();
 
   private State state = State.WAITING;
-
-  public RoundBasedGame(IServiceProvider provider) {
-    this.provider   = provider;
-    assigner        = provider.GetRequiredService<IRoleAssigner>();
-    bus             = provider.GetRequiredService<IEventBus>();
-    finder          = provider.GetRequiredService<IPlayerFinder>();
-    scheduler       = provider.GetRequiredService<IScheduler>();
-    onlineMessenger = provider.GetService<IOnlineMessenger>();
-    localizer       = provider.GetService<IMsgLocalizer>();
-    config = provider.GetRequiredService<IStorage<GameConfig>>()
-     .Load()
-     .GetAwaiter()
-     .GetResult();
-    roles = [
-      new InnocentRole(this.provider), new TraitorRole(this.provider),
-      new DetectiveRole(this.provider)
-    ];
-  }
 
   public State State {
     set {
@@ -133,12 +116,6 @@ public class RoundBasedGame : IGame {
       winningTeam == null ?
         "The game was canceled or ended without a winning team." :
         $"{winningTeam.Name} won the game!");
-  }
-
-  public void Dispose() {
-    players.Clear();
-    roles.Clear();
-    Actions.Clear();
   }
 
   public void Dispose() {
