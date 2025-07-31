@@ -1,10 +1,12 @@
-﻿using TTT.API.Events;
+﻿using Microsoft.Extensions.DependencyInjection;
+using TTT.API.Events;
 using TTT.API.Player;
 using TTT.Game.Events.Player;
 
 namespace TTT.Test.Game.Listeners;
 
-public class PlayerDiesOnLeaveListener(IEventBus bus) : IListener {
+public class PlayerDiesOnLeaveListener(IServiceProvider provider) : IListener {
+  private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
   public void Dispose() { bus.UnregisterListener(this); }
 
   [EventHandler(Priority = Priority.HIGH)]

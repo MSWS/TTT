@@ -37,9 +37,9 @@ public class PlayerDeathListener(IServiceProvider provider)
     winningTeam = null;
     if (game is null) return false;
 
-    var traitorsAlive    = game.GetAlive(typeof(TraitorRole));
+    var traitorsAlive    = game.GetAlive(typeof(TraitorRole)).Count;
     var nonTraitorsAlive = game.GetAlive().Count - traitorsAlive;
-    var detectivesAlive  = game.GetAlive(typeof(DetectiveRole));
+    var detectivesAlive  = game.GetAlive(typeof(DetectiveRole)).Count;
 
     switch (traitorsAlive) {
       case 0 when nonTraitorsAlive == 0:
