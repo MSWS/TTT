@@ -9,8 +9,8 @@ namespace TTT.Test.Game.Command;
 public class CommandManagerTests {
   private readonly CommandManager manager;
 
-  public CommandManagerTests() {
-    manager = new CommandManager(new FakeLocalizer());
+  public CommandManagerTests(IServiceProvider provider) {
+    manager = new CommandManager(provider);
   }
 
   [Fact]

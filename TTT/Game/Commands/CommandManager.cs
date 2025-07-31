@@ -5,8 +5,10 @@ using TTT.Locale;
 
 namespace TTT.Game.Commands;
 
-public class CommandManager(IMsgLocalizer localizer)
+public class CommandManager(IServiceProvider provider)
   : ICommandManager {
+  private readonly IMsgLocalizer localizer =
+    provider.GetRequiredService<IMsgLocalizer>();
   private readonly Dictionary<string, ICommand> commands = new();
   
   public bool RegisterCommand(ICommand command)
@@ -14,7 +16,6 @@ public class CommandManager(IMsgLocalizer localizer)
 
   public bool UnregisterCommand(ICommand command)
     => command.Aliases.All(alias => commands.Remove(alias));
-
   public async Task<CommandResult> ProcessCommand(
     IOnlinePlayer? executor, ICommandInfo info) {
     if (info.ArgCount == 0) return CommandResult.ERROR;
