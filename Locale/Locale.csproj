@@ -14,4 +14,19 @@
     <PackageReference Include="YamlDotNet" Version="16.3.0"/>
   </ItemGroup>
 
+  <Target Name="PreprocessYaml" AfterTargets="Build">
+    <PropertyGroup>
+      <LocaleDllPath>$(MSBuildProjectDirectory)\bin\$(Configuration)\net8.0\$(AssemblyName).dll</LocaleDllPath>
+      <MasterJsonPath>$(MSBuildProjectDirectory)\..\lang\en.json</MasterJsonPath>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <LangFiles Include="..\**\lang\*.yml"/>
+    </ItemGroup>
+
+    <Message Importance="high" Text="Combining YAML files into $(MasterJsonPath)"/>
+
+    <Exec Command="dotnet &quot;$(LocaleDllPath)&quot; @(LangFiles->'&quot;%(FullPath)&quot;', ' ') --out &quot;$(MasterJsonPath)&quot;"/>
+  </Target>
+
 </Project>

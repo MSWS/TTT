@@ -1,39 +1,58 @@
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using Microsoft.Extensions.DependencyInjection;
-using TTT.API;
 using TTT.API.Events;
 using TTT.API.Game;
 using TTT.API.Messages;
 using TTT.API.Player;
 using TTT.API.Role;
+using TTT.API.Storage;
 using TTT.Game.Events.Game;
 using TTT.Game.Roles;
+using TTT.Locale;
 
 namespace TTT.Game;
 
-public class RoundBasedGame(IServiceProvider provider) : IGame {
-  private readonly IRoleAssigner assigner =
-    provider.GetRequiredService<IRoleAssigner>();
+public class RoundBasedGame : IGame {
+  private readonly IRoleAssigner assigner;
 
-  private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
+  private readonly IEventBus bus;
 
-  private readonly IPlayerFinder finder =
-    provider.GetRequiredService<IPlayerFinder>();
+  private readonly IPlayerFinder finder;
 
-  private readonly IOnlineMessenger? onlineMessenger =
-    provider.GetService<IOnlineMessenger>();
+  private readonly IMsgLocalizer? localizer;
+
+  private readonly IOnlineMessenger? onlineMessenger;
 
   private readonly List<IPlayer> players = [];
 
-  private readonly List<IRole> roles = [
-    new InnocentRole(), new TraitorRole(), new DetectiveRole()
-  ];
+  private readonly IServiceProvider provider;
 
-  private readonly IScheduler scheduler =
-    provider.GetRequiredService<IScheduler>();
+  private readonly List<IRole> roles;
+
+  private readonly IScheduler scheduler;
+
+  private readonly GameConfig config;
 
   private State state = State.WAITING;
+
+  public RoundBasedGame(IServiceProvider provider) {
+    this.provider   = provider;
+    assigner        = provider.GetRequiredService<IRoleAssigner>();
+    bus             = provider.GetRequiredService<IEventBus>();
+    finder          = provider.GetRequiredService<IPlayerFinder>();
+    scheduler       = provider.GetRequiredService<IScheduler>();
+    onlineMessenger = provider.GetService<IOnlineMessenger>();
+    localizer       = provider.GetService<IMsgLocalizer>();
+    config = provider.GetRequiredService<IStorage<GameConfig>>()
+     .Load()
+     .GetAwaiter()
+     .GetResult();
+    roles = [
+      new InnocentRole(this.provider), new TraitorRole(this.provider),
+      new DetectiveRole(this.provider)
+    ];
+  }
 
   public State State {
     set {
@@ -49,7 +68,7 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
   public ICollection<IPlayer> Players => players;
 
   public DateTime? StartedAt { get; protected set; }
-  public DateTime? FinishedAt { get; protected set; } = null;
+  public DateTime? FinishedAt { get; protected set; }
 
   public SortedDictionary<DateTime, ISet<IAction>> Actions {
     get;
@@ -62,7 +81,7 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
 
     var online = finder.GetOnline();
 
-    if (online.Count < 2) {
+    if (online.Count < config.RoundCfg.MinimumPlayers) {
       onlineMessenger?.BackgroundMsgAll(finder,
         "Not enough players to start the game.");
       return null;
@@ -112,6 +131,12 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
       onlineMessenger?.MessageAll(finder, $"{winningTeam.Name} won the game!");
   }
 
+  public void Dispose() {
+    players.Clear();
+    roles.Clear();
+    Actions.Clear();
+  }
+
   private void startRound() {
     var online = finder.GetOnline();
 
@@ -126,11 +151,5 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
     StartedAt = DateTime.Now;
     assigner.AssignRoles(finder.GetOnline(), roles);
     players.AddRange(finder.GetOnline());
-  }
-
-  public void Dispose() {
-    players.Clear();
-    roles.Clear();
-    Actions.Clear();
   }
 }

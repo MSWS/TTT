@@ -23,7 +23,7 @@ public interface IGame : IDisposable {
   /// <param name="countdown"></param>
   IObservable<long>? Start(TimeSpan? countdown = null);
 
-  void EndGame(IRole? winningTeam = null);
+  void EndGame(Role.IRole? winningTeam = null);
 
-  bool IsInProgress() => State is State.COUNTDOWN or State.IN_PROGRESS;
+  bool IsInProgress() { return State is State.COUNTDOWN or State.IN_PROGRESS; }
 }

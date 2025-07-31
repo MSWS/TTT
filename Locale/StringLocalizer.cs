@@ -5,8 +5,8 @@ using Microsoft.Extensions.Localization;
 namespace TTT.Locale;
 
 /// <summary>
-/// A custom implementation of <see cref="IStringLocalizer"/> that adds support
-/// for in-string placeholders like %key% and grammatical pluralization with %s%.
+///   A custom implementation of <see cref="IStringLocalizer" /> that adds support
+///   for in-string placeholders like %key% and grammatical pluralization with %s%.
 /// </summary>
 public partial class StringLocalizer : IStringLocalizer, IMsgLocalizer {
   public static readonly StringLocalizer Instance =
@@ -20,6 +20,8 @@ public partial class StringLocalizer : IStringLocalizer, IMsgLocalizer {
       new AssemblyName(type.GetTypeInfo().Assembly.FullName ?? string.Empty);
     localizer = factory.Create(string.Empty, assemblyName.FullName);
   }
+
+  public string this[IMsg msg] => getString(msg.Key, msg.Args);
 
   public LocalizedString this[string name] => getString(name);
 
@@ -118,6 +120,4 @@ public partial class StringLocalizer : IStringLocalizer, IMsgLocalizer {
 
     return value;
   }
-
-  public string this[IMsg msg] => getString(msg.Key, msg.Args);
 }

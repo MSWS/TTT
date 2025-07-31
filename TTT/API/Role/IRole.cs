@@ -19,4 +19,6 @@ public interface IRole : IEquatable<IRole> {
   }
 
   IOnlinePlayer? FindPlayerToAssign(ISet<IOnlinePlayer> players);
+
+  void OnAssign(IOnlinePlayer player) { }
 }

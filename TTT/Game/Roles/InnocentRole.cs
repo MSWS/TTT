@@ -1,17 +1,24 @@
+using Microsoft.Extensions.DependencyInjection;
 using System.Drawing;
-using TTT.API;
 using TTT.API.Player;
-using TTT.API.Role;
+using TTT.Locale;
 
 namespace TTT.Game.Roles;
 
-public class InnocentRole : IRole {
+public class InnocentRole(IServiceProvider provider) : BaseRole(provider) {
   public const string ID = "basegame.role.innocent";
-  public string Id => ID;
-  public string Name => "Innocent";
-  public Color Color => Color.LimeGreen;
+  public override string Id => ID;
 
-  public IOnlinePlayer? FindPlayerToAssign(ISet<IOnlinePlayer> players) {
+  private readonly IMsgLocalizer? localizer =
+    provider.GetService<IMsgLocalizer>();
+
+  public override string Name
+    => localizer?[GameMsgs.ROLE_INNOCENT] ?? nameof(InnocentRole);
+
+  public override Color Color => Color.LimeGreen;
+
+  public override IOnlinePlayer?
+    FindPlayerToAssign(ISet<IOnlinePlayer> players) {
     return players.FirstOrDefault(p => p.Roles.Count == 0);
   }
 }

@@ -2,13 +2,13 @@ using System.Reactive.Concurrency;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Localization;
 using Microsoft.Reactive.Testing;
-using TTT.API;
 using TTT.API.Events;
 using TTT.API.Extensions;
 using TTT.API.Game;
 using TTT.API.Messages;
 using TTT.API.Player;
 using TTT.API.Role;
+using TTT.API.Storage;
 using TTT.Game;
 using TTT.Game.Roles;
 using TTT.Locale;
@@ -32,6 +32,7 @@ public class Startup {
     services.AddScoped<StringLocalizer>();
     services.AddTransient<IMsgLocalizer>(s
       => s.GetRequiredService<StringLocalizer>());
+    services.AddTransient<IStorage<GameConfig>, FakeConfig>();
 
     services.AddModBehavior<GenericInitTester>();
     services.AddModBehavior<PluginInitTester>();
