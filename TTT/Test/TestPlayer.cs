@@ -5,6 +5,8 @@ namespace TTT.Test;
 
 public class TestPlayer(string id, string name) : IOnlinePlayer {
   private readonly List<string> weapons = [];
+  private readonly HashSet<string> flags = [ "@ttt/test" ];
+  private readonly HashSet<string> groups = [ "#ttt/test" ];
   public TestPlayer() : this("314159", "Test Player") { }
 
   public List<string> Messages { get; } = [];
@@ -21,6 +23,9 @@ public class TestPlayer(string id, string name) : IOnlinePlayer {
   public void RemoveWeapon(string weaponId) { weapons.Remove(weaponId); }
 
   public void RemoveAllWeapons() { weapons.Clear(); }
+  //TODO: Test Flags and Groups
+  public bool HasFlags(params string[] flags) { throw new NotImplementedException(); }
+  public bool InGroups(params string[] groups) { throw new NotImplementedException(); }
 
   public static TestPlayer Random() {
     return new TestPlayer(new Random().NextInt64().ToString(),

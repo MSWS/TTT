@@ -27,8 +27,8 @@ public class DetectiveRole(IServiceProvider provider)
 
     if (balanceConfig.DetectiveWeapons == null) return;
 
-    player.RemoveAllWeapons();
+    Inventory.RemoveAllWeapons(player);
     foreach (var weapon in balanceConfig.DetectiveWeapons)
-      player.GiveWeapon(weapon);
+      Inventory.GiveWeapon(player, weapon);
   }
 }

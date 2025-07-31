@@ -1,5 +1,7 @@
 using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
+using CounterStrikeSharp.API.Modules.Admin;
+using CounterStrikeSharp.API.Modules.Entities;
 using TTT.API.Player;
 using TTT.API.Role;
 
@@ -32,6 +34,7 @@ public class CS2Player : IOnlinePlayer {
     Name = player.PlayerName;
   }
 
+  // TODO: Can we make this public?
   private CCSPlayerController? Player {
     get {
       var player = Utilities.GetPlayerFromSteamId(ulong.Parse(Id))
@@ -80,36 +83,13 @@ public class CS2Player : IOnlinePlayer {
     }
   }
 
-  public bool IsAlive { get; set; }
+  public bool IsAlive {
+    get => Player?.Pawn.Value != null && Player.PawnIsAlive;
 
-  public void GiveWeapon(string weaponId) { Player?.GiveNamedItem(weaponId); }
-
-  public void RemoveWeapon(string weaponId) {
-    if (!IsAlive) return;
-
-    var pawn = Player?.PlayerPawn.Value;
-
-    if (pawn == null || pawn.WeaponServices == null) return;
-
-    var matchedWeapon =
-      pawn.WeaponServices.MyWeapons.FirstOrDefault(x
-        => x.Value?.DesignerName == weaponId);
-
-    if (matchedWeapon?.Value == null || !matchedWeapon.IsValid) return;
-    pawn.WeaponServices.ActiveWeapon.Raw = matchedWeapon.Raw;
-
-    // Make them equip the desired weapon
-    var activeWeaponEntity =
-      pawn.WeaponServices.ActiveWeapon.Value?.As<CBaseEntity>();
-
-    Player?.DropActiveWeapon();
-
-    // TODO: Verify 1f is required here (and not 0.1 or similar)
-    activeWeaponEntity?.AddEntityIOEvent("Kill", activeWeaponEntity, null, "",
-      1f);
+    set
+      => throw new NotSupportedException(
+        "Setting IsAlive is not supported in CS2.");
   }
-
-  public void RemoveAllWeapons() { Player?.RemoveWeapons(); }
 
   public static string GetKey(CCSPlayerController player) {
     if (player.IsBot || player.IsHLTV) return player.Index.ToString();

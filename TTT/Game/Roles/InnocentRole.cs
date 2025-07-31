@@ -31,8 +31,8 @@ public class InnocentRole(IServiceProvider provider) : BaseRole(provider) {
 
     if (balanceConfig.InnocentWeapons == null) return;
 
-    player.RemoveAllWeapons();
+    Inventory.RemoveAllWeapons(player);
     foreach (var weapon in balanceConfig.InnocentWeapons)
-      player.GiveWeapon(weapon);
+      Inventory.GiveWeapon(player, weapon);
   }
 }

@@ -114,7 +114,7 @@ public class LocaleTest(IMsgLocalizer localizer) {
 
   [Fact]
   public void Locale_Replaces_Prefix() {
-    var msg = localizer[TestMsgs.PREFIX];
+    var msg = localizer[TestMsgs.TEST_PREFIX];
 
     Assert.Equal("SUPERLIMINAL ", msg);
   }
