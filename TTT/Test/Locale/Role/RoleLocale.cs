@@ -1,5 +1,4 @@
 ﻿using TTT.Game.Roles;
-using TTT.Locale;
 using Xunit;
 
 namespace TTT.Test.Locale.Role;

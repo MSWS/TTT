@@ -1,5 +1,4 @@
 ﻿using TTT.API.Storage;
-using TTT.Game;
 
 namespace TTT.Test.Fakes;
 
@@ -7,9 +6,8 @@ public class MemoryStorage<T> : IStorage<T>, IWriteable<T> where T : class {
   private T? data;
 
   public Task<T> Load() {
-    if (data is null) {
+    if (data is null)
       throw new InvalidOperationException("Data not initialized");
-    }
 
     return Task.FromResult(data);
   }
@@ -20,7 +18,7 @@ public class MemoryStorage<T> : IStorage<T>, IWriteable<T> where T : class {
   }
 
   public Task Write(T newData) {
-    this.data = newData
+    data = newData
       ?? throw new ArgumentNullException(nameof(newData),
         "Data cannot be null");
     return Task.CompletedTask;

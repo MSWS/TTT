@@ -3,7 +3,7 @@ using TTT.API.Role;
 namespace TTT.API.Player;
 
 public interface IOnlinePlayer : IPlayer {
-  ICollection<Role.IRole> Roles { get; }
+  ICollection<IRole> Roles { get; }
   public int Health { get; set; }
   public int MaxHealth { get; set; }
   public int Armor { get; set; }
