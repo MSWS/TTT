@@ -16,7 +16,7 @@ public class CS2CommandManager(IServiceProvider provider,
   public void Start(BasePlugin? basePlugin, bool baseReload) {
     plugin    = basePlugin;
     hotReload = baseReload;
-    
+
     //Add Commands Here
 
     foreach (var command in provider.GetServices<ICommand>()) {
@@ -25,13 +25,17 @@ public class CS2CommandManager(IServiceProvider provider,
     }
   }
 
+  public void Dispose() { }
+  public string Name => "CommandManager";
+  public string Version => GitVersionInformation.FullSemVer;
+  public void Start() { }
+
   private bool registerCommand(ICommand command) {
     if (!commandManager.RegisterCommand(command)) return false;
-    
-    foreach (var alias in command.Aliases) {
+
+    foreach (var alias in command.Aliases)
       plugin?.AddCommand(alias, command.Description ?? string.Empty,
         processInternal);
-    }
 
     return true;
   }
@@ -45,22 +49,17 @@ public class CS2CommandManager(IServiceProvider provider,
       try {
         await commandManager.ProcessCommand(player, wrappedInfo);
       } catch (Exception ex) {
-        var logger = provider.GetRequiredService<ILoggerFactory>().CreateLogger("CommandManager");
-        await Server.NextFrameAsync(() =>
-          logger.LogError(ex,
-            "Error running command \"{command}\" by {steam}",
-            wrappedInfo.GetCommandString,
-            executor?.SteamID.ToString() ?? "Console"));
+        var logger = provider.GetRequiredService<ILoggerFactory>()
+         .CreateLogger("CommandManager");
+        await Server.NextFrameAsync(() => logger.LogError(ex,
+          "Error running command \"{command}\" by {steam}",
+          wrappedInfo.GetCommandString,
+          executor?.SteamID.ToString() ?? "Console"));
 
-        wrappedInfo.ReplySync(string.IsNullOrEmpty(ex.Message)
-          ? "An unexpected error occurred."
-          : $"Error: {ex.Message}");
+        wrappedInfo.ReplySync(string.IsNullOrEmpty(ex.Message) ?
+          "An unexpected error occurred." :
+          $"Error: {ex.Message}");
       }
     });
   }
-
-  public void Dispose() {  }
-  public string Name => "CommandManager";
-  public string Version => GitVersionInformation.FullSemVer;
-  public void Start() { }
 }

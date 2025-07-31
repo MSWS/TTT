@@ -11,21 +11,6 @@ namespace TTT.CS2;
 ///   and the execution context.
 /// </summary>
 public class CS2CommandInfo : ICommandInfo {
-  /// <summary>
-  ///   The arguments the command consists of
-  /// </summary>
-  public string[] Args { get; }
-
-  /// <summary>
-  ///   The player that executed the command
-  /// </summary>
-  public IOnlinePlayer? CallingPlayer { get; }
-
-  /// <summary>
-  ///   The calling context of the command
-  /// </summary>
-  public CommandCallingContext CallingContext { get; set; }
-
   public CS2CommandInfo(IOnlinePlayer? executor, int offset = 0,
     params string[] args) {
     CallingPlayer = executor;
@@ -44,8 +29,24 @@ public class CS2CommandInfo : ICommandInfo {
     if (offset == 0 && Args.Length > 0) Args[0] = Args[0].ToLower();
   }
 
-  public int ArgCount => Args.Length;
   public string this[int index] => Args[index];
+
+  /// <summary>
+  ///   The arguments the command consists of
+  /// </summary>
+  public string[] Args { get; }
+
+  /// <summary>
+  ///   The player that executed the command
+  /// </summary>
+  public IOnlinePlayer? CallingPlayer { get; }
+
+  /// <summary>
+  ///   The calling context of the command
+  /// </summary>
+  public CommandCallingContext CallingContext { get; set; }
+
+  public int ArgCount => Args.Length;
 
   public string GetCommandString => string.Join(' ', Args);
 
@@ -55,10 +56,7 @@ public class CS2CommandInfo : ICommandInfo {
   /// </summary>
   /// <param name="message"></param>
   public void ReplySync(string message) {
-    if (CallingPlayer == null) {
-      Console.WriteLine(message);
-      return;
-    }
+    if (CallingPlayer == null) Console.WriteLine(message);
 
     //TODO: Figure Out Replies
     /*if (CallingContext == CommandCallingContext.Console)

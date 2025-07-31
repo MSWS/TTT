@@ -1,5 +1,4 @@
-﻿using System.Security;
-using TTT.API.Player;
+﻿using TTT.API.Player;
 
 namespace TTT.Test.Fakes;
 
