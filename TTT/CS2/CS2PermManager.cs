@@ -7,14 +7,14 @@ using TTT.API.Player;
 namespace TTT.CS2;
 
 public class CS2PermManager(IPlayerConverter<CCSPlayerController> converter)
-  : IPermissionManager<CS2Player> {
-  public bool HasFlags(CS2Player player, params string[] flags) {
+  : IPermissionManager {
+  public bool HasFlags(IPlayer player, params string[] flags) {
     var gamePlayer = converter.GetPlayer(player);
     return gamePlayer != null
       && AdminManager.PlayerHasPermissions(new SteamID(player.Id), flags);
   }
 
-  public bool InGroups(CS2Player player, params string[] groups) {
+  public bool InGroups(IPlayer player, params string[] groups) {
     var gamePlayer = converter.GetPlayer(player);
     if (gamePlayer == null) return false;
 

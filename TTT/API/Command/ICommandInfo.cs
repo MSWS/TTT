@@ -8,5 +8,6 @@ public interface ICommandInfo {
   IOnlinePlayer? CallingPlayer { get; }
   CommandCallingContext CallingContext { get; set; }
   string GetCommandString => string.Join(' ', Args);
+  int ArgCount => Args.Length;
   void ReplySync(string message);
 }
