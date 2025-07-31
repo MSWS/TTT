@@ -1,5 +1,4 @@
 using Microsoft.Extensions.DependencyInjection;
-using TTT.API;
 using TTT.API.Command;
 using TTT.API.Player;
 using TTT.Locale;
@@ -7,19 +6,21 @@ using TTT.Locale;
 namespace TTT.Game.Commands;
 
 public class CommandManager(IServiceProvider provider) : ICommandManager {
+  private readonly Dictionary<string, ICommand> commands = new();
+
   private readonly IMsgLocalizer localizer =
     provider.GetRequiredService<IMsgLocalizer>();
 
   private readonly IPermissionManager permissions =
     provider.GetRequiredService<IPermissionManager>();
 
-  private readonly Dictionary<string, ICommand> commands = new();
+  public bool RegisterCommand(ICommand command) {
+    return command.Aliases.All(alias => commands.TryAdd(alias, command));
+  }
 
-  public bool RegisterCommand(ICommand command)
-    => command.Aliases.All(alias => commands.TryAdd(alias, command));
-
-  public bool UnregisterCommand(ICommand command)
-    => command.Aliases.All(alias => commands.Remove(alias));
+  public bool UnregisterCommand(ICommand command) {
+    return command.Aliases.All(alias => commands.Remove(alias));
+  }
 
   public bool CanExecute(IOnlinePlayer? executor, ICommand command) {
     if (executor == null) return true; // Allow all commands for console
@@ -63,11 +64,10 @@ public class CommandManager(IServiceProvider provider) : ICommandManager {
     if (result == CommandResult.PLAYER_ONLY)
       info.ReplySync(localizer[GameMsgs.GENERIC_PLAYER_ONLY]);
 
-    if (result == CommandResult.PRINT_USAGE) {
+    if (result == CommandResult.PRINT_USAGE)
       foreach (var usage in command.Usage)
         info.ReplySync(
           localizer[GameMsgs.GENERIC_USAGE($"{info.Args[0]} {usage}")]);
-    }
 
     return result;
   }

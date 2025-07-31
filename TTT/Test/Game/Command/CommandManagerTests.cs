@@ -1,7 +1,5 @@
-using Microsoft.Extensions.Localization;
 using TTT.API.Command;
 using TTT.Game.Commands;
-using TTT.Test.Fakes;
 using Xunit;
 
 namespace TTT.Test.Game.Command;
@@ -47,28 +45,27 @@ public class CommandManagerTests {
   [Fact]
   public async Task ProcessCommand_ReturnsUnknownCommand() {
     var player = new TestPlayer();
-    var info = new TestCommandInfo(["doesnotexist"]) {
-      CallingPlayer = player
-    };
+    var info = new TestCommandInfo(["doesnotexist"]) { CallingPlayer = player };
 
     var result = await manager.ProcessCommand(player, info);
 
     Assert.Equal(CommandResult.UNKNOWN_COMMAND, result);
     Assert.Contains("doesnotexist", info.Replies[0]);
   }
-  
+
   [Fact]
   public async Task ProcessCommand_HandlesAlias() {
     var cmd = new TestEchoCommand();
     manager.RegisterCommand(cmd);
 
-    var info = new TestCommandInfo(["say", "hi"]) { CallingPlayer = new TestPlayer() };
+    var info =
+      new TestCommandInfo(["say", "hi"]) { CallingPlayer = new TestPlayer() };
     var result = await manager.ProcessCommand(info.CallingPlayer, info);
 
     Assert.Equal(CommandResult.SUCCESS, result);
     Assert.Equal("hi", info.Replies.Single());
   }
-  
+
   [Fact]
   public void RegisterCommand_FailsOnDuplicateAlias() {
     var cmd1 = new TestEchoCommand();
