@@ -36,5 +36,6 @@ public class Startup {
 
     services.AddModBehavior<GenericInitTester>();
     services.AddModBehavior<PluginInitTester>();
+    services.AddScoped<IMsgLocalizer, FakeLocalizer>();
   }
 }

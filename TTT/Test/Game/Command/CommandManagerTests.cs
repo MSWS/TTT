@@ -1,5 +1,7 @@
+using Microsoft.Extensions.Localization;
 using TTT.API.Command;
 using TTT.Game.Commands;
+using TTT.Test.Fakes;
 using Xunit;
 
 namespace TTT.Test.Game.Command;
@@ -8,7 +10,7 @@ public class CommandManagerTests {
   private readonly CommandManager manager;
 
   public CommandManagerTests() {
-    manager = new CommandManager(null!);
+    manager = new CommandManager(new FakeLocalizer());
   }
 
   [Fact]

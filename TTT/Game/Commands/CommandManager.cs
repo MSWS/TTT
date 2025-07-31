@@ -5,29 +5,26 @@ using TTT.Locale;
 
 namespace TTT.Game.Commands;
 
-public class CommandManager(IServiceProvider provider)
+public class CommandManager(IMsgLocalizer localizer)
   : ICommandManager {
-  private readonly IMsgLocalizer? localizer =
-    provider.GetRequiredService<IMsgLocalizer>();
+  private readonly Dictionary<string, ICommand> commands = new();
   
-  protected readonly Dictionary<string, ICommand> Commands = new();
-  
-  public virtual bool RegisterCommand(ICommand command)
-    => command.Aliases.All(alias => Commands.TryAdd(alias, command));
+  public bool RegisterCommand(ICommand command)
+    => command.Aliases.All(alias => commands.TryAdd(alias, command));
 
   public bool UnregisterCommand(ICommand command)
-    => command.Aliases.All(alias => Commands.Remove(alias));
+    => command.Aliases.All(alias => commands.Remove(alias));
 
   public Task<CommandResult> ProcessCommand(IOnlinePlayer? executor,
     ICommandInfo info, params string[] args) {
     throw new NotImplementedException();
   }
 
-  public virtual async Task<CommandResult> ProcessCommand(
+  public async Task<CommandResult> ProcessCommand(
     IOnlinePlayer? executor, ICommandInfo info) {
     if (info.ArgCount == 0) return CommandResult.ERROR;
 
-    if (!Commands.TryGetValue(info.Args[0], out var command)) {
+    if (!commands.TryGetValue(info.Args[0], out var command)) {
       info.ReplySync(localizer[GameMsgs.GENERIC_UNKNOWN(info.Args[0])]);
       return CommandResult.UNKNOWN_COMMAND;
     }
