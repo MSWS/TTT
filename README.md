@@ -5,16 +5,38 @@
 TTT (Trouble in Terrorist Town) is a game mode similar to Among Us where a group of players are attempting to
 survive while eliminating the traitors among them.
 
-# Structure
+## Features
 
-## TTT
+- [X] Unit Testing
+- [ ] Basic Gameplay
+    - [ ] Traitors
+    - [ ] Detectives
+    - [ ] Innocents
+- [ ] Shop
+- [ ] Karma
+- [ ] Statistics
 
-You likely want to read the [TTT ReadMe](./TTT/README.md), which covers the structure of its own directory.
+# Modules
 
-## Versioning
+## [TTT](./TTT)
+
+You likely want to read the [TTT README](./TTT/README.md), which covers the structure of its own directory.
+
+## [Versioning](./Versioning)
 
 To allow for `MSBuild.GitVersion` to be used on both Windows and Linux (specifically NixOS), this project manually
 converts `dotnet-gitversion` to the `GitVersionInformation` that is used.
+
+## [Locale](./Locale)
+
+Due to this project being primarily developed with Counter-Strike 2 (and more
+specifically, [CounterStrikeSharp](https://github.com/roflmuffin/CounterStrikeSharp)) in mind, localization has been
+built with flat-file storage based around YML/JSON.
+
+In short, we write our locales in `en.yml`, run `Locale.csproj` to convert and combine all `**/Lang/en.yml` -> a master
+`lang/en.json`, and then run our tests / release pipeliens with it.
+
+It is recommend to read the [Locale README](./Locale/README.md) for more information on how to use it.
 
 # Development
 
