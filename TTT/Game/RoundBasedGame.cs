@@ -1,12 +1,12 @@
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using Microsoft.Extensions.DependencyInjection;
-using TTT.API;
 using TTT.API.Events;
 using TTT.API.Game;
 using TTT.API.Messages;
 using TTT.API.Player;
 using TTT.API.Role;
+using TTT.API.Storage;
 using TTT.Game.Events.Game;
 using TTT.Game.Roles;
 
@@ -18,6 +18,12 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
 
   private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
 
+  private readonly GameConfig config = provider
+   .GetRequiredService<IStorage<GameConfig>>()
+   .Load()
+   .GetAwaiter()
+   .GetResult();
+
   private readonly IPlayerFinder finder =
     provider.GetRequiredService<IPlayerFinder>();
 
@@ -27,7 +33,8 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
   private readonly List<IPlayer> players = [];
 
   private readonly List<IRole> roles = [
-    new InnocentRole(), new TraitorRole(), new DetectiveRole()
+    new InnocentRole(provider), new TraitorRole(provider),
+    new DetectiveRole(provider)
   ];
 
   private readonly IScheduler scheduler =
@@ -49,7 +56,7 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
   public ICollection<IPlayer> Players => players;
 
   public DateTime? StartedAt { get; protected set; }
-  public DateTime? FinishedAt { get; protected set; } = null;
+  public DateTime? FinishedAt { get; protected set; }
 
   public SortedDictionary<DateTime, ISet<IAction>> Actions {
     get;
@@ -62,7 +69,7 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
 
     var online = finder.GetOnline();
 
-    if (online.Count < 2) {
+    if (online.Count < config.RoundCfg.MinimumPlayers) {
       onlineMessenger?.BackgroundMsgAll(finder,
         "Not enough players to start the game.");
       return null;
@@ -105,11 +112,16 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
     FinishedAt = DateTime.Now;
     State      = State.FINISHED;
 
-    if (winningTeam == null)
-      onlineMessenger?.MessageAll(finder,
-        "The game was canceled or ended without a winning team.");
-    else
-      onlineMessenger?.MessageAll(finder, $"{winningTeam.Name} won the game!");
+    onlineMessenger?.MessageAll(finder,
+      winningTeam == null ?
+        "The game was canceled or ended without a winning team." :
+        $"{winningTeam.Name} won the game!");
+  }
+
+  public void Dispose() {
+    players.Clear();
+    roles.Clear();
+    Actions.Clear();
   }
 
   private void startRound() {
@@ -126,11 +138,5 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
     StartedAt = DateTime.Now;
     assigner.AssignRoles(finder.GetOnline(), roles);
     players.AddRange(finder.GetOnline());
-  }
-
-  public void Dispose() {
-    players.Clear();
-    roles.Clear();
-    Actions.Clear();
   }
 }

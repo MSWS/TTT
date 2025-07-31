@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Reactive.Testing;
-using TTT.API;
 using TTT.API.Game;
 using TTT.API.Player;
 using TTT.Game;
@@ -143,13 +142,13 @@ public class RoundBasedGameTest(IServiceProvider provider) {
 
     Assert.Null(result);
   }
-  
+
   [Fact]
   public void EndGame_ShouldDoNothing_WhenNotInProgress() {
     var game = new RoundBasedGame(provider);
-    
+
     game.EndGame();
-    
+
     Assert.Equal(State.WAITING, game.State);
     Assert.Null(game.FinishedAt);
   }

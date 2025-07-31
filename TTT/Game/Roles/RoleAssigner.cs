@@ -1,4 +1,4 @@
-using TTT.API;
+using Microsoft.Extensions.DependencyInjection;
 using TTT.API.Events;
 using TTT.API.Messages;
 using TTT.API.Player;
@@ -7,8 +7,15 @@ using TTT.Game.Events.Player;
 
 namespace TTT.Game.Roles;
 
-public class RoleAssigner(IEventBus bus, IOnlineMessenger onlineMessenger,
-  IPlayerFinder finder) : IRoleAssigner {
+public class RoleAssigner(IServiceProvider provider) : IRoleAssigner {
+  private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
+
+  private readonly IPlayerFinder finder =
+    provider.GetRequiredService<IPlayerFinder>();
+
+  private readonly IOnlineMessenger? onlineMessenger =
+    provider.GetService<IOnlineMessenger>();
+
   public void AssignRoles(ISet<IOnlinePlayer> players, IList<IRole> roles) {
     var  shuffled = players.OrderBy(_ => Guid.NewGuid()).ToHashSet();
     bool roleAssigned;
@@ -24,6 +31,7 @@ public class RoleAssigner(IEventBus bus, IOnlineMessenger onlineMessenger,
         if (ev.IsCanceled) continue;
 
         player.Roles.Add(ev.Role);
+        ev.Role.OnAssign(player);
         roleAssigned = true;
 
         onlineMessenger?.BackgroundMsgAll(finder,

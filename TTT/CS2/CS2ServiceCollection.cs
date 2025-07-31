@@ -1,6 +1,8 @@
 using CounterStrikeSharp.API.Core;
 using Microsoft.Extensions.DependencyInjection;
 using TTT.API.Player;
+using TTT.API.Storage;
+using TTT.Game;
 
 namespace TTT.CS2;
 
@@ -9,5 +11,6 @@ public static class CS2ServiceCollection {
     collection
      .AddScoped<IPlayerConverter<CCSPlayerController>, CCPlayerConverter>();
     collection.AddScoped<IPlayerFinder, CS2PlayerFinder>();
+    collection.AddScoped<IStorage<GameConfig>, CS2GameConfig>();
   }
 }

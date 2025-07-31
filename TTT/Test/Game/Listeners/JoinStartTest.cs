@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Reactive.Testing;
-using TTT.API;
 using TTT.API.Events;
 using TTT.API.Game;
 using TTT.API.Messages;

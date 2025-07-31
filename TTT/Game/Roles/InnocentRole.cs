@@ -1,17 +1,38 @@
 using System.Drawing;
-using TTT.API;
+using Microsoft.Extensions.DependencyInjection;
 using TTT.API.Player;
-using TTT.API.Role;
+using TTT.Locale;
 
 namespace TTT.Game.Roles;
 
-public class InnocentRole : IRole {
+public class InnocentRole(IServiceProvider provider) : BaseRole(provider) {
   public const string ID = "basegame.role.innocent";
-  public string Id => ID;
-  public string Name => "Innocent";
-  public Color Color => Color.LimeGreen;
 
-  public IOnlinePlayer? FindPlayerToAssign(ISet<IOnlinePlayer> players) {
+  private readonly IMsgLocalizer? localizer =
+    provider.GetService<IMsgLocalizer>();
+
+  public override string Id => ID;
+
+  public override string Name
+    => localizer?[GameMsgs.ROLE_INNOCENT] ?? nameof(InnocentRole);
+
+  public override Color Color => Color.LimeGreen;
+
+  public override IOnlinePlayer?
+    FindPlayerToAssign(ISet<IOnlinePlayer> players) {
     return players.FirstOrDefault(p => p.Roles.Count == 0);
+  }
+
+  public override void OnAssign(IOnlinePlayer player) {
+    base.OnAssign(player);
+    var balanceConfig = Config.BalanceCfg;
+    player.Health = balanceConfig.InnocentHealth;
+    player.Armor  = balanceConfig.InnocentArmor;
+
+    if (balanceConfig.InnocentWeapons == null) return;
+
+    player.RemoveAllWeapons();
+    foreach (var weapon in balanceConfig.InnocentWeapons)
+      player.GiveWeapon(weapon);
   }
 }
