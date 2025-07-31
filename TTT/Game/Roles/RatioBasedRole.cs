@@ -4,12 +4,14 @@ using TTT.API.Role;
 
 namespace TTT.Game.Roles;
 
-public abstract class RatioBasedRole(Func<int, int> targetCount) : IRole {
-  public abstract string Id { get; }
-  public abstract string Name { get; }
-  public abstract Color Color { get; }
+public abstract class RatioBasedRole(IServiceProvider provider,
+  Func<int, int> targetCount) : BaseRole(provider) {
+  public override abstract string Id { get; }
+  public override abstract string Name { get; }
+  public override abstract Color Color { get; }
 
-  public IOnlinePlayer? FindPlayerToAssign(ISet<IOnlinePlayer> players) {
+  public override IOnlinePlayer?
+    FindPlayerToAssign(ISet<IOnlinePlayer> players) {
     var currentCount     = players.Count(p => p.Roles.Any(r => r.Id == Id));
     var targetCountValue = targetCount(players.Count);
 

@@ -8,6 +8,7 @@ using TTT.API.Game;
 using TTT.API.Messages;
 using TTT.API.Player;
 using TTT.API.Role;
+using TTT.API.Storage;
 using TTT.Game;
 using TTT.Game.Roles;
 using TTT.Locale;
@@ -31,6 +32,7 @@ public class Startup {
     services.AddScoped<StringLocalizer>();
     services.AddTransient<IMsgLocalizer>(s
       => s.GetRequiredService<StringLocalizer>());
+    services.AddTransient<IStorage<GameConfig>, FakeConfig>();
 
     services.AddModBehavior<GenericInitTester>();
     services.AddModBehavior<PluginInitTester>();

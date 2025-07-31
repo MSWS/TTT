@@ -32,8 +32,4 @@
     <UseMicrosoftTestingPlatformRunner>true</UseMicrosoftTestingPlatformRunner>
   </PropertyGroup>
 
-  <!--  <Target Name="PreprocessYaml" AfterTargets="Build">-->
-  <!--    <Exec Command="dotnet $(MSBuildThisFileDirectory)..\..\Locale\bin\Debug\net8.0\Locale.dll lang/en.yml"/>-->
-  <!--  </Target>-->
-
 </Project>

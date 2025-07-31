@@ -6,6 +6,7 @@ using TTT.API.Game;
 using TTT.API.Messages;
 using TTT.API.Player;
 using TTT.API.Role;
+using TTT.API.Storage;
 using TTT.Game.Events.Game;
 using TTT.Game.Roles;
 using TTT.Locale;
@@ -31,6 +32,8 @@ public class RoundBasedGame : IGame {
 
   private readonly IScheduler scheduler;
 
+  private readonly GameConfig config;
+
   private State state = State.WAITING;
 
   public RoundBasedGame(IServiceProvider provider) {
@@ -41,9 +44,13 @@ public class RoundBasedGame : IGame {
     scheduler       = provider.GetRequiredService<IScheduler>();
     onlineMessenger = provider.GetService<IOnlineMessenger>();
     localizer       = provider.GetService<IMsgLocalizer>();
+    config = provider.GetRequiredService<IStorage<GameConfig>>()
+     .Load()
+     .GetAwaiter()
+     .GetResult();
     roles = [
-      new InnocentRole(localizer), new TraitorRole(localizer),
-      new DetectiveRole(localizer)
+      new InnocentRole(this.provider), new TraitorRole(this.provider),
+      new DetectiveRole(this.provider)
     ];
   }
 
@@ -74,7 +81,7 @@ public class RoundBasedGame : IGame {
 
     var online = finder.GetOnline();
 
-    if (online.Count < 2) {
+    if (online.Count < config.RoundCfg.MinimumPlayers) {
       onlineMessenger?.BackgroundMsgAll(finder,
         "Not enough players to start the game.");
       return null;

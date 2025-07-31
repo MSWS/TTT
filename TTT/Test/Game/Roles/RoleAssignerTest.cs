@@ -1,4 +1,5 @@
-﻿using TTT.API.Events;
+﻿using Microsoft.Extensions.DependencyInjection;
+using TTT.API.Events;
 using TTT.API.Messages;
 using TTT.API.Player;
 using TTT.API.Role;
@@ -7,9 +8,19 @@ using Xunit;
 
 namespace TTT.Test.Game.Roles;
 
-public class RoleAssignerTest(IEventBus bus, IOnlineMessenger messenger,
-  IPlayerFinder finder) {
-  private readonly RoleAssigner assigner = new(bus, messenger, finder);
+public class RoleAssignerTest(IServiceProvider provider) {
+  private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
+
+  private readonly IOnlineMessenger messenger =
+    provider.GetRequiredService<IOnlineMessenger>();
+
+  private readonly IPlayerFinder finder =
+    provider.GetRequiredService<IPlayerFinder>();
+
+  private readonly RoleAssigner assigner = new(
+    provider.GetRequiredService<IEventBus>(),
+    provider.GetRequiredService<IOnlineMessenger>(),
+    provider.GetRequiredService<IPlayerFinder>());
 
   [Fact]
   public void AssignRole_Finishes_WithNoRoles() {
@@ -58,9 +69,9 @@ public class RoleAssignerTest(IEventBus bus, IOnlineMessenger messenger,
     var playerList = new HashSet<IOnlinePlayer>();
     for (var i = 0; i < players; i++) playerList.Add(TestPlayer.Random());
 
-    var innoRole      = new InnocentRole();
-    var traitorRole   = new TraitorRole();
-    var detectiveRole = new DetectiveRole();
+    var innoRole      = new InnocentRole(provider);
+    var traitorRole   = new TraitorRole(provider);
+    var detectiveRole = new DetectiveRole(provider);
 
     var roles = new List<IRole>([innoRole, traitorRole, detectiveRole]);
     assigner.AssignRoles(playerList, roles);
