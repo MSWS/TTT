@@ -15,7 +15,7 @@ public class CS2Messenger(IEventBus bus) : EventModifiedMessenger(bus) {
 
   override protected Task<bool> SendMessage(IPlayer player, string message) {
     var gamePlayer = getPlayer(player);
-    gamePlayer?.PrintToChat(message);
+    getPlayer(player)?.PrintToChat(message);
     return Task.FromResult(gamePlayer != null);
   }
 

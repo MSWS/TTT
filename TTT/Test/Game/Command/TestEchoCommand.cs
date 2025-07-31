@@ -5,7 +5,7 @@ namespace TTT.Test.Game.Command;
 
 public class TestEchoCommand : ICommand {
   public string Name => "echo";
-  public string Version { get; }
+  public string Version { get; } = GitVersionInformation.FullSemVer;
   public void Start() { }
   public string[] Aliases => ["echo", "say"];
 

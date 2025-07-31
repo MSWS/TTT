@@ -102,7 +102,7 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
     return timer;
   }
 
-  public void EndGame(IRole? winningTeam = null) {
+  public void EndGame(EndReason? reason = null) {
     if (!((IGame)this).IsInProgress()) {
       Dispose();
       State = State.WAITING;
@@ -111,10 +111,11 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
 
     FinishedAt = DateTime.Now;
     State      = State.FINISHED;
+    var winningTeam = reason?.WinningTeam;
 
     onlineMessenger?.MessageAll(finder,
       winningTeam == null ?
-        "The game was canceled or ended without a winning team." :
+        reason?.Message ?? "Game ended." :
         $"{winningTeam.Name} won the game!");
   }
 

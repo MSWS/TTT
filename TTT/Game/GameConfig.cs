@@ -25,7 +25,7 @@ public record GameConfig {
     public TimeSpan CountDownDuration { get; init; } = TimeSpan.FromSeconds(10);
     public int MinimumPlayers { get; init; } = 2;
 
-    public TimeSpan RoundDuration(int players) {
+    public virtual TimeSpan RoundDuration(int players) {
       return TimeSpan.FromSeconds(players switch {
         < 4  => 60,
         < 6  => 90,

@@ -20,7 +20,7 @@ public class CS2CommandManager(IServiceProvider provider,
     //Add Commands Here
 
     foreach (var command in provider.GetServices<ICommand>()) {
-      command.Start(basePlugin, baseReload);
+      command.Start();
       registerCommand(command);
     }
   }
