@@ -10,13 +10,17 @@ public class JsonLocalizerFactory : IStringLocalizerFactory {
     // Lang folder is in the root of the project
     // keep moving up until we find it
     var current = Directory.GetCurrentDirectory();
-    while (!Directory.Exists(Path.Combine(current, "lang"))) {
+    // while (!Directory.Exists(Path.Combine(current, "lang", "en.json"))) {
+    while (!File.Exists(Path.Combine(current, "lang", "en.json"))) {
       current = Directory.GetParent(current)?.FullName;
       if (current == null)
         throw new DirectoryNotFoundException("Could not find lang folder");
     }
 
     langPath = Path.Combine(current, "lang");
+
+    Console.WriteLine(
+      $"JsonLocalizerFactory initialized with path: {langPath}");
   }
 
   public IStringLocalizer Create(Type resourceSource) {

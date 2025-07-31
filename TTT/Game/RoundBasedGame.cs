@@ -9,29 +9,42 @@ using TTT.API.Player;
 using TTT.API.Role;
 using TTT.Game.Events.Game;
 using TTT.Game.Roles;
+using TTT.Locale;
 
 namespace TTT.Game;
 
-public class RoundBasedGame(IServiceProvider provider) : IGame {
-  private readonly IRoleAssigner assigner =
-    provider.GetRequiredService<IRoleAssigner>();
+public class RoundBasedGame : IGame {
+  private readonly IRoleAssigner assigner;
 
-  private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
+  private readonly IEventBus bus;
 
-  private readonly IPlayerFinder finder =
-    provider.GetRequiredService<IPlayerFinder>();
+  private readonly IPlayerFinder finder;
 
-  private readonly IOnlineMessenger? onlineMessenger =
-    provider.GetService<IOnlineMessenger>();
+  private readonly IOnlineMessenger? onlineMessenger;
+
+  private readonly IMsgLocalizer? localizer;
 
   private readonly List<IPlayer> players = [];
 
-  private readonly List<IRole> roles = [
-    new InnocentRole(), new TraitorRole(), new DetectiveRole()
-  ];
+  private readonly IServiceProvider provider;
 
-  private readonly IScheduler scheduler =
-    provider.GetRequiredService<IScheduler>();
+  public RoundBasedGame(IServiceProvider provider) {
+    this.provider   = provider;
+    assigner        = provider.GetRequiredService<IRoleAssigner>();
+    bus             = provider.GetRequiredService<IEventBus>();
+    finder          = provider.GetRequiredService<IPlayerFinder>();
+    scheduler       = provider.GetRequiredService<IScheduler>();
+    onlineMessenger = provider.GetService<IOnlineMessenger>();
+    localizer       = provider.GetService<IMsgLocalizer>();
+    roles = [
+      new InnocentRole(localizer), new TraitorRole(localizer),
+      new DetectiveRole(localizer)
+    ];
+  }
+
+  private readonly List<IRole> roles;
+
+  private readonly IScheduler scheduler;
 
   private State state = State.WAITING;
 

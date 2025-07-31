@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Locale\Locale.csproj" />
+    <ProjectReference Include="..\..\Locale\Locale.csproj"/>
     <ProjectReference Include="..\API\API.csproj"/>
     <ProjectReference Include="..\Plugin\Plugin.csproj"/>
   </ItemGroup>
@@ -32,9 +32,8 @@
     <UseMicrosoftTestingPlatformRunner>true</UseMicrosoftTestingPlatformRunner>
   </PropertyGroup>
 
-  <Target Name="PreprocessYaml" BeforeTargets="BeforeBuild">
-    <Exec Command="dotnet build $(MSBuildThisFileDirectory)..\..\Locale\Locale.csproj"/>
-    <Exec Command="dotnet $(MSBuildThisFileDirectory)..\..\Locale\bin\Debug\net8.0\Locale.dll lang/en.yml"/>
-  </Target>
+<!--  <Target Name="PreprocessYaml" AfterTargets="Build">-->
+<!--    <Exec Command="dotnet $(MSBuildThisFileDirectory)..\..\Locale\bin\Debug\net8.0\Locale.dll lang/en.yml"/>-->
+<!--  </Target>-->
 
 </Project>
