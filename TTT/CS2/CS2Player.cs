@@ -14,6 +14,7 @@ namespace TTT.CS2;
 ///   Note that slot numbers are not guaranteed to be stable across server restarts.
 /// </summary>
 public class CS2Player : IOnlinePlayer {
+  
   protected CS2Player(string id, string name) {
     Id   = id;
     Name = name;
@@ -32,6 +33,7 @@ public class CS2Player : IOnlinePlayer {
   public CS2Player(CCSPlayerController player) {
     Id   = GetKey(player);
     Name = player.PlayerName;
+    
   }
 
   private CCSPlayerController? Player {
@@ -87,7 +89,6 @@ public class CS2Player : IOnlinePlayer {
   }
 
   public bool IsAlive { get; set; }
-
   public void GiveWeapon(string weaponId) { Player?.GiveNamedItem(weaponId); }
 
   public void RemoveWeapon(string weaponId) {
