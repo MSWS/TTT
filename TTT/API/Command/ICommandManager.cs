@@ -23,8 +23,7 @@ public interface ICommandManager {
   /// </summary>
   /// <param name="executor"></param>
   /// <param name="info"></param>
-  /// <param name="args"></param>
   /// <returns>True if the command finished processing successfully.</returns>
   Task<CommandResult> ProcessCommand(IOnlinePlayer? executor,
-    ICommandInfo info, params string[] args);
+    ICommandInfo info);
 }

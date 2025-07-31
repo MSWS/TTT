@@ -15,11 +15,6 @@ public class CommandManager(IMsgLocalizer localizer)
   public bool UnregisterCommand(ICommand command)
     => command.Aliases.All(alias => commands.Remove(alias));
 
-  public Task<CommandResult> ProcessCommand(IOnlinePlayer? executor,
-    ICommandInfo info, params string[] args) {
-    throw new NotImplementedException();
-  }
-
   public async Task<CommandResult> ProcessCommand(
     IOnlinePlayer? executor, ICommandInfo info) {
     if (info.ArgCount == 0) return CommandResult.ERROR;
