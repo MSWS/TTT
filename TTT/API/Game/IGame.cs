@@ -23,7 +23,21 @@ public interface IGame : IDisposable {
   /// <param name="countdown"></param>
   IObservable<long>? Start(TimeSpan? countdown = null);
 
-  void EndGame(IRole? winningTeam = null);
+  void EndGame(IRole? winningRole);
 
   bool IsInProgress() { return State is State.COUNTDOWN or State.IN_PROGRESS; }
+
+  ISet<IOnlinePlayer> GetAlive() {
+    return Players.OfType<IOnlinePlayer>().Where(p => p.IsAlive).ToHashSet();
+  }
+
+  int GetAlive(Type roleType) {
+    if (!typeof(IRole).IsAssignableFrom(roleType))
+      throw new ArgumentException(
+        "roleType must be a type that implements IRole", nameof(roleType));
+
+    return GetAlive().Count(p => p.Roles.Any(r => r.GetType() == roleType));
+  }
+
+  int GetAlive(IRole role) { return GetAlive(role.GetType()); }
 }
