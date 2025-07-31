@@ -5,8 +5,6 @@ namespace TTT.Test;
 
 public class TestPlayer(string id, string name) : IOnlinePlayer {
   private readonly List<string> weapons = [];
-  private readonly HashSet<string> flags = [ "@ttt/test" ];
-  private readonly HashSet<string> groups = [ "#ttt/test" ];
   public TestPlayer() : this("314159", "Test Player") { }
 
   public List<string> Messages { get; } = [];
@@ -23,10 +21,6 @@ public class TestPlayer(string id, string name) : IOnlinePlayer {
   public void RemoveWeapon(string weaponId) { weapons.Remove(weaponId); }
 
   public void RemoveAllWeapons() { weapons.Clear(); }
-  public bool HasFlags(params string[] queryFlags) =>
-    queryFlags.All(flags.Contains);
-  public bool InGroups(params string[] queryGroups) =>
-    queryGroups.All(groups.Contains);
 
   public static TestPlayer Random() {
     return new TestPlayer(new Random().NextInt64().ToString(),
