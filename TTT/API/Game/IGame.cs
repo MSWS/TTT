@@ -13,6 +13,7 @@ public interface IGame : IDisposable {
   DateTime? StartedAt { get; }
   DateTime? FinishedAt { get; }
   SortedDictionary<DateTime, ISet<IAction>> Actions { get; }
+  IRole? WinningRole { get; set; }
 
   State State { get; set; }
 
@@ -23,7 +24,23 @@ public interface IGame : IDisposable {
   /// <param name="countdown"></param>
   IObservable<long>? Start(TimeSpan? countdown = null);
 
-  void EndGame(IRole? winningTeam = null);
+  void EndGame(IRole? winningRole = null);
 
   bool IsInProgress() { return State is State.COUNTDOWN or State.IN_PROGRESS; }
+
+  ISet<IOnlinePlayer> GetAlive() {
+    return Players.OfType<IOnlinePlayer>().Where(p => p.IsAlive).ToHashSet();
+  }
+
+  ISet<IOnlinePlayer> GetAlive(Type roleType) {
+    if (!typeof(IRole).IsAssignableFrom(roleType))
+      throw new ArgumentException(
+        "roleType must be a type that implements IRole", nameof(roleType));
+
+    return GetAlive()
+     .Where(p => p.Roles.Any(r => r.GetType() == roleType))
+     .ToHashSet();
+  }
+
+  ISet<IOnlinePlayer> GetAlive(IRole role) { return GetAlive(role.GetType()); }
 }

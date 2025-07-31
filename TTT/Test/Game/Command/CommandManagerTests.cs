@@ -31,7 +31,7 @@ public class CommandManagerTests {
     var cmd = new TestEchoCommand();
     manager.RegisterCommand(cmd);
 
-    var player = new TestPlayer();
+    var player = TestPlayer.Random();
     var info = new TestCommandInfo(["echo", "hello", "world"]) {
       CallingPlayer = player
     };
@@ -44,7 +44,7 @@ public class CommandManagerTests {
 
   [Fact]
   public async Task ProcessCommand_ReturnsUnknownCommand() {
-    var player = new TestPlayer();
+    var player = TestPlayer.Random();
     var info = new TestCommandInfo(["doesnotexist"]) { CallingPlayer = player };
 
     var result = await manager.ProcessCommand(player, info);
@@ -59,7 +59,9 @@ public class CommandManagerTests {
     manager.RegisterCommand(cmd);
 
     var info =
-      new TestCommandInfo(["say", "hi"]) { CallingPlayer = new TestPlayer() };
+      new TestCommandInfo(["say", "hi"]) {
+        CallingPlayer = TestPlayer.Random()
+      };
     var result = await manager.ProcessCommand(info.CallingPlayer, info);
 
     Assert.Equal(CommandResult.SUCCESS, result);
