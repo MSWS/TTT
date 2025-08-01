@@ -8,6 +8,7 @@ using TTT.API.Player;
 using TTT.API.Role;
 using TTT.API.Storage;
 using TTT.Game.Events.Game;
+using TTT.Game.Loggers;
 using TTT.Game.Roles;
 
 namespace TTT.Game;
@@ -32,6 +33,9 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
   #endregion
 
   public ICollection<IPlayer> Players => players;
+
+  public IActionLogger Logger { get; } = new SimpleLogger(provider
+   .GetRequiredService<IScheduler>());
 
   public DateTime? StartedAt { get; protected set; }
   public DateTime? FinishedAt { get; protected set; }
