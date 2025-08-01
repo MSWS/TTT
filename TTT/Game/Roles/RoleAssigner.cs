@@ -24,7 +24,8 @@ public class RoleAssigner(IServiceProvider provider) : IRoleAssigner {
     while (roleAssigned);
   }
 
-  private bool tryAssignRole(ISet<IOnlinePlayer> players, IList<IRole> roles) {
+  private bool tryAssignRole(HashSet<IOnlinePlayer> players,
+    IList<IRole> roles) {
     var assigned = false;
 
     foreach (var role in roles) {
@@ -34,7 +35,10 @@ public class RoleAssigner(IServiceProvider provider) : IRoleAssigner {
       var ev = new PlayerRoleAssignEvent(player, role);
       bus.Dispatch(ev);
 
-      if (ev.IsCanceled) continue;
+      if (ev.IsCanceled) {
+        players.Remove(player);
+        continue;
+      }
 
       assigned = true;
       player.Roles.Add(ev.Role);

@@ -17,9 +17,6 @@ public class GameRestartListener(IServiceProvider provider)
    .GetAwaiter()
    .GetResult();
 
-  private readonly IGameManager games = provider
-   .GetRequiredService<IGameManager>();
-
   private readonly IScheduler scheduler =
     provider.GetRequiredService<IScheduler>();
 
@@ -31,8 +28,8 @@ public class GameRestartListener(IServiceProvider provider)
     if (ev.NewState != State.FINISHED) return;
     Observable.Timer(config.RoundCfg.TimeBetweenRounds, scheduler)
      .Subscribe(_ => {
-        if (games.IsGameActive()) return;
-        games.CreateGame()?.Start(config.RoundCfg.CountDownDuration);
+        if (Games.IsGameActive()) return;
+        Games.CreateGame()?.Start(config.RoundCfg.CountDownDuration);
       });
   }
 }
