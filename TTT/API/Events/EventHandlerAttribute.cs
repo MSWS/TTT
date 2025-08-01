@@ -15,10 +15,10 @@ public class EventHandlerAttribute : Attribute {
 /// </summary>
 public static class Priority {
   public const uint HIGHEST = 10;
-  public const uint VERY_HIGH = 20;
+  public const uint HIGHER = 20;
   public const uint HIGH = 40;
   public const uint DEFAULT = 60;
   public const uint LOW = 80;
-  public const uint VERY_LOW = 100;
+  public const uint LOWER = 100;
   public const uint LOWEST = 200;
 }

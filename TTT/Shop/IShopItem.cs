@@ -4,7 +4,8 @@ namespace TTT.Shop;
 
 public interface IShopItem {
   string Name { get; }
-  int Price { get; }
   string Description { get; }
+  int Price { get; }
   void OnPurchase(IOnlinePlayer player);
+  bool CanPurchase(IOnlinePlayer player);
 }
