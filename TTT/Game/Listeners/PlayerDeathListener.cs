@@ -1,5 +1,6 @@
 using System.Diagnostics.Tracing;
 using TTT.API.Events;
+using TTT.API.Game;
 using TTT.API.Role;
 using TTT.Game.Events.Player;
 using TTT.Game.Roles;
@@ -18,7 +19,10 @@ public class PlayerDeathListener(IServiceProvider provider)
 
     if (!endGame) return;
 
-    Games.ActiveGame?.EndGame(winningTeam);
+    if (winningTeam == null)
+      Games.ActiveGame?.EndGame(new EndReason("Draw"));
+    else
+      Games.ActiveGame?.EndGame(new EndReason(winningTeam));
   }
 
   [EventHandler]
@@ -29,7 +33,10 @@ public class PlayerDeathListener(IServiceProvider provider)
 
     if (!endGame) return;
 
-    Games.ActiveGame?.EndGame(winningTeam);
+    if (winningTeam == null)
+      Games.ActiveGame?.EndGame(new EndReason("Draw"));
+    else
+      Games.ActiveGame?.EndGame(new EndReason(winningTeam));
   }
 
   private bool getWinningTeam(out IRole? winningTeam) {
