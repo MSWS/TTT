@@ -3,5 +3,8 @@
 public interface IGameManager {
   IGame? ActiveGame { get; }
   IGame? CreateGame();
-  bool IsGameActive() => ActiveGame is not null && ActiveGame.IsInProgress();
+
+  bool IsGameActive() {
+    return ActiveGame is not null && ActiveGame.IsInProgress();
+  }
 }

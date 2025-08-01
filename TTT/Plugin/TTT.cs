@@ -2,6 +2,7 @@ using CounterStrikeSharp.API.Core;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using TTT.API;
+using TTT.API.Events;
 
 namespace TTT.Plugin;
 

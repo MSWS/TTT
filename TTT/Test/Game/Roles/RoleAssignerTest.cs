@@ -1,10 +1,10 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using TTT.API.Events;
-using TTT.API.Messages;
 using TTT.API.Player;
 using TTT.API.Role;
 using TTT.Game.Roles;
 using Xunit;
+using Xunit.Internal;
 
 namespace TTT.Test.Game.Roles;
 
@@ -13,12 +13,6 @@ public class RoleAssignerTest(IServiceProvider provider) {
     provider.GetRequiredService<IRoleAssigner>();
 
   private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
-
-  private readonly IPlayerFinder finder =
-    provider.GetRequiredService<IPlayerFinder>();
-
-  private readonly IOnlineMessenger messenger =
-    provider.GetRequiredService<IOnlineMessenger>();
 
   [Fact]
   public void AssignRole_Finishes_WithNoRoles() {
@@ -98,5 +92,29 @@ public class RoleAssignerTest(IServiceProvider provider) {
 
     foreach (var player in players)
       Assert.Equal([new TestRoles.RoleB()], player.Roles);
+  }
+
+  [Fact]
+  public void AssignRole_AssignsRandom_Roles() {
+    var firstRoles = new HashSet<IRole>();
+    for (var i = 0; i < 100; i++) {
+      // Hard-code these to remove all sources of randomness, forcing the
+      // assigner to use some source of randomness.
+      var firstPlayer = new TestPlayer("first", "first");
+      var secondPlayer = new TestPlayer("second", "second");
+      var players = new HashSet<IOnlinePlayer> { firstPlayer, secondPlayer };
+
+      assigner.AssignRoles(players,
+      [
+        new TraitorRole(provider), new InnocentRole(provider),
+        new DetectiveRole(provider)
+      ]);
+
+      firstRoles.AddRange(firstPlayer.Roles);
+      if (firstRoles.Count == 2) return;
+    }
+
+    Assert.Fail(
+      "First player did not get two different roles after 100 tries.");
   }
 }

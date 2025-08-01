@@ -1,29 +1,20 @@
-﻿using System.Diagnostics.Tracing;
-using System.Reactive.Concurrency;
-using Microsoft.Extensions.DependencyInjection;
+﻿using JetBrains.Annotations;
 using TTT.API.Events;
-using TTT.API.Game;
 using TTT.Game.Actions;
 using TTT.Game.Events.Player;
 
 namespace TTT.Game.Listeners;
 
-public class GamePlayerActionsListener(IServiceProvider provider) : IListener {
-  private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
-
-  private readonly IScheduler scheduler =
-    provider.GetRequiredService<IScheduler>();
-
-  private readonly IGameManager games =
-    provider.GetRequiredService<IGameManager>();
-
-  public void Dispose() { bus.UnregisterListener(this); }
+public class GamePlayerActionsListener(IServiceProvider provider)
+  : BaseListener(provider) {
+  public override string Name => nameof(GamePlayerActionsListener);
 
   [EventHandler]
+  [UsedImplicitly]
   public void OnPlayerKill(PlayerDeathEvent ev) {
-    if (!games.IsGameActive()) return;
+    if (!Games.IsGameActive()) return;
 
-    var game = games.ActiveGame;
+    var game = Games.ActiveGame;
     if (game == null)
       throw new InvalidOperationException(
         "Active game is null, but game is active?");
@@ -33,9 +24,9 @@ public class GamePlayerActionsListener(IServiceProvider provider) : IListener {
 
   [EventHandler]
   public void OnPlayerDamage(PlayerDamagedEvent ev) {
-    if (!games.IsGameActive()) return;
+    if (!Games.IsGameActive()) return;
 
-    var game = games.ActiveGame;
+    var game = Games.ActiveGame;
     if (game == null)
       throw new InvalidOperationException(
         "Active game is null, but game is active?");
@@ -45,9 +36,9 @@ public class GamePlayerActionsListener(IServiceProvider provider) : IListener {
 
   [EventHandler]
   public void OnPlayerAssignedRole(PlayerRoleAssignEvent ev) {
-    if (!games.IsGameActive()) return;
+    if (!Games.IsGameActive()) return;
 
-    var game = games.ActiveGame;
+    var game = Games.ActiveGame;
     if (game == null)
       throw new InvalidOperationException(
         "Active game is null, but game is active?");

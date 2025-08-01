@@ -2,19 +2,12 @@
 
 namespace TTT.API.Game;
 
-public record EndReason {
-  public IRole? WinningRole { get; init; }
-  public string? Message { get; init; }
+public record EndReason(string? Message, IRole? WinningRole = null) {
+  public EndReason(IRole role) : this(null, role) { }
 
-  public EndReason(IRole role) { this.WinningRole = role; }
-
-  public EndReason(string msg) {
-    this.WinningRole = null;
-    this.Message     = msg;
+  public static EndReason TIMEOUT(IRole? defaultTeam) {
+    return new EndReason("Round ended due to timeout", defaultTeam);
   }
 
-  public static EndReason TIMEOUT()
-    => new EndReason("Round ended due to timeout");
-
-  public static EndReason ERROR(string err) => new EndReason(err);
+  public static EndReason ERROR(string err) { return new EndReason(err); }
 }

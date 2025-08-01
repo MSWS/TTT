@@ -1,3 +1,4 @@
+using JetBrains.Annotations;
 using TTT.API.Events;
 using TTT.API.Messages;
 using TTT.Game.Events.Player;
@@ -28,6 +29,7 @@ public class MessageModificationTest(IEventBus bus, IMessenger messenger) {
     public void Dispose() { bus.UnregisterListener(this); }
 
     [EventHandler]
+    [UsedImplicitly]
     public void OnMessage(PlayerMessageEvent ev) {
       ev.Message = MODIFIED_MESSAGE;
     }

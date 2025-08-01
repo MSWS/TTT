@@ -7,9 +7,9 @@ using TTT.Game.Events.Player;
 
 namespace TTT.CS2.GameHandlers;
 
-public class PlayerListeners(IEventBus bus,
+public class PlayerConnectionsHandler(IEventBus bus,
   IPlayerConverter<CCSPlayerController> converter) : IPluginModule {
-  public string Name => "PlayerListeners";
+  public string Name => nameof(PlayerConnectionsHandler);
   public string Version => GitVersionInformation.FullSemVer;
 
   public void Start() { }

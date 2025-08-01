@@ -7,7 +7,7 @@ using TTT.Game.Events.Game;
 
 namespace TTT.CS2.Listeners;
 
-public class RoundStartTimerListener(IServiceProvider provider) : IListener {
+public class RoundTimerListener(IServiceProvider provider) : IListener {
   private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
 
   private readonly GameConfig config = provider
@@ -28,5 +28,12 @@ public class RoundStartTimerListener(IServiceProvider provider) : IListener {
     RoundUtil.SetTimeRemaining((int)config.RoundCfg
      .RoundDuration(ev.Game.Players.Count)
      .TotalSeconds);
+  }
+
+  [EventHandler(IgnoreCanceled = true)]
+  public void OnRoundEnd(GameStateUpdateEvent ev) {
+    if (ev.NewState != State.FINISHED) return;
+    if (RoundUtil.GetTimeRemaining() <= 1) return;
+    RoundUtil.SetTimeRemaining(0);
   }
 }

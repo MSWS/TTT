@@ -2,7 +2,6 @@
 using TTT.API.Events;
 using TTT.API.Game;
 using TTT.API.Player;
-using TTT.Game;
 using TTT.Game.Events.Player;
 using TTT.Game.Listeners;
 using TTT.Game.Roles;
@@ -26,7 +25,7 @@ public class RoundEndingTest {
 
   [Fact]
   public void Round_EndsWhen_PlayerDies() {
-    bus.RegisterListener(new GameEndListener(provider));
+    bus.RegisterListener(new PlayerCausesEndListener(provider));
 
     var dier = finder.AddPlayer(TestPlayer.Random());
     finder.AddPlayer(TestPlayer.Random());
@@ -41,7 +40,7 @@ public class RoundEndingTest {
 
   [Fact]
   public void Round_EndsWhen_PlayerLeaves() {
-    bus.RegisterListener(new GameEndListener(provider));
+    bus.RegisterListener(new PlayerCausesEndListener(provider));
     bus.RegisterListener(new PlayerDiesOnLeaveListener(provider));
 
     var leaver = finder.AddPlayer(TestPlayer.Random());
@@ -56,7 +55,7 @@ public class RoundEndingTest {
 
   [Fact]
   public void Round_EndsWhen_InnosWin() {
-    bus.RegisterListener(new GameEndListener(provider));
+    bus.RegisterListener(new PlayerCausesEndListener(provider));
 
     finder.AddPlayer(TestPlayer.Random());
     finder.AddPlayer(TestPlayer.Random());
@@ -74,7 +73,7 @@ public class RoundEndingTest {
 
   [Fact]
   public void Round_EndsWhen_TraitorsWin() {
-    bus.RegisterListener(new GameEndListener(provider));
+    bus.RegisterListener(new PlayerCausesEndListener(provider));
 
     finder.AddPlayer(TestPlayer.Random());
     finder.AddPlayer(TestPlayer.Random());
@@ -92,7 +91,7 @@ public class RoundEndingTest {
 
   [Fact]
   public void Round_ContinuesWhen_InnosLeft() {
-    bus.RegisterListener(new GameEndListener(provider));
+    bus.RegisterListener(new PlayerCausesEndListener(provider));
     bus.RegisterListener(new PlayerDiesOnLeaveListener(provider));
 
     finder.AddPlayer(TestPlayer.Random());

@@ -35,7 +35,7 @@ public class PlayerDamagedEvent(IOnlinePlayer player, IOnlinePlayer? attacker,
   public int ArmorRemaining { get; private set; }
   public int DmgDealt { get; private set; } = dmgDealt;
   public int HpLeft { get; private set; } = hpLeft;
-  public string? Weapon { get; private set; } = null;
+  public string? Weapon { get; private set; }
   public bool IsCanceled { get; set; } = false;
 
   public PlayerDamagedEvent WithAttacker(IOnlinePlayer? attacker) {

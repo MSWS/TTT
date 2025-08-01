@@ -1,3 +1,4 @@
+using JetBrains.Annotations;
 using TTT.API.Events;
 using TTT.API.Messages;
 using TTT.API.Player;
@@ -27,6 +28,7 @@ public class JoinMessageTest(IEventBus bus, IMessenger msg,
     public void Dispose() { bus.UnregisterListener(this); }
 
     [EventHandler]
+    [UsedImplicitly]
     public void OnJoin(PlayerJoinEvent ev) {
       msg.Message(ev.Player, "Hello, World!");
     }

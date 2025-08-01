@@ -31,9 +31,16 @@ jobs:
         with:
           dotnet-version: 8.0.x
 
+      - name: Build Locale
+        run: |
+          mkdir -p build/TTT/lang
+          dotnet restore Locale/Locale.csproj
+          dotnet build Locale/Locale.csproj --no-restore -c Release
+          cp lang/*.json build/TTT/lang
+
       - run: |
           dotnet restore TTT/Plugin/Plugin.csproj
-          dotnet publish TTT/Plugin/Plugin.csproj --no-restore --configuration Release -o build/TTT
+          dotnet publish TTT/Plugin/Plugin.csproj --no-restore -c Release -o build/TTT
 
       - uses: actions/upload-artifact@v4.0.0
         with:

@@ -14,23 +14,20 @@ using TTT.Game.Roles;
 namespace TTT.Game;
 
 public class RoundBasedGame(IServiceProvider provider) : IGame {
-  #region classDeps
+  private readonly GameConfig config = provider
+   .GetRequiredService<IStorage<GameConfig>>()
+   .Load()
+   .GetAwaiter()
+   .GetResult();
 
-  private readonly IRoleAssigner assigner =
-    provider.GetRequiredService<IRoleAssigner>();
+  private readonly List<IPlayer> players = [];
 
-  private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
+  private readonly List<IRole> roles = [
+    new InnocentRole(provider), new TraitorRole(provider),
+    new DetectiveRole(provider)
+  ];
 
-  private readonly IScheduler scheduler =
-    provider.GetRequiredService<IScheduler>();
-
-  private readonly IPlayerFinder finder =
-    provider.GetRequiredService<IPlayerFinder>();
-
-  private readonly IOnlineMessenger? onlineMessenger =
-    provider.GetService<IOnlineMessenger>();
-
-  #endregion
+  private State state = State.WAITING;
 
   public ICollection<IPlayer> Players => players;
 
@@ -41,26 +38,6 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
   public DateTime? FinishedAt { get; protected set; }
 
   public IRole? WinningRole { get; set; }
-
-  public SortedDictionary<DateTime, ISet<IAction>> Actions {
-    get;
-    protected set;
-  } = new();
-
-  private readonly List<IPlayer> players = [];
-
-  private readonly List<IRole> roles = [
-    new InnocentRole(provider), new TraitorRole(provider),
-    new DetectiveRole(provider)
-  ];
-
-  private readonly GameConfig config = provider
-   .GetRequiredService<IStorage<GameConfig>>()
-   .Load()
-   .GetAwaiter()
-   .GetResult();
-
-  private State state = State.WAITING;
 
   public State State {
     set {
@@ -127,13 +104,13 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
     onlineMessenger?.MessageAll(finder,
       WinningRole == null ?
         reason?.Message ?? "Game ended." :
-        $"{WinningRole.Name} won the game!");
+        reason?.Message ?? $"{WinningRole.Name} won the game!");
   }
 
   public void Dispose() {
     players.Clear();
     roles.Clear();
-    Actions.Clear();
+    Logger.ClearActions();
   }
 
   private void startRound() {
@@ -151,4 +128,22 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
     assigner.AssignRoles(finder.GetOnline(), roles);
     players.AddRange(finder.GetOnline());
   }
+
+  #region classDeps
+
+  private readonly IRoleAssigner assigner =
+    provider.GetRequiredService<IRoleAssigner>();
+
+  private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
+
+  private readonly IScheduler scheduler =
+    provider.GetRequiredService<IScheduler>();
+
+  private readonly IPlayerFinder finder =
+    provider.GetRequiredService<IPlayerFinder>();
+
+  private readonly IOnlineMessenger? onlineMessenger =
+    provider.GetService<IOnlineMessenger>();
+
+  #endregion
 }
