@@ -4,12 +4,8 @@ using Xunit;
 
 namespace TTT.Test.Game.Command;
 
-public class CommandManagerTests {
-  private readonly CommandManager manager;
-
-  public CommandManagerTests(IServiceProvider provider) {
-    manager = new CommandManager(provider);
-  }
+public class CommandManagerTests(IServiceProvider provider) {
+  private readonly CommandManager manager = new(provider);
 
   [Fact]
   public void RegisterCommand_AddsAllAliases() {
