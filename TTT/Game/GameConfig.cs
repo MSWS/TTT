@@ -23,6 +23,7 @@ public record GameConfig {
 
   public record RoundConfig {
     public TimeSpan CountDownDuration { get; init; } = TimeSpan.FromSeconds(10);
+    public TimeSpan TimeBetweenRounds { get; init; } = TimeSpan.FromSeconds(5);
     public int MinimumPlayers { get; init; } = 2;
 
     public virtual TimeSpan RoundDuration(int players) {

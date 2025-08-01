@@ -79,6 +79,10 @@ public class CS2GameConfig : IStorage<GameConfig>, IPluginModule {
     "weapon_knife,weapon_glock", ConVarFlags.FCVAR_NONE,
     new ItemValidator(allowMultiple: true));
 
+  public static readonly FakeConVar<int> CV_TIME_BETWEEN_ROUNDS = new(
+    "css_ttt_time_between_rounds", "Time to wait between rounds in seconds", 5,
+    ConVarFlags.FCVAR_NONE, new RangeValidator<int>(1, 60));
+
   public void Dispose() { }
   public string Name => "CS2GameConfig";
   public string Version => GitVersionInformation.FullSemVer;
@@ -118,6 +122,7 @@ public class CS2GameConfig : IStorage<GameConfig>, IPluginModule {
       RoundCfg = new CS2RoundConfig {
         CountDownDuration = TimeSpan.FromSeconds(CV_ROUND_COUNTDOWN.Value),
         MinimumPlayers    = CV_MINIMUM_PLAYERS.Value,
+        TimeBetweenRounds = TimeSpan.FromSeconds(CV_TIME_BETWEEN_ROUNDS.Value),
       }
     });
   }

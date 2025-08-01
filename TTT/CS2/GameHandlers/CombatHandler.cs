@@ -7,7 +7,7 @@ using TTT.Game.Events.Player;
 
 namespace TTT.CS2.GameHandlers;
 
-public class CombatListeners(IEventBus bus,
+public class CombatHandler(IEventBus bus,
   IPlayerConverter<CCSPlayerController> converter) : IPluginModule {
   public void Dispose() { }
   public string Name => "CombatListeners";

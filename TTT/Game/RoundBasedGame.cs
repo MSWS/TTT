@@ -127,7 +127,7 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
     onlineMessenger?.MessageAll(finder,
       WinningRole == null ?
         reason?.Message ?? "Game ended." :
-        $"{WinningRole.Name} won the game!");
+        reason?.Message ?? $"{WinningRole.Name} won the game!");
   }
 
   public void Dispose() {
