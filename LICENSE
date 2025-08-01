@@ -1,0 +1,83 @@
+Profit Disclosure License v1.0
+==================================
+
+Copyright (c) 2025 Isaac Boaz
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to use,
+copy, modify, and distribute the Software, subject to the following conditions:
+
+1. Definitions
+--------------
+"Modified versions" means any work containing the Software altered or
+adapted in any way.
+"Derivative works" means works based upon the Software, including
+translations, adaptations, or other modifications.
+"Combined works" means any software that relies on, depends on, builds on,
+or requires the Software to function in whole or in part.
+
+2. Non-Commercial Use
+---------------------
+You may use, copy, modify, and distribute the Software freely for any
+non-commercial purpose, provided that this license and the above copyright
+notice are included in all copies or substantial portions of the Software.
+
+3. Commercial and Monetized Network Use Obligations
+---------------------------------------------------
+If the Software, or any portion of it, is used in a project, product, service,
+or network-accessible application (e.g., SaaS, PaaS, hosted application) that
+generates revenue or is intended for commercial gain, whether direct or indirect,
+you must:
+
+a) Make the complete and corresponding source code of any modified versions,
+   derivative works, or combined works that include or depend on the Software
+   publicly and freely available under the terms of this same license; and
+
+b) Provide a clear and prominent offer to all users and customers of the
+   commercial product, service, or network application to obtain the full source
+   code free of charge.
+
+4. Definition of Commercial Use
+-------------------------------
+"Commercial use" includes, but is not limited to:
+- Selling or licensing the Software or any derivative or combined work;
+- Offering the Software as part of a paid product or service;
+- Using the Software to provide services for a fee;
+- Monetizing access via advertising, subscriptions, or affiliates;
+- Internal use by for-profit entities in products that are not themselves
+  open-sourced.
+
+5. Patent Grant
+---------------
+The copyright holder grants you a limited, non-exclusive,
+royalty-free patent license to use, make, and distribute the Software as
+permitted by this license. This grant does not include any patent rights not
+necessarily infringed by the Software.
+
+6. No Sublicensing
+------------------
+You may not sublicense the Software under terms more permissive than this
+license.
+
+7. Termination
+--------------
+Any violation of this license terminates your rights under it immediately.
+Rights may be reinstated if you cure the violation within 30 days of notice.
+
+8. Governing Law and Jurisdiction
+---------------------------------
+This license shall be governed by and construed in accordance with the laws of
+the jurisdiction where the copyright holder resides, without regard to conflict
+of law principles. Any dispute shall be resolved exclusively in the courts of
+that jurisdiction.
+
+9. No Warranty
+--------------
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY, WHETHER IN AN
+ACTION OF CONTRACT, TORT, OR OTHERWISE, ARISING FROM, OUT OF, OR IN
+CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+SPDX-License-Identifier: Profit-Disclosure-1.0
