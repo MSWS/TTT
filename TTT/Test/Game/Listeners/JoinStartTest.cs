@@ -19,7 +19,7 @@ public class JoinStartTest(IServiceProvider provider) {
 
   [Fact]
   public void OnJoin_StartsGame_WhenTwoPlayersJoin() {
-    var listener = new PlayerJoinBaseStartListener(provider);
+    var listener = new PlayerJoinStarting(provider);
     listener.Start();
 
     finder.AddPlayer(TestPlayer.Random());
@@ -35,7 +35,7 @@ public class JoinStartTest(IServiceProvider provider) {
 
   [Fact]
   public void OnJoin_ShouldPrintStarting_OnJoin() {
-    var listener = new PlayerJoinBaseStartListener(provider);
+    var listener = new PlayerJoinStarting(provider);
     listener.Start();
 
     var player1 = TestPlayer.Random();

@@ -3,9 +3,9 @@ using TTT.Game.Events.Player;
 
 namespace TTT.Game.Listeners;
 
-public class PlayerJoinBaseStartListener(IServiceProvider provider)
+public class PlayerJoinStarting(IServiceProvider provider)
   : BaseListener(provider) {
-  public override string Name => nameof(PlayerJoinBaseStartListener);
+  public override string Name => nameof(PlayerJoinStarting);
 
   [EventHandler]
   public void OnJoin(PlayerJoinEvent ev) {
