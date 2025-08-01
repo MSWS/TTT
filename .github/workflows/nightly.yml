@@ -34,6 +34,7 @@ jobs:
       - name: Build Locale
         run: |
           mkdir -p build/TTT/lang
+          dotnet restore Locale/Locale.csproj
           dotnet build Locale/Locale.csproj --no-restore --configuration Release
           cp lang/*.json build/TTT/lang
 
