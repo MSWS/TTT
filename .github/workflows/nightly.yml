@@ -39,7 +39,7 @@ jobs:
         uses: GitTools/actions/gitversion/execute@v4.0.1
 
       - name: Output Version to Summary
-        run: "echo \"## GitVersion: `${{ steps.gitversion.outputs.fullSemVer }}`\" >> $GITHUB_STEP_SUMMARY"
+        run: "echo \"## GitVersion: ${{ steps.gitversion.outputs.fullSemVer }}\" >> $GITHUB_STEP_SUMMARY"
 
       - name: Build Locale
         run: |
