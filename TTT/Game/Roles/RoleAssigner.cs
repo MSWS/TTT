@@ -19,24 +19,31 @@ public class RoleAssigner(IServiceProvider provider) : IRoleAssigner {
   public void AssignRoles(ISet<IOnlinePlayer> players, IList<IRole> roles) {
     var  shuffled = players.OrderBy(_ => Guid.NewGuid()).ToHashSet();
     bool roleAssigned;
-    do {
-      roleAssigned = false;
-      foreach (var role in roles) {
-        var player = role.FindPlayerToAssign(shuffled);
-        if (player is null) continue;
+    do
+      roleAssigned = tryAssignRole(shuffled, roles);
+    while (roleAssigned);
+  }
 
-        var ev = new PlayerRoleAssignEvent(player, role);
-        bus.Dispatch(ev);
+  private bool tryAssignRole(ISet<IOnlinePlayer> players, IList<IRole> roles) {
+    var assigned = false;
 
-        if (ev.IsCanceled) continue;
+    foreach (var role in roles) {
+      var player = role.FindPlayerToAssign(players);
+      if (player is null) continue;
 
-        player.Roles.Add(ev.Role);
-        ev.Role.OnAssign(player);
-        roleAssigned = true;
+      var ev = new PlayerRoleAssignEvent(player, role);
+      bus.Dispatch(ev);
 
-        onlineMessenger?.BackgroundMsgAll(finder,
-          $"{player.Name} has been assigned the role of {role.Name}.");
-      }
-    } while (roleAssigned);
+      if (ev.IsCanceled) continue;
+
+      assigned = true;
+      player.Roles.Add(ev.Role);
+      ev.Role.OnAssign(player);
+
+      onlineMessenger?.BackgroundMsgAll(finder,
+        $"{player.Name} has been assigned the role of {role.Name}.");
+    }
+
+    return assigned;
   }
 }
