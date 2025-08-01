@@ -13,7 +13,7 @@ on:
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
-  
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -38,6 +38,9 @@ jobs:
         id: gitversion
         uses: GitTools/actions/gitversion/execute@v4.0.1
 
+      - name: Output Version to Summary
+        run: "echo \"## GitVersion: `${{ steps.gitversion.outputs.fullSemVer }}`\" >> $GITHUB_STEP_SUMMARY"
+
       - name: Build Locale
         run: |
           mkdir -p build/TTT/lang
@@ -51,13 +54,12 @@ jobs:
           dotnet publish TTT/Plugin/Plugin.csproj --no-restore -c Release -o build/TTT
 
       - name: Zip Output
-        run: |
-          version="${{ steps.gitversion.outputs.fullSemVer }}"
-          zip -r "ttt-${version}.zip" build/TTT
+        run: zip -r TTT.zip build/TTT
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ttt-${{ steps.gitversion.outputs.fullSemVer }}
-          path: ttt-${{ steps.gitversion.outputs.fullSemVer }}.zip
+          name: TTT
+          path: TTT.zip
           if-no-files-found: error
+
