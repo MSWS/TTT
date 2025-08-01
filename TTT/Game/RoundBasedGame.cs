@@ -116,14 +116,14 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
       return;
     }
 
-    FinishedAt = DateTime.Now;
-    State      = State.FINISHED;
-    var winningTeam = reason?.WinningTeam;
+    FinishedAt  = DateTime.Now;
+    State       = State.FINISHED;
+    WinningRole = reason?.WinningRole;
 
     onlineMessenger?.MessageAll(finder,
-      winningTeam == null ?
+      WinningRole == null ?
         reason?.Message ?? "Game ended." :
-        $"{winningTeam.Name} won the game!");
+        $"{WinningRole.Name} won the game!");
   }
 
   public void Dispose() {
