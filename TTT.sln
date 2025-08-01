@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Versioning", "Versioning\Ve
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Locale", "Locale\Locale.csproj", "{B5F91489-CD1B-42F2-9CF0-889604BD7C7E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shop", "Shop\Shop.csproj", "{478416D7-4996-41CC-BDDF-5BF50B505D0F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -54,6 +56,10 @@ Global
 		{B5F91489-CD1B-42F2-9CF0-889604BD7C7E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B5F91489-CD1B-42F2-9CF0-889604BD7C7E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B5F91489-CD1B-42F2-9CF0-889604BD7C7E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{478416D7-4996-41CC-BDDF-5BF50B505D0F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{478416D7-4996-41CC-BDDF-5BF50B505D0F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{478416D7-4996-41CC-BDDF-5BF50B505D0F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{478416D7-4996-41CC-BDDF-5BF50B505D0F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 	EndGlobalSection
