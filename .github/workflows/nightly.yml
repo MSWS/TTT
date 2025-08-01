@@ -53,13 +53,10 @@ jobs:
           dotnet restore TTT/Plugin/Plugin.csproj
           dotnet publish TTT/Plugin/Plugin.csproj --no-restore -c Release -o build/TTT
 
-      - name: Zip Output
-        run: zip -r TTT.zip build/TTT
-
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: TTT
-          path: TTT.zip
+          path: build/TTT
           if-no-files-found: error
 
