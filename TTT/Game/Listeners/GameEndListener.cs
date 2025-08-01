@@ -7,9 +7,9 @@ using TTT.Game.Roles;
 
 namespace TTT.Game.Listeners;
 
-public class PlayerDeathListener(IServiceProvider provider)
+public class GameEndListener(IServiceProvider provider)
   : BaseListener(provider) {
-  public override string Name { get; } = nameof(PlayerDeathListener);
+  public override string Name { get; } = nameof(GameEndListener);
 
   [EventHandler]
   public void OnKill(PlayerDeathEvent ev) {

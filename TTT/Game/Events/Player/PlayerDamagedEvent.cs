@@ -16,9 +16,16 @@ public class PlayerDamagedEvent(IOnlinePlayer player, IOnlinePlayer? attacker,
     ev.Health) {
     ArmorDamage    = ev.DmgArmor;
     ArmorRemaining = ev.Armor;
-    DmgDealt       = ev.DmgHealth;
-    HpLeft         = ev.Health;
     Weapon         = ev.Weapon;
+  }
+
+  public PlayerDamagedEvent(IPlayerConverter<CCSPlayerController> converter,
+    EventPlayerFalldamage ev) : this(
+    converter.GetPlayer(ev.Userid!) as IOnlinePlayer
+    ?? throw new InvalidOperationException(), null, (int)ev.Damage,
+    ev.Userid!.Health) {
+    ArmorDamage    = 0;
+    ArmorRemaining = ev.Userid.PawnArmor;
   }
 
   public override string Id => "basegame.event.player.damaged";
@@ -28,7 +35,7 @@ public class PlayerDamagedEvent(IOnlinePlayer player, IOnlinePlayer? attacker,
   public int ArmorRemaining { get; private set; }
   public int DmgDealt { get; private set; } = dmgDealt;
   public int HpLeft { get; private set; } = hpLeft;
-  public string Weapon { get; private set; } = string.Empty;
+  public string? Weapon { get; private set; } = null;
   public bool IsCanceled { get; set; } = false;
 
   public PlayerDamagedEvent WithAttacker(IOnlinePlayer? attacker) {

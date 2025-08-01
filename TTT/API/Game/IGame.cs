@@ -10,9 +10,10 @@ public interface IGame : IDisposable {
   /// </summary>
   ICollection<IPlayer> Players { get; }
 
+  IActionLogger Logger { get; }
+
   DateTime? StartedAt { get; }
   DateTime? FinishedAt { get; }
-  SortedDictionary<DateTime, ISet<IAction>> Actions { get; }
   IRole? WinningRole { get; set; }
 
   State State { get; set; }
