@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using TTT.API.Events;
 
 namespace TTT.API.Extensions;
 
@@ -67,5 +68,10 @@ public static class ServiceCollectionExtensions {
     collection.AddModBehavior<TExtension>();
     collection.AddTransient<TInterface, TExtension>(p
       => p.GetRequiredService<TExtension>());
+  }
+
+  public static void AddListener<TListener>(this IServiceCollection collection)
+    where TListener : class, IListener {
+    collection.AddScoped<IListener, TListener>();
   }
 }

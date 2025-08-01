@@ -30,6 +30,12 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 8.0.x
+          
+      - name: Build Locale
+        run: |
+          mkdir -p build/TTT/lang
+          dotnet build Locale/Locale.csproj --no-restore --configuration Release
+          cp lang/*.json build/TTT/lang
 
       - run: |
           dotnet restore TTT/Plugin/Plugin.csproj
