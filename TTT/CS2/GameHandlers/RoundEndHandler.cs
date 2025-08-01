@@ -4,7 +4,6 @@ using Microsoft.Extensions.DependencyInjection;
 using TTT.API;
 using TTT.API.Events;
 using TTT.API.Game;
-using TTT.Game;
 using TTT.Game.Roles;
 
 namespace TTT.CS2.GameHandlers;

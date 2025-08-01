@@ -1,9 +1,4 @@
-﻿using CounterStrikeSharp.API.Core;
-using Microsoft.Extensions.DependencyInjection;
-using TTT.API.Events;
-using TTT.API.Game;
-using TTT.API.Player;
-using TTT.Game.Actions;
+﻿using TTT.Game.Actions;
 using TTT.Game.Events.Player;
 using TTT.Game.Listeners;
 using Xunit;

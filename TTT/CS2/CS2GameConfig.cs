@@ -122,7 +122,7 @@ public class CS2GameConfig : IStorage<GameConfig>, IPluginModule {
       RoundCfg = new CS2RoundConfig {
         CountDownDuration = TimeSpan.FromSeconds(CV_ROUND_COUNTDOWN.Value),
         MinimumPlayers    = CV_MINIMUM_PLAYERS.Value,
-        TimeBetweenRounds = TimeSpan.FromSeconds(CV_TIME_BETWEEN_ROUNDS.Value),
+        TimeBetweenRounds = TimeSpan.FromSeconds(CV_TIME_BETWEEN_ROUNDS.Value)
       }
     });
   }

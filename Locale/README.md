@@ -5,7 +5,8 @@ In and of itself does not provide any translations, but rather provides a framew
 own translations.
 
 For convenience, Localizer runs as a CLI tool that converts YML files to JSON files, as YML is nicer to work with, but
-JSON is the format used for [CounterStrikeSharp](https://github.com/roflmuffin/CounterStrikeSharp)'s localization system.
+JSON is the format used for [CounterStrikeSharp](https://github.com/roflmuffin/CounterStrikeSharp)'s localization
+system.
 
 ## Usage
 

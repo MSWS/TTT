@@ -1,8 +1,4 @@
-﻿using System.Diagnostics.Tracing;
-using System.Reactive.Concurrency;
-using Microsoft.Extensions.DependencyInjection;
-using TTT.API.Events;
-using TTT.API.Game;
+﻿using TTT.API.Events;
 using TTT.Game.Actions;
 using TTT.Game.Events.Player;
 

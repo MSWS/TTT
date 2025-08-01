@@ -7,14 +7,14 @@ using Xunit;
 namespace TTT.Test.Game.Listeners;
 
 /// <summary>
-/// Base GameTest class to reduce boilerplate code in tests.
+///   Base GameTest class to reduce boilerplate code in tests.
 /// </summary>
 /// <param name="provider"></param>
 public class GameTest(IServiceProvider provider) {
+  protected readonly IEventBus Bus = provider.GetRequiredService<IEventBus>();
+
   protected readonly IPlayerFinder Finder =
     provider.GetRequiredService<IPlayerFinder>();
-
-  protected readonly IEventBus Bus = provider.GetRequiredService<IEventBus>();
 
   protected readonly IGameManager Games =
     provider.GetRequiredService<IGameManager>();

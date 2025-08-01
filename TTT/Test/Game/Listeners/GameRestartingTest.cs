@@ -10,14 +10,14 @@ namespace TTT.Test.Game.Listeners;
 
 public class GameRestartingTest(IServiceProvider provider)
   : GameTest(provider) {
-  private readonly TestScheduler scheduler =
-    provider.GetRequiredService<TestScheduler>();
-
   private readonly GameConfig config = provider
    .GetRequiredService<IStorage<GameConfig>>()
    .Load()
    .GetAwaiter()
    .GetResult();
+
+  private readonly TestScheduler scheduler =
+    provider.GetRequiredService<TestScheduler>();
 
   [Fact]
   public void Game_Restarts_OnEnd() {

@@ -1,4 +1,3 @@
-using System.Diagnostics.Tracing;
 using TTT.API.Events;
 using TTT.API.Game;
 using TTT.API.Role;

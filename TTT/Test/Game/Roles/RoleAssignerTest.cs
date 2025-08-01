@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using TTT.API.Events;
 using TTT.API.Player;
 using TTT.API.Role;

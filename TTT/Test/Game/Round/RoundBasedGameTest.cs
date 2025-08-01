@@ -1,26 +1,21 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyModel;
 using Microsoft.Reactive.Testing;
 using TTT.API.Events;
 using TTT.API.Game;
 using TTT.API.Player;
-using TTT.Game;
-using TTT.Game.Events.Player;
-using TTT.Game.Listeners;
 using Xunit;
 
 namespace TTT.Test.Game.Round;
 
 public class RoundBasedGameTest {
+  private readonly IEventBus bus;
   private readonly IPlayerFinder finder;
 
-  private readonly IEventBus bus;
-
-  private readonly TestScheduler scheduler;
+  private readonly IGame game;
 
   private readonly IGameManager manager;
 
-  private readonly IGame game;
+  private readonly TestScheduler scheduler;
 
   public RoundBasedGameTest(IServiceProvider provider) {
     finder    = provider.GetRequiredService<IPlayerFinder>();
@@ -141,7 +136,7 @@ public class RoundBasedGameTest {
 
   [Fact]
   public void EndGame_ShouldDoNothing_WhenNotInProgress() {
-    game.EndGame(null);
+    game.EndGame();
 
     Assert.Equal(State.WAITING, game.State);
     Assert.Null(game.FinishedAt);

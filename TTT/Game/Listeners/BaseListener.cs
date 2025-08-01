@@ -11,15 +11,15 @@ public abstract class BaseListener(IServiceProvider provider)
   : IListener, ITerrorModule {
   protected readonly IEventBus Bus = provider.GetRequiredService<IEventBus>();
 
-  protected readonly IGameManager Games =
-    provider.GetRequiredService<IGameManager>();
-
   protected readonly IPlayerFinder Finder =
     provider.GetRequiredService<IPlayerFinder>();
 
+  protected readonly IGameManager Games =
+    provider.GetRequiredService<IGameManager>();
+
   protected readonly IOnlineMessenger Messenger =
     provider.GetRequiredService<IOnlineMessenger>();
-  
+
   protected readonly IServiceProvider Provider = provider;
 
   public virtual void Dispose() { Bus.UnregisterListener(this); }

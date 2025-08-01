@@ -10,17 +10,17 @@ namespace TTT.Game.Listeners;
 
 public class GameRestartListener(IServiceProvider provider)
   : BaseListener(provider) {
-  private readonly IGameManager games = provider
-   .GetRequiredService<IGameManager>();
-
-  private readonly IScheduler scheduler =
-    provider.GetRequiredService<IScheduler>();
-
   private readonly GameConfig config = provider
    .GetRequiredService<IStorage<GameConfig>>()
    .Load()
    .GetAwaiter()
    .GetResult();
+
+  private readonly IGameManager games = provider
+   .GetRequiredService<IGameManager>();
+
+  private readonly IScheduler scheduler =
+    provider.GetRequiredService<IScheduler>();
 
   public override string Name => nameof(GameRestartListener);
 

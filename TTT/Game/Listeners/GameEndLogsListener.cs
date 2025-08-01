@@ -21,9 +21,8 @@ public class GameEndLogsListener(IServiceProvider provider)
   public void OnGameEnd(GameStateUpdateEvent ev) {
     if (ev.NewState != State.FINISHED) return;
     var logs = ev.Game.Logger.GetActions();
-    foreach (var (timestamp, action) in logs) {
+    foreach (var (timestamp, action) in logs)
       _ = messenger.BackgroundMsgAll(finder,
         $"[{timestamp}] {action.Format()}");
-    }
   }
 }
