@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Reactive.Testing;
-using TTT.API.Events;
 using TTT.API.Game;
 using TTT.API.Player;
 using Xunit;
@@ -8,21 +7,17 @@ using Xunit;
 namespace TTT.Test.Game.Round;
 
 public class RoundBasedGameTest {
-  private readonly IEventBus bus;
   private readonly IPlayerFinder finder;
 
   private readonly IGame game;
-
-  private readonly IGameManager manager;
 
   private readonly TestScheduler scheduler;
 
   public RoundBasedGameTest(IServiceProvider provider) {
     finder    = provider.GetRequiredService<IPlayerFinder>();
-    bus       = provider.GetRequiredService<IEventBus>();
     scheduler = provider.GetRequiredService<TestScheduler>();
-    manager   = provider.GetRequiredService<IGameManager>();
-    game      = manager.CreateGame() ?? throw new InvalidOperationException();
+    var manager = provider.GetRequiredService<IGameManager>();
+    game = manager.CreateGame() ?? throw new InvalidOperationException();
   }
 
   [Fact]

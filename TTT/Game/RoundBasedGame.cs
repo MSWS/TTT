@@ -29,11 +29,6 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
 
   private State state = State.WAITING;
 
-  public SortedDictionary<DateTime, ISet<IAction>> Actions {
-    get;
-    protected set;
-  } = new();
-
   public ICollection<IPlayer> Players => players;
 
   public IActionLogger Logger { get; } = new SimpleLogger(provider
@@ -115,7 +110,7 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
   public void Dispose() {
     players.Clear();
     roles.Clear();
-    Actions.Clear();
+    Logger.ClearActions();
   }
 
   private void startRound() {

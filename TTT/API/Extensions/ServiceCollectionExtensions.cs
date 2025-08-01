@@ -27,7 +27,7 @@ public static class ServiceCollectionExtensions {
   }
 
   /// <summary>
-  ///   Add a <see cref="IPluginBehavior" /> to the global service collection
+  ///   Add a <see cref="ITerrorModule" /> to the global service collection
   /// </summary>
   /// <param name="collection"></param>
   /// <typeparam name="TExtension"></typeparam>

@@ -1,3 +1,4 @@
+using JetBrains.Annotations;
 using TTT.API.Events;
 using TTT.API.Game;
 using TTT.API.Role;
@@ -11,6 +12,7 @@ public class PlayerCausesEndListener(IServiceProvider provider)
   public override string Name { get; } = nameof(PlayerCausesEndListener);
 
   [EventHandler]
+  [UsedImplicitly]
   public void OnKill(PlayerDeathEvent ev) {
     if (!Games.IsGameActive()) return;
 
@@ -25,6 +27,7 @@ public class PlayerCausesEndListener(IServiceProvider provider)
   }
 
   [EventHandler]
+  [UsedImplicitly]
   public void OnLeave(PlayerLeaveEvent ev) {
     if (!Games.IsGameActive()) return;
 

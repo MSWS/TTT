@@ -1,4 +1,5 @@
-﻿using TTT.API.Events;
+﻿using JetBrains.Annotations;
+using TTT.API.Events;
 using TTT.Game.Actions;
 using TTT.Game.Events.Player;
 
@@ -9,6 +10,7 @@ public class GamePlayerActionsListener(IServiceProvider provider)
   public override string Name => nameof(GamePlayerActionsListener);
 
   [EventHandler]
+  [UsedImplicitly]
   public void OnPlayerKill(PlayerDeathEvent ev) {
     if (!Games.IsGameActive()) return;
 

@@ -2,15 +2,12 @@
 using CounterStrikeSharp.API.Core.Attributes.Registration;
 using Microsoft.Extensions.DependencyInjection;
 using TTT.API;
-using TTT.API.Events;
 using TTT.API.Game;
 using TTT.Game.Roles;
 
 namespace TTT.CS2.GameHandlers;
 
 public class RoundEndHandler(IServiceProvider provider) : IPluginModule {
-  private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
-
   private readonly IGameManager games =
     provider.GetRequiredService<IGameManager>();
 
@@ -22,7 +19,7 @@ public class RoundEndHandler(IServiceProvider provider) : IPluginModule {
   public void Start() { }
 
   [GameEventHandler]
-  public HookResult OnRoundEnd(EventRoundEnd ev, GameEventInfo _) {
+  public HookResult OnRoundEnd(EventRoundEnd _, GameEventInfo _1) {
     if (!games.IsGameActive()) return HookResult.Continue;
     var game = games.ActiveGame ?? throw new InvalidOperationException(
       "Active game is null, but round end event was triggered.");

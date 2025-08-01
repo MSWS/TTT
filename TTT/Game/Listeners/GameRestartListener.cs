@@ -1,5 +1,6 @@
 ﻿using System.Reactive.Concurrency;
 using System.Reactive.Linq;
+using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using TTT.API.Events;
 using TTT.API.Game;
@@ -25,6 +26,7 @@ public class GameRestartListener(IServiceProvider provider)
   public override string Name => nameof(GameRestartListener);
 
   [EventHandler]
+  [UsedImplicitly]
   public void OnGameEnd(GameStateUpdateEvent ev) {
     if (ev.NewState != State.FINISHED) return;
     Observable.Timer(config.RoundCfg.TimeBetweenRounds, scheduler)

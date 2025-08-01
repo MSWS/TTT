@@ -39,23 +39,7 @@ public class CommandManager(IServiceProvider provider) : ICommandManager {
     }
 
     if (!CanExecute(executor, command)) {
-      if (executor == null) {
-        info.ReplySync(localizer[GameMsgs.GENERIC_NO_PERMISSION]);
-        return CommandResult.NO_PERMISSION;
-      }
-
-      if (command.RequiredFlags.Any(f => !permissions.HasFlags(executor, f))) {
-        info.ReplySync(localizer[
-          GameMsgs.GENERIC_NO_PERMISSION_NODE(string.Join(", ",
-            command.RequiredFlags))]);
-        return CommandResult.NO_PERMISSION;
-      }
-
-      if (command.RequiredGroups.Any(g => permissions.InGroups(executor, g)))
-        return CommandResult.NO_PERMISSION;
-      info.ReplySync(localizer[
-        GameMsgs.GENERIC_NO_PERMISSION_RANK(string.Join(", ",
-          command.RequiredGroups))]);
+      printNoPermission(executor, command, info);
       return CommandResult.NO_PERMISSION;
     }
 
@@ -74,5 +58,24 @@ public class CommandManager(IServiceProvider provider) : ICommandManager {
     }
 
     return result;
+  }
+
+  private void printNoPermission(IOnlinePlayer? executor, ICommand command,
+    ICommandInfo info) {
+    if (executor == null) {
+      info.ReplySync(localizer[GameMsgs.GENERIC_NO_PERMISSION]);
+      return;
+    }
+
+    if (command.RequiredFlags.Any(f => !permissions.HasFlags(executor, f))) {
+      info.ReplySync(localizer[
+        GameMsgs.GENERIC_NO_PERMISSION_NODE(string.Join(", ",
+          command.RequiredFlags))]);
+      return;
+    }
+
+    info.ReplySync(localizer[
+      GameMsgs.GENERIC_NO_PERMISSION_RANK(string.Join(", ",
+        command.RequiredGroups))]);
   }
 }

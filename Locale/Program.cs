@@ -10,33 +10,33 @@ public static class Program {
 
   public static void Main(string[] args) {
     if (args.Length < 1) {
-      PrintUsage();
+      printUsage();
       Environment.Exit(1);
     }
 
-    var (inputPaths, outputPath) = ParseArguments(args);
+    var (inputPaths, outputPath) = parseArguments(args);
 
-    ValidateInputFiles(inputPaths);
+    validateInputFiles(inputPaths);
 
-    var merged = MergeYamlFiles(inputPaths);
+    var merged = mergeYamlFiles(inputPaths);
 
-    WriteJsonOutput(merged, outputPath);
+    writeJsonOutput(merged, outputPath);
   }
 
-  private static void PrintUsage() {
+  private static void printUsage() {
     Console.Error.WriteLine("Usage:");
     Console.Error.WriteLine("  YamlToJson <input.yml>");
     Console.Error.WriteLine(
       "  YamlToJson <input1.yml> <input2.yml> ... --out <output.json>");
   }
 
-  private static (string[] inputPaths, string outputPath) ParseArguments(
+  private static (string[] inputPaths, string outputPath) parseArguments(
     string[] args) {
     string   outputPath;
     string[] inputPaths;
 
     if (args.Length == 1) {
-      inputPaths = new[] { args[0] };
+      inputPaths = [args[0]];
       outputPath = Path.ChangeExtension(args[0], ".json");
     } else {
       var outIndex = Array.IndexOf(args, "--out");
@@ -53,7 +53,7 @@ public static class Program {
     return (inputPaths, outputPath);
   }
 
-  private static void ValidateInputFiles(string[] inputPaths) {
+  private static void validateInputFiles(string[] inputPaths) {
     foreach (var input in inputPaths)
       if (!File.Exists(input)) {
         Console.Error.WriteLine($"Error: File not found - {input}");
@@ -62,7 +62,7 @@ public static class Program {
   }
 
   private static Dictionary<string, string>
-    MergeYamlFiles(string[] inputPaths) {
+    mergeYamlFiles(string[] inputPaths) {
     var deserializer = new DeserializerBuilder()
      .WithNamingConvention(NullNamingConvention.Instance)
      .Build();
@@ -89,7 +89,7 @@ public static class Program {
     return merged;
   }
 
-  private static void WriteJsonOutput(Dictionary<string, string> merged,
+  private static void writeJsonOutput(Dictionary<string, string> merged,
     string outputPath) {
     var dir = Path.GetDirectoryName(outputPath);
     if (!string.IsNullOrEmpty(dir) && !Directory.Exists(dir))

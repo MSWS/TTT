@@ -3,7 +3,7 @@ namespace TTT.API.Events;
 [AttributeUsage(AttributeTargets.Method)]
 public class EventHandlerAttribute : Attribute {
   public uint Priority { get; set; } = Events.Priority.DEFAULT;
-  public bool IgnoreCanceled { get; set; } = false;
+  public bool IgnoreCanceled { get; set; }
 }
 
 /// <summary>

@@ -13,5 +13,5 @@ public class PlayerRoleAssignEvent(IPlayer player, IRole role)
   /// </summary>
   public IRole Role { get; internal set; } = role;
 
-  public bool IsCanceled { get; set; } = false;
+  public bool IsCanceled { get; set; }
 }
