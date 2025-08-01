@@ -1,4 +1,3 @@
-using Microsoft.Extensions.Localization;
 using TTT.API.Player;
 using TTT.Locale;
 

@@ -15,7 +15,7 @@ public class GameRestartListener(IServiceProvider provider)
    .GetRequiredService<IStorage<GameConfig>>()
    .Load()
    .GetAwaiter()
-   .GetResult();
+   .GetResult() ?? new GameConfig();
 
   private readonly IScheduler scheduler =
     provider.GetRequiredService<IScheduler>();

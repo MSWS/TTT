@@ -9,6 +9,8 @@ public interface IGame : IDisposable {
   ///   Spectators are not included in this list.
   /// </summary>
   ICollection<IPlayer> Players { get; }
+  
+  public IList<IRole> Roles { get; }
 
   IActionLogger Logger { get; }
 

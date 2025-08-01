@@ -4,11 +4,6 @@ using TTT.API.Player;
 namespace TTT.Shop;
 
 public class Shop : ITerrorModule, IShop {
-  public void Dispose() { }
-  public string Name => "TTT.Shop";
-  public string Version => GitVersionInformation.FullSemVer;
-  public void Start() { }
-
   private readonly Dictionary<IOnlinePlayer, int> balances = new();
 
   public Task<int> Load(IOnlinePlayer key) {
@@ -30,4 +25,9 @@ public class Shop : ITerrorModule, IShop {
     balances[key] = newData;
     return Task.CompletedTask;
   }
+
+  public void Dispose() { }
+  public string Name => "TTT.Shop";
+  public string Version => GitVersionInformation.FullSemVer;
+  public void Start() { }
 }
