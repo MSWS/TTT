@@ -17,41 +17,34 @@ public record ShopConfig {
   public int CreditsForDetectiveVTraitorKill { get; init; } = 8;
   public int CreditsForAnyKill { get; init; } = 2;
 
-  private readonly Dictionary<Type, Dictionary<Type, int>> creditsForKillCache =
-    new() {
-      {
-        typeof(TraitorRole),
-        new() {
-          { typeof(TraitorRole), -5 },
-          { typeof(InnocentRole), 4 },
-          { typeof(DetectiveRole), 6 }
-        }
-      }, {
-        typeof(InnocentRole),
-        new() {
-          { typeof(TraitorRole), 8 },
-          { typeof(InnocentRole), -4 },
-          { typeof(DetectiveRole), -6 }
-        }
-      }, {
-        typeof(DetectiveRole),
-        new() {
-          { typeof(TraitorRole), 8 },
-          { typeof(InnocentRole), -6 },
-          { typeof(DetectiveRole), -8 }
-        }
+  private readonly Dictionary<Type, Dictionary<Type, int>>
+    creditsForKillDictionary = new() {
+      [typeof(TraitorRole)] = {
+        [typeof(TraitorRole)]   = -5,
+        [typeof(InnocentRole)]  = 4,
+        [typeof(DetectiveRole)] = 6
+      },
+      [typeof(InnocentRole)] = {
+        [typeof(TraitorRole)]   = 8,
+        [typeof(InnocentRole)]  = -4,
+        [typeof(DetectiveRole)] = -6
+      },
+      [typeof(DetectiveRole)] = {
+        [typeof(TraitorRole)]   = 8,
+        [typeof(InnocentRole)]  = -6,
+        [typeof(DetectiveRole)] = -8
       }
     };
 
-
   public int CreditsForKill(IOnlinePlayer attacker, IOnlinePlayer victim) {
     var attackerRole = attacker.Roles.FirstOrDefault(r
-      => creditsForKillCache.ContainsKey(r.GetType()));
+      => creditsForKillDictionary.ContainsKey(r.GetType()));
     if (attackerRole == null) return CreditsForAnyKill;
     var victimRole = victim.Roles.FirstOrDefault(r
-      => creditsForKillCache[attackerRole.GetType()].ContainsKey(r.GetType()));
+      => creditsForKillDictionary[attackerRole.GetType()]
+       .ContainsKey(r.GetType()));
     return victimRole == null ?
       CreditsForAnyKill :
-      creditsForKillCache[attackerRole.GetType()][victimRole.GetType()];
+      creditsForKillDictionary[attackerRole.GetType()][victimRole.GetType()];
   }
 }

@@ -8,5 +8,5 @@ public interface IMessenger {
   /// </summary>
   /// <param name="player">The player to send the message to.</param>
   /// <param name="message">The message to send</param>
-  Task<bool> Message(IPlayer player, string message);
+  Task<bool> Message(IPlayer? player, string message);
 }
