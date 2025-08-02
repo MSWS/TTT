@@ -18,6 +18,7 @@ public class CS2CommandManager(IServiceProvider provider,
     hotReload = baseReload;
 
     //Add Commands Here
+    registerCommand(new TTTCommand(provider));
 
     foreach (var command in provider.GetServices<ICommand>()) {
       command.Start();

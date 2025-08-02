@@ -3,15 +3,16 @@ using TTT.API.Player;
 namespace TTT.API.Messages;
 
 public interface IOnlineMessenger : IMessenger {
-  Task<bool> IMessenger.Message(IPlayer player, string message) {
-    if (player is not IOnlinePlayer onlinePlayer)
+  Task<bool> IMessenger.Message(IPlayer? player, string message) {
+    IOnlinePlayer? online = player as IOnlinePlayer;
+    if (player is not null && player is not IOnlinePlayer)
       return
         Task.FromResult(false); // Cannot send message to non-online players
 
-    return Message(onlinePlayer, message);
+    return Message(online, message);
   }
 
-  Task<bool> Message(IOnlinePlayer player, string message);
+  Task<bool> Message(IOnlinePlayer? player, string message);
 
   async Task<bool> MessageAll(IPlayerFinder finder, string message) {
     var tasks = finder.GetOnline()

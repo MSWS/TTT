@@ -16,7 +16,7 @@ public static class CS2ServiceCollection {
      .AddScoped<IPlayerConverter<CCSPlayerController>, CCPlayerConverter>();
     collection.AddScoped<IPlayerFinder, CS2PlayerFinder>();
     collection.AddScoped<IStorage<GameConfig>, CS2GameConfig>();
-    collection.AddScoped<CS2CommandManager>();
+    collection.AddPluginBehavior<CS2CommandManager>();
 
     // GameHandlers
     collection.AddPluginBehavior<CombatHandler>();
