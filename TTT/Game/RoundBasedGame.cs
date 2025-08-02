@@ -142,8 +142,8 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
   private readonly IPlayerFinder finder =
     provider.GetRequiredService<IPlayerFinder>();
 
-  private readonly IOnlineMessenger? onlineMessenger =
-    provider.GetService<IOnlineMessenger>();
+  private readonly IMessenger? onlineMessenger =
+    provider.GetService<IMessenger>();
 
   #endregion
 }

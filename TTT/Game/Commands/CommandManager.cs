@@ -6,20 +6,22 @@ using TTT.Locale;
 namespace TTT.Game.Commands;
 
 public class CommandManager(IServiceProvider provider) : ICommandManager {
-  private readonly Dictionary<string, ICommand> commands = new();
+  protected readonly Dictionary<string, ICommand> Commands = new();
 
+  protected readonly IServiceProvider Provider = provider;
+  
   private readonly IMsgLocalizer localizer =
     provider.GetRequiredService<IMsgLocalizer>();
 
   private readonly IPermissionManager permissions =
     provider.GetRequiredService<IPermissionManager>();
 
-  public bool RegisterCommand(ICommand command) {
-    return command.Aliases.All(alias => commands.TryAdd(alias, command));
+  public virtual bool RegisterCommand(ICommand command) {
+    return command.Aliases.All(alias => Commands.TryAdd(alias, command));
   }
 
   public bool UnregisterCommand(ICommand command) {
-    return command.Aliases.All(alias => commands.Remove(alias));
+    return command.Aliases.All(alias => Commands.Remove(alias));
   }
 
   public bool CanExecute(IOnlinePlayer? executor, ICommand command) {
@@ -33,7 +35,7 @@ public class CommandManager(IServiceProvider provider) : ICommandManager {
     ICommandInfo info) {
     if (info.ArgCount == 0) return CommandResult.ERROR;
 
-    if (!commands.TryGetValue(info.Args[0], out var command)) {
+    if (!Commands.TryGetValue(info.Args[0], out var command)) {
       info.ReplySync(localizer[GameMsgs.GENERIC_UNKNOWN(info.Args[0])]);
       return CommandResult.UNKNOWN_COMMAND;
     }

@@ -1,5 +1,4 @@
 using TTT.API.Player;
-using TTT.API.Role;
 using TTT.Game.Roles;
 
 namespace TTT.Shop;

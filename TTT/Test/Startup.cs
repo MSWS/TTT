@@ -21,9 +21,7 @@ public class Startup {
   public void ConfigureServices(IServiceCollection services) {
     services.AddScoped<IEventBus, EventBus>();
     services.AddScoped<IPlayerFinder, FakePlayerFinder>();
-    services.AddScoped<IOnlineMessenger, FakeMessenger>();
-    services.AddScoped<IMessenger>(s
-      => s.GetRequiredService<IOnlineMessenger>());
+    services.AddScoped<IMessenger, FakeMessenger>();
     services.AddScoped<IRoleAssigner, RoleAssigner>();
     services.AddScoped<TestScheduler>();
     services.AddScoped<IScheduler>(s => s.GetRequiredService<TestScheduler>());

@@ -13,8 +13,8 @@ public class RoleAssigner(IServiceProvider provider) : IRoleAssigner {
   private readonly IPlayerFinder finder =
     provider.GetRequiredService<IPlayerFinder>();
 
-  private readonly IOnlineMessenger? onlineMessenger =
-    provider.GetService<IOnlineMessenger>();
+  private readonly IMessenger? onlineMessenger =
+    provider.GetService<IMessenger>();
 
   public void AssignRoles(ISet<IOnlinePlayer> players, IList<IRole> roles) {
     var  shuffled = players.OrderBy(_ => Guid.NewGuid()).ToHashSet();

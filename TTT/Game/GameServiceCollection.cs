@@ -12,7 +12,6 @@ public static class GameServiceCollection {
   public static void AddGameServices(this IServiceCollection collection) {
     collection.AddScoped<IEventBus, EventBus>();
     collection.AddScoped<IGameManager, GameManager>();
-    collection.AddScoped<ICommandManager, CommandManager>();
 
     // Listeners
     collection.AddListener<GameEndLogsListener>();

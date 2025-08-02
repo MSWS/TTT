@@ -33,8 +33,8 @@ public class CS2GameConfig : IStorage<GameConfig>, IPluginModule {
 
   public static readonly FakeConVar<int> CV_TRAITOR_HEALTH = new(
     "css_ttt_rolehp_traitor",
-    "Amount of health to give to traitors at start of round", 1000,
-    ConVarFlags.FCVAR_NONE, new RangeValidator<int>(1, 100));
+    "Amount of health to give to traitors at start of round", 100,
+    ConVarFlags.FCVAR_NONE, new RangeValidator<int>(1, 1000));
 
   public static readonly FakeConVar<int> CV_DETECTIVE_HEALTH = new(
     "css_ttt_rolehp_detective",

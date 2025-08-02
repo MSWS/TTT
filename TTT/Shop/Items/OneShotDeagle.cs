@@ -2,7 +2,6 @@ using Microsoft.Extensions.DependencyInjection;
 using TTT.API;
 using TTT.API.Player;
 using TTT.API.Storage;
-using TTT.Game.Events.Player;
 using TTT.Locale;
 
 namespace TTT.Shop.Items;

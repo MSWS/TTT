@@ -6,7 +6,14 @@ using TTT.Game.Events.Player;
 namespace TTT.Game;
 
 public abstract class EventModifiedMessenger(IEventBus bus) : IMessenger {
-  public Task<bool> Message(IPlayer player, string message) {
+  public Task<bool> Message(IPlayer? player, string message) {
+    if (player == null) {
+      Console.WriteLine(
+        "EVentModifiedMessenger: Message called with null player.");
+      SendMessage(null, message);
+      return Task.FromResult(true);
+    }
+
     var messageEvent = new PlayerMessageEvent(player, message);
     bus.Dispatch(messageEvent);
     return messageEvent.IsCanceled ?
@@ -14,14 +21,18 @@ public abstract class EventModifiedMessenger(IEventBus bus) : IMessenger {
       SendMessage(player, messageEvent.Message);
   }
 
+  public Task<bool> Message(IOnlinePlayer? player, string message) {
+    return ((IMessenger)this).Message(player, message);
+  }
+
   // Allow for overriding in derived classes
-  public virtual Task<bool> BackgroundMsg(IPlayer player, string message) {
+  public virtual Task<bool> BackgroundMsg(IPlayer? player, string message) {
     return Message(player, message);
   }
 
-  public virtual Task<bool> ScreenMsg(IPlayer player, string message) {
+  public virtual Task<bool> ScreenMsg(IPlayer? player, string message) {
     return Message(player, message);
   }
 
-  abstract protected Task<bool> SendMessage(IPlayer player, string message);
+  abstract protected Task<bool> SendMessage(IPlayer? player, string message);
 }

@@ -56,12 +56,7 @@ public class CS2CommandInfo : ICommandInfo {
   /// </summary>
   /// <param name="message"></param>
   public void ReplySync(string message) {
+    // TODO: Wrap this in NextFrame
     if (CallingPlayer == null) Console.WriteLine(message);
-
-    //TODO: Figure Out Replies
-    /*if (CallingContext == CommandCallingContext.Console)
-      CallingPlayer.PrintToConsole(message);
-    else
-      CallingPlayer.PrintToChat(message);*/
   }
 }
