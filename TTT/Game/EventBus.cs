@@ -32,6 +32,10 @@ public class EventBus : IEventBus {
       dirtyTypes.Add(eventType);
     }
 
+    if (dirtyTypes.Count == 0)
+      throw new InvalidOperationException(
+        $"Listener {listener.GetType().Name} has no valid event handlers.");
+
     // Sort handlers by priority
     foreach (var type in dirtyTypes)
       handlers[type]

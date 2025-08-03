@@ -64,4 +64,22 @@ public class EventBusTest(IEventBus bus) {
     Assert.False(ev.IsCanceled);
     Assert.Equal(2, listener.Fired);
   }
+
+  [Fact]
+  public void Register_Throws_IfNoMethods() {
+    Assert.Throws<InvalidOperationException>(()
+      => bus.RegisterListener(new InvalidListeners.NoMethodListener()));
+  }
+
+  [Fact]
+  public void Register_Throws_IfNoParams() {
+    Assert.Throws<InvalidOperationException>(()
+      => bus.RegisterListener(new InvalidListeners.NoParamListener()));
+  }
+
+  [Fact]
+  public void Register_Throws_IfWrongParam() {
+    Assert.Throws<InvalidOperationException>(()
+      => bus.RegisterListener(new InvalidListeners.WrongParamListener()));
+  }
 }
