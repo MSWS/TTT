@@ -2,9 +2,12 @@ name: Release
 
 on:
   workflow_run:
-    workflows: [ "Build" ]
+    workflows: [ "Nightly" ]
     types:
       - completed
+    branches:
+      - main
+      - dev
 
 concurrency:
   group: release-${{ github.event.workflow_run.head_branch }}
