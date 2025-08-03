@@ -1,13 +1,19 @@
 ﻿using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Utils;
+using Microsoft.Extensions.DependencyInjection;
 using TTT.API.Events;
 using TTT.API.Player;
+using TTT.CS2.Roles;
 using TTT.Game.Events.Player;
 
 namespace TTT.CS2.Listeners;
 
-public class RoleAssignListener(IEventBus bus,
-  IPlayerConverter<CCSPlayerController> players) : IListener {
+public class RoleAssignListener(IServiceProvider provider) : IListener {
+  private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
+
+  private readonly IPlayerConverter<CCSPlayerController> players =
+    provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
+
   public void Dispose() { bus.UnregisterListener(this); }
 
   [EventHandler(IgnoreCanceled = true)]
@@ -15,6 +21,6 @@ public class RoleAssignListener(IEventBus bus,
     var player = players.GetPlayer(ev.Player);
     if (player == null || !player.IsValid) return;
 
-    if (player.Team == CsTeam.Spectator) ev.IsCanceled = true;
+    if (player.Team == CsTeam.Spectator) ev.Role = new SpectatorRole(provider);
   }
 }

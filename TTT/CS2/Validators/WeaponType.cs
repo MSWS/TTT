@@ -1,4 +1,7 @@
-﻿[Flags]
+﻿namespace TTT.CS2.Validators;
+
+[Flags]
+// ReSharper disable once CheckNamespace
 public enum WeaponType {
   GRENADE = 1 << 0,  // 1
   UTILITY = 1 << 1,  // 2

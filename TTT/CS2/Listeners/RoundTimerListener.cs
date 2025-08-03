@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using CounterStrikeSharp.API;
+using Microsoft.Extensions.DependencyInjection;
 using TTT.API.Events;
 using TTT.API.Game;
 using TTT.API.Storage;
@@ -14,20 +15,24 @@ public class RoundTimerListener(IServiceProvider provider) : IListener {
    .GetRequiredService<IStorage<GameConfig>>()
    .Load()
    .GetAwaiter()
-   .GetResult();
+   .GetResult() ?? new GameConfig();
 
   public void Dispose() { bus.UnregisterListener(this); }
 
   [EventHandler(IgnoreCanceled = true)]
   public void OnRoundStart(GameStateUpdateEvent ev) {
-    if (ev.NewState == State.COUNTDOWN)
+    if (ev.NewState == State.COUNTDOWN) {
       RoundUtil.SetTimeRemaining((int)config.RoundCfg.CountDownDuration
        .TotalSeconds);
+      Server.ExecuteCommand("mp_ignore_round_win_conditions 0");
+      return;
+    }
 
     if (ev.NewState != State.IN_PROGRESS) return;
     RoundUtil.SetTimeRemaining((int)config.RoundCfg
      .RoundDuration(ev.Game.Players.Count)
      .TotalSeconds);
+    Server.ExecuteCommand("mp_ignore_round_win_conditions 1");
   }
 
   [EventHandler(IgnoreCanceled = true)]

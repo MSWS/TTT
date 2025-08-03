@@ -13,30 +13,34 @@ public class RoleAssigner(IServiceProvider provider) : IRoleAssigner {
   private readonly IPlayerFinder finder =
     provider.GetRequiredService<IPlayerFinder>();
 
-  private readonly IOnlineMessenger? onlineMessenger =
-    provider.GetService<IOnlineMessenger>();
+  private readonly IMessenger? onlineMessenger =
+    provider.GetService<IMessenger>();
 
   public void AssignRoles(ISet<IOnlinePlayer> players, IList<IRole> roles) {
     var  shuffled = players.OrderBy(_ => Guid.NewGuid()).ToHashSet();
     bool roleAssigned;
-    do {
-      roleAssigned = false;
-      foreach (var role in roles) {
-        var player = role.FindPlayerToAssign(shuffled);
-        if (player is null) continue;
+    do { roleAssigned = tryAssignRole(shuffled, roles); } while (roleAssigned);
+  }
 
-        var ev = new PlayerRoleAssignEvent(player, role);
-        bus.Dispatch(ev);
+  private bool tryAssignRole(HashSet<IOnlinePlayer> players,
+    IList<IRole> roles) {
+    foreach (var role in roles) {
+      var player = role.FindPlayerToAssign(players);
+      if (player is null) continue;
 
-        if (ev.IsCanceled) continue;
+      var ev = new PlayerRoleAssignEvent(player, role);
+      bus.Dispatch(ev);
 
-        player.Roles.Add(ev.Role);
-        ev.Role.OnAssign(player);
-        roleAssigned = true;
+      if (ev.IsCanceled) continue;
 
-        onlineMessenger?.BackgroundMsgAll(finder,
-          $"{player.Name} has been assigned the role of {role.Name}.");
-      }
-    } while (roleAssigned);
+      player.Roles.Add(ev.Role);
+      ev.Role.OnAssign(player);
+
+      onlineMessenger?.BackgroundMsgAll(finder,
+        $"{player.Name} has been assigned the role of {role.Name}.");
+      return true;
+    }
+
+    return false;
   }
 }

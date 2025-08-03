@@ -1,7 +1,4 @@
-﻿# This workflow will build a .NET project
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
-
-name: Nightly
+﻿name: Nightly
 on:
   push:
     branches:
@@ -16,7 +13,7 @@ on:
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
-  
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -32,6 +29,18 @@ jobs:
         with:
           dotnet-version: 8.0.x
 
+      - name: Install GitVersion
+        uses: GitTools/actions/gitversion/setup@v4.0.1
+        with:
+          versionSpec: '6.3.x'
+
+      - name: Run GitVersion
+        id: gitversion
+        uses: GitTools/actions/gitversion/execute@v4.0.1
+
+      - name: Output Version to Summary
+        run: "echo \"## GitVersion: ${{ steps.gitversion.outputs.fullSemVer }}\" >> $GITHUB_STEP_SUMMARY"
+
       - name: Build Locale
         run: |
           mkdir -p build/TTT/lang
@@ -39,12 +48,15 @@ jobs:
           dotnet build Locale/Locale.csproj --no-restore -c Release
           cp lang/*.json build/TTT/lang
 
-      - run: |
+      - name: Publish Plugin
+        run: |
           dotnet restore TTT/Plugin/Plugin.csproj
           dotnet publish TTT/Plugin/Plugin.csproj --no-restore -c Release -o build/TTT
 
-      - uses: actions/upload-artifact@v4.0.0
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
         with:
-          name: ttt-nightly
+          name: TTT
           path: build/TTT
           if-no-files-found: error
+

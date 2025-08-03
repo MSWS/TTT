@@ -1,15 +1,22 @@
 using CounterStrikeSharp.API.Core;
+using TTT.API;
 using TTT.API.Player;
+using TTT.CS2.Extensions;
 
 namespace TTT.CS2;
 
 public class CS2InventoryManager(
   IPlayerConverter<CCSPlayerController> converter) : IInventoryManager {
-  public void GiveWeapon(IOnlinePlayer player, string weaponId) {
+  public void GiveWeapon(IOnlinePlayer player, IWeapon weapon) {
     var gamePlayer = converter.GetPlayer(player);
     if (gamePlayer == null) return;
 
-    gamePlayer.GiveNamedItem(weaponId);
+    gamePlayer.GiveNamedItem(weapon.Id);
+    if (weapon.ReserveAmmo == null && weapon.CurrentAmmo == null) return;
+    var weaponBase = gamePlayer.GetWeaponBase(weapon.Id);
+    if (weaponBase == null) return;
+    if (weapon.CurrentAmmo != null) weaponBase.Clip1 = weapon.CurrentAmmo.Value;
+    if (weapon.ReserveAmmo != null) weaponBase.Clip2 = weapon.ReserveAmmo.Value;
   }
 
   public void RemoveWeapon(IOnlinePlayer player, string weaponId) {

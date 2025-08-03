@@ -6,20 +6,22 @@ using TTT.Locale;
 namespace TTT.Game.Commands;
 
 public class CommandManager(IServiceProvider provider) : ICommandManager {
-  private readonly Dictionary<string, ICommand> commands = new();
+  protected readonly Dictionary<string, ICommand> Commands = new();
 
-  private readonly IMsgLocalizer localizer =
+  protected readonly IMsgLocalizer Localizer =
     provider.GetRequiredService<IMsgLocalizer>();
 
   private readonly IPermissionManager permissions =
     provider.GetRequiredService<IPermissionManager>();
 
-  public bool RegisterCommand(ICommand command) {
-    return command.Aliases.All(alias => commands.TryAdd(alias, command));
+  protected readonly IServiceProvider Provider = provider;
+
+  public virtual bool RegisterCommand(ICommand command) {
+    return command.Aliases.All(alias => Commands.TryAdd(alias, command));
   }
 
   public bool UnregisterCommand(ICommand command) {
-    return command.Aliases.All(alias => commands.Remove(alias));
+    return command.Aliases.All(alias => Commands.Remove(alias));
   }
 
   public bool CanExecute(IOnlinePlayer? executor, ICommand command) {
@@ -29,12 +31,12 @@ public class CommandManager(IServiceProvider provider) : ICommandManager {
     return true;
   }
 
-  public async Task<CommandResult> ProcessCommand(IOnlinePlayer? executor,
-    ICommandInfo info) {
+  public async Task<CommandResult> ProcessCommand(ICommandInfo info) {
+    var executor = info.CallingPlayer;
     if (info.ArgCount == 0) return CommandResult.ERROR;
 
-    if (!commands.TryGetValue(info.Args[0], out var command)) {
-      info.ReplySync(localizer[GameMsgs.GENERIC_UNKNOWN(info.Args[0])]);
+    if (!Commands.TryGetValue(info.Args[0], out var command)) {
+      info.ReplySync(Localizer[GameMsgs.GENERIC_UNKNOWN(info.Args[0])]);
       return CommandResult.UNKNOWN_COMMAND;
     }
 
@@ -47,12 +49,12 @@ public class CommandManager(IServiceProvider provider) : ICommandManager {
 
     switch (result) {
       case CommandResult.PLAYER_ONLY:
-        info.ReplySync(localizer[GameMsgs.GENERIC_PLAYER_ONLY]);
+        info.ReplySync(Localizer[GameMsgs.GENERIC_PLAYER_ONLY]);
         break;
       case CommandResult.PRINT_USAGE: {
         foreach (var usage in command.Usage)
           info.ReplySync(
-            localizer[GameMsgs.GENERIC_USAGE($"{info.Args[0]} {usage}")]);
+            Localizer[GameMsgs.GENERIC_USAGE($"{info.Args[0]} {usage}")]);
         break;
       }
     }
@@ -63,18 +65,18 @@ public class CommandManager(IServiceProvider provider) : ICommandManager {
   private void printNoPermission(IOnlinePlayer? executor, ICommand command,
     ICommandInfo info) {
     if (executor == null) {
-      info.ReplySync(localizer[GameMsgs.GENERIC_NO_PERMISSION]);
+      info.ReplySync(Localizer[GameMsgs.GENERIC_NO_PERMISSION]);
       return;
     }
 
     if (command.RequiredFlags.Any(f => !permissions.HasFlags(executor, f))) {
-      info.ReplySync(localizer[
+      info.ReplySync(Localizer[
         GameMsgs.GENERIC_NO_PERMISSION_NODE(string.Join(", ",
           command.RequiredFlags))]);
       return;
     }
 
-    info.ReplySync(localizer[
+    info.ReplySync(Localizer[
       GameMsgs.GENERIC_NO_PERMISSION_RANK(string.Join(", ",
         command.RequiredGroups))]);
   }

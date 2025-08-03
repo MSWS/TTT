@@ -14,7 +14,7 @@ public class GameRestartingTest(IServiceProvider provider)
    .GetRequiredService<IStorage<GameConfig>>()
    .Load()
    .GetAwaiter()
-   .GetResult();
+   .GetResult() ?? new GameConfig();
 
   private readonly TestScheduler scheduler =
     provider.GetRequiredService<TestScheduler>();

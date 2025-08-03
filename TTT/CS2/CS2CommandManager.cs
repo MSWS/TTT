@@ -2,27 +2,29 @@ using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Commands;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using TTT.API;
 using TTT.API.Command;
+using TTT.API.Player;
+using TTT.Game;
+using TTT.Game.Commands;
 
 namespace TTT.CS2;
 
-public class CS2CommandManager(IServiceProvider provider,
-  ICommandManager commandManager) : IPluginModule {
-  private bool hotReload;
+public class CS2CommandManager(IServiceProvider provider)
+  : CommandManager(provider), IPluginModule {
+  private const string COMMAND_PREFIX = "css_";
+
+  private readonly IPlayerConverter<CCSPlayerController> converter =
+    provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
+
   private BasePlugin? plugin;
 
-  public void Start(BasePlugin? basePlugin, bool baseReload) {
-    plugin    = basePlugin;
-    hotReload = baseReload;
+  public void Start(BasePlugin? basePlugin, bool _) {
+    plugin = basePlugin;
 
-    //Add Commands Here
+    RegisterCommand(new TTTCommand(Provider));
 
-    foreach (var command in provider.GetServices<ICommand>()) {
-      command.Start();
-      registerCommand(command);
-    }
+    foreach (var command in Provider.GetServices<ICommand>()) command.Start();
   }
 
   public void Dispose() { }
@@ -30,35 +32,36 @@ public class CS2CommandManager(IServiceProvider provider,
   public string Version => GitVersionInformation.FullSemVer;
   public void Start() { }
 
-  private bool registerCommand(ICommand command) {
-    if (!commandManager.RegisterCommand(command)) return false;
-
+  public override bool RegisterCommand(ICommand command) {
+    command.Start();
+    var registration = command.Aliases.All(alias
+      => Commands.TryAdd(COMMAND_PREFIX + alias, command));
+    if (registration == false) return false;
     foreach (var alias in command.Aliases)
-      plugin?.AddCommand(alias, command.Description ?? string.Empty,
-        processInternal);
-
+      plugin?.AddCommand(COMMAND_PREFIX + alias,
+        command.Description ?? string.Empty, processInternal);
     return true;
   }
 
   private void
     processInternal(CCSPlayerController? executor, CommandInfo info) {
-    var player      = executor is null ? null : new CS2Player(executor);
-    var wrappedInfo = new CS2CommandInfo(info);
-
+    var cs2Info = new CS2CommandInfo(Provider, info);
+    var wrapper = executor == null ?
+      null :
+      converter.GetPlayer(executor) as IOnlinePlayer;
     Task.Run(async () => {
       try {
-        await commandManager.ProcessCommand(player, wrappedInfo);
-      } catch (Exception ex) {
-        var logger = provider.GetRequiredService<ILoggerFactory>()
-         .CreateLogger("CommandManager");
-        await Server.NextFrameAsync(() => logger.LogError(ex,
-          "Error running command \"{command}\" by {steam}",
-          wrappedInfo.GetCommandString,
-          executor?.SteamID.ToString() ?? "Console"));
-
-        wrappedInfo.ReplySync(string.IsNullOrEmpty(ex.Message) ?
-          "An unexpected error occurred." :
-          $"Error: {ex.Message}");
+        Console.WriteLine($"Processing command: {cs2Info.GetCommandString}");
+        return await ProcessCommand(cs2Info);
+      } catch (Exception e) {
+        var msg = e.Message;
+        cs2Info.ReplySync(Localizer[GameMsgs.GENERIC_ERROR(msg)]);
+        await Server.NextFrameAsync(() => {
+          Console.WriteLine(
+            $"Encountered an error when processing command: \"{cs2Info.GetCommandString}\" by {wrapper?.Id}");
+          Console.WriteLine(e);
+        });
+        return CommandResult.ERROR;
       }
     });
   }
