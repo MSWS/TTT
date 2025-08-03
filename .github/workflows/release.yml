@@ -54,8 +54,7 @@ jobs:
           
       - name: Rename artifact
         run: |
-          mkdir -p build
-          mv build/TTT build/TTT-${{ steps.gitversion.outputs.fullSemVer }}.zip
+          mv build/TTT.zip build/TTT-${{ steps.gitversion.outputs.fullSemVer }}.zip
 
       - name: Generate Changelog
         id: changelog
