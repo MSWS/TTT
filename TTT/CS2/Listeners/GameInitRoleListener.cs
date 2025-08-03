@@ -5,7 +5,7 @@ using TTT.Game.Events.Game;
 namespace TTT.CS2.Listeners;
 
 public class GameInitRoleListener(IServiceProvider provider) : IListener {
-  private IEventBus bus = provider.GetRequiredService<IEventBus>();
+  private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
   public void Dispose() { bus.UnregisterListener(this); }
 
   [EventHandler]

@@ -9,10 +9,10 @@ using TTT.Locale;
 namespace TTT.CS2;
 
 public class SpectatorRole(IServiceProvider provider) : IRole {
-  public string Id => "basegame.role.spectator";
-
   private readonly IPlayerConverter<CCSPlayerController> playerConverter =
     provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
+
+  public string Id => "basegame.role.spectator";
 
   public string Name
     => provider.GetRequiredService<IMsgLocalizer>()[CS2Msgs.ROLE_SPECTATOR];

@@ -6,10 +6,10 @@ using TTT.API.Player;
 namespace TTT.Shop.Commands;
 
 public class ListCommand(IServiceProvider provider) : ICommand {
-  private readonly IShop shop = provider.GetRequiredService<IShop>();
-
   private readonly IMessenger messenger =
     provider.GetRequiredService<IMessenger>();
+
+  private readonly IShop shop = provider.GetRequiredService<IShop>();
 
   public void Dispose() { throw new NotImplementedException(); }
   public string Name => "list";

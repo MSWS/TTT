@@ -7,13 +7,12 @@ namespace TTT.CS2;
 
 public class CS2InventoryManager(
   IPlayerConverter<CCSPlayerController> converter) : IInventoryManager {
-  
   public void GiveWeapon(IOnlinePlayer player, IWeapon weapon) {
     var gamePlayer = converter.GetPlayer(player);
     if (gamePlayer == null) return;
 
     gamePlayer.GiveNamedItem(weapon.Id);
-    if(weapon.ReserveAmmo == null && weapon.CurrentAmmo == null) return;
+    if (weapon.ReserveAmmo == null && weapon.CurrentAmmo == null) return;
     gamePlayer.GetWeaponBase(weapon.Id);
   }
 

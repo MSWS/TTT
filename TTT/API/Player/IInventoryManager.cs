@@ -14,8 +14,9 @@ public interface IInventoryManager {
   /// <param name="weaponId">The ID of the weapon to remove.</param>
   void RemoveWeapon(IOnlinePlayer player, string weaponId);
 
-  void RemoveWeapon(IOnlinePlayer player, IWeapon weapon)
-    => RemoveWeapon(player, weapon.Id);
+  void RemoveWeapon(IOnlinePlayer player, IWeapon weapon) {
+    RemoveWeapon(player, weapon.Id);
+  }
 
 
   /// <summary>

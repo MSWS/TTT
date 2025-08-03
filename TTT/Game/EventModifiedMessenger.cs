@@ -21,10 +21,6 @@ public abstract class EventModifiedMessenger(IEventBus bus) : IMessenger {
       SendMessage(player, messageEvent.Message);
   }
 
-  public Task<bool> Message(IOnlinePlayer? player, string message) {
-    return ((IMessenger)this).Message(player, message);
-  }
-
   // Allow for overriding in derived classes
   public virtual Task<bool> BackgroundMsg(IPlayer? player, string message) {
     return Message(player, message);
@@ -32,6 +28,10 @@ public abstract class EventModifiedMessenger(IEventBus bus) : IMessenger {
 
   public virtual Task<bool> ScreenMsg(IPlayer? player, string message) {
     return Message(player, message);
+  }
+
+  public Task<bool> Message(IOnlinePlayer? player, string message) {
+    return ((IMessenger)this).Message(player, message);
   }
 
   abstract protected Task<bool> SendMessage(IPlayer? player, string message);

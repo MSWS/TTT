@@ -22,12 +22,12 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
 
   private readonly List<IPlayer> players = [];
 
+  private State state = State.WAITING;
+
   public IList<IRole> Roles { get; } = [
     new InnocentRole(provider), new TraitorRole(provider),
     new DetectiveRole(provider)
   ];
-
-  private State state = State.WAITING;
 
   public ICollection<IPlayer> Players => players;
 

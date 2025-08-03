@@ -8,13 +8,13 @@ namespace TTT.Game.Commands;
 public class CommandManager(IServiceProvider provider) : ICommandManager {
   protected readonly Dictionary<string, ICommand> Commands = new();
 
-  protected readonly IServiceProvider Provider = provider;
-
   protected readonly IMsgLocalizer Localizer =
     provider.GetRequiredService<IMsgLocalizer>();
 
   private readonly IPermissionManager permissions =
     provider.GetRequiredService<IPermissionManager>();
+
+  protected readonly IServiceProvider Provider = provider;
 
   public virtual bool RegisterCommand(ICommand command) {
     return command.Aliases.All(alias => Commands.TryAdd(alias, command));

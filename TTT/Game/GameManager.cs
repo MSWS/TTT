@@ -14,7 +14,7 @@ public class GameManager(IServiceProvider provider) : IGameManager {
 
     var ev = new GameInitEvent(ActiveGame);
     bus.Dispatch(ev);
-    
+
     return ActiveGame;
   }
 }

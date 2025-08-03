@@ -12,12 +12,12 @@ namespace TTT.CS2;
 
 public class CS2CommandManager(IServiceProvider provider)
   : CommandManager(provider), IPluginModule {
-  private BasePlugin? plugin;
-
   private const string COMMAND_PREFIX = "css_";
 
   private readonly IPlayerConverter<CCSPlayerController> converter =
     provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
+
+  private BasePlugin? plugin;
 
   public void Start(BasePlugin? basePlugin, bool _) {
     plugin = basePlugin;
@@ -26,6 +26,11 @@ public class CS2CommandManager(IServiceProvider provider)
 
     foreach (var command in Provider.GetServices<ICommand>()) command.Start();
   }
+
+  public void Dispose() { }
+  public string Name => "CommandManager";
+  public string Version => GitVersionInformation.FullSemVer;
+  public void Start() { }
 
   public override bool RegisterCommand(ICommand command) {
     command.Start();
@@ -60,9 +65,4 @@ public class CS2CommandManager(IServiceProvider provider)
       }
     });
   }
-
-  public void Dispose() { }
-  public string Name => "CommandManager";
-  public string Version => GitVersionInformation.FullSemVer;
-  public void Start() { }
 }

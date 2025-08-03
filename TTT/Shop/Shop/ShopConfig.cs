@@ -4,18 +4,6 @@ using TTT.Game.Roles;
 namespace TTT.Shop;
 
 public record ShopConfig {
-  public int CreditsForRoundStart { get; init; } = 10;
-  public int CreditsForInnoVInnoKill { get; init; } = -4;
-  public int CreditsForInnoVTraitorKill { get; init; } = 8;
-  public int CreditsForInnoVDetectiveKill { get; init; } = -6;
-  public int CreditsForTraitorVTraitorKill { get; init; } = -5;
-  public int CreditsForTraitorVInnoKill { get; init; } = 4;
-  public int CreditsForTraitorVDetectiveKill { get; init; } = 6;
-  public int CreditsForDetectiveVDetectiveKill { get; init; } = -8;
-  public int CreditsForDetectiveVInnoKill { get; init; } = -6;
-  public int CreditsForDetectiveVTraitorKill { get; init; } = 8;
-  public int CreditsForAnyKill { get; init; } = 2;
-
   private readonly Dictionary<Type, Dictionary<Type, int>>
     creditsForKillDictionary = new() {
       [typeof(TraitorRole)] = {
@@ -34,6 +22,18 @@ public record ShopConfig {
         [typeof(DetectiveRole)] = -8
       }
     };
+
+  public int CreditsForRoundStart { get; init; } = 10;
+  public int CreditsForInnoVInnoKill { get; init; } = -4;
+  public int CreditsForInnoVTraitorKill { get; init; } = 8;
+  public int CreditsForInnoVDetectiveKill { get; init; } = -6;
+  public int CreditsForTraitorVTraitorKill { get; init; } = -5;
+  public int CreditsForTraitorVInnoKill { get; init; } = 4;
+  public int CreditsForTraitorVDetectiveKill { get; init; } = 6;
+  public int CreditsForDetectiveVDetectiveKill { get; init; } = -8;
+  public int CreditsForDetectiveVInnoKill { get; init; } = -6;
+  public int CreditsForDetectiveVTraitorKill { get; init; } = 8;
+  public int CreditsForAnyKill { get; init; } = 2;
 
   public int CreditsForKill(IOnlinePlayer attacker, IOnlinePlayer victim) {
     var attackerRole = attacker.Roles.FirstOrDefault(r

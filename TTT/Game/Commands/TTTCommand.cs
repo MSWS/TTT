@@ -6,12 +6,12 @@ using TTT.API.Player;
 namespace TTT.Game.Commands;
 
 public class TTTCommand(IServiceProvider provider) : ICommand {
+  private readonly IMessenger messenger =
+    provider.GetRequiredService<IMessenger>();
+
   public void Dispose() { }
   public string Name => "ttt";
   public string Version => GitVersionInformation.FullSemVer;
-
-  private readonly IMessenger messenger =
-    provider.GetRequiredService<IMessenger>();
 
   public void Start() { }
 

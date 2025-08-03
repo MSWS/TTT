@@ -45,8 +45,9 @@ public static class GameMsgs {
     return MsgFactory.Create(nameof(GENERIC_USAGE), usage);
   }
 
-  public static IMsg GENERIC_ERROR(string err)
-    => MsgFactory.Create(nameof(GENERIC_ERROR), err);
+  public static IMsg GENERIC_ERROR(string err) {
+    return MsgFactory.Create(nameof(GENERIC_ERROR), err);
+  }
 
   #endregion
 }
