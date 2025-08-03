@@ -1,8 +1,6 @@
 name: .NET Build and Test
 on:
   push:
-    branches:
-      - main
     paths:
       - 'TTT/**'
       - '.github/workflows/dotnet.yml'
@@ -10,7 +8,7 @@ on:
   pull_request:
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.head_ref || github.ref_name }}
   cancel-in-progress: true
   
 jobs:
