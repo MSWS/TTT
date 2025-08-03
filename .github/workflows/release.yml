@@ -60,6 +60,8 @@ jobs:
       - name: Generate Changelog
         id: changelog
         uses: mikepenz/release-changelog-builder-action@v5
+        with:
+          configuration: 'changelogConfig.json'
 
       - name: Create GitHub Release
         if: ${{ steps.extract_branch.outputs.branch == 'main' || steps.extract_branch.outputs.branch == 'dev' }}
