@@ -1,13 +1,15 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Localization;
 using TTT.API.Command;
 using TTT.API.Messages;
 using TTT.API.Player;
+using TTT.Locale;
 
 namespace TTT.Game.Commands;
 
 public class TTTCommand(IServiceProvider provider) : ICommand {
-  private readonly IMessenger messenger =
-    provider.GetRequiredService<IMessenger>();
+  private readonly IMsgLocalizer localizer =
+    provider.GetRequiredService<IMsgLocalizer>();
 
   public void Dispose() { }
   public string Name => "ttt";
@@ -17,8 +19,8 @@ public class TTTCommand(IServiceProvider provider) : ICommand {
 
   public Task<CommandResult>
     Execute(IOnlinePlayer? executor, ICommandInfo info) {
-    messenger.Message(executor,
-      "[MSG] TTT Version: " + GitVersionInformation.FullSemVer);
+    info.ReplySync(
+      localizer[GameMsgs.CMD_TTT(GitVersionInformation.FullSemVer)]);
     return Task.FromResult(CommandResult.SUCCESS);
   }
 }

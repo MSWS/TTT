@@ -2,6 +2,7 @@ using CounterStrikeSharp.API.Core;
 using Microsoft.Extensions.DependencyInjection;
 using TTT.API.Command;
 using TTT.API.Extensions;
+using TTT.API.Game;
 using TTT.API.Messages;
 using TTT.API.Player;
 using TTT.API.Storage;
@@ -14,6 +15,9 @@ namespace TTT.CS2;
 
 public static class CS2ServiceCollection {
   public static void AddCS2Services(this IServiceCollection collection) {
+    // Base Requirements
+    collection.AddScoped<IGameManager, CS2GameManager>();
+
     // TTT - CS2 Specific requirements
     collection
      .AddModBehavior<IPlayerConverter<CCSPlayerController>,

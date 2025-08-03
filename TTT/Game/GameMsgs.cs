@@ -49,5 +49,9 @@ public static class GameMsgs {
     return MsgFactory.Create(nameof(GENERIC_ERROR), err);
   }
 
+  public static IMsg CMD_TTT(string version) {
+    return MsgFactory.Create(nameof(CMD_TTT), version);
+  }
+
   #endregion
 }
