@@ -1,10 +1,8 @@
 name: .NET Build and Test
 on:
   push:
-    paths:
-      - 'TTT/**'
-      - '.github/workflows/dotnet.yml'
-      - '.github/workflows/release.yml'
+    branches:
+      - dev
   pull_request:
 
 concurrency:
