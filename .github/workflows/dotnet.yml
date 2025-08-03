@@ -4,6 +4,7 @@ on:
     paths:
       - 'TTT/**'
       - '.github/workflows/dotnet.yml'
+  pull_request:
 
 jobs:
   build:
