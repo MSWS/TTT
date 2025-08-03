@@ -32,11 +32,6 @@ jobs:
           fetch-depth: 0
           fetch-tags: true
 
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: 8.0.x
-
       - name: Install GitVersion
         uses: GitTools/actions/gitversion/setup@v4.0.1
         with:
@@ -51,7 +46,7 @@ jobs:
         uses: dawidd6/action-download-artifact@v11
         with:
           name: TTT
-          workflow: nightly.yml
+          workflow: 'nightly.yml'
           github_token: '${{ secrets.GITHUB_TOKEN }}'
           path: 'build/TTT'
 
