@@ -46,12 +46,6 @@ jobs:
         id: gitversion
         uses: GitTools/actions/gitversion/execute@v4.0.1
 
-      - name: Download Build Artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: ttt-nightly
-          path: build/TTT
-
       - name: Download artifact
         id: download-artifact
         uses: dawidd6/action-download-artifact@v11
