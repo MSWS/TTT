@@ -2,13 +2,16 @@ name: Release
 
 on:
   workflow_run:
-    workflows: [ "Build" ]
+    workflows: [ "Nightly" ]
     types:
       - completed
+    branches:
+      - main
+      - dev
 
 concurrency:
   group: release-${{ github.event.workflow_run.head_branch }}
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   release:
@@ -45,7 +48,7 @@ jobs:
       - name: Download Build Artifact
         uses: actions/download-artifact@v4
         with:
-          name: TTT
+          name: ttt-nightly
           path: build/TTT
 
       - name: Generate Changelog
