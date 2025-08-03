@@ -9,7 +9,7 @@ public class MemoryStorage<T> : IStorage<T>, IWriteable<T> where T : class {
     if (data is null)
       throw new InvalidOperationException("Data not initialized");
 
-    return Task.FromResult(data)!;
+    return Task.FromResult<T?>(data);
   }
 
   public Task Write(T newData) {

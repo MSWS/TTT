@@ -95,7 +95,7 @@ public class CS2GameConfig : IStorage<GameConfig>, IPluginModule {
   }
 
   public Task<GameConfig?> Load() {
-    return Task.FromResult(new GameConfig {
+    return Task.FromResult<GameConfig?>(new GameConfig {
       BalanceCfg = new GameConfig.BalanceConfig {
         TraitorHealth   = CV_TRAITOR_HEALTH.Value,
         DetectiveHealth = CV_DETECTIVE_HEALTH.Value,
@@ -124,7 +124,7 @@ public class CS2GameConfig : IStorage<GameConfig>, IPluginModule {
         MinimumPlayers    = CV_MINIMUM_PLAYERS.Value,
         TimeBetweenRounds = TimeSpan.FromSeconds(CV_TIME_BETWEEN_ROUNDS.Value)
       }
-    })!;
+    });
   }
 
   public record CS2RoundConfig : GameConfig.RoundConfig {

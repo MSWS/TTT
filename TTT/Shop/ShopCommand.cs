@@ -10,7 +10,6 @@ public class ShopCommand(IServiceProvider provider) : ICommand {
     ["list"] = new ListCommand(provider)
   };
 
-  private readonly Dictionary<string, ICommand> subCommands = new();
   public void Dispose() { }
   public string Name => "shop";
   public string Version => GitVersionInformation.FullSemVer;

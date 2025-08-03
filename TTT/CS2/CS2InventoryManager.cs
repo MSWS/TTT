@@ -13,7 +13,10 @@ public class CS2InventoryManager(
 
     gamePlayer.GiveNamedItem(weapon.Id);
     if (weapon.ReserveAmmo == null && weapon.CurrentAmmo == null) return;
-    gamePlayer.GetWeaponBase(weapon.Id);
+    var weaponBase = gamePlayer.GetWeaponBase(weapon.Id);
+    if (weaponBase == null) return;
+    if (weapon.CurrentAmmo != null) weaponBase.Clip1 = weapon.CurrentAmmo.Value;
+    if (weapon.ReserveAmmo != null) weaponBase.Clip2 = weapon.ReserveAmmo.Value;
   }
 
   public void RemoveWeapon(IOnlinePlayer player, string weaponId) {

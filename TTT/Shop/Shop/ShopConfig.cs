@@ -16,11 +16,11 @@ public record ShopConfig {
   public int CreditsForDetectiveVTraitorKill { get; init; } = 8;
   public int CreditsForAnyKill { get; init; } = 2;
 
-  public int CreditsForKill(IOnlinePlayer attacker, IOnlinePlayer victim) {
-    Type[] roleConcerns = [
-      typeof(TraitorRole), typeof(DetectiveRole), typeof(InnocentRole)
-    ];
+  private static readonly Type[] roleConcerns = [
+    typeof(TraitorRole), typeof(DetectiveRole), typeof(InnocentRole)
+  ];
 
+  public int CreditsForKill(IOnlinePlayer attacker, IOnlinePlayer victim) {
     var attackerRole =
       attacker.Roles.FirstOrDefault(r => roleConcerns.Contains(r.GetType()));
     var victimRole =
