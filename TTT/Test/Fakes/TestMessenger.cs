@@ -4,7 +4,7 @@ using TTT.Game;
 
 namespace TTT.Test.Fakes;
 
-public class FakeMessenger(IEventBus bus) : EventModifiedMessenger(bus) {
+public class TestMessenger(IEventBus bus) : EventModifiedMessenger(bus) {
   override protected Task<bool> SendMessage(IPlayer? player, string message) {
     if (player is not TestPlayer testPlayer)
       throw new ArgumentException("Player must be a TestPlayer",

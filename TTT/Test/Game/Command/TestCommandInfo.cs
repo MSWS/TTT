@@ -1,17 +1,24 @@
 using CounterStrikeSharp.API.Modules.Commands;
+using Microsoft.Extensions.DependencyInjection;
 using TTT.API.Command;
+using TTT.API.Messages;
 using TTT.API.Player;
 
 namespace TTT.Test.Game.Command;
 
-public class TestCommandInfo(string[] args) : ICommandInfo {
-  public List<string> Replies { get; } = [];
-  public IOnlinePlayer? CallingPlayer { get; set; }
+public class TestCommandInfo(IServiceProvider provider, IOnlinePlayer caller,
+  params string[] args) : ICommandInfo {
+  private readonly IMessenger messenger =
+    provider.GetRequiredService<IMessenger>();
+
+  public IOnlinePlayer? CallingPlayer { get; init; } = caller;
   public string[] Args { get; } = args;
   public CommandCallingContext CallingContext { get; set; }
 
   public string GetCommandString => string.Join(' ', Args);
   public int ArgCount => Args.Length;
 
-  public void ReplySync(string message) { Replies.Add(message); }
+  public void ReplySync(string message) {
+    messenger.Message(CallingPlayer, message);
+  }
 }

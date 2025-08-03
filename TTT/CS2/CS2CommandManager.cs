@@ -52,7 +52,7 @@ public class CS2CommandManager(IServiceProvider provider)
     Task.Run(async () => {
       try {
         Console.WriteLine($"Processing command: {cs2Info.GetCommandString}");
-        return await ProcessCommand(wrapper, cs2Info);
+        return await ProcessCommand(cs2Info);
       } catch (Exception e) {
         var msg = e.Message;
         cs2Info.ReplySync(Localizer[GameMsgs.GENERIC_ERROR(msg)]);

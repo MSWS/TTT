@@ -31,8 +31,8 @@ public class CommandManager(IServiceProvider provider) : ICommandManager {
     return true;
   }
 
-  public async Task<CommandResult> ProcessCommand(IOnlinePlayer? executor,
-    ICommandInfo info) {
+  public async Task<CommandResult> ProcessCommand(ICommandInfo info) {
+    var executor = info.CallingPlayer;
     if (info.ArgCount == 0) return CommandResult.ERROR;
 
     if (!Commands.TryGetValue(info.Args[0], out var command)) {
