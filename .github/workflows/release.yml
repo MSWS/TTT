@@ -49,13 +49,17 @@ jobs:
           name: TTT
           workflow: 'nightly.yml'
           github_token: '${{ secrets.GITHUB_TOKEN }}'
-          path: 'build/TTT'
+          skip_unpack: 'true'
+          path: 'build'
+          
+      - name: Rename artifact
+        run: |
+          mkdir -p build
+          mv build/TTT build/TTT-${{ steps.gitversion.outputs.fullSemVer }}.zip
 
       - name: Generate Changelog
         id: changelog
-        uses: mikepenz/release-changelog-builder-action@v4
-#        with:
-#          token: ${{ secrets.ACTIONS_GET_PR }}
+        uses: mikepenz/release-changelog-builder-action@v5
 
       - name: Create GitHub Release
         if: ${{ steps.extract_branch.outputs.branch == 'main' || steps.extract_branch.outputs.branch == 'dev' }}
@@ -66,4 +70,4 @@ jobs:
           tag_name: ${{ steps.gitversion.outputs.fullSemVer }}
           body: ${{ steps.changelog.outputs.changelog }}
           prerelease: ${{ steps.extract_branch.outputs.branch == 'dev' }}
-          files: build/TTT/**
+          files: build/TTT-${{ steps.gitversion.outputs.fullSemVer }}.zip
