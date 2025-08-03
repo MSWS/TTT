@@ -1,7 +1,5 @@
 using System.Drawing;
-using Microsoft.Extensions.DependencyInjection;
 using TTT.API.Player;
-using TTT.Locale;
 
 namespace TTT.Game.Roles;
 
@@ -26,6 +24,6 @@ public class DetectiveRole(IServiceProvider provider)
 
     Inventory.RemoveAllWeapons(player);
     foreach (var weapon in balanceConfig.DetectiveWeapons)
-      Inventory.GiveWeapon(player, weapon);
+      Inventory.GiveWeapon(player, new BaseWeapon(weapon));
   }
 }

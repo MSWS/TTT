@@ -27,6 +27,24 @@ public static class ServiceCollectionExtensions {
       => p.GetRequiredService<TExtension>());
   }
 
+  public static void AddPluginBehavior<TInterface, TExtension>(
+    this IServiceCollection collection)
+    where TExtension : class, TInterface, IPluginModule
+    where TInterface : class {
+    //	Add the root extension itself as a scoped service.
+    //	This means every time Load is called in the main Jailbreak loader,
+    //	the extension will be fetched and kept as a singleton for the duration
+    //	until "Unload" is called.
+    // collection.AddScoped<IPluginBehavior, PluginBehavior>();
+    // collection.AddScoped<TExtension>();
+    // collection.AddTransient<IPluginModule, TExtension>(provider
+    //   => provider.GetRequiredService<TExtension>());
+    // collection.AddModBehavior<TExtension>();
+    collection.AddPluginBehavior<TExtension>();
+    collection.AddTransient<TInterface, TExtension>(p
+      => p.GetRequiredService<TExtension>());
+  }
+
   /// <summary>
   ///   Add a <see cref="ITerrorModule" /> to the global service collection
   /// </summary>

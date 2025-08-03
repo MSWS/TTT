@@ -3,10 +3,56 @@ using TTT.API.Player;
 namespace TTT.API.Messages;
 
 public interface IMessenger {
+  Task<bool> Message(IPlayer? player, string message);
+
+  async Task<bool> MessageAll(IPlayerFinder finder, string message) {
+    var tasks = finder.GetOnline()
+     .Select(onlinePlayer => Message(onlinePlayer, message))
+     .ToList();
+
+    var results = await Task.WhenAll(tasks);
+    return results.All(r => r);
+  }
+
+  async Task<bool> BackgroundMsgAll(IPlayerFinder finder, string message) {
+    var tasks = finder.GetOnline()
+     .Select(onlinePlayer => BackgroundMsg(onlinePlayer, message))
+     .ToList();
+
+    var results = await Task.WhenAll(tasks);
+    return results.All(r => r);
+  }
+
+  async Task<bool> ScreenMsgAll(IPlayerFinder finder, string message) {
+    var tasks = finder.GetOnline()
+     .Select(onlinePlayer => ScreenMsg(onlinePlayer, message))
+     .ToList();
+
+    var results = await Task.WhenAll(tasks);
+    return results.All(r => r);
+  }
+
   /// <summary>
-  ///   Attempt to send a message to a player.
+  ///   Attempt to send a message to a player without showing it on the screen.
+  ///   This could mean sending to console, background file, or just
+  ///   falling back to showing it on the screen.
   /// </summary>
-  /// <param name="player">The player to send the message to.</param>
-  /// <param name="message">The message to send</param>
-  Task<bool> Message(IPlayer player, string message);
+  /// <param name="player"></param>
+  /// <param name="message"></param>
+  /// <returns></returns>
+  Task<bool> BackgroundMsg(IPlayer? player, string message) {
+    return Message(player, message);
+  }
+
+  /// <summary>
+  ///   Attempt to send a message to a player that will be shown on the screen using
+  ///   an alternative method, such as a popup or a notification.
+  ///   May just fall back to showing it on the screen if no alternative is available.
+  /// </summary>
+  /// <param name="player"></param>
+  /// <param name="message"></param>
+  /// <returns></returns>
+  Task<bool> ScreenMsg(IPlayer? player, string message) {
+    return Message(player, message);
+  }
 }

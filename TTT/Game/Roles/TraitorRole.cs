@@ -23,6 +23,6 @@ public class TraitorRole(IServiceProvider provider)
 
     Inventory.RemoveAllWeapons(player);
     foreach (var weapon in balanceConfig.TraitorWeapons)
-      Inventory.GiveWeapon(player, weapon);
+      Inventory.GiveWeapon(player, new BaseWeapon(weapon));
   }
 }

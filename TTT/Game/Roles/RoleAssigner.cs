@@ -13,15 +13,13 @@ public class RoleAssigner(IServiceProvider provider) : IRoleAssigner {
   private readonly IPlayerFinder finder =
     provider.GetRequiredService<IPlayerFinder>();
 
-  private readonly IOnlineMessenger? onlineMessenger =
-    provider.GetService<IOnlineMessenger>();
+  private readonly IMessenger? onlineMessenger =
+    provider.GetService<IMessenger>();
 
   public void AssignRoles(ISet<IOnlinePlayer> players, IList<IRole> roles) {
     var  shuffled = players.OrderBy(_ => Guid.NewGuid()).ToHashSet();
     bool roleAssigned;
-    do
-      roleAssigned = tryAssignRole(shuffled, roles);
-    while (roleAssigned);
+    do { roleAssigned = tryAssignRole(shuffled, roles); } while (roleAssigned);
   }
 
   private bool tryAssignRole(HashSet<IOnlinePlayer> players,
@@ -35,10 +33,7 @@ public class RoleAssigner(IServiceProvider provider) : IRoleAssigner {
       var ev = new PlayerRoleAssignEvent(player, role);
       bus.Dispatch(ev);
 
-      if (ev.IsCanceled) {
-        players.Remove(player);
-        continue;
-      }
+      if (ev.IsCanceled) continue;
 
       assigned = true;
       player.Roles.Add(ev.Role);

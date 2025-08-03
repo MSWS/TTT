@@ -15,7 +15,7 @@ public class RoundTimerListener(IServiceProvider provider) : IListener {
    .GetRequiredService<IStorage<GameConfig>>()
    .Load()
    .GetAwaiter()
-   .GetResult();
+   .GetResult() ?? new GameConfig();
 
   public void Dispose() { bus.UnregisterListener(this); }
 

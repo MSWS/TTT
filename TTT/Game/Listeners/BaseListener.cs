@@ -17,8 +17,8 @@ public abstract class BaseListener(IServiceProvider provider)
   protected readonly IGameManager Games =
     provider.GetRequiredService<IGameManager>();
 
-  protected readonly IOnlineMessenger Messenger =
-    provider.GetRequiredService<IOnlineMessenger>();
+  protected readonly IMessenger Messenger =
+    provider.GetRequiredService<IMessenger>();
 
   protected readonly IServiceProvider Provider = provider;
 

@@ -1,8 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using TTT.API.Events;
+﻿using TTT.API.Events;
 using TTT.API.Game;
-using TTT.API.Messages;
-using TTT.API.Player;
 using TTT.Game.Events.Game;
 
 namespace TTT.Game.Listeners;

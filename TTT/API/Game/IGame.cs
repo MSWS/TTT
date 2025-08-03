@@ -10,6 +10,8 @@ public interface IGame : IDisposable {
   /// </summary>
   ICollection<IPlayer> Players { get; }
 
+  public IList<IRole> Roles { get; }
+
   IActionLogger Logger { get; }
 
   DateTime? StartedAt { get; }
