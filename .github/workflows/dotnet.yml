@@ -91,6 +91,7 @@ jobs:
           valColorRange: ${{ env.CODE_COVERAGE }}
           maxColorRange: 100
           minColorRange: 33
+          style: 'for-the-badge'
 
       - name: Write to Job Summary
         run: cat code-coverage-results.md >> $GITHUB_STEP_SUMMARY
