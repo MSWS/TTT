@@ -4,8 +4,13 @@ on:
     paths:
       - 'TTT/**'
       - '.github/workflows/dotnet.yml'
+      - '.github/workflows/release.yml'
   pull_request:
 
+concurrency:
+  group: ${{ github.head_ref || github.ref_name }}
+  cancel-in-progress: true
+  
 jobs:
   build:
     runs-on: ubuntu-latest
