@@ -19,8 +19,8 @@ public class OneShotDeagle(IServiceProvider provider) : IWeapon, IShopItem {
   private readonly IMsgLocalizer locale =
     provider.GetRequiredService<IMsgLocalizer>();
 
-  public string Name => locale[ShopMsgs.SHOP_ITEM_DEAGLE];
-  public string Description => locale[ShopMsgs.SHOP_ITEM_DEAGLE_DESC];
+  public string Name => locale[DeagleMsgs.SHOP_ITEM_DEAGLE];
+  public string Description => locale[DeagleMsgs.SHOP_ITEM_DEAGLE_DESC];
 
   public ShopItemConfig Config => deagleConfigStorage;
 

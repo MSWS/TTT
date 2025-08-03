@@ -1,3 +1,4 @@
+using Microsoft.Extensions.DependencyInjection;
 using TTT.API.Command;
 using TTT.API.Player;
 using TTT.Shop.Commands;
@@ -14,7 +15,9 @@ public class ShopCommand(IServiceProvider provider) : ICommand {
   public string Name => "shop";
   public string Version => GitVersionInformation.FullSemVer;
 
-  public void Start() { }
+  public void Start() {
+    provider.GetRequiredService<ICommandManager>().RegisterCommand(this);
+  }
 
   public Task<CommandResult>
     Execute(IOnlinePlayer? executor, ICommandInfo info) {
