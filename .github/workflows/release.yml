@@ -51,7 +51,6 @@ jobs:
         uses: dawidd6/action-download-artifact@v11
         with:
           name: TTT
-          branch: main
           workflow: 'Nightly'
           github_token: '${{ secrets.GITHUB_TOKEN }}'
           path: 'build/TTT'
