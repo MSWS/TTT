@@ -16,7 +16,9 @@ public class TTT(IServiceProvider provider) : BasePlugin {
     Logger.LogInformation($"{ModuleName} {ModuleVersion} Starting... ");
 
     scope = provider.CreateScope();
-    var modules = scope.ServiceProvider.GetServices<ITerrorModule>().ToList();
+    var modules = scope.ServiceProvider.GetServices<ITerrorModule>()
+     .Where(m => m is not IPluginModule)
+     .ToList();
     Logger.LogInformation($"Found {modules.Count} base modules to load.");
 
     foreach (var module in modules) {

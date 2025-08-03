@@ -1,5 +1,7 @@
 using CounterStrikeSharp.API.Modules.Commands;
+using Microsoft.Extensions.DependencyInjection;
 using TTT.API.Command;
+using TTT.API.Messages;
 using TTT.API.Player;
 
 namespace TTT.CS2;
@@ -11,17 +13,21 @@ namespace TTT.CS2;
 ///   and the execution context.
 /// </summary>
 public class CS2CommandInfo : ICommandInfo {
-  public CS2CommandInfo(IOnlinePlayer? executor, int offset = 0,
-    params string[] args) {
+  private readonly IMessenger messenger;
+
+  public CS2CommandInfo(IServiceProvider provider, IOnlinePlayer? executor,
+    int offset = 0, params string[] args) {
+    messenger     = provider.GetRequiredService<IMessenger>();
     CallingPlayer = executor;
     Args          = args.Skip(offset).ToArray();
     if (offset == 0 && Args.Length > 0) Args[0] = args[0].ToLower();
   }
 
-  public CS2CommandInfo(CommandInfo info, int offset = 0) {
-    CallingPlayer = info.CallingPlayer == null ?
-      null :
-      new CS2Player(info.CallingPlayer);
+  public CS2CommandInfo(IServiceProvider provider, CommandInfo info,
+    int offset = 0) {
+    messenger = provider.GetRequiredService<IMessenger>();
+    if (info.CallingPlayer != null)
+      CallingPlayer = new CS2Player(info.CallingPlayer);
     CallingContext = info.CallingContext;
     Args           = new string[info.ArgCount - offset];
     for (var i = 0; i < info.ArgCount - offset; i++)
@@ -50,13 +56,14 @@ public class CS2CommandInfo : ICommandInfo {
 
   public string GetCommandString => string.Join(' ', Args);
 
-  /// <summary>
-  ///   Replies to the player who issued the command to
-  ///   the proper channels depending on context
-  /// </summary>
-  /// <param name="message"></param>
   public void ReplySync(string message) {
-    // TODO: Wrap this in NextFrame
-    if (CallingPlayer == null) Console.WriteLine(message);
+    switch (CallingContext) {
+      case CommandCallingContext.Chat:
+        messenger.Message(CallingPlayer, message);
+        break;
+      case CommandCallingContext.Console:
+        messenger.BackgroundMsg(CallingPlayer, message);
+        break;
+    }
   }
 }

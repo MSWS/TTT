@@ -2,9 +2,7 @@
 using TTT.API.Events;
 using TTT.API.Extensions;
 using TTT.API.Game;
-using TTT.Game.Commands;
 using TTT.Game.Listeners;
-using ICommandManager = TTT.API.Command.ICommandManager;
 
 namespace TTT.Game;
 

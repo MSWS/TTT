@@ -1,8 +1,6 @@
 using System.Reactive.Concurrency;
 using CounterStrikeSharp.API.Core;
 using Microsoft.Extensions.DependencyInjection;
-using TTT.API.Events;
-using TTT.API.Game;
 using TTT.CS2;
 using TTT.Game;
 

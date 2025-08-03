@@ -1,17 +1,17 @@
+using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Commands;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Localization;
 using TTT.API;
 using TTT.API.Command;
 using TTT.API.Player;
+using TTT.Game;
 using TTT.Game.Commands;
 
 namespace TTT.CS2;
 
 public class CS2CommandManager(IServiceProvider provider)
   : CommandManager(provider), IPluginModule {
-  private bool hotReload;
   private BasePlugin? plugin;
 
   private const string COMMAND_PREFIX = "css_";
@@ -19,9 +19,8 @@ public class CS2CommandManager(IServiceProvider provider)
   private readonly IPlayerConverter<CCSPlayerController> converter =
     provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
 
-  public void Start(BasePlugin? basePlugin, bool baseReload) {
-    plugin    = basePlugin;
-    hotReload = baseReload;
+  public void Start(BasePlugin? basePlugin, bool _) {
+    plugin = basePlugin;
 
     RegisterCommand(new TTTCommand(Provider));
 
@@ -41,7 +40,7 @@ public class CS2CommandManager(IServiceProvider provider)
 
   private void
     processInternal(CCSPlayerController? executor, CommandInfo info) {
-    var cs2Info = new CS2CommandInfo(info);
+    var cs2Info = new CS2CommandInfo(Provider, info);
     var wrapper = executor == null ?
       null :
       converter.GetPlayer(executor) as IOnlinePlayer;
@@ -51,16 +50,12 @@ public class CS2CommandManager(IServiceProvider provider)
         return await ProcessCommand(wrapper, cs2Info);
       } catch (Exception e) {
         var msg = e.Message;
-        // await Server.NextFrameAsync(() => {
-        //   provider.GetRequiredService<ILoggerFactory>()
-        //    .CreateLogger("Gangs")
-        //    .LogError(e,
-        //       "Encountered an error when processing command: \"{command}\" by {steam}",
-        //       wrappedInfo.GetCommandString, wrapper?.Steam);
-        // });
-        // wrappedInfo.ReplySync(string.IsNullOrEmpty(msg) ?
-        //   Locale.Get(MSG.GENERIC_ERROR) :
-        //   Locale.Get(MSG.GENERIC_ERROR_INFO, msg));
+        cs2Info.ReplySync(Localizer[GameMsgs.GENERIC_ERROR(msg)]);
+        await Server.NextFrameAsync(() => {
+          Console.WriteLine(
+            $"Encountered an error when processing command: \"{cs2Info.GetCommandString}\" by {wrapper?.Id}");
+          Console.WriteLine(e);
+        });
         return CommandResult.ERROR;
       }
     });
