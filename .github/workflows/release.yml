@@ -55,7 +55,7 @@ jobs:
         id: changelog
         uses: mikepenz/release-changelog-builder-action@v4
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.ACTIONS_GET_PR }}
 
       - name: Create GitHub Release
         if: ${{ steps.extract_branch.outputs.branch == 'main' || steps.extract_branch.outputs.branch == 'dev' }}
