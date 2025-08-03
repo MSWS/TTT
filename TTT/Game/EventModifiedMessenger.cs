@@ -9,7 +9,7 @@ public abstract class EventModifiedMessenger(IEventBus bus) : IMessenger {
   public Task<bool> Message(IPlayer? player, string message) {
     if (player == null) {
       Console.WriteLine(
-        "EVentModifiedMessenger: Message called with null player.");
+        "EventModifiedMessenger: Message called with null player.");
       SendMessage(null, message);
       return Task.FromResult(true);
     }
