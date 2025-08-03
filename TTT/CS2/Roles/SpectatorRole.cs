@@ -6,7 +6,7 @@ using TTT.API.Player;
 using TTT.API.Role;
 using TTT.Locale;
 
-namespace TTT.CS2;
+namespace TTT.CS2.Roles;
 
 public class SpectatorRole(IServiceProvider provider) : IRole {
   private readonly IPlayerConverter<CCSPlayerController> playerConverter =

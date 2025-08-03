@@ -1,4 +1,5 @@
 using TTT.API.Player;
+using TTT.Game.Events.Player;
 using TTT.Game.Roles;
 
 namespace TTT.Shop;
@@ -15,12 +16,15 @@ public record ShopConfig {
   public int CreditsForDetectiveVInnoKill { get; init; } = -6;
   public int CreditsForDetectiveVTraitorKill { get; init; } = 8;
   public int CreditsForAnyKill { get; init; } = 2;
+  public float CreditMultiplierForAssisting { get; init; } = 0.5f;
+  public float CreditsMultiplierForNotAssisted { get; init; } = 1.5f;
 
   private static readonly Type[] roleConcerns = [
     typeof(TraitorRole), typeof(DetectiveRole), typeof(InnocentRole)
   ];
 
-  public int CreditsForKill(IOnlinePlayer attacker, IOnlinePlayer victim) {
+  public virtual int CreditsForKill(IOnlinePlayer attacker,
+    IOnlinePlayer victim) {
     var attackerRole =
       attacker.Roles.FirstOrDefault(r => roleConcerns.Contains(r.GetType()));
     var victimRole =
@@ -46,5 +50,24 @@ public record ShopConfig {
       InnocentRole when victimRole is InnocentRole => CreditsForInnoVInnoKill,
       _ => CreditsForAnyKill
     };
+  }
+
+  public virtual (int?, int?) CreditsFor(PlayerDeathEvent ev) {
+    var victim   = ev.Victim;
+    var killer   = ev.Killer;
+    var assister = ev.Assister;
+
+    if (victim == killer || victim is null || killer is null)
+      return (null, null);
+
+    var killerCredits = CreditsForKill(killer, victim);
+    var assisterCredits =
+      assister == null ? 0 : CreditsForKill(assister, victim);
+
+    assisterCredits = (int)(assisterCredits * CreditMultiplierForAssisting);
+    if (assister == null)
+      killerCredits = (int)(killerCredits * CreditsMultiplierForNotAssisted);
+
+    return (killerCredits, assisterCredits);
   }
 }

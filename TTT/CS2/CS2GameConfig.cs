@@ -96,7 +96,7 @@ public class CS2GameConfig : IStorage<GameConfig>, IPluginModule {
 
   public Task<GameConfig?> Load() {
     return Task.FromResult<GameConfig?>(new GameConfig {
-      BalanceCfg = new GameConfig.BalanceConfig {
+      RoleCfg = new GameConfig.RoleConfig {
         TraitorHealth   = CV_TRAITOR_HEALTH.Value,
         DetectiveHealth = CV_DETECTIVE_HEALTH.Value,
         InnocentHealth  = CV_INNOCENT_HEALTH.Value,

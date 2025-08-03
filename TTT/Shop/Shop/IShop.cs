@@ -12,5 +12,8 @@ public interface IShop : IKeyedStorage<IOnlinePlayer, int>,
   PurchaseResult TryPurchase(IOnlinePlayer player, IShopItem item,
     bool printReason = true);
 
+  void AddBalance(IOnlinePlayer player, int amount, string reason = "",
+    bool print = true);
+
   void ClearBalances();
 }

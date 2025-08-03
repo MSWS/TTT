@@ -3,6 +3,7 @@ using CounterStrikeSharp.API.Modules.Utils;
 using Microsoft.Extensions.DependencyInjection;
 using TTT.API.Events;
 using TTT.API.Player;
+using TTT.CS2.Roles;
 using TTT.Game.Events.Player;
 
 namespace TTT.CS2.Listeners;

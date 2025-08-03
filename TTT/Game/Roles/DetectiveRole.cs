@@ -4,7 +4,7 @@ using TTT.API.Player;
 namespace TTT.Game.Roles;
 
 public class DetectiveRole(IServiceProvider provider)
-  : RatioBasedRole(provider, p => (int)Math.Floor(p / 8f)) {
+  : RatioBasedRole(provider) {
   public const string ID = "basegame.role.detective";
 
   public override string Id => ID;
@@ -14,9 +14,12 @@ public class DetectiveRole(IServiceProvider provider)
 
   public override Color Color => Color.DodgerBlue;
 
+  override protected Func<int, int> TargetCount
+    => Config.BalanceCfg.DetectiveCount;
+
   public override void OnAssign(IOnlinePlayer player) {
     base.OnAssign(player);
-    var balanceConfig = Config.BalanceCfg;
+    var balanceConfig = Config.RoleCfg;
     player.Health = balanceConfig.DetectiveHealth;
     player.Armor  = balanceConfig.DetectiveArmor;
 

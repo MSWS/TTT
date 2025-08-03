@@ -5,7 +5,8 @@ using TTT.Locale;
 
 namespace TTT.Game.Roles;
 
-public class InnocentRole(IServiceProvider provider) : BaseRole(provider) {
+public class InnocentRole(IServiceProvider provider)
+  : RatioBasedRole(provider) {
   public const string ID = "basegame.role.innocent";
 
   private readonly IMsgLocalizer? localizer =
@@ -18,14 +19,12 @@ public class InnocentRole(IServiceProvider provider) : BaseRole(provider) {
 
   public override Color Color => Color.LimeGreen;
 
-  public override IOnlinePlayer?
-    FindPlayerToAssign(ISet<IOnlinePlayer> players) {
-    return players.FirstOrDefault(p => p.Roles.Count == 0);
-  }
+  override protected Func<int, int> TargetCount
+    => Config.BalanceCfg.InnocentCount;
 
   public override void OnAssign(IOnlinePlayer player) {
     base.OnAssign(player);
-    var balanceConfig = Config.BalanceCfg;
+    var balanceConfig = Config.RoleCfg;
     player.Health = balanceConfig.InnocentHealth;
     player.Armor  = balanceConfig.InnocentArmor;
 

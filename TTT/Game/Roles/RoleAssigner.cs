@@ -24,8 +24,6 @@ public class RoleAssigner(IServiceProvider provider) : IRoleAssigner {
 
   private bool tryAssignRole(HashSet<IOnlinePlayer> players,
     IList<IRole> roles) {
-    var assigned = false;
-
     foreach (var role in roles) {
       var player = role.FindPlayerToAssign(players);
       if (player is null) continue;
@@ -35,14 +33,14 @@ public class RoleAssigner(IServiceProvider provider) : IRoleAssigner {
 
       if (ev.IsCanceled) continue;
 
-      assigned = true;
       player.Roles.Add(ev.Role);
       ev.Role.OnAssign(player);
 
       onlineMessenger?.BackgroundMsgAll(finder,
         $"{player.Name} has been assigned the role of {role.Name}.");
+      return true;
     }
 
-    return assigned;
+    return false;
   }
 }

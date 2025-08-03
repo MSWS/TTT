@@ -1,10 +1,22 @@
 ﻿namespace TTT.Game;
 
 public record GameConfig {
-  public BalanceConfig BalanceCfg { get; init; } = new();
+  public RoleConfig RoleCfg { get; init; } = new();
   public RoundConfig RoundCfg { get; init; } = new();
+  public BalanceConfig BalanceCfg { get; init; } = new();
 
   public record BalanceConfig {
+    public Func<int, int> TraitorCount { get; init; } =
+      p => (int)Math.Ceiling((p - 1) / 5f);
+
+    public Func<int, int> DetectiveCount { get; init; } =
+      p => (int)Math.Floor(p / 8f);
+
+    public Func<int, int> InnocentCount { get; init; } = p
+      => p - (int)Math.Ceiling((p - 1) / 5f) - (int)Math.Floor(p / 8f);
+  }
+
+  public record RoleConfig {
     public int TraitorHealth { get; init; } = 100;
     public int DetectiveHealth { get; init; } = 100;
     public int InnocentHealth { get; init; } = 100;

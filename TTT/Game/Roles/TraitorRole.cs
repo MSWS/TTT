@@ -3,8 +3,7 @@ using TTT.API.Player;
 
 namespace TTT.Game.Roles;
 
-public class TraitorRole(IServiceProvider provider)
-  : RatioBasedRole(provider, p => (int)Math.Ceiling((p - 1f) / 5f)) {
+public class TraitorRole(IServiceProvider provider) : RatioBasedRole(provider) {
   public const string ID = "basegame.role.traitor";
   public override string Id => ID;
 
@@ -13,9 +12,12 @@ public class TraitorRole(IServiceProvider provider)
 
   public override Color Color => Color.Red;
 
+  override protected Func<int, int> TargetCount
+    => Config.BalanceCfg.TraitorCount;
+
   public override void OnAssign(IOnlinePlayer player) {
     base.OnAssign(player);
-    var balanceConfig = Config.BalanceCfg;
+    var balanceConfig = Config.RoleCfg;
     player.Health = balanceConfig.TraitorHealth;
     player.Armor  = balanceConfig.TraitorArmor;
 
