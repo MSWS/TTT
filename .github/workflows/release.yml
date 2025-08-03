@@ -19,6 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      actions: read
 
     steps:
       - name: Extract Triggering Branch
@@ -50,6 +51,16 @@ jobs:
         with:
           name: ttt-nightly
           path: build/TTT
+
+      - name: Download artifact
+        id: download-artifact
+        uses: dawidd6/action-download-artifact@v11
+        with:
+          name: ttt-nightly
+          branch: main
+          workflow: 'Nightly'
+          github_token: '${{ secrets.GITHUB_TOKEN }}'
+          path: 'build/TTT'
 
       - name: Generate Changelog
         id: changelog
