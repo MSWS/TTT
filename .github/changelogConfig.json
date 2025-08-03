@@ -1,0 +1,35 @@
+{
+  "pr_template": "- ##{NUMBER}}: #{{TITLE}}",
+  "commit_template": "- #{{TITLE}}",
+  "empty_template": "- No changes",
+  "categories": [
+    {
+      "title": "## Features",
+      "labels": [
+        "feature",
+        "feat"
+      ]
+    },
+    {
+      "title": "## Fixes",
+      "labels": [
+        "fix",
+        "bug"
+      ]
+    },
+    {
+      "title": "## CI / CD",
+      "labels": [
+        "ci",
+        "cd",
+        "build",
+        "workflow",
+        "test"
+      ]
+    },
+    {
+      "title": "### Other",
+      "labels": []
+    }
+  ]
+}

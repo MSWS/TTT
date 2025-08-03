@@ -60,7 +60,8 @@ jobs:
         id: changelog
         uses: mikepenz/release-changelog-builder-action@v5
         with:
-          configuration: 'changelogConfig.json'
+          configuration: '.github/changelogConfig.json'
+          mode: "HYBRID"
 
       - name: Create GitHub Release
         if: ${{ steps.extract_branch.outputs.branch == 'main' || steps.extract_branch.outputs.branch == 'dev' }}
