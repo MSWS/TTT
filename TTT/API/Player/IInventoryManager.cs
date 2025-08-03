@@ -5,8 +5,7 @@ public interface IInventoryManager {
   ///   Gives a weapon to the player.
   /// </summary>
   /// <param name="player">The player to give the weapon to.</param>
-  /// <param name="weaponId">The ID of the weapon to give.</param>
-  void GiveWeapon(IOnlinePlayer player, string weaponId);
+  void GiveWeapon(IOnlinePlayer player, IWeapon weapon);
 
   /// <summary>
   ///   Removes a weapon from the player.
@@ -14,6 +13,11 @@ public interface IInventoryManager {
   /// <param name="player">The player to remove the weapon from.</param>
   /// <param name="weaponId">The ID of the weapon to remove.</param>
   void RemoveWeapon(IOnlinePlayer player, string weaponId);
+
+  void RemoveWeapon(IOnlinePlayer player, IWeapon weapon) {
+    RemoveWeapon(player, weapon.Id);
+  }
+
 
   /// <summary>
   ///   Removes all weapons from the player.

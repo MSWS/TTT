@@ -18,16 +18,16 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
    .GetRequiredService<IStorage<GameConfig>>()
    .Load()
    .GetAwaiter()
-   .GetResult();
+   .GetResult() ?? new GameConfig();
 
   private readonly List<IPlayer> players = [];
 
-  private readonly List<IRole> roles = [
+  private State state = State.WAITING;
+
+  public IList<IRole> Roles { get; } = [
     new InnocentRole(provider), new TraitorRole(provider),
     new DetectiveRole(provider)
   ];
-
-  private State state = State.WAITING;
 
   public ICollection<IPlayer> Players => players;
 
@@ -109,7 +109,7 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
 
   public void Dispose() {
     players.Clear();
-    roles.Clear();
+    Roles.Clear();
     Logger.ClearActions();
   }
 
@@ -125,7 +125,7 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
 
     State     = State.IN_PROGRESS;
     StartedAt = DateTime.Now;
-    assigner.AssignRoles(finder.GetOnline(), roles);
+    assigner.AssignRoles(finder.GetOnline(), Roles);
     players.AddRange(finder.GetOnline());
   }
 
@@ -142,8 +142,8 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
   private readonly IPlayerFinder finder =
     provider.GetRequiredService<IPlayerFinder>();
 
-  private readonly IOnlineMessenger? onlineMessenger =
-    provider.GetService<IOnlineMessenger>();
+  private readonly IMessenger? onlineMessenger =
+    provider.GetService<IMessenger>();
 
   #endregion
 }

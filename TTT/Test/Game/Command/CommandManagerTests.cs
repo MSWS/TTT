@@ -4,12 +4,8 @@ using Xunit;
 
 namespace TTT.Test.Game.Command;
 
-public class CommandManagerTests {
-  private readonly CommandManager manager;
-
-  public CommandManagerTests(IServiceProvider provider) {
-    manager = new CommandManager(provider);
-  }
+public class CommandManagerTests(IServiceProvider provider) {
+  private readonly CommandManager manager = new(provider);
 
   [Fact]
   public void RegisterCommand_AddsAllAliases() {
@@ -32,25 +28,24 @@ public class CommandManagerTests {
     manager.RegisterCommand(cmd);
 
     var player = TestPlayer.Random();
-    var info = new TestCommandInfo(["echo", "hello", "world"]) {
-      CallingPlayer = player
-    };
+    var info =
+      new TestCommandInfo(provider, player, ["echo", "hello", "world"]);
 
-    var result = await manager.ProcessCommand(player, info);
+    var result = await manager.ProcessCommand(info);
 
     Assert.Equal(CommandResult.SUCCESS, result);
-    Assert.Contains("hello world", info.Replies);
+    Assert.Contains("hello world", player.Messages);
   }
 
   [Fact]
   public async Task ProcessCommand_ReturnsUnknownCommand() {
     var player = TestPlayer.Random();
-    var info = new TestCommandInfo(["doesnotexist"]) { CallingPlayer = player };
+    var info   = new TestCommandInfo(provider, player, ["doesnotexist"]);
 
-    var result = await manager.ProcessCommand(player, info);
+    var result = await manager.ProcessCommand(info);
 
     Assert.Equal(CommandResult.UNKNOWN_COMMAND, result);
-    Assert.Contains("doesnotexist", info.Replies[0]);
+    Assert.Contains("doesnotexist", player.Messages.Single());
   }
 
   [Fact]
@@ -58,14 +53,12 @@ public class CommandManagerTests {
     var cmd = new TestEchoCommand();
     manager.RegisterCommand(cmd);
 
-    var info =
-      new TestCommandInfo(["say", "hi"]) {
-        CallingPlayer = TestPlayer.Random()
-      };
-    var result = await manager.ProcessCommand(info.CallingPlayer, info);
+    var player = TestPlayer.Random();
+    var info   = new TestCommandInfo(provider, player, ["say", "hi"]);
+    var result = await manager.ProcessCommand(info);
 
     Assert.Equal(CommandResult.SUCCESS, result);
-    Assert.Equal("hi", info.Replies.Single());
+    Assert.Equal("hi", player.Messages.Single());
   }
 
   [Fact]

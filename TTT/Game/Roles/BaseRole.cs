@@ -12,7 +12,7 @@ public abstract class BaseRole(IServiceProvider provider) : IRole {
    .GetRequiredService<IStorage<GameConfig>>()
    .Load()
    .GetAwaiter()
-   .GetResult();
+   .GetResult() ?? new GameConfig();
 
   protected readonly IInventoryManager Inventory =
     provider.GetRequiredService<IInventoryManager>();

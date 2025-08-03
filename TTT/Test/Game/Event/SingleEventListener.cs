@@ -8,5 +8,5 @@ public class SingleEventListener(IEventBus bus) : IListener {
   public void Dispose() { bus.UnregisterListener(this); }
 
   [EventHandler]
-  public void OnTestEvent(TestEvent e) { fired++; }
+  public void OnTestEvent(TestEvent _) { fired++; }
 }

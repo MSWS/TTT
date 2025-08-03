@@ -23,9 +23,7 @@ public interface ICommandManager {
   /// <summary>
   ///   Attempts to process a command.
   /// </summary>
-  /// <param name="executor"></param>
   /// <param name="info"></param>
   /// <returns>True if the command finished processing successfully.</returns>
-  Task<CommandResult> ProcessCommand(IOnlinePlayer? executor,
-    ICommandInfo info);
+  Task<CommandResult> ProcessCommand(ICommandInfo info);
 }

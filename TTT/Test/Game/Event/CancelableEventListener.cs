@@ -15,5 +15,5 @@ public class CancelableEventListener(IEventBus bus, bool cancelEvent)
   }
 
   [EventHandler(Priority = Priority.LOW, IgnoreCanceled = true)]
-  public void AfterOnEvent(TestEvent e) { Fired++; }
+  public void AfterOnEvent(TestEvent _) { Fired++; }
 }
