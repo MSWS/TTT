@@ -3,34 +3,16 @@ using TTT.API.Player;
 namespace TTT.API.Messages;
 
 public interface IMessenger {
-  Task<bool> Message(IPlayer? player, string message);
+  Task<bool> Message(IPlayer? player, string message, params object[] args);
 
-  async Task<bool> MessageAll(IPlayerFinder finder, string message) {
-    var tasks = finder.GetOnline()
-     .Select(onlinePlayer => Message(onlinePlayer, message))
-     .ToList();
+  void Debug(string msg, params object[] args);
+  void DebugInform(string msg, params object[] args) { Debug(msg, args); }
 
-    var results = await Task.WhenAll(tasks);
-    return results.All(r => r);
-  }
+  void DebugAnnounce(string msg, params object[] args) { Debug(msg, args); }
 
-  async Task<bool> BackgroundMsgAll(IPlayerFinder finder, string message) {
-    var tasks = finder.GetOnline()
-     .Select(onlinePlayer => BackgroundMsg(onlinePlayer, message))
-     .ToList();
-
-    var results = await Task.WhenAll(tasks);
-    return results.All(r => r);
-  }
-
-  async Task<bool> ScreenMsgAll(IPlayerFinder finder, string message) {
-    var tasks = finder.GetOnline()
-     .Select(onlinePlayer => ScreenMsg(onlinePlayer, message))
-     .ToList();
-
-    var results = await Task.WhenAll(tasks);
-    return results.All(r => r);
-  }
+  Task<bool> MessageAll(string message, params object[] args);
+  Task<bool> BackgroundMsgAll(string message, params object[] args);
+  Task<bool> ScreenMsgAll(string message, params object[] args);
 
   /// <summary>
   ///   Attempt to send a message to a player without showing it on the screen.
@@ -39,9 +21,11 @@ public interface IMessenger {
   /// </summary>
   /// <param name="player"></param>
   /// <param name="message"></param>
+  /// <param name="args"></param>
   /// <returns></returns>
-  Task<bool> BackgroundMsg(IPlayer? player, string message) {
-    return Message(player, message);
+  Task<bool> BackgroundMsg(IPlayer? player, string message,
+    params object[] args) {
+    return Message(player, message, args);
   }
 
   /// <summary>
@@ -51,8 +35,9 @@ public interface IMessenger {
   /// </summary>
   /// <param name="player"></param>
   /// <param name="message"></param>
+  /// <param name="args"></param>
   /// <returns></returns>
-  Task<bool> ScreenMsg(IPlayer? player, string message) {
-    return Message(player, message);
+  Task<bool> ScreenMsg(IPlayer? player, string message, params object[] args) {
+    return Message(player, message, args);
   }
 }

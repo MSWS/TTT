@@ -10,6 +10,7 @@ using TTT.API.Storage;
 using TTT.Game.Events.Game;
 using TTT.Game.Loggers;
 using TTT.Game.Roles;
+using TTT.Locale;
 
 namespace TTT.Game;
 
@@ -19,6 +20,9 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
    .Load()
    .GetAwaiter()
    .GetResult() ?? new GameConfig();
+
+  private readonly IMsgLocalizer locale =
+    provider.GetRequiredService<IMsgLocalizer>();
 
   private readonly List<IPlayer> players = [];
 
@@ -52,33 +56,32 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
 
 
   public IObservable<long>? Start(TimeSpan? countdown = null) {
-    onlineMessenger?.ScreenMsgAll(finder, "Attempting to start the game...");
-
+    onlineMessenger?.Debug("Attempting to start the game...");
     var online = finder.GetOnline();
 
     if (online.Count < config.RoundCfg.MinimumPlayers) {
-      onlineMessenger?.ScreenMsgAll(finder,
-        "Not enough players to start the game.");
+      onlineMessenger?.MessageAll(
+        locale[GameMsgs.NOT_ENOUGH_PLAYERS(config.RoundCfg.MinimumPlayers)]);
       return null;
     }
 
     if (State != State.WAITING) return null;
 
     if (countdown == null) {
-      onlineMessenger?.ScreenMsgAll(finder, "Starting game without countdown.");
+      onlineMessenger?.DebugAnnounce("Starting game without countdown.");
       StartRound();
       return Observable.Empty<long>();
     }
 
-    onlineMessenger?.BackgroundMsgAll(finder,
-      $"Game is starting in {countdown.Value.TotalSeconds} seconds...");
+    onlineMessenger?.MessageAll(
+      locale[GameMsgs.GAME_STATE_STARTING(countdown.Value)]);
     State = State.COUNTDOWN;
     var timer = Observable.Timer(countdown.Value, scheduler);
 
     timer.Subscribe(_ => {
       if (State != State.COUNTDOWN) {
-        onlineMessenger?.ScreenMsgAll(finder,
-          "Game countdown was interrupted.");
+        onlineMessenger?.MessageAll(
+          locale[GameMsgs.GENERIC_ERROR("Game was interrupted.")]);
         return;
       }
 
@@ -99,10 +102,9 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
     State       = State.FINISHED;
     WinningRole = reason?.WinningRole;
 
-    onlineMessenger?.MessageAll(finder,
-      WinningRole == null ?
-        reason?.Message ?? "Game ended." :
-        reason?.Message ?? $"{WinningRole.Name} won the game!");
+    onlineMessenger?.MessageAll(WinningRole == null ?
+      reason?.Message ?? "Game ended." :
+      reason?.Message ?? $"{WinningRole.Name} won the game!");
   }
 
   public void Dispose() {
@@ -114,9 +116,9 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
   virtual protected void StartRound() {
     var online = finder.GetOnline();
 
-    if (online.Count < 2) {
-      onlineMessenger?.ScreenMsgAll(finder,
-        "Not enough players to start the game.");
+    if (online.Count < config.RoundCfg.MinimumPlayers) {
+      onlineMessenger?.MessageAll(
+        locale[GameMsgs.NOT_ENOUGH_PLAYERS(config.RoundCfg.MinimumPlayers)]);
       State = State.WAITING;
       return;
     }

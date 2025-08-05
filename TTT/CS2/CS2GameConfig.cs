@@ -15,7 +15,7 @@ public class CS2GameConfig : IStorage<GameConfig>, IPluginModule {
     ConVarFlags.FCVAR_NONE, new RangeValidator<int>(1, 60));
 
   public static readonly FakeConVar<int> CV_MINIMUM_PLAYERS = new(
-    "css_ttt_minimum_players", "Minimum number of players to start a round", 2,
+    "css_ttt_minimum_players", "Minimum number of Players to start a round", 2,
     ConVarFlags.FCVAR_NONE, new RangeValidator<int>(2, 64));
 
   public static readonly FakeConVar<int> CV_ROUND_DURATION_BASE = new(

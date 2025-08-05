@@ -1,4 +1,3 @@
-using JetBrains.Annotations;
 using TTT.API.Events;
 using TTT.API.Messages;
 using TTT.Game.Events.Player;
@@ -6,14 +5,12 @@ using Xunit;
 
 namespace TTT.Test.Messages;
 
-public class MessageModificationTest(IEventBus bus, IMessenger messenger) {
-  private const string ORIGINAL_MESSAGE = "Original Message";
-  private const string MODIFIED_MESSAGE = "Modified Message";
-
+public partial class MessageModificationTest(IEventBus bus,
+  IMessenger messenger) {
   [Fact]
-  public void TestMessageModification() {
+  public void Message_IsModified() {
     // Arrange
-    var listener = new MessageModifyListener(bus);
+    var listener = new SimpleMessageSubstitution<PlayerMessageEvent>(bus);
     bus.RegisterListener(listener);
     var player = TestPlayer.Random();
 
@@ -25,13 +22,70 @@ public class MessageModificationTest(IEventBus bus, IMessenger messenger) {
     Assert.Equal(MODIFIED_MESSAGE, player.Messages[0]);
   }
 
-  private class MessageModifyListener(IEventBus bus) : IListener {
-    public void Dispose() { bus.UnregisterListener(this); }
+  [Fact]
+  public void Message_Args_AreModified() {
+    var listener = new SimpleArgsSubstitution<PlayerMessageEvent>(bus);
+    bus.RegisterListener(listener);
+    var player = TestPlayer.Random();
 
-    [EventHandler]
-    [UsedImplicitly]
-    public void OnMessage(PlayerMessageEvent ev) {
-      ev.Message = MODIFIED_MESSAGE;
-    }
+    messenger.Message(player, ORIGINAL_MESSAGE + " {0}", "Original Arg");
+
+    Assert.Single(player.Messages);
+    Assert.Equal(ORIGINAL_MESSAGE + " Modified Arg", player.Messages[0]);
+  }
+
+  [Fact]
+  public void BackgroundMessage_IsModified() {
+    // Arrange
+    var listener =
+      new SimpleMessageSubstitution<PlayerBackgroundMessageEvent>(bus);
+    bus.RegisterListener(listener);
+    var player = TestPlayer.Random();
+
+    // Act
+    messenger.BackgroundMsg(player, ORIGINAL_MESSAGE);
+
+    // Assert
+    Assert.Single(player.Messages);
+    Assert.Equal(MODIFIED_MESSAGE, player.Messages[0]);
+  }
+
+  [Fact]
+  public void BackgroundMessage_Args_AreModified() {
+    var listener =
+      new SimpleArgsSubstitution<PlayerBackgroundMessageEvent>(bus);
+    bus.RegisterListener(listener);
+    var player = TestPlayer.Random();
+
+    messenger.BackgroundMsg(player, ORIGINAL_MESSAGE + " {0}", "Original Arg");
+    Assert.Single(player.Messages);
+    Assert.Equal(ORIGINAL_MESSAGE + " Modified Arg", player.Messages[0]);
+  }
+
+  [Fact]
+  public void ScreenMessage_IsModified() {
+    // Arrange
+    var listener = new SimpleMessageSubstitution<PlayerScreenMessageEvent>(bus);
+    bus.RegisterListener(listener);
+    var player = TestPlayer.Random();
+
+    // Act
+    messenger.ScreenMsg(player, ORIGINAL_MESSAGE);
+
+    // Assert
+    Assert.Single(player.Messages);
+    Assert.Equal(MODIFIED_MESSAGE, player.Messages[0]);
+  }
+
+  [Fact]
+  public void ScreenMessage_Args_AreModified() {
+    var listener = new SimpleArgsSubstitution<PlayerScreenMessageEvent>(bus);
+    bus.RegisterListener(listener);
+    var player = TestPlayer.Random();
+
+    messenger.ScreenMsg(player, ORIGINAL_MESSAGE + " {0}", "Original Arg");
+
+    Assert.Single(player.Messages);
+    Assert.Equal(ORIGINAL_MESSAGE + " Modified Arg", player.Messages[0]);
   }
 }

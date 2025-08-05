@@ -1,19 +1,13 @@
 using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using TTT.API.Events;
+using TTT.API.Messages;
 using TTT.API.Player;
 using TTT.Game;
 
 namespace TTT.CS2;
 
 public class CS2Messenger(IServiceProvider provider)
-  : EventModifiedMessenger(provider.GetRequiredService<IEventBus>()) {
-  private readonly ILogger logger = provider
-   .GetRequiredService<ILoggerFactory>()
-   .CreateLogger("TTT - CS2");
-
+  : EventModifiedMessenger(provider) {
   private CCSPlayerController? getPlayer(IPlayer player) {
     if (!ulong.TryParse(player.Id, out var steamId)) return null;
     var gamePlayer = Utilities.GetPlayerFromSteamId(steamId);
@@ -21,12 +15,10 @@ public class CS2Messenger(IServiceProvider provider)
   }
 
   override protected async Task<bool> SendMessage(IPlayer? player,
-    string message) {
+    string message, params object[] args) {
+    if (args.Length > 0) message = string.Format(message, args);
     if (player == null) {
-      await Server.NextWorldUpdateAsync(() => {
-        Console.WriteLine(message);
-        logger.LogInformation(message);
-      });
+      Console.WriteLine(message);
       return true;
     }
 
@@ -39,8 +31,14 @@ public class CS2Messenger(IServiceProvider provider)
      .ContinueWith(_ => success);
   }
 
+  public override void Debug(string msg, params object[] args) {
+    _ = ((IMessenger)this).BackgroundMsgAll(msg, args);
+  }
+
   public override async Task<bool> BackgroundMsg(IPlayer? player,
-    string message) {
+    string message, params object[] args) {
+    if (args.Length > 0) message = string.Format(message, args);
+
     if (player == null) return await Message(null, message);
 
     var success = false;
@@ -52,7 +50,9 @@ public class CS2Messenger(IServiceProvider provider)
      .ContinueWith(_ => success);
   }
 
-  public override async Task<bool> ScreenMsg(IPlayer? player, string message) {
+  public override async Task<bool> ScreenMsg(IPlayer? player, string message,
+    params object[] args) {
+    if (args.Length > 0) message = string.Format(message, args);
     if (player == null) return await Message(null, message);
     var success = false;
     return await Server.NextWorldUpdateAsync(() => {
