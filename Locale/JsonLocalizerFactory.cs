@@ -17,9 +17,6 @@ public class JsonLocalizerFactory : IStringLocalizerFactory {
     }
 
     langPath = Path.Combine(current, "lang");
-
-    Console.WriteLine(
-      $"JsonLocalizerFactory initialized with path: {langPath}");
   }
 
   public IStringLocalizer Create(Type resourceSource) {
