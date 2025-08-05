@@ -54,7 +54,7 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
   }
 
 
-  public IObservable<long>? Start(TimeSpan? countdown = null) {
+  public virtual IObservable<long>? Start(TimeSpan? countdown = null) {
     onlineMessenger?.Debug("Attempting to start the game...");
     var online = finder.GetOnline();
 

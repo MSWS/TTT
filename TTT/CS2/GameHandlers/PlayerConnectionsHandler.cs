@@ -15,8 +15,6 @@ public class PlayerConnectionsHandler(IEventBus bus,
   public void Start() { }
 
   public void Start(BasePlugin? plugin, bool hotReload) {
-    Console.WriteLine(
-      $"PlayerConnectionsHandler started, hotReload: {hotReload}");
     plugin
     ?.RegisterListener<CounterStrikeSharp.API.Core.Listeners.OnClientConnect>(
         connectToServer);

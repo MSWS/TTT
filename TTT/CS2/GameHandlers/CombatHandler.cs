@@ -12,7 +12,6 @@ namespace TTT.CS2.GameHandlers;
 
 public class CombatHandler(IEventBus bus,
   IPlayerConverter<CCSPlayerController> converter) : IPluginModule {
-  
   // TODO: This seems to crash 50% of the time upon shooting.
 
   public void Dispose() {
@@ -33,38 +32,43 @@ public class CombatHandler(IEventBus bus,
   /// </summary>
   /// <param name="hook"></param>
   /// <returns></returns>
-  /// <exception cref="InvalidOperationException"></exception>
   private HookResult OnTakeDamage(DynamicHook hook) {
-    try {
-      var playerPawn = hook.GetParam<CCSPlayerPawn>(0);
-      var info       = hook.GetParam<CTakeDamageInfo>(1);
+    var playerPawn = hook.GetParam<CCSPlayerPawn>(0);
+    var info       = hook.GetParam<CTakeDamageInfo>(1);
 
-      var player = playerPawn.Controller.Value?.As<CCSPlayerController>();
+    Console.WriteLine($"OnTakeDamage called");
 
-      if (player == null || !player.IsValid || player.Pawn.Value == null)
-        return HookResult.Continue;
+    var player = playerPawn.Controller.Value?.As<CCSPlayerController>();
 
-      var attackerPawn = info.Attacker;
-      var attacker     = attackerPawn.Value?.As<CCSPlayerController>();
+    if (player == null || !player.IsValid || player.Pawn.Value == null
+      || !player.Pawn.IsValid)
+      return HookResult.Continue;
 
-      var playerGame = converter.GetPlayer(player) as IOnlinePlayer;
-      var attackerGame = attacker == null ?
-        null :
-        converter.GetPlayer(attacker) as IOnlinePlayer;
+    Console.WriteLine($"Past basic checks");
 
-      if (playerGame == null)
-        throw new InvalidOperationException(
-          "Player game object is null, this should never happen.");
+    var attackerPawn = info.Attacker;
+    var attacker     = attackerPawn.Value?.As<CCSPlayerController>();
 
-      var dmgEvent = new PlayerDamagedEvent(playerGame, attackerGame,
-        (int)info.Damage, player.Pawn.Value.Health - (int)info.Damage);
+    Console.WriteLine($"Attacker: {attacker?.PlayerName ?? "null"}");
 
-      bus.Dispatch(dmgEvent);
+    var playerGame = converter.GetPlayer(player) as IOnlinePlayer;
+    var attackerGame = attacker == null ?
+      null :
+      converter.GetPlayer(attacker) as IOnlinePlayer;
 
-      return dmgEvent.IsCanceled ? HookResult.Handled : HookResult.Continue;
-    } catch (AccessViolationException e) { Console.WriteLine(e); }
+    Console.WriteLine(
+      $"PlayerGame: {playerGame?.Id ?? "null"}, AttackerGame: {attackerGame?.Id ?? "null"}");
 
-    return HookResult.Continue;
+    if (playerGame == null)
+      throw new InvalidOperationException(
+        "Player game object is null, this should never happen.");
+
+    var dmgEvent = new PlayerDamagedEvent(playerGame, attackerGame,
+      (int)info.Damage, player.Pawn.Value.Health - (int)info.Damage);
+
+    bus.Dispatch(dmgEvent);
+
+    return dmgEvent.IsCanceled ? HookResult.Handled : HookResult.Continue;
   }
 
   /// <summary>

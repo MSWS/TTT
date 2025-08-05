@@ -37,7 +37,11 @@ public class CS2Player : IOnlinePlayer {
     get {
       var player = Utilities.GetPlayerFromSteamId(ulong.Parse(Id))
         ?? Utilities.GetPlayerFromIndex(int.Parse(Id));
-      return player is not { IsValid: true } ? null : player;
+#if DEBUG
+      if (player == null || !player.IsValid)
+        Console.WriteLine("Failed to find player with ID: " + Id);
+#endif
+      return player is { IsValid: true } ? player : null;
     }
   }
 
@@ -82,7 +86,15 @@ public class CS2Player : IOnlinePlayer {
   }
 
   public bool IsAlive {
+#if DEBUG
+    get {
+      var val = Player != null && Player.PawnIsAlive;
+      Console.WriteLine($"Checking IsAlive for player {Id} ({Name}) = {val}");
+      return val;
+    }
+#else
     get => Player != null && Player.PawnIsAlive;
+#endif
 
     set
       => throw new NotSupportedException(

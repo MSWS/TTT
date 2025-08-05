@@ -14,4 +14,9 @@ public class CS2Game(IServiceProvider provider) : RoundBasedGame(provider) {
   override protected void StartRound() {
     Server.NextWorldUpdate(() => { base.StartRound(); });
   }
+
+  public override IObservable<long>? Start(TimeSpan? countdown = null) {
+    Server.NextWorldUpdate(() => { base.Start(countdown); });
+    return null;
+  }
 }

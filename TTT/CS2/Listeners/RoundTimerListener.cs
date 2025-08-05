@@ -24,7 +24,7 @@ public class RoundTimerListener(IServiceProvider provider) : IListener {
     if (ev.NewState == State.COUNTDOWN) {
       RoundUtil.SetTimeRemaining((int)config.RoundCfg.CountDownDuration
        .TotalSeconds);
-      Server.ExecuteCommand("mp_ignore_round_win_conditions 0");
+      Server.ExecuteCommand("mp_ignore_round_win_conditions 1");
       return;
     }
 
@@ -32,7 +32,7 @@ public class RoundTimerListener(IServiceProvider provider) : IListener {
     RoundUtil.SetTimeRemaining((int)config.RoundCfg
      .RoundDuration(ev.Game.Players.Count)
      .TotalSeconds);
-    Server.ExecuteCommand("mp_ignore_round_win_conditions 1");
+    Server.ExecuteCommand("mp_ignore_round_win_conditions 0");
   }
 
   [EventHandler(IgnoreCanceled = true)]
