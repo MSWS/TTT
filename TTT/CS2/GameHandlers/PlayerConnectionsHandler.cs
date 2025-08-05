@@ -16,7 +16,7 @@ public class PlayerConnectionsHandler(IEventBus bus,
 
   public void Start(BasePlugin? plugin, bool hotReload) {
     plugin
-    ?.RegisterListener<CounterStrikeSharp.API.Core.Listeners.OnClientConnect>(
+    ?.RegisterListener<CounterStrikeSharp.API.Core.Listeners.OnClientConnected>(
         connectToServer);
     plugin
     ?.RegisterListener<
@@ -52,7 +52,7 @@ public class PlayerConnectionsHandler(IEventBus bus,
     bus.Dispatch(new PlayerLeaveEvent(gamePlayer));
   }
 
-  private void connectToServer(int playerSlot, string name, string ipAddress) {
+  private void connectToServer(int playerSlot) {
     var player = Utilities.GetPlayerFromSlot(playerSlot);
     Console.WriteLine($"Player {playerSlot} put in server.");
     if (player == null || !player.IsValid) {

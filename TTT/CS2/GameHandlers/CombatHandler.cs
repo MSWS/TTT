@@ -15,8 +15,8 @@ public class CombatHandler(IEventBus bus,
   // TODO: This seems to crash 50% of the time upon shooting.
 
   public void Dispose() {
-    // VirtualFunctions.CBaseEntity_TakeDamageOldFunc.Unhook(OnTakeDamage,
-    //   HookMode.Pre);
+    VirtualFunctions.CBaseEntity_TakeDamageOldFunc.Unhook(OnTakeDamage,
+      HookMode.Pre);
   }
 
   public string Name => "CombatListeners";

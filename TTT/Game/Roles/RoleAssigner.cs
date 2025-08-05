@@ -10,9 +10,6 @@ namespace TTT.Game.Roles;
 public class RoleAssigner(IServiceProvider provider) : IRoleAssigner {
   private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
 
-  private readonly IPlayerFinder finder =
-    provider.GetRequiredService<IPlayerFinder>();
-
   private readonly IMessenger? onlineMessenger =
     provider.GetService<IMessenger>();
 
