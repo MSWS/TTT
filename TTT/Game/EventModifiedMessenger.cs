@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
 using TTT.API.Events;
 using TTT.API.Messages;
@@ -23,29 +22,35 @@ public abstract class EventModifiedMessenger(IServiceProvider provider)
       new PlayerMessageEvent(player, message, args));
   }
 
-  [Conditional("DEBUG")]
   public abstract void Debug(string msg, params object[] args);
 
-  [Conditional("DEBUG")]
   public virtual void DebugAnnounce(string msg, params object[] args) {
     Debug(msg, args);
   }
 
+  public virtual void DebugInform(string msg, params object[] args) {
+    Debug(msg, args);
+  }
+
+  private async Task<bool> forAll(Func<IOnlinePlayer, Task<bool>> action) {
+    var players = Players.GetOnline();
+    if (players.Count == 0) return true;
+    var tasks = new List<Task<bool>>(players.Count);
+    tasks.AddRange(players.Select(action));
+    var results = await Task.WhenAll(tasks);
+    return results.All(r => r);
+  }
+
   public Task<bool> MessageAll(string message, params object[] args) {
-    throw new NotImplementedException();
+    return forAll(p => Message(p, message, args));
   }
 
   public Task<bool> BackgroundMsgAll(string message, params object[] args) {
-    throw new NotImplementedException();
+    return forAll(p => BackgroundMsg(p, message, args));
   }
 
   public Task<bool> ScreenMsgAll(string message, params object[] args) {
-    throw new NotImplementedException();
-  }
-
-  [Conditional("DEBUG")]
-  public virtual void DebugInform(string msg, params object[] args) {
-    Debug(msg, args);
+    return forAll(p => ScreenMsg(p, message, args));
   }
 
   // Allow for overriding in derived classes

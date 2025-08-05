@@ -10,6 +10,8 @@ public class TestMessenger(IServiceProvider provider)
     if (player is not TestPlayer testPlayer)
       throw new ArgumentException("Player must be a TestPlayer",
         nameof(player));
+    
+    if (args.Length > 0) message = string.Format(message, args);
 
     testPlayer.Messages.Add(message);
     return Task.FromResult(true);
