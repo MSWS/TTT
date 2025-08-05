@@ -52,13 +52,13 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
 
 
   public IObservable<long>? Start(TimeSpan? countdown = null) {
-    onlineMessenger?.BackgroundMsgAll(finder,
+    onlineMessenger?.ScreenMsgAll(finder,
       "Attempting to start the game...");
 
     var online = finder.GetOnline();
 
     if (online.Count < config.RoundCfg.MinimumPlayers) {
-      onlineMessenger?.BackgroundMsgAll(finder,
+      onlineMessenger?.ScreenMsgAll(finder,
         "Not enough players to start the game.");
       return null;
     }
@@ -66,7 +66,7 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
     if (State != State.WAITING) return null;
 
     if (countdown == null) {
-      onlineMessenger?.BackgroundMsgAll(finder,
+      onlineMessenger?.ScreenMsgAll(finder,
         "Starting game without countdown.");
       StartRound();
       return Observable.Empty<long>();
@@ -79,7 +79,7 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
 
     timer.Subscribe(_ => {
       if (State != State.COUNTDOWN) {
-        onlineMessenger?.BackgroundMsgAll(finder,
+        onlineMessenger?.ScreenMsgAll(finder,
           "Game countdown was interrupted.");
         return;
       }
@@ -117,7 +117,7 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
     var online = finder.GetOnline();
 
     if (online.Count < 2) {
-      onlineMessenger?.BackgroundMsgAll(finder,
+      onlineMessenger?.ScreenMsgAll(finder,
         "Not enough players to start the game.");
       State = State.WAITING;
       return;

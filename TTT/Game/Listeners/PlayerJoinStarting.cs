@@ -11,7 +11,7 @@ public class PlayerJoinStarting(IServiceProvider provider)
   [EventHandler]
   [UsedImplicitly]
   public void OnJoin(PlayerJoinEvent ev) {
-    if (Games.ActiveGame is not null) return;
+    if (Games.IsGameActive()) return;
     var playerCount = Finder.GetOnline().Count;
     if (playerCount < 2) return;
 
