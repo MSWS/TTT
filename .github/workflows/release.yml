@@ -32,6 +32,7 @@ jobs:
         with:
           fetch-depth: 0
           fetch-tags: true
+          ref: ${{ github.event.workflow_run.head_branch }}
 
       - name: Install GitVersion
         uses: GitTools/actions/gitversion/setup@v4.0.1
