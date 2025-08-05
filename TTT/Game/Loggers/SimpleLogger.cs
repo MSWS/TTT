@@ -6,8 +6,8 @@ using TTT.API.Messages;
 namespace TTT.Game.Loggers;
 
 public class SimpleLogger(IServiceProvider provider) : IActionLogger {
-  // private readonly Lazy<IMessenger> msg =
-  //   new(provider.GetRequiredService<IMessenger>());
+  private readonly Lazy<IMessenger> msg =
+    new(provider.GetRequiredService<IMessenger>());
 
   private readonly IScheduler scheduler = provider
    .GetRequiredService<IScheduler>();
@@ -16,8 +16,8 @@ public class SimpleLogger(IServiceProvider provider) : IActionLogger {
 
   public void LogAction(IAction action) {
 #if DEBUG
-    // msg.Value.Debug(
-    //   $"Logging action: {action.GetType().Name} at {scheduler.Now}");
+    msg.Value.Debug(
+      $"Logging action: {action.GetType().Name} at {scheduler.Now}");
 #endif
     var timestamp = scheduler.Now;
     actions.TryGetValue(timestamp.Date, out var actionSet);
