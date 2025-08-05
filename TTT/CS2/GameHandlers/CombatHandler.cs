@@ -10,6 +10,8 @@ namespace TTT.CS2.GameHandlers;
 
 public class CombatHandler(IEventBus bus,
   IPlayerConverter<CCSPlayerController> converter) : IPluginModule {
+  // TODO: This seems to crash 50% of the time upon shooting.
+
   public void Dispose() {
     // VirtualFunctions.CBaseEntity_TakeDamageOldFunc.Unhook(OnTakeDamage,
     //   HookMode.Pre);
@@ -61,6 +63,13 @@ public class CombatHandler(IEventBus bus,
   //
   //   return HookResult.Continue;
   // }
+
+  /// <summary>
+  /// 
+  /// </summary>
+  /// <param name="ev"></param>
+  /// <param name="_"></param>
+  /// <returns></returns>
   [GameEventHandler]
   public HookResult OnPlayerDeath(EventPlayerDeath ev, GameEventInfo _) {
     var player = ev.Userid;

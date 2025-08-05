@@ -19,8 +19,12 @@ public class PlayerConnectionsHandler(IEventBus bus,
     Console.WriteLine(
       $"PlayerConnectionsHandler started, hotReload: {hotReload}");
     plugin
+    ?.RegisterListener<CounterStrikeSharp.API.Core.Listeners.OnClientConnect>(
+        connectToServer);
+    plugin
     ?.RegisterListener<
-        CounterStrikeSharp.API.Core.Listeners.OnClientPutInServer>(putInServer);
+        CounterStrikeSharp.API.Core.Listeners.OnClientDisconnect>(
+        disconnectFromServer);
 
     if (!hotReload) return;
 
@@ -37,9 +41,19 @@ public class PlayerConnectionsHandler(IEventBus bus,
     });
   }
 
-  public void Dispose() { }
+  private void disconnectFromServer(int playerSlot) {
+    var player = Utilities.GetPlayerFromSlot(playerSlot);
+    Console.WriteLine($"Player {playerSlot} disconnected from server.");
+    if (player == null || !player.IsValid) {
+      Console.WriteLine($"Player {playerSlot} does not exist.");
+      return;
+    }
 
-  private void putInServer(int playerSlot) {
+    var gamePlayer = converter.GetPlayer(player);
+    bus.Dispatch(new PlayerLeaveEvent(gamePlayer));
+  }
+
+  private void connectToServer(int playerSlot, string name, string ipAddress) {
     var player = Utilities.GetPlayerFromSlot(playerSlot);
     Console.WriteLine($"Player {playerSlot} put in server.");
     if (player == null || !player.IsValid) {
@@ -51,22 +65,5 @@ public class PlayerConnectionsHandler(IEventBus bus,
     bus.Dispatch(new PlayerJoinEvent(gamePlayer));
   }
 
-  [GameEventHandler]
-  public HookResult OnPlayerConnect(EventPlayerConnect ev, GameEventInfo _) {
-    Console.WriteLine(
-      $"Player connected with name {ev.Userid?.PlayerName} and steamid {ev.Userid?.SteamID}");
-    var player = ev.Userid;
-    return HookResult.Continue;
-  }
-
-  [GameEventHandler]
-  public HookResult OnPlayerDisconnect(EventPlayerDisconnect ev,
-    GameEventInfo _) {
-    var player = ev.Userid;
-    if (player == null || !player.IsValid) return HookResult.Continue;
-
-    var gamePlayer = converter.GetPlayer(player);
-    bus.Dispatch(new PlayerLeaveEvent(gamePlayer));
-    return HookResult.Continue;
-  }
+  public void Dispose() { }
 }
