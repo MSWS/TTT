@@ -35,8 +35,7 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
 
   public ICollection<IPlayer> Players => players;
 
-  public IActionLogger Logger { get; } = new SimpleLogger(provider
-   .GetRequiredService<IScheduler>());
+  public IActionLogger Logger { get; } = new SimpleLogger(provider);
 
   public DateTime? StartedAt { get; protected set; }
   public DateTime? FinishedAt { get; protected set; }
@@ -72,7 +71,7 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
       StartRound();
       return Observable.Empty<long>();
     }
-    
+
     onlineMessenger?.MessageAll(
       locale[GameMsgs.GAME_STATE_STARTING(countdown.Value)]);
     State = State.COUNTDOWN;

@@ -32,7 +32,21 @@ public class CS2Messenger(IServiceProvider provider)
   }
 
   public override void Debug(string msg, params object[] args) {
+#if DEBUG
     _ = ((IMessenger)this).BackgroundMsgAll(msg, args);
+#endif
+  }
+
+  public override void DebugAnnounce(string msg, params object[] args) {
+#if DEBUG
+    _ = ((IMessenger)this).MessageAll(msg, args);
+#endif
+  }
+
+  public override void DebugInform(string msg, params object[] args) {
+#if DEBUG
+    _ = ((IMessenger)this).ScreenMsgAll(msg, args);
+#endif
   }
 
   public override async Task<bool> BackgroundMsg(IPlayer? player,

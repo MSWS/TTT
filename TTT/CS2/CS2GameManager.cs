@@ -6,7 +6,7 @@ namespace TTT.CS2;
 
 public class CS2GameManager(IServiceProvider provider) : GameManager(provider) {
   public override IGame CreateGame() {
-    ActiveGame = new CS2Game(provider);
+    ActiveGame = new CS2Game(Provider);
 
     var ev = new GameInitEvent(ActiveGame);
     Bus.Dispatch(ev);
