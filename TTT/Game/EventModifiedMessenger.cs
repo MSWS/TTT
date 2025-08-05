@@ -56,12 +56,16 @@ public abstract class EventModifiedMessenger(IServiceProvider provider)
   // Allow for overriding in derived classes
   public virtual Task<bool> BackgroundMsg(IPlayer? player, string message,
     params object[] args) {
-    return Message(player, message);
+    if (player == null) return SendMessage(null, message, args);
+    return sendMsg(player, message,
+      new PlayerBackgroundMessageEvent(player, message, args));
   }
 
   public virtual Task<bool> ScreenMsg(IPlayer? player, string message,
     params object[] args) {
-    return Message(player, message);
+    if (player == null) return SendMessage(null, message, args);
+    return sendMsg(player, message,
+      new PlayerScreenMessageEvent(player, message, args));
   }
 
   private async Task<bool> sendMsg(IPlayer? player, string msg,

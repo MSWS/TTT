@@ -1,5 +1,6 @@
 using TTT.API.Events;
 using TTT.API.Messages;
+using TTT.Game.Events.Player;
 using Xunit;
 
 namespace TTT.Test.Messages;
@@ -9,7 +10,7 @@ public partial class MessageModificationTest(IEventBus bus,
   [Fact]
   public void Message_IsModified() {
     // Arrange
-    var listener = new SimpleMessageSubstitution(bus);
+    var listener = new SimpleMessageSubstitution<PlayerMessageEvent>(bus);
     bus.RegisterListener(listener);
     var player = TestPlayer.Random();
 
@@ -23,7 +24,7 @@ public partial class MessageModificationTest(IEventBus bus,
 
   [Fact]
   public void Message_Args_AreModified() {
-    var listener = new SimpleArgsSubstitution(bus);
+    var listener = new SimpleArgsSubstitution<PlayerMessageEvent>(bus);
     bus.RegisterListener(listener);
     var player = TestPlayer.Random();
 
@@ -36,7 +37,8 @@ public partial class MessageModificationTest(IEventBus bus,
   [Fact]
   public void BackgroundMessage_IsModified() {
     // Arrange
-    var listener = new SimpleMessageSubstitution(bus);
+    var listener =
+      new SimpleMessageSubstitution<PlayerBackgroundMessageEvent>(bus);
     bus.RegisterListener(listener);
     var player = TestPlayer.Random();
 
@@ -50,7 +52,8 @@ public partial class MessageModificationTest(IEventBus bus,
 
   [Fact]
   public void BackgroundMessage_Args_AreModified() {
-    var listener = new SimpleArgsSubstitution(bus);
+    var listener =
+      new SimpleArgsSubstitution<PlayerBackgroundMessageEvent>(bus);
     bus.RegisterListener(listener);
     var player = TestPlayer.Random();
 
@@ -62,7 +65,7 @@ public partial class MessageModificationTest(IEventBus bus,
   [Fact]
   public void ScreenMessage_IsModified() {
     // Arrange
-    var listener = new SimpleMessageSubstitution(bus);
+    var listener = new SimpleMessageSubstitution<PlayerScreenMessageEvent>(bus);
     bus.RegisterListener(listener);
     var player = TestPlayer.Random();
 
@@ -76,7 +79,7 @@ public partial class MessageModificationTest(IEventBus bus,
 
   [Fact]
   public void ScreenMessage_Args_AreModified() {
-    var listener = new SimpleArgsSubstitution(bus);
+    var listener = new SimpleArgsSubstitution<PlayerScreenMessageEvent>(bus);
     bus.RegisterListener(listener);
     var player = TestPlayer.Random();
 
