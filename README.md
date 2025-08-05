@@ -53,5 +53,5 @@ It is recommend to read the [Locale README](./Locale/README.md) for more informa
 1. `git clone ...`
 2. `dotnet restore`
 3. `dotnet build`
-4. Convert all `lang/en.yml` -> `lang/en.json` (Required for testing, refer to [Locale](./Locale/Locale.csproj))
+4. Convert all `lang/en.yml` -> `lang/en.json` (Required for testing, refer to [Locale](./Locale/README.md))
 5. `dotnet test` (Optional)
