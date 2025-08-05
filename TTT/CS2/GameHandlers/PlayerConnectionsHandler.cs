@@ -1,5 +1,6 @@
 using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
+using Microsoft.Extensions.DependencyInjection;
 using TTT.API;
 using TTT.API.Events;
 using TTT.API.Player;
@@ -7,10 +8,15 @@ using TTT.Game.Events.Player;
 
 namespace TTT.CS2.GameHandlers;
 
-public class PlayerConnectionsHandler(IEventBus bus,
-  IPlayerConverter<CCSPlayerController> converter) : IPluginModule {
+public class PlayerConnectionsHandler(IServiceProvider provider)
+  : IPluginModule {
   public string Name => nameof(PlayerConnectionsHandler);
   public string Version => GitVersionInformation.FullSemVer;
+
+  private readonly IPlayerConverter<CCSPlayerController> converter =
+    provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
+
+  private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
 
   public void Start() { }
 
@@ -25,8 +31,6 @@ public class PlayerConnectionsHandler(IEventBus bus,
 
     if (!hotReload) return;
 
-    // Delay dispatching PlayerJoinEvent since our listeners may
-    // not yet be registered.
     Server.NextWorldUpdate(() => {
       foreach (var player in Utilities.GetPlayers()) {
         var gamePlayer = converter.GetPlayer(player);

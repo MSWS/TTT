@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
 using TTT.API.Events;
 using TTT.API.Messages;
@@ -33,11 +32,12 @@ public abstract class EventModifiedMessenger(IServiceProvider provider)
     Debug(msg, args);
   }
 
-  private async Task<bool> forAll(Func<IOnlinePlayer, Task<bool>> action) {
+  private async Task<bool> forAll(Func<IOnlinePlayer?, Task<bool>> action) {
     var players = Players.GetOnline();
     if (players.Count == 0) return true;
     var tasks = new List<Task<bool>>(players.Count);
     tasks.AddRange(players.Select(action));
+    tasks.Add(action(null));
     var results = await Task.WhenAll(tasks);
     return results.All(r => r);
   }

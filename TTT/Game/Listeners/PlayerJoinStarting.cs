@@ -21,7 +21,7 @@ public class PlayerJoinStarting(IServiceProvider provider)
   public void OnJoin(PlayerJoinEvent ev) {
     if (Games.IsGameActive()) return;
     var playerCount = Finder.GetOnline().Count;
-    if (playerCount < 2) return;
+    if (playerCount < config.RoundCfg.MinimumPlayers) return;
 
     Messenger.DebugInform(
       $"There are {playerCount} Players online, starting the game...");

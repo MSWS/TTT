@@ -22,17 +22,21 @@ public class RoundTimerListener(IServiceProvider provider) : IListener {
   [EventHandler(IgnoreCanceled = true)]
   public void OnRoundStart(GameStateUpdateEvent ev) {
     if (ev.NewState == State.COUNTDOWN) {
-      RoundUtil.SetTimeRemaining((int)config.RoundCfg.CountDownDuration
-       .TotalSeconds);
-      Server.ExecuteCommand("mp_ignore_round_win_conditions 1");
+      Server.NextWorldUpdate(() => {
+        RoundUtil.SetTimeRemaining((int)config.RoundCfg.CountDownDuration
+         .TotalSeconds);
+        Server.ExecuteCommand("mp_ignore_round_win_conditions 1");
+      });
       return;
     }
 
     if (ev.NewState != State.IN_PROGRESS) return;
-    RoundUtil.SetTimeRemaining((int)config.RoundCfg
-     .RoundDuration(ev.Game.Players.Count)
-     .TotalSeconds);
-    Server.ExecuteCommand("mp_ignore_round_win_conditions 0");
+    Server.NextWorldUpdate(() => {
+      RoundUtil.SetTimeRemaining((int)config.RoundCfg
+       .RoundDuration(ev.Game.Players.Count)
+       .TotalSeconds);
+      Server.ExecuteCommand("mp_ignore_round_win_conditions 0");
+    });
   }
 
   [EventHandler(IgnoreCanceled = true)]
