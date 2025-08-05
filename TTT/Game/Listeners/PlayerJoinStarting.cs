@@ -15,8 +15,8 @@ public class PlayerJoinStarting(IServiceProvider provider)
     var playerCount = Finder.GetOnline().Count;
     if (playerCount < 2) return;
 
-    _ = Messenger.MessageAll(Finder,
-      $"There are {playerCount} players online, starting the game...");
+    _ = Messenger.MessageAll(
+      $"There are {playerCount} Players online, starting the game...");
 
     var game = Games.CreateGame();
     game?.Start(TimeSpan.FromSeconds(5));

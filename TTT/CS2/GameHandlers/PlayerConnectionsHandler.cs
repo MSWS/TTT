@@ -1,6 +1,5 @@
 using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
-using CounterStrikeSharp.API.Core.Attributes.Registration;
 using TTT.API;
 using TTT.API.Events;
 using TTT.API.Player;
@@ -41,6 +40,8 @@ public class PlayerConnectionsHandler(IEventBus bus,
     });
   }
 
+  public void Dispose() { }
+
   private void disconnectFromServer(int playerSlot) {
     var player = Utilities.GetPlayerFromSlot(playerSlot);
     Console.WriteLine($"Player {playerSlot} disconnected from server.");
@@ -64,6 +65,4 @@ public class PlayerConnectionsHandler(IEventBus bus,
     var gamePlayer = converter.GetPlayer(player);
     bus.Dispatch(new PlayerJoinEvent(gamePlayer));
   }
-
-  public void Dispose() { }
 }

@@ -56,7 +56,7 @@ public class CombatHandler(IEventBus bus,
   //     var dmgEvent = new PlayerDamagedEvent(playerGame, attackerGame,
   //       (int)info.Damage, player.Pawn.Value.Health - (int)info.Damage);
   //
-  //     bus.Dispatch(dmgEvent);
+  //     Bus.Dispatch(dmgEvent);
   //
   //     return dmgEvent.IsCanceled ? HookResult.Handled : HookResult.Continue;
   //   } catch (AccessViolationException e) { Console.WriteLine(e); }
@@ -65,7 +65,6 @@ public class CombatHandler(IEventBus bus,
   // }
 
   /// <summary>
-  /// 
   /// </summary>
   /// <param name="ev"></param>
   /// <param name="_"></param>

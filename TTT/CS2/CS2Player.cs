@@ -7,8 +7,8 @@ namespace TTT.CS2;
 
 /// <summary>
 ///   A CS2-specific implementation of <see cref="IOnlinePlayer" />.
-///   Human players will **always** be tracked by their Steam ID.
-///   Non-human players (bots) will be tracked by their entity index.
+///   Human Players will **always** be tracked by their Steam ID.
+///   Non-human Players (bots) will be tracked by their entity index.
 ///   Note that slot numbers are not guaranteed to be stable across server restarts.
 /// </summary>
 public class CS2Player : IOnlinePlayer {
