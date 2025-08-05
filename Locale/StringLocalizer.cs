@@ -10,8 +10,8 @@ namespace TTT.Locale;
 ///   for in-string placeholders like %key% and grammatical pluralization with %s%.
 /// </summary>
 public partial class StringLocalizer : IMsgLocalizer {
-  public static readonly StringLocalizer Instance =
-    new(new JsonLocalizerFactory());
+  // public static readonly StringLocalizer Instance =
+  //   new(new JsonLocalizerFactory());
 
   private readonly IStringLocalizer localizer;
 
