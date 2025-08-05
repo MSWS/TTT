@@ -1,11 +1,12 @@
 using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using TTT.API;
+using TTT.API.Messages;
 using TTT.API.Player;
 
 namespace TTT.CS2;
 
-public class CCPlayerConverter : IPluginModule,
+public class CCPlayerConverter(IMessenger msg) : IPluginModule,
   IPlayerConverter<CCSPlayerController> {
   private readonly Dictionary<string, CS2Player> playerCache = new();
 
@@ -29,8 +30,7 @@ public class CCPlayerConverter : IPluginModule,
   public CCSPlayerController? GetPlayer(IPlayer player) {
     if (!ulong.TryParse(player.Id, out var steamId)) return null;
     CCSPlayerController? result = null;
-    Console.WriteLine(
-      $"Converting player {player.Id} ({player.Name}) to CCSPlayerController...");
+    msg.Debug($"Converting player {player.Id} to CCSPlayerController..."););
     var gamePlayer = Utilities.GetPlayerFromSteamId(steamId);
     if (gamePlayer is { IsValid: true }) result = gamePlayer;
 

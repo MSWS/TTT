@@ -72,7 +72,7 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
       StartRound();
       return Observable.Empty<long>();
     }
-
+    
     onlineMessenger?.MessageAll(
       locale[GameMsgs.GAME_STATE_STARTING(countdown.Value)]);
     State = State.COUNTDOWN;
