@@ -2,6 +2,7 @@ using CounterStrikeSharp.API.Core;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using TTT.API;
+using TTT.API.Events;
 
 namespace TTT.Plugin;
 
@@ -36,6 +37,14 @@ public class TTT(IServiceProvider provider) : BasePlugin {
       RegisterAllAttributes(module);
       module.Start(this, hotReload);
       Logger.LogInformation($"Loaded {module.Name} ({module.Version})");
+    }
+
+    var listeners = scope.ServiceProvider.GetServices<IListener>().ToList();
+    var eventBus  = scope.ServiceProvider.GetRequiredService<IEventBus>();
+    Logger.LogInformation($"Found {listeners.Count} listeners to load.");
+    foreach (var listener in listeners) {
+      eventBus.RegisterListener(listener);
+      Logger.LogInformation($"Registered listener {listener.GetType()}");
     }
 
     Logger.LogInformation("All modules loaded successfully.");

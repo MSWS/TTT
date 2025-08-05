@@ -6,6 +6,8 @@ namespace TTT.Game.Events.Player;
 
 public class PlayerDamagedEvent(IOnlinePlayer player, IOnlinePlayer? attacker,
   int dmgDealt, int hpLeft) : PlayerEvent(player), ICancelableEvent {
+  private int _hpLeft = hpLeft;
+
   public PlayerDamagedEvent(IPlayerConverter<CCSPlayerController> converter,
     EventPlayerHurt ev) : this(
     converter.GetPlayer(ev.Userid!) as IOnlinePlayer
@@ -32,9 +34,19 @@ public class PlayerDamagedEvent(IOnlinePlayer player, IOnlinePlayer? attacker,
   public IOnlinePlayer? Attacker { get; private set; } = attacker;
 
   public int ArmorDamage { get; private set; }
-  public int ArmorRemaining { get; private set; }
+  public int ArmorRemaining { get; set; }
   public int DmgDealt { get; private set; } = dmgDealt;
-  public int HpLeft { get; private set; } = hpLeft;
+
+  public int HpLeft {
+    get => _hpLeft;
+    set {
+      if (value <= 0)
+        throw new ArgumentOutOfRangeException(nameof(value),
+          "HpLeft must be greater than 0.");
+      _hpLeft = value;
+    }
+  }
+
   public string? Weapon { get; private set; }
   public bool IsCanceled { get; set; } = false;
 

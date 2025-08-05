@@ -26,11 +26,13 @@ public static class CS2ServiceCollection {
     collection.AddModBehavior<IStorage<GameConfig>, CS2GameConfig>();
     collection.AddPluginBehavior<ICommandManager, CS2CommandManager>();
     collection.AddScoped<IMessenger, CS2Messenger>();
+    collection.AddScoped<IInventoryManager, CS2InventoryManager>();
 
     // GameHandlers
     // collection.AddPluginBehavior<CombatHandler>();
     collection.AddPluginBehavior<PlayerConnectionsHandler>();
     collection.AddPluginBehavior<RoundEndHandler>();
+    collection.AddPluginBehavior<CombatHandler>();
 
     // Listeners
     collection.AddListener<RoleAssignListener>();

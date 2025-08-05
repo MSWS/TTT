@@ -7,10 +7,10 @@ using TTT.Locale;
 namespace TTT.Shop;
 
 public class Shop(IServiceProvider provider) : ITerrorModule, IShop {
+  private readonly Dictionary<IOnlinePlayer, int> balances = new();
+
   private readonly IMsgLocalizer localizer =
     provider.GetRequiredService<IMsgLocalizer>();
-
-  private readonly Dictionary<IOnlinePlayer, int> balances = new();
 
   private readonly IMessenger? messenger = provider.GetService<IMessenger>();
 

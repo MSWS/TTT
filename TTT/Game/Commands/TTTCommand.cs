@@ -1,7 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Localization;
 using TTT.API.Command;
-using TTT.API.Messages;
 using TTT.API.Player;
 using TTT.Locale;
 

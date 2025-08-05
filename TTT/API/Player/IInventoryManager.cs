@@ -5,6 +5,7 @@ public interface IInventoryManager {
   ///   Gives a weapon to the player.
   /// </summary>
   /// <param name="player">The player to give the weapon to.</param>
+  /// <param name="weapon"></param>
   void GiveWeapon(IOnlinePlayer player, IWeapon weapon);
 
   /// <summary>

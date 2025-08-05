@@ -5,15 +5,10 @@ namespace TTT.Game.Events.Player;
 
 public class PlayerDeathEvent : PlayerEvent {
   public PlayerDeathEvent(IPlayer player) : base(player) {
-    if (player is not IOnlinePlayer online) {
+    if (player is not IOnlinePlayer online)
       throw new ArgumentException(
         "Player must be an online player to create a PlayerDeathEvent.",
         nameof(player));
-    }
-
-    if (online.IsAlive)
-      throw new ArgumentException(
-        "Player must be dead to create a PlayerDeathEvent.", nameof(player));
   }
 
   public PlayerDeathEvent(IPlayerConverter<CCSPlayerController> converter,
@@ -31,7 +26,7 @@ public class PlayerDeathEvent : PlayerEvent {
 
   public override string Id => "basegame.event.player.death";
 
-  public IOnlinePlayer? Victim => Player as IOnlinePlayer;
+  public IOnlinePlayer Victim => (Player as IOnlinePlayer)!;
   public IOnlinePlayer? Assister { get; private set; }
   public IOnlinePlayer? Killer { get; private set; }
   public bool Headshot { get; private set; }

@@ -5,6 +5,10 @@ using TTT.Game.Roles;
 namespace TTT.Shop;
 
 public record ShopConfig {
+  private static readonly Type[] roleConcerns = [
+    typeof(TraitorRole), typeof(DetectiveRole), typeof(InnocentRole)
+  ];
+
   public int CreditsForRoundStart { get; init; } = 10;
   public int CreditsForInnoVInnoKill { get; init; } = -4;
   public int CreditsForInnoVTraitorKill { get; init; } = 8;
@@ -18,10 +22,6 @@ public record ShopConfig {
   public int CreditsForAnyKill { get; init; } = 2;
   public float CreditMultiplierForAssisting { get; init; } = 0.5f;
   public float CreditsMultiplierForNotAssisted { get; init; } = 1.5f;
-
-  private static readonly Type[] roleConcerns = [
-    typeof(TraitorRole), typeof(DetectiveRole), typeof(InnocentRole)
-  ];
 
   public virtual int CreditsForKill(IOnlinePlayer attacker,
     IOnlinePlayer victim) {

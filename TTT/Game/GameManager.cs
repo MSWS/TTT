@@ -7,8 +7,8 @@ namespace TTT.Game;
 
 public class GameManager(IServiceProvider provider) : IGameManager {
   private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
-  public IGame? ActiveGame { get; private set; }
   protected readonly IServiceProvider Provider = provider;
+  public IGame? ActiveGame { get; private set; }
 
   public virtual IGame CreateGame() {
     ActiveGame = new RoundBasedGame(Provider);
