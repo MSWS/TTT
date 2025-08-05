@@ -1,3 +1,4 @@
+using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Core.Attributes.Registration;
 using CounterStrikeSharp.API.Modules.Memory;
@@ -31,39 +32,45 @@ public class CombatHandler(IEventBus bus,
   /// <returns></returns>
   /// <exception cref="InvalidOperationException"></exception>
   private HookResult OnTakeDamage(DynamicHook hook) {
-    var playerPawn = hook.GetParam<CCSPlayerPawn>(0);
-    var info       = hook.GetParam<CTakeDamageInfo>(1);
+    try {
+      var playerPawn = hook.GetParam<CCSPlayerPawn>(0);
+      var info       = hook.GetParam<CTakeDamageInfo>(1);
 
-    var player = playerPawn.Controller.Value?.As<CCSPlayerController>();
+      var player = playerPawn.Controller.Value?.As<CCSPlayerController>();
 
-    if (player == null || !player.IsValid || player.Pawn.Value == null)
-      return HookResult.Continue;
+      if (player == null || !player.IsValid || player.Pawn.Value == null)
+        return HookResult.Continue;
 
-    var attackerPawn = info.Attacker;
-    var attacker     = attackerPawn.Value?.As<CCSPlayerController>();
+      var attackerPawn = info.Attacker;
+      var attacker     = attackerPawn.Value?.As<CCSPlayerController>();
 
-    var playerGame = converter.GetPlayer(player) as IOnlinePlayer;
-    var attackerGame = attacker == null ?
-      null :
-      converter.GetPlayer(attacker) as IOnlinePlayer;
+      var playerGame = converter.GetPlayer(player) as IOnlinePlayer;
+      var attackerGame = attacker == null ?
+        null :
+        converter.GetPlayer(attacker) as IOnlinePlayer;
 
-    if (playerGame == null)
-      throw new InvalidOperationException(
-        "Player game object is null, this should never happen.");
+      if (playerGame == null)
+        throw new InvalidOperationException(
+          "Player game object is null, this should never happen.");
 
-    var dmgEvent = new PlayerDamagedEvent(playerGame, attackerGame,
-      (int)info.Damage, player.Pawn.Value.Health - (int)info.Damage);
+      var dmgEvent = new PlayerDamagedEvent(playerGame, attackerGame,
+        (int)info.Damage, player.Pawn.Value.Health - (int)info.Damage);
 
-    bus.Dispatch(dmgEvent);
-    return dmgEvent.IsCanceled ? HookResult.Handled : HookResult.Continue;
+      bus.Dispatch(dmgEvent);
+
+      return dmgEvent.IsCanceled ? HookResult.Handled : HookResult.Continue;
+    } catch (AccessViolationException e) { Console.WriteLine(e); }
+
+    return HookResult.Continue;
   }
 
   [GameEventHandler]
   public HookResult OnPlayerDeath(EventPlayerDeath ev, GameEventInfo _) {
     var player = ev.Userid;
     if (player == null) return HookResult.Continue;
+    var deathEvent = new PlayerDeathEvent(converter, ev);
 
-    bus.Dispatch(new PlayerDeathEvent(converter, ev));
+    Server.NextWorldUpdateAsync(() => bus.Dispatch(deathEvent));
     return HookResult.Continue;
   }
 

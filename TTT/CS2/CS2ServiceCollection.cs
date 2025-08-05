@@ -5,10 +5,12 @@ using TTT.API.Extensions;
 using TTT.API.Game;
 using TTT.API.Messages;
 using TTT.API.Player;
+using TTT.API.Role;
 using TTT.API.Storage;
 using TTT.CS2.GameHandlers;
 using TTT.CS2.Listeners;
 using TTT.Game;
+using TTT.Game.Roles;
 using TTT.Locale;
 
 namespace TTT.CS2;
@@ -26,11 +28,13 @@ public static class CS2ServiceCollection {
     collection.AddModBehavior<IStorage<GameConfig>, CS2GameConfig>();
     collection.AddPluginBehavior<ICommandManager, CS2CommandManager>();
     collection.AddScoped<IMessenger, CS2Messenger>();
+    collection.AddScoped<IInventoryManager, CS2InventoryManager>();
 
     // GameHandlers
     // collection.AddPluginBehavior<CombatHandler>();
     collection.AddPluginBehavior<PlayerConnectionsHandler>();
     collection.AddPluginBehavior<RoundEndHandler>();
+    collection.AddPluginBehavior<CombatHandler>();
 
     // Listeners
     collection.AddListener<RoleAssignListener>();

@@ -23,10 +23,7 @@ public class CS2Messenger(IServiceProvider provider)
   override protected async Task<bool> SendMessage(IPlayer? player,
     string message) {
     if (player == null) {
-      Console.WriteLine(message);
-      logger.LogInformation(message);
-      await Server.NextFrameAsync(() => {
-        // TODO: Looks like this is broken due to the recent CS2 update
+      await Server.NextWorldUpdateAsync(() => {
         Console.WriteLine(message);
         logger.LogInformation(message);
       });
@@ -34,7 +31,7 @@ public class CS2Messenger(IServiceProvider provider)
     }
 
     var success = false;
-    return await Server.NextFrameAsync(() => {
+    return await Server.NextWorldUpdateAsync(() => {
         var gamePlayer = getPlayer(player);
         gamePlayer?.PrintToChat(message);
         success = gamePlayer != null;
@@ -47,7 +44,7 @@ public class CS2Messenger(IServiceProvider provider)
     if (player == null) return await Message(null, message);
 
     var success = false;
-    return await Server.NextFrameAsync(() => {
+    return await Server.NextWorldUpdateAsync(() => {
         var gamePlayer = getPlayer(player);
         gamePlayer?.PrintToConsole(message);
         success = gamePlayer != null;
@@ -58,7 +55,7 @@ public class CS2Messenger(IServiceProvider provider)
   public override async Task<bool> ScreenMsg(IPlayer? player, string message) {
     if (player == null) return await Message(null, message);
     var success = false;
-    return await Server.NextFrameAsync(() => {
+    return await Server.NextWorldUpdateAsync(() => {
         var gamePlayer = getPlayer(player);
         gamePlayer?.PrintToCenter(message);
         success = gamePlayer != null;

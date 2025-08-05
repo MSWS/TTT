@@ -24,7 +24,7 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
 
   private State state = State.WAITING;
 
-  public IList<IRole> Roles { get; } = [
+  public virtual IList<IRole> Roles { get; } = [
     new InnocentRole(provider), new TraitorRole(provider),
     new DetectiveRole(provider)
   ];
@@ -68,7 +68,7 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
     if (countdown == null) {
       onlineMessenger?.BackgroundMsgAll(finder,
         "Starting game without countdown.");
-      startRound();
+      StartRound();
       return Observable.Empty<long>();
     }
 
@@ -83,8 +83,8 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
           "Game countdown was interrupted.");
         return;
       }
-
-      startRound();
+      
+      StartRound();
     });
 
     return timer;
@@ -113,7 +113,7 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
     Logger.ClearActions();
   }
 
-  private void startRound() {
+  protected virtual void StartRound() {
     var online = finder.GetOnline();
 
     if (online.Count < 2) {

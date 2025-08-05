@@ -28,12 +28,15 @@ public class CCPlayerConverter : IPluginModule,
 
   public CCSPlayerController? GetPlayer(IPlayer player) {
     if (!ulong.TryParse(player.Id, out var steamId)) return null;
+    CCSPlayerController? result = null;
+    Console.WriteLine(
+      $"Converting player {player.Id} ({player.Name}) to CCSPlayerController...");
     var gamePlayer = Utilities.GetPlayerFromSteamId(steamId);
-
-    if (gamePlayer is { IsValid: true }) return gamePlayer;
+    if (gamePlayer is { IsValid: true }) result = gamePlayer;
 
     var bot = Utilities.GetPlayerFromIndex((int)steamId);
-    return bot is { IsValid: true } ? bot : null;
+    if (bot is { IsValid: true }) result = bot;
+    return result;
   }
 
   public void Dispose() { playerCache.Clear(); }

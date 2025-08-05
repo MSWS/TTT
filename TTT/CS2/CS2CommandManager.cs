@@ -56,7 +56,7 @@ public class CS2CommandManager(IServiceProvider provider)
       } catch (Exception e) {
         var msg = e.Message;
         cs2Info.ReplySync(Localizer[GameMsgs.GENERIC_ERROR(msg)]);
-        await Server.NextFrameAsync(() => {
+        await Server.NextWorldUpdateAsync(() => {
           Console.WriteLine(
             $"Encountered an error when processing command: \"{cs2Info.GetCommandString}\" by {wrapper?.Id}");
           Console.WriteLine(e);
