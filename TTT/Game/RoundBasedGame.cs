@@ -52,8 +52,7 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
 
 
   public IObservable<long>? Start(TimeSpan? countdown = null) {
-    onlineMessenger?.ScreenMsgAll(finder,
-      "Attempting to start the game...");
+    onlineMessenger?.ScreenMsgAll(finder, "Attempting to start the game...");
 
     var online = finder.GetOnline();
 
@@ -66,8 +65,7 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
     if (State != State.WAITING) return null;
 
     if (countdown == null) {
-      onlineMessenger?.ScreenMsgAll(finder,
-        "Starting game without countdown.");
+      onlineMessenger?.ScreenMsgAll(finder, "Starting game without countdown.");
       StartRound();
       return Observable.Empty<long>();
     }
@@ -83,7 +81,7 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
           "Game countdown was interrupted.");
         return;
       }
-      
+
       StartRound();
     });
 
@@ -113,7 +111,7 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
     Logger.ClearActions();
   }
 
-  protected virtual void StartRound() {
+  virtual protected void StartRound() {
     var online = finder.GetOnline();
 
     if (online.Count < 2) {

@@ -37,6 +37,8 @@ public class PlayerConnectionsHandler(IEventBus bus,
     });
   }
 
+  public void Dispose() { }
+
   private void putInServer(int playerSlot) {
     var player = Utilities.GetPlayerFromSlot(playerSlot);
     Console.WriteLine($"Player {playerSlot} put in server.");
@@ -48,8 +50,6 @@ public class PlayerConnectionsHandler(IEventBus bus,
     var gamePlayer = converter.GetPlayer(player);
     bus.Dispatch(new PlayerJoinEvent(gamePlayer));
   }
-
-  public void Dispose() { }
 
   [GameEventHandler]
   public HookResult OnPlayerConnect(EventPlayerConnect ev, GameEventInfo _) {

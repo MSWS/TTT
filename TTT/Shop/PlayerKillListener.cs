@@ -6,13 +6,13 @@ using TTT.Game.Events.Player;
 namespace TTT.Shop;
 
 public class PlayerKillListener(IServiceProvider provider) : IListener {
+  private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
+
   private readonly ShopConfig config =
     provider.GetService<IStorage<ShopConfig>>()?.Load().GetAwaiter().GetResult()
     ?? new ShopConfig();
 
   private readonly IShop shop = provider.GetRequiredService<IShop>();
-
-  private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
   public void Dispose() { bus.UnregisterListener(this); }
 
   [EventHandler]

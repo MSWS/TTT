@@ -1,7 +1,5 @@
 ﻿using TTT.API.Game;
-using TTT.CS2.Roles;
 using TTT.Game;
-using TTT.Game.Roles;
 
 namespace TTT.CS2;
 

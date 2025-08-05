@@ -1,8 +1,6 @@
 using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Core.Attributes.Registration;
-using CounterStrikeSharp.API.Modules.Memory;
-using CounterStrikeSharp.API.Modules.Memory.DynamicFunctions;
 using TTT.API;
 using TTT.API.Events;
 using TTT.API.Player;
@@ -89,7 +87,7 @@ public class CombatHandler(IEventBus bus,
         player.PlayerPawn.Value.ArmorValue = dmgEvent.ArmorRemaining;
     }
 
-    if (dmgEvent.IsCanceled) { return HookResult.Handled; }
+    if (dmgEvent.IsCanceled) return HookResult.Handled;
 
     return HookResult.Continue;
   }

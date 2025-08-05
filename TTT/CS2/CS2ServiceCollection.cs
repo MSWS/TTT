@@ -5,12 +5,10 @@ using TTT.API.Extensions;
 using TTT.API.Game;
 using TTT.API.Messages;
 using TTT.API.Player;
-using TTT.API.Role;
 using TTT.API.Storage;
 using TTT.CS2.GameHandlers;
 using TTT.CS2.Listeners;
 using TTT.Game;
-using TTT.Game.Roles;
 using TTT.Locale;
 
 namespace TTT.CS2;

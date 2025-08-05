@@ -28,8 +28,7 @@ public class CommandManagerTests(IServiceProvider provider) {
     manager.RegisterCommand(cmd);
 
     var player = TestPlayer.Random();
-    var info =
-      new TestCommandInfo(provider, player, ["echo", "hello", "world"]);
+    var info = new TestCommandInfo(provider, player, "echo", "hello", "world");
 
     var result = await manager.ProcessCommand(info);
 
@@ -40,7 +39,7 @@ public class CommandManagerTests(IServiceProvider provider) {
   [Fact]
   public async Task ProcessCommand_ReturnsUnknownCommand() {
     var player = TestPlayer.Random();
-    var info   = new TestCommandInfo(provider, player, ["doesnotexist"]);
+    var info   = new TestCommandInfo(provider, player, "doesnotexist");
 
     var result = await manager.ProcessCommand(info);
 
@@ -54,7 +53,7 @@ public class CommandManagerTests(IServiceProvider provider) {
     manager.RegisterCommand(cmd);
 
     var player = TestPlayer.Random();
-    var info   = new TestCommandInfo(provider, player, ["say", "hi"]);
+    var info   = new TestCommandInfo(provider, player, "say", "hi");
     var result = await manager.ProcessCommand(info);
 
     Assert.Equal(CommandResult.SUCCESS, result);

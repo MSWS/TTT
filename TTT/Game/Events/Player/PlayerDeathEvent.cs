@@ -5,11 +5,10 @@ namespace TTT.Game.Events.Player;
 
 public class PlayerDeathEvent : PlayerEvent {
   public PlayerDeathEvent(IPlayer player) : base(player) {
-    if (player is not IOnlinePlayer online) {
+    if (player is not IOnlinePlayer online)
       throw new ArgumentException(
         "Player must be an online player to create a PlayerDeathEvent.",
         nameof(player));
-    }
   }
 
   public PlayerDeathEvent(IPlayerConverter<CCSPlayerController> converter,

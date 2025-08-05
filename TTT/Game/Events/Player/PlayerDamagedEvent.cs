@@ -6,6 +6,8 @@ namespace TTT.Game.Events.Player;
 
 public class PlayerDamagedEvent(IOnlinePlayer player, IOnlinePlayer? attacker,
   int dmgDealt, int hpLeft) : PlayerEvent(player), ICancelableEvent {
+  private int _hpLeft = hpLeft;
+
   public PlayerDamagedEvent(IPlayerConverter<CCSPlayerController> converter,
     EventPlayerHurt ev) : this(
     converter.GetPlayer(ev.Userid!) as IOnlinePlayer
@@ -34,8 +36,6 @@ public class PlayerDamagedEvent(IOnlinePlayer player, IOnlinePlayer? attacker,
   public int ArmorDamage { get; private set; }
   public int ArmorRemaining { get; set; }
   public int DmgDealt { get; private set; } = dmgDealt;
-
-  private int _hpLeft = hpLeft;
 
   public int HpLeft {
     get => _hpLeft;
