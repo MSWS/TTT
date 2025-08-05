@@ -2,6 +2,7 @@
 using Microsoft.Reactive.Testing;
 using TTT.API.Game;
 using TTT.API.Player;
+using TTT.Game;
 using TTT.Game.Listeners;
 using Xunit;
 
@@ -17,6 +18,8 @@ public class JoinStartTest(IServiceProvider provider) {
   private readonly TestScheduler scheduler =
     provider.GetRequiredService<TestScheduler>();
 
+  private readonly GameConfig config = new GameConfig();
+
   [Fact]
   public void OnJoin_StartsGame_WhenTwoPlayersJoin() {
     var listener = new PlayerJoinStarting(provider);
@@ -28,7 +31,7 @@ public class JoinStartTest(IServiceProvider provider) {
     Assert.NotNull(games.ActiveGame);
     Assert.Equal(State.COUNTDOWN, games.ActiveGame?.State);
 
-    scheduler.AdvanceBy(TimeSpan.FromSeconds(5).Ticks);
+    scheduler.AdvanceBy(config.RoundCfg.CountDownDuration.Ticks);
 
     Assert.Equal(State.IN_PROGRESS, games.ActiveGame?.State);
   }
