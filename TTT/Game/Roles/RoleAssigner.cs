@@ -34,7 +34,7 @@ public class RoleAssigner(IServiceProvider provider) : IRoleAssigner {
       player.Roles.Add(ev.Role);
       ev.Role.OnAssign(player);
 
-      onlineMessenger?.ScreenMsg(player,
+      onlineMessenger?.Message(player,
         $"You were assigned the role of {role.Name}.");
       onlineMessenger?.BackgroundMsgAll(
         $"{player.Name} was assigned the role of {role.Name}.");

@@ -18,7 +18,7 @@ public class JoinStartTest(IServiceProvider provider) {
   private readonly TestScheduler scheduler =
     provider.GetRequiredService<TestScheduler>();
 
-  private readonly GameConfig config = new GameConfig();
+  private readonly GameConfig config = new();
 
   [Fact]
   public void OnJoin_StartsGame_WhenTwoPlayersJoin() {

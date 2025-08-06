@@ -40,8 +40,21 @@ public interface IGame : IDisposable {
       throw new ArgumentException(
         "roleType must be a type that implements IRole", nameof(roleType));
 
+    foreach (var player in GetAlive()) {
+      var roles = player.Roles;
+      if (roles.Count == 0) continue;
+      Console.WriteLine(
+        $"Player {player.Id} has roles: {string.Join(", ", roles.Select(r => r.GetType().Name))}");
+      if (roles.Any(r => r.GetType().IsAssignableTo(roleType))) {
+        Console.WriteLine($"Player {player.Id} has role {roleType.Name}");
+      } else {
+        Console.WriteLine(
+          $"Player {player.Id} does not have role {roleType.Name}");
+      }
+    }
+
     return GetAlive()
-     .Where(p => p.Roles.Any(r => r.GetType() == roleType))
+     .Where(p => p.Roles.Any(r => r.GetType().IsAssignableTo(roleType)))
      .ToHashSet();
   }
 

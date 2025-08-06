@@ -15,16 +15,16 @@ public class CombatHandler(IEventBus bus,
   // TODO: This seems to crash 50% of the time upon shooting.
 
   public void Dispose() {
-    VirtualFunctions.CBaseEntity_TakeDamageOldFunc.Unhook(OnTakeDamage,
-      HookMode.Pre);
+    // VirtualFunctions.CBaseEntity_TakeDamageOldFunc.Unhook(OnTakeDamage,
+    //   HookMode.Pre);
   }
 
   public string Name => "CombatListeners";
   public string Version => GitVersionInformation.FullSemVer;
 
   public void Start() {
-    VirtualFunctions.CBaseEntity_TakeDamageOldFunc.Hook(OnTakeDamage,
-      HookMode.Pre);
+    // VirtualFunctions.CBaseEntity_TakeDamageOldFunc.Hook(OnTakeDamage,
+    //   HookMode.Pre);
   }
 
   /// <summary>
@@ -37,6 +37,11 @@ public class CombatHandler(IEventBus bus,
     var info       = hook.GetParam<CTakeDamageInfo>(1);
 
     Console.WriteLine($"OnTakeDamage called");
+
+    if (!playerPawn.IsValid) {
+      Console.WriteLine("Player pawn is not valid, returning.");
+      return HookResult.Continue;
+    }
 
     var player = playerPawn.Controller.Value?.As<CCSPlayerController>();
 

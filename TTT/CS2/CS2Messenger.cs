@@ -34,18 +34,21 @@ public class CS2Messenger(IServiceProvider provider)
   public override void Debug(string msg, params object[] args) {
 #if DEBUG
     _ = ((IMessenger)this).BackgroundMsgAll(msg, args);
+    Console.WriteLine($"[DEBUG] {string.Format(msg, args)}");
 #endif
   }
 
   public override void DebugAnnounce(string msg, params object[] args) {
 #if DEBUG
     _ = ((IMessenger)this).MessageAll(msg, args);
+    Console.WriteLine($"[DEBUG ANNOUNCE] {string.Format(msg, args)}");
 #endif
   }
 
   public override void DebugInform(string msg, params object[] args) {
 #if DEBUG
     _ = ((IMessenger)this).ScreenMsgAll(msg, args);
+    Console.WriteLine($"[DEBUG ANNOUNCE] {string.Format(msg, args)}");
 #endif
   }
 
