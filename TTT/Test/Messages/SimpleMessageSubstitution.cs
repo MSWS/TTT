@@ -1,4 +1,3 @@
-using CounterStrikeSharp.API.Modules.Entities;
 using JetBrains.Annotations;
 using TTT.API.Events;
 using TTT.Game.Events.Player;

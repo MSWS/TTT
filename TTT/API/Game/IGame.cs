@@ -55,12 +55,11 @@ public interface IGame : IDisposable {
       if (roles.Count == 0) continue;
       Console.WriteLine(
         $"Player {player.Id} has roles: {string.Join(", ", roles.Select(r => r.GetType().Name))}");
-      if (roles.Any(r => r.GetType().IsAssignableTo(roleType))) {
+      if (roles.Any(r => r.GetType().IsAssignableTo(roleType)))
         Console.WriteLine($"Player {player.Id} has role {roleType.Name}");
-      } else {
+      else
         Console.WriteLine(
           $"Player {player.Id} does not have role {roleType.Name}");
-      }
     }
 
     return GetAlive()

@@ -38,6 +38,27 @@ public static class TestMsgs {
   public static IMsg BOTH_TEST_TRAILING
     => MsgFactory.Create(nameof(BOTH_TEST_TRAILING));
 
+  public static IMsg AN_TEST_LOWER => MsgFactory.Create(nameof(AN_TEST_LOWER));
+
+  public static IMsg AN_TEST_UPPER => MsgFactory.Create(nameof(AN_TEST_UPPER));
+
+  public static IMsg AN_AMAZING_TEST_LOWER
+    => MsgFactory.Create(nameof(AN_AMAZING_TEST_LOWER));
+
+
+  public static IMsg AN_AMAZING_TEST_UPPER
+    => MsgFactory.Create(nameof(AN_AMAZING_TEST_UPPER));
+
+  public static IMsg AN_AMAZING_TEST_SENTENCE
+    => MsgFactory.Create(nameof(AN_AMAZING_TEST_SENTENCE));
+
+  public static IMsg AN_AMAZING_TEST_ODD
+    => MsgFactory.Create(nameof(AN_AMAZING_TEST_ODD));
+
+  public static IMsg AN_IN_BETWEEN => MsgFactory.Create(nameof(AN_IN_BETWEEN));
+
+  public static IMsg AN_AT_END => MsgFactory.Create(nameof(AN_AT_END));
+
   public static IMsg SINGLE_SUBSTITUTION(string name) {
     return MsgFactory.Create(nameof(SINGLE_SUBSTITUTION), name);
   }
@@ -58,23 +79,6 @@ public static class TestMsgs {
     return MsgFactory.Create(nameof(TRAILING_PLURALS_DOUBLE), amo, obj);
   }
 
-  public static IMsg AN_TEST_LOWER => MsgFactory.Create(nameof(AN_TEST_LOWER));
-
-  public static IMsg AN_TEST_UPPER => MsgFactory.Create(nameof(AN_TEST_UPPER));
-
-  public static IMsg AN_AMAZING_TEST_LOWER
-    => MsgFactory.Create(nameof(AN_AMAZING_TEST_LOWER));
-
-
-  public static IMsg AN_AMAZING_TEST_UPPER
-    => MsgFactory.Create(nameof(AN_AMAZING_TEST_UPPER));
-
-  public static IMsg AN_AMAZING_TEST_SENTENCE
-    => MsgFactory.Create(nameof(AN_AMAZING_TEST_SENTENCE));
-
-  public static IMsg AN_AMAZING_TEST_ODD
-    => MsgFactory.Create(nameof(AN_AMAZING_TEST_ODD));
-
   public static IMsg AN_TEST_SUBSTITUTION_LOWER(string name) {
     return MsgFactory.Create(nameof(AN_TEST_SUBSTITUTION_LOWER), name);
   }
@@ -82,8 +86,4 @@ public static class TestMsgs {
   public static IMsg AN_TEST_SUBSTITUTION_UPPER(string name) {
     return MsgFactory.Create(nameof(AN_TEST_SUBSTITUTION_UPPER), name);
   }
-
-  public static IMsg AN_IN_BETWEEN => MsgFactory.Create(nameof(AN_IN_BETWEEN));
-
-  public static IMsg AN_AT_END => MsgFactory.Create(nameof(AN_AT_END));
 }

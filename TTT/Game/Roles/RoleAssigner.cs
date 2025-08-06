@@ -11,11 +11,11 @@ namespace TTT.Game.Roles;
 public class RoleAssigner(IServiceProvider provider) : IRoleAssigner {
   private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
 
-  private readonly IMessenger? onlineMessenger =
-    provider.GetService<IMessenger>();
-
   private readonly IMsgLocalizer locale =
     provider.GetRequiredService<IMsgLocalizer>();
+
+  private readonly IMessenger? onlineMessenger =
+    provider.GetService<IMessenger>();
 
   public void AssignRoles(ISet<IOnlinePlayer> players, IList<IRole> roles) {
     foreach (var onlinePlayer in players.ToList()) onlinePlayer.Roles.Clear();

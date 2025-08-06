@@ -1,7 +1,6 @@
 using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Core.Attributes.Registration;
-using CounterStrikeSharp.API.Modules.Memory;
 using CounterStrikeSharp.API.Modules.Memory.DynamicFunctions;
 using TTT.API;
 using TTT.API.Events;
@@ -36,7 +35,7 @@ public class CombatHandler(IEventBus bus,
     var playerPawn = hook.GetParam<CCSPlayerPawn>(0);
     var info       = hook.GetParam<CTakeDamageInfo>(1);
 
-    Console.WriteLine($"OnTakeDamage called");
+    Console.WriteLine("OnTakeDamage called");
 
     if (!playerPawn.IsValid) {
       Console.WriteLine("Player pawn is not valid, returning.");
@@ -49,7 +48,7 @@ public class CombatHandler(IEventBus bus,
       || !player.Pawn.IsValid)
       return HookResult.Continue;
 
-    Console.WriteLine($"Past basic checks");
+    Console.WriteLine("Past basic checks");
 
     var attackerPawn = info.Attacker;
     var attacker     = attackerPawn.Value?.As<CCSPlayerController>();

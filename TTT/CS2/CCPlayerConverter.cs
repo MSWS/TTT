@@ -9,10 +9,10 @@ namespace TTT.CS2;
 
 public class CCPlayerConverter(IServiceProvider provider) : IPluginModule,
   IPlayerConverter<CCSPlayerController> {
-  private readonly Dictionary<string, CS2Player> playerCache = new();
-
   private readonly Lazy<IMessenger> msg =
     new(provider.GetRequiredService<IMessenger>);
+
+  private readonly Dictionary<string, CS2Player> playerCache = new();
 
   public IPlayer GetPlayer(CCSPlayerController player) {
     if (playerCache.TryGetValue(player.SteamID.ToString(),

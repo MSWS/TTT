@@ -11,8 +11,8 @@ namespace TTT.Game.Listeners;
 
 public class PlayerCausesEndListener(IServiceProvider provider)
   : BaseListener(provider) {
-  public override string Name { get; } = nameof(PlayerCausesEndListener);
   private readonly IMessenger msg = provider.GetRequiredService<IMessenger>();
+  public override string Name { get; } = nameof(PlayerCausesEndListener);
 
   [EventHandler]
   [UsedImplicitly]

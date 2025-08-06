@@ -9,7 +9,6 @@ using TTT.API.Game;
 using TTT.API.Player;
 using TTT.API.Storage;
 using TTT.CS2.Extensions;
-using TTT.CS2.Roles;
 using TTT.Game;
 using TTT.Game.Events.Game;
 using TTT.Game.Roles;
@@ -17,19 +16,23 @@ using TTT.Game.Roles;
 namespace TTT.CS2.Listeners;
 
 public class RoundTimerListener(IServiceProvider provider) : IListener {
+  public static MemoryFunctionVoid<nint, float, RoundEndReason, nint, nint>
+    TerminateRoundFunc =
+      new(GameData.GetSignature("CCSGameRules_TerminateRound"));
+
   private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
-
-  private readonly IPlayerFinder finder =
-    provider.GetRequiredService<IPlayerFinder>();
-
-  private readonly IPlayerConverter<CCSPlayerController> converter =
-    provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
 
   private readonly GameConfig config = provider
    .GetRequiredService<IStorage<GameConfig>>()
    .Load()
    .GetAwaiter()
    .GetResult() ?? new GameConfig();
+
+  private readonly IPlayerConverter<CCSPlayerController> converter =
+    provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
+
+  private readonly IPlayerFinder finder =
+    provider.GetRequiredService<IPlayerFinder>();
 
   public void Dispose() { bus.UnregisterListener(this); }
 
@@ -56,10 +59,6 @@ public class RoundTimerListener(IServiceProvider provider) : IListener {
       Server.ExecuteCommand("mp_ignore_round_win_conditions 0");
     });
   }
-
-  public static MemoryFunctionVoid<nint, float, RoundEndReason, nint, nint>
-    TerminateRoundFunc =
-      new(GameData.GetSignature("CCSGameRules_TerminateRound"));
 
   [EventHandler(IgnoreCanceled = true)]
   public void OnRoundEnd(GameStateUpdateEvent ev) {

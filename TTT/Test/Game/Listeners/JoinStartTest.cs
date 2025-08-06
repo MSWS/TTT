@@ -9,6 +9,8 @@ using Xunit;
 namespace TTT.Test.Game.Listeners;
 
 public class JoinStartTest(IServiceProvider provider) {
+  private readonly GameConfig config = new();
+
   private readonly IPlayerFinder finder =
     provider.GetRequiredService<IPlayerFinder>();
 
@@ -17,8 +19,6 @@ public class JoinStartTest(IServiceProvider provider) {
 
   private readonly TestScheduler scheduler =
     provider.GetRequiredService<TestScheduler>();
-
-  private readonly GameConfig config = new();
 
   [Fact]
   public void OnJoin_StartsGame_WhenTwoPlayersJoin() {

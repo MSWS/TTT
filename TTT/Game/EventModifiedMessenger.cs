@@ -32,16 +32,6 @@ public abstract class EventModifiedMessenger(IServiceProvider provider)
     Debug(msg, args);
   }
 
-  private async Task<bool> forAll(Func<IOnlinePlayer?, Task<bool>> action) {
-    var players = Players.GetOnline();
-    if (players.Count == 0) return true;
-    var tasks = new List<Task<bool>>(players.Count);
-    tasks.AddRange(players.Select(action));
-    tasks.Add(action(null));
-    var results = await Task.WhenAll(tasks);
-    return results.All(r => r);
-  }
-
   public Task<bool> MessageAll(string message, params object[] args) {
     return forAll(p => Message(p, message, args));
   }
@@ -67,6 +57,16 @@ public abstract class EventModifiedMessenger(IServiceProvider provider)
     if (player == null) return SendMessage(null, message, args);
     return sendMsg(player, message,
       new PlayerScreenMessageEvent(player, message, args));
+  }
+
+  private async Task<bool> forAll(Func<IOnlinePlayer?, Task<bool>> action) {
+    var players = Players.GetOnline();
+    if (players.Count == 0) return true;
+    var tasks = new List<Task<bool>>(players.Count);
+    tasks.AddRange(players.Select(action));
+    tasks.Add(action(null));
+    var results = await Task.WhenAll(tasks);
+    return results.All(r => r);
   }
 
   private async Task<bool> sendMsg(IPlayer? player, string msg,

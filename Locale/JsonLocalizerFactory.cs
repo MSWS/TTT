@@ -1,5 +1,4 @@
-﻿using CounterStrikeSharp.API;
-using CounterStrikeSharp.API.Core.Translations;
+﻿using CounterStrikeSharp.API.Core.Translations;
 using Microsoft.Extensions.Localization;
 
 namespace TTT.Locale;

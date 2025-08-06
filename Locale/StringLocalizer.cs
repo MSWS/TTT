@@ -135,11 +135,10 @@ public partial class StringLocalizer : IMsgLocalizer {
       var nextChar = (suffix.Split(' ')
          .FirstOrDefault(w => !string.IsNullOrWhiteSpace(w)) ?? string.Empty)
        .FirstOrDefault(char.IsLetter);
-      if ("aeiou".Contains(nextChar.ToString().ToLower())) {
+      if ("aeiou".Contains(nextChar.ToString().ToLower()))
         value = value[..index] + anMatch + value[(index + match.Length)..];
-      } else {
+      else
         value = value[..index] + anMatch[0] + value[(index + match.Length)..];
-      }
     }
 
     return value;

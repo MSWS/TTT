@@ -10,13 +10,13 @@ namespace TTT.CS2.GameHandlers;
 
 public class PlayerConnectionsHandler(IServiceProvider provider)
   : IPluginModule {
-  public string Name => nameof(PlayerConnectionsHandler);
-  public string Version => GitVersionInformation.FullSemVer;
+  private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
 
   private readonly IPlayerConverter<CCSPlayerController> converter =
     provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
 
-  private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
+  public string Name => nameof(PlayerConnectionsHandler);
+  public string Version => GitVersionInformation.FullSemVer;
 
   public void Start() { }
 

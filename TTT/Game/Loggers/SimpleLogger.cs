@@ -6,13 +6,13 @@ using TTT.API.Messages;
 namespace TTT.Game.Loggers;
 
 public class SimpleLogger(IServiceProvider provider) : IActionLogger {
+  private readonly SortedDictionary<DateTime, ISet<IAction>> actions = new();
+
   private readonly Lazy<IMessenger> msg =
     new(provider.GetRequiredService<IMessenger>());
 
   private readonly IScheduler scheduler = provider
    .GetRequiredService<IScheduler>();
-
-  private readonly SortedDictionary<DateTime, ISet<IAction>> actions = new();
 
   public void LogAction(IAction action) {
 #if DEBUG
