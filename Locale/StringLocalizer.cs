@@ -129,16 +129,18 @@ public partial class StringLocalizer : IMsgLocalizer {
     foreach (Match match in anMatches) {
       var anMatch = match.Value[1..^1];
       var index   = match.Index;
+      var prefix  = value[..index];
       var suffix  = value[(index + match.Length)..];
 
       // Determine if the next word starts with a vowel sound
-      var nextChar = (suffix.Split(' ')
-         .FirstOrDefault(w => !string.IsNullOrWhiteSpace(w)) ?? string.Empty)
-       .FirstOrDefault(char.IsLetter);
-      if ("aeiou".Contains(nextChar.ToString().ToLower()))
-        value = value[..index] + anMatch + value[(index + match.Length)..];
-      else
-        value = value[..index] + anMatch[0] + value[(index + match.Length)..];
+      var nextWord = suffix.Split(' ')
+       .FirstOrDefault(w => !string.IsNullOrWhiteSpace(w)) ?? " ";
+      var nextChar =
+        char.ToLowerInvariant(nextWord.FirstOrDefault(char.IsLetter));
+      value = nextChar switch {
+        'a' or 'e' or 'i' or 'o' or 'u' => prefix + anMatch + suffix,
+        _                               => prefix + anMatch[0] + suffix
+      };
     }
 
     return value;

@@ -16,7 +16,8 @@ using TTT.Game.Roles;
 namespace TTT.CS2.Listeners;
 
 public class RoundTimerListener(IServiceProvider provider) : IListener {
-  public static MemoryFunctionVoid<nint, float, RoundEndReason, nint, nint>
+  public static readonly
+    MemoryFunctionVoid<nint, float, RoundEndReason, nint, nint>
     TerminateRoundFunc =
       new(GameData.GetSignature("CCSGameRules_TerminateRound"));
 

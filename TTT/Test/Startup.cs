@@ -26,12 +26,11 @@ public class Startup {
     services.AddScoped<IMessenger, TestMessenger>();
     services.AddScoped<IRoleAssigner, RoleAssigner>();
     services.AddScoped<TestScheduler>();
-    services.AddTransient<IScheduler>(s
-      => s.GetRequiredService<TestScheduler>());
+    services.AddScoped<IScheduler>(s => s.GetRequiredService<TestScheduler>());
     services.AddScoped<IGameManager, GameManager>();
     services.AddScoped<IStringLocalizerFactory, JsonLocalizerFactory>();
     services.AddScoped<StringLocalizer>();
-    services.AddTransient<IMsgLocalizer>(s
+    services.AddScoped<IMsgLocalizer>(s
       => s.GetRequiredService<StringLocalizer>());
     services.AddScoped<IInventoryManager, FakeInventoryManager>();
     services.AddTransient<IStorage<GameConfig>, FakeConfig>();
