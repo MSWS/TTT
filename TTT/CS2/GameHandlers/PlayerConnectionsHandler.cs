@@ -1,6 +1,6 @@
 using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
-using CounterStrikeSharp.API.Core.Attributes.Registration;
+using Microsoft.Extensions.DependencyInjection;
 using TTT.API;
 using TTT.API.Events;
 using TTT.API.Player;
@@ -8,18 +8,21 @@ using TTT.Game.Events.Player;
 
 namespace TTT.CS2.GameHandlers;
 
-public class PlayerConnectionsHandler(IEventBus bus,
-  IPlayerConverter<CCSPlayerController> converter) : IPluginModule {
+public class PlayerConnectionsHandler(IServiceProvider provider)
+  : IPluginModule {
+  private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
+
+  private readonly IPlayerConverter<CCSPlayerController> converter =
+    provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
+
   public string Name => nameof(PlayerConnectionsHandler);
   public string Version => GitVersionInformation.FullSemVer;
 
   public void Start() { }
 
   public void Start(BasePlugin? plugin, bool hotReload) {
-    Console.WriteLine(
-      $"PlayerConnectionsHandler started, hotReload: {hotReload}");
     plugin
-    ?.RegisterListener<CounterStrikeSharp.API.Core.Listeners.OnClientConnect>(
+    ?.RegisterListener<CounterStrikeSharp.API.Core.Listeners.OnClientConnected>(
         connectToServer);
     plugin
     ?.RegisterListener<
@@ -28,8 +31,6 @@ public class PlayerConnectionsHandler(IEventBus bus,
 
     if (!hotReload) return;
 
-    // Delay dispatching PlayerJoinEvent since our listeners may
-    // not yet be registered.
     Server.NextWorldUpdate(() => {
       foreach (var player in Utilities.GetPlayers()) {
         var gamePlayer = converter.GetPlayer(player);
@@ -40,6 +41,8 @@ public class PlayerConnectionsHandler(IEventBus bus,
       }
     });
   }
+
+  public void Dispose() { }
 
   private void disconnectFromServer(int playerSlot) {
     var player = Utilities.GetPlayerFromSlot(playerSlot);
@@ -53,7 +56,7 @@ public class PlayerConnectionsHandler(IEventBus bus,
     bus.Dispatch(new PlayerLeaveEvent(gamePlayer));
   }
 
-  private void connectToServer(int playerSlot, string name, string ipAddress) {
+  private void connectToServer(int playerSlot) {
     var player = Utilities.GetPlayerFromSlot(playerSlot);
     Console.WriteLine($"Player {playerSlot} put in server.");
     if (player == null || !player.IsValid) {
@@ -64,6 +67,4 @@ public class PlayerConnectionsHandler(IEventBus bus,
     var gamePlayer = converter.GetPlayer(player);
     bus.Dispatch(new PlayerJoinEvent(gamePlayer));
   }
-
-  public void Dispose() { }
 }

@@ -1,6 +1,8 @@
 using JetBrains.Annotations;
+using Microsoft.Extensions.DependencyInjection;
 using TTT.API.Events;
 using TTT.API.Game;
+using TTT.API.Messages;
 using TTT.API.Role;
 using TTT.Game.Events.Player;
 using TTT.Game.Roles;
@@ -9,6 +11,7 @@ namespace TTT.Game.Listeners;
 
 public class PlayerCausesEndListener(IServiceProvider provider)
   : BaseListener(provider) {
+  private readonly IMessenger msg = provider.GetRequiredService<IMessenger>();
   public override string Name { get; } = nameof(PlayerCausesEndListener);
 
   [EventHandler]
@@ -49,6 +52,10 @@ public class PlayerCausesEndListener(IServiceProvider provider)
     var traitorsAlive    = game.GetAlive(typeof(TraitorRole)).Count;
     var nonTraitorsAlive = game.GetAlive().Count - traitorsAlive;
     var detectivesAlive  = game.GetAlive(typeof(DetectiveRole)).Count;
+
+    msg.DebugInform($"Traitors alive: {traitorsAlive}, "
+      + $"Non-traitors alive: {nonTraitorsAlive}, "
+      + $"Detectives alive: {detectivesAlive}");
 
     switch (traitorsAlive) {
       case 0 when nonTraitorsAlive == 0:

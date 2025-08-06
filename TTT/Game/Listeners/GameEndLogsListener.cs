@@ -13,7 +13,6 @@ public class GameEndLogsListener(IServiceProvider provider)
     if (ev.NewState != State.FINISHED) return;
     var logs = ev.Game.Logger.GetActions();
     foreach (var (timestamp, action) in logs)
-      _ = Messenger.BackgroundMsgAll(Finder,
-        $"[{timestamp}] {action.Format()}");
+      _ = Messenger.BackgroundMsgAll($"[{timestamp}] {action.Format()}");
   }
 }

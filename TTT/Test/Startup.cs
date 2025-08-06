@@ -30,7 +30,7 @@ public class Startup {
     services.AddScoped<IGameManager, GameManager>();
     services.AddScoped<IStringLocalizerFactory, JsonLocalizerFactory>();
     services.AddScoped<StringLocalizer>();
-    services.AddTransient<IMsgLocalizer>(s
+    services.AddScoped<IMsgLocalizer>(s
       => s.GetRequiredService<StringLocalizer>());
     services.AddScoped<IInventoryManager, FakeInventoryManager>();
     services.AddTransient<IStorage<GameConfig>, FakeConfig>();

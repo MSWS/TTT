@@ -1,4 +1,5 @@
 ﻿using CounterStrikeSharp.API;
+using CounterStrikeSharp.API.Modules.Entities.Constants;
 using TTT.CS2.Extensions;
 
 namespace TTT.CS2;
@@ -39,5 +40,10 @@ public static class RoundUtil {
   public static bool IsWarmup() {
     var rules = ServerExtensions.GetGameRules();
     return rules == null || rules.WarmupPeriod;
+  }
+
+  public static void EndRound(RoundEndReason reason, float delay = 0) {
+    ServerExtensions.GetGameRulesProxy()
+    ?.GameRules?.TerminateRound(delay, reason);
   }
 }

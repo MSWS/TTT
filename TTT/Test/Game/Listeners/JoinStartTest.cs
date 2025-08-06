@@ -2,12 +2,15 @@
 using Microsoft.Reactive.Testing;
 using TTT.API.Game;
 using TTT.API.Player;
+using TTT.Game;
 using TTT.Game.Listeners;
 using Xunit;
 
 namespace TTT.Test.Game.Listeners;
 
 public class JoinStartTest(IServiceProvider provider) {
+  private readonly GameConfig config = new();
+
   private readonly IPlayerFinder finder =
     provider.GetRequiredService<IPlayerFinder>();
 
@@ -28,7 +31,7 @@ public class JoinStartTest(IServiceProvider provider) {
     Assert.NotNull(games.ActiveGame);
     Assert.Equal(State.COUNTDOWN, games.ActiveGame?.State);
 
-    scheduler.AdvanceBy(TimeSpan.FromSeconds(5).Ticks);
+    scheduler.AdvanceBy(config.RoundCfg.CountDownDuration.Ticks);
 
     Assert.Equal(State.IN_PROGRESS, games.ActiveGame?.State);
   }

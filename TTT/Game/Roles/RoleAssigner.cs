@@ -4,19 +4,21 @@ using TTT.API.Messages;
 using TTT.API.Player;
 using TTT.API.Role;
 using TTT.Game.Events.Player;
+using TTT.Locale;
 
 namespace TTT.Game.Roles;
 
 public class RoleAssigner(IServiceProvider provider) : IRoleAssigner {
   private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
 
-  private readonly IPlayerFinder finder =
-    provider.GetRequiredService<IPlayerFinder>();
+  private readonly IMsgLocalizer locale =
+    provider.GetRequiredService<IMsgLocalizer>();
 
   private readonly IMessenger? onlineMessenger =
     provider.GetService<IMessenger>();
 
   public void AssignRoles(ISet<IOnlinePlayer> players, IList<IRole> roles) {
+    foreach (var onlinePlayer in players.ToList()) onlinePlayer.Roles.Clear();
     var  shuffled = players.OrderBy(_ => Guid.NewGuid()).ToHashSet();
     bool roleAssigned;
     do { roleAssigned = tryAssignRole(shuffled, roles); } while (roleAssigned);
@@ -36,9 +38,8 @@ public class RoleAssigner(IServiceProvider provider) : IRoleAssigner {
       player.Roles.Add(ev.Role);
       ev.Role.OnAssign(player);
 
-      onlineMessenger?.ScreenMsg(player,
-        $"You were assigned the role of {role.Name}.");
-      onlineMessenger?.BackgroundMsgAll(finder,
+      onlineMessenger?.Message(player, locale[GameMsgs.ROLE_ASSIGNED(role)]);
+      onlineMessenger?.BackgroundMsgAll(
         $"{player.Name} was assigned the role of {role.Name}.");
       return true;
     }

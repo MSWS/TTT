@@ -7,8 +7,8 @@ namespace TTT.CS2;
 
 /// <summary>
 ///   A CS2-specific implementation of <see cref="IOnlinePlayer" />.
-///   Human players will **always** be tracked by their Steam ID.
-///   Non-human players (bots) will be tracked by their entity index.
+///   Human Players will **always** be tracked by their Steam ID.
+///   Non-human Players (bots) will be tracked by their entity index.
 ///   Note that slot numbers are not guaranteed to be stable across server restarts.
 /// </summary>
 public class CS2Player : IOnlinePlayer {
@@ -32,12 +32,15 @@ public class CS2Player : IOnlinePlayer {
     Name = player.PlayerName;
   }
 
-  // TODO: Can we make this public?
   private CCSPlayerController? Player {
     get {
       var player = Utilities.GetPlayerFromSteamId(ulong.Parse(Id))
         ?? Utilities.GetPlayerFromIndex(int.Parse(Id));
-      return player is not { IsValid: true } ? null : player;
+#if DEBUG
+      if (player == null || !player.IsValid)
+        Console.WriteLine("Failed to find player with ID: " + Id);
+#endif
+      return player is { IsValid: true } ? player : null;
     }
   }
 
@@ -82,7 +85,15 @@ public class CS2Player : IOnlinePlayer {
   }
 
   public bool IsAlive {
+#if DEBUG
+    get {
+      var val = Player != null && Player.PawnIsAlive;
+      Console.WriteLine($"Checking IsAlive for player {Id} ({Name}) = {val}");
+      return val;
+    }
+#else
     get => Player != null && Player.PawnIsAlive;
+#endif
 
     set
       => throw new NotSupportedException(

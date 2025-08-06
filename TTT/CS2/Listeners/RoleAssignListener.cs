@@ -3,6 +3,7 @@ using CounterStrikeSharp.API.Modules.Utils;
 using Microsoft.Extensions.DependencyInjection;
 using TTT.API.Events;
 using TTT.API.Player;
+using TTT.CS2.Extensions;
 using TTT.CS2.Roles;
 using TTT.Game.Events.Player;
 
@@ -21,6 +22,15 @@ public class RoleAssignListener(IServiceProvider provider) : IListener {
     var player = players.GetPlayer(ev.Player);
     if (player == null || !player.IsValid) return;
 
-    if (player.Team == CsTeam.Spectator) ev.Role = new SpectatorRole(provider);
+    if (player.Team == CsTeam.Spectator) {
+      ev.Role = new SpectatorRole(provider);
+      return;
+    }
+
+    player.SwitchTeam(ev.Role is CS2DetectiveRole ?
+      CsTeam.CounterTerrorist :
+      CsTeam.Terrorist);
+
+    player.SetClan(ev.Role is CS2DetectiveRole ? ev.Role.Name : "", false);
   }
 }

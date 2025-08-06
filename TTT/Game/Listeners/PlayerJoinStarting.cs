@@ -1,11 +1,19 @@
 ﻿using JetBrains.Annotations;
+using Microsoft.Extensions.DependencyInjection;
 using TTT.API.Events;
+using TTT.API.Storage;
 using TTT.Game.Events.Player;
 
 namespace TTT.Game.Listeners;
 
 public class PlayerJoinStarting(IServiceProvider provider)
   : BaseListener(provider) {
+  private readonly GameConfig config =
+    provider.GetRequiredService<IStorage<GameConfig>>()
+     .Load()
+     .GetAwaiter()
+     .GetResult() ?? new GameConfig();
+
   public override string Name => nameof(PlayerJoinStarting);
 
   [EventHandler]
@@ -13,12 +21,12 @@ public class PlayerJoinStarting(IServiceProvider provider)
   public void OnJoin(PlayerJoinEvent ev) {
     if (Games.IsGameActive()) return;
     var playerCount = Finder.GetOnline().Count;
-    if (playerCount < 2) return;
+    if (playerCount < config.RoundCfg.MinimumPlayers) return;
 
-    _ = Messenger.MessageAll(Finder,
-      $"There are {playerCount} players online, starting the game...");
+    Messenger.DebugInform(
+      $"There are {playerCount} Players online, starting the game...");
 
     var game = Games.CreateGame();
-    game?.Start(TimeSpan.FromSeconds(5));
+    game?.Start(config.RoundCfg.CountDownDuration);
   }
 }

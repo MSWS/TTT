@@ -160,4 +160,87 @@ public class LocaleTest(IMsgLocalizer localizer) {
 
     Assert.Equal(" Foo SUPERLIMINAL  ", msg);
   }
+
+  [Fact]
+  public void Locale_AStatic_Lower() {
+    var msg = localizer[TestMsgs.AN_TEST_LOWER];
+
+    Assert.Equal("a test", msg);
+  }
+
+  [Fact]
+  public void Locale_AStatic_Upper() {
+    var msg = localizer[TestMsgs.AN_TEST_UPPER];
+
+    Assert.Equal("A TEST", msg);
+  }
+
+  [Fact]
+  public void Locale_AnAmazing_Lower() {
+    var msg = localizer[TestMsgs.AN_AMAZING_TEST_LOWER];
+
+    Assert.Equal("an amazing test", msg);
+  }
+
+  [Fact]
+  public void Locale_AnAmazing_Upper() {
+    var msg = localizer[TestMsgs.AN_AMAZING_TEST_UPPER];
+
+    Assert.Equal("AN AMAZING TEST", msg);
+  }
+
+  [Fact]
+  public void Locale_AnAmazing_Sentence() {
+    var msg = localizer[TestMsgs.AN_AMAZING_TEST_SENTENCE];
+
+    Assert.Equal("An amazing test", msg);
+  }
+
+  [Fact]
+  public void Locale_AnAmazing_Odd() {
+    var msg = localizer[TestMsgs.AN_AMAZING_TEST_ODD];
+
+    Assert.Equal("aN amazing test", msg);
+  }
+
+  [Theory]
+  [InlineData("test", "a test")]
+  [InlineData("foobar", "a foobar")]
+  [InlineData("young person", "a young person")]
+  [InlineData("50-foot high tree", "a 50-foot high tree")]
+  [InlineData("impressive jump", "an impressive jump")]
+  [InlineData("ELEVATED PLATFORM", "an ELEVATED PLATFORM")]
+  public void Locale_ASubstituion_Lower(string input, string output) {
+    var msg = localizer[TestMsgs.AN_TEST_SUBSTITUTION_LOWER(input)];
+
+    Assert.Equal(output, msg);
+  }
+
+  [Theory]
+  [InlineData("test", "A test")]
+  [InlineData("FOOBAR", "A FOOBAR")]
+  [InlineData("YOUNG PERSON", "A YOUNG PERSON")]
+  [InlineData("50-FOOT HIGH TREE", "A 50-FOOT HIGH TREE")]
+  [InlineData("IMPRESSIVE JUMP", "AN IMPRESSIVE JUMP")]
+  [InlineData("ELEVATED PLATFORM", "AN ELEVATED PLATFORM")]
+  [InlineData("amazing test", "AN amazing test")]
+  public void Locale_ASubstituion_Upper(string input, string output) {
+    var msg = localizer[TestMsgs.AN_TEST_SUBSTITUTION_UPPER(input)];
+
+    Assert.Equal(output, msg);
+  }
+
+  [Fact]
+  public void Locale_AnBetween() {
+    var msg = localizer[TestMsgs.AN_IN_BETWEEN];
+
+    Assert.Equal("Foo a bar", msg);
+  }
+
+  [Fact]
+  public void Locale_AnAtEnd() {
+    var msg = localizer[TestMsgs.AN_AT_END];
+
+    Assert.Equal("Foo a", msg);
+  }
 }

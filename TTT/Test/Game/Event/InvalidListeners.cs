@@ -8,20 +8,20 @@ public static class InvalidListeners {
   }
 
   public class NoParamListener : IListener {
+    public void Dispose() { }
+
     [EventHandler]
     public void OnEvent() {
       // No parameters, should throw
     }
-
-    public void Dispose() { }
   }
 
   public class WrongParamListener : IListener {
+    public void Dispose() { }
+
     [EventHandler]
     public void OnEvent(string message) {
       // Invalid parameter type, should throw
     }
-
-    public void Dispose() { }
   }
 }

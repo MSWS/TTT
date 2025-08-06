@@ -1,23 +1,36 @@
-﻿using TTT.Locale;
+﻿using TTT.API.Role;
+using TTT.Locale;
 
 // ReSharper disable InconsistentNaming
 
 namespace TTT.Game;
 
 public static class GameMsgs {
-  #region PREFIX
-
   public static IMsg PREFIX => MsgFactory.Create(nameof(PREFIX));
-
-  #endregion
-
-  #region ROLES
 
   public static IMsg ROLE_INNOCENT => MsgFactory.Create(nameof(ROLE_INNOCENT));
   public static IMsg ROLE_TRAITOR => MsgFactory.Create(nameof(ROLE_TRAITOR));
 
   public static IMsg ROLE_DETECTIVE
     => MsgFactory.Create(nameof(ROLE_DETECTIVE));
+
+  public static IMsg ROLE_ASSIGNED(IRole role) {
+    return MsgFactory.Create(nameof(ROLE_ASSIGNED), role.Name);
+  }
+
+  public static IMsg GAME_STATE_STARTING(TimeSpan span) {
+    return MsgFactory.Create(nameof(GAME_STATE_STARTING), span.TotalSeconds);
+  }
+
+  public static IMsg NOT_ENOUGH_PLAYERS(int minNeeded) {
+    return MsgFactory.Create(nameof(NOT_ENOUGH_PLAYERS), minNeeded);
+  }
+
+  #region COMMANDS
+
+  public static IMsg CMD_TTT(string version) {
+    return MsgFactory.Create(nameof(CMD_TTT), version);
+  }
 
   #endregion
 
@@ -47,10 +60,6 @@ public static class GameMsgs {
 
   public static IMsg GENERIC_ERROR(string err) {
     return MsgFactory.Create(nameof(GENERIC_ERROR), err);
-  }
-
-  public static IMsg CMD_TTT(string version) {
-    return MsgFactory.Create(nameof(CMD_TTT), version);
   }
 
   #endregion
