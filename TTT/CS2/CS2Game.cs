@@ -28,6 +28,7 @@ public class CS2Game(IServiceProvider provider) : RoundBasedGame(provider) {
     // and restore the old state right before we actually call the base Start method.
     var oldState = State;
     Server.NextWorldUpdate(() => {
+      if (RoundUtil.IsWarmup()) return;
       State = oldState;
       base.Start(countdown);
     });
