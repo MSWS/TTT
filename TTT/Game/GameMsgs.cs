@@ -1,4 +1,5 @@
-﻿using TTT.Locale;
+﻿using TTT.API.Role;
+using TTT.Locale;
 
 // ReSharper disable InconsistentNaming
 
@@ -12,6 +13,10 @@ public static class GameMsgs {
 
   public static IMsg ROLE_DETECTIVE
     => MsgFactory.Create(nameof(ROLE_DETECTIVE));
+
+  public static IMsg ROLE_ASSIGNED(IRole role) {
+    return MsgFactory.Create(nameof(ROLE_ASSIGNED), role);
+  }
 
   public static IMsg GAME_STATE_STARTING(TimeSpan span) {
     return MsgFactory.Create(nameof(GAME_STATE_STARTING), span.TotalSeconds);

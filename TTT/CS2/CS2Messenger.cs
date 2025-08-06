@@ -48,7 +48,7 @@ public class CS2Messenger(IServiceProvider provider)
   public override void DebugInform(string msg, params object[] args) {
 #if DEBUG
     _ = ((IMessenger)this).ScreenMsgAll(msg, args);
-    Console.WriteLine($"[DEBUG ANNOUNCE] {string.Format(msg, args)}");
+    Console.WriteLine($"[DEBUG INFORM] {string.Format(msg, args)}");
 #endif
   }
 

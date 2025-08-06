@@ -1,4 +1,5 @@
-﻿using CounterStrikeSharp.API.Core;
+﻿using CounterStrikeSharp.API;
+using CounterStrikeSharp.API.Core;
 
 namespace TTT.CS2.Extensions;
 
@@ -12,5 +13,14 @@ public static class PlayerExtensions {
     return pawn.WeaponServices?.MyWeapons
      .FirstOrDefault(w => w.Value?.DesignerName == designerName)
     ?.Value;
+  }
+
+  public static void SetClan(this CCSPlayerController player, string clan,
+    bool flush = true) {
+    player.Clan = clan;
+    Utilities.SetStateChanged(player, "CCSPlayerController", "m_szClan");
+    if (!flush) return;
+    var ev = new EventNextlevelChanged(true);
+    ev.FireEvent(false);
   }
 }
