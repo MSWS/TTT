@@ -31,11 +31,6 @@ public class RoleAssignListener(IServiceProvider provider) : IListener {
       CsTeam.CounterTerrorist :
       CsTeam.Terrorist);
 
-    if (ev.Role is not CS2DetectiveRole) {
-      player.SetClan("");
-      return;
-    }
-
-    player.SetClan(ev.Role.Name);
+    player.SetClan(ev.Role is CS2DetectiveRole ? ev.Role.Name : "", false);
   }
 }

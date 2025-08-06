@@ -77,12 +77,7 @@ public class RoundTimerListener(IServiceProvider provider) : IListener {
         RoundEndReason.CTsWin;
     var gameRules = ServerExtensions.GetGameRulesProxy();
     if (gameRules == null || gameRules.GameRules == null) return;
+    // TODO: Figure out what these params do
     TerminateRoundFunc.Invoke(gameRules.GameRules.Handle, 5f, endReason, 0, 0);
-
-    // RoundUtil.EndRound(
-    //   ev.Game.WinningRole is TraitorRole ?
-    //     RoundEndReason.TerroristsWin :
-    //     RoundEndReason.CTsWin,
-    //   (float)config.RoundCfg.TimeBetweenRounds.TotalSeconds);
   }
 }

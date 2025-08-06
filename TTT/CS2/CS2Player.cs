@@ -32,7 +32,6 @@ public class CS2Player : IOnlinePlayer {
     Name = player.PlayerName;
   }
 
-  // TODO: Can we make this public?
   private CCSPlayerController? Player {
     get {
       var player = Utilities.GetPlayerFromSteamId(ulong.Parse(Id))
