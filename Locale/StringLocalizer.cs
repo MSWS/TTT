@@ -37,6 +37,9 @@ public partial class StringLocalizer : IMsgLocalizer {
   [GeneratedRegex(@"\b(\w+)%s%")]
   private static partial Regex pluralRegex();
 
+  [GeneratedRegex(@"%an%", RegexOptions.IgnoreCase)]
+  private static partial Regex anRegex();
+
   private LocalizedString getString(string name, params object[] arguments) {
     // Get the localized value
     var value = localizer[name].Value;
@@ -67,6 +70,7 @@ public partial class StringLocalizer : IMsgLocalizer {
 
     // Handle pluralization
     value = HandlePluralization(value);
+    value = HandleAn(value);
 
     return new LocalizedString(name, value);
   }
@@ -115,6 +119,27 @@ public partial class StringLocalizer : IMsgLocalizer {
         StringComparison.OrdinalIgnoreCase))
         value = value[..(trailingIndex + 1)] + " "
           + value[(trailingIndex + 4)..];
+    }
+
+    return value;
+  }
+
+  public static string HandleAn(string value) {
+    var anMatches = anRegex().Matches(value);
+    foreach (Match match in anMatches) {
+      var anMatch = match.Value[1..^1];
+      var index   = match.Index;
+      var suffix  = value[(index + match.Length)..];
+
+      // Determine if the next word starts with a vowel sound
+      var nextChar = (suffix.Split(' ')
+         .FirstOrDefault(w => !string.IsNullOrWhiteSpace(w)) ?? string.Empty)
+       .FirstOrDefault(char.IsLetter);
+      if ("aeiou".Contains(nextChar.ToString().ToLower())) {
+        value = value[..index] + anMatch + value[(index + match.Length)..];
+      } else {
+        value = value[..index] + anMatch[0] + value[(index + match.Length)..];
+      }
     }
 
     return value;

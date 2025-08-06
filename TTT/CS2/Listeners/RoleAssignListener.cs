@@ -34,7 +34,5 @@ public class RoleAssignListener(IServiceProvider provider) : IListener {
     if (ev.Role is not CS2DetectiveRole) return;
 
     player.SetClan(ev.Role.Name);
-    var levelChange = new EventNextlevelChanged(true);
-    levelChange.FireEvent(false);
   }
 }

@@ -23,6 +23,11 @@ public class RoundEndHandler(IServiceProvider provider) : IPluginModule {
     if (!games.IsGameActive()) return HookResult.Continue;
     var game = games.ActiveGame ?? throw new InvalidOperationException(
       "Active game is null, but round end event was triggered.");
+    if (game.FinishedAt != null) {
+      // The game's round ended due to our TTT game ending
+      return HookResult.Continue;
+    }
+
     game.EndGame(EndReason.TIMEOUT(new InnocentRole(provider)));
     return HookResult.Continue;
   }

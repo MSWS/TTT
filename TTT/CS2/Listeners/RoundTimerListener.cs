@@ -1,4 +1,5 @@
 ﻿using CounterStrikeSharp.API;
+using CounterStrikeSharp.API.Modules.Entities.Constants;
 using Microsoft.Extensions.DependencyInjection;
 using TTT.API.Events;
 using TTT.API.Game;
@@ -27,6 +28,10 @@ public class RoundTimerListener(IServiceProvider provider) : IListener {
          .TotalSeconds);
         Server.ExecuteCommand("mp_ignore_round_win_conditions 1");
       });
+
+      foreach (var player in Utilities.GetPlayers().Where(p => !p.PawnIsAlive))
+        player.Respawn();
+
       return;
     }
 
@@ -43,6 +48,6 @@ public class RoundTimerListener(IServiceProvider provider) : IListener {
   public void OnRoundEnd(GameStateUpdateEvent ev) {
     if (ev.NewState != State.FINISHED) return;
     if (RoundUtil.GetTimeRemaining() <= 1) return;
-    RoundUtil.SetTimeRemaining(0);
+    RoundUtil.EndRound(RoundEndReason.CTsWin);
   }
 }

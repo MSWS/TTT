@@ -15,7 +15,7 @@ public static class GameMsgs {
     => MsgFactory.Create(nameof(ROLE_DETECTIVE));
 
   public static IMsg ROLE_ASSIGNED(IRole role) {
-    return MsgFactory.Create(nameof(ROLE_ASSIGNED), role);
+    return MsgFactory.Create(nameof(ROLE_ASSIGNED), role.Name);
   }
 
   public static IMsg GAME_STATE_STARTING(TimeSpan span) {

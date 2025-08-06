@@ -75,7 +75,7 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
     onlineMessenger?.MessageAll(
       locale[GameMsgs.GAME_STATE_STARTING(countdown.Value)]);
     State = State.COUNTDOWN;
-    var timer = Observable.Timer(countdown.Value, scheduler);
+    var timer = Observable.Timer(countdown.Value, Scheduler);
 
     timer.Subscribe(_ => {
       if (State != State.COUNTDOWN) {
@@ -98,8 +98,8 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
     }
 
     FinishedAt  = DateTime.Now;
-    State       = State.FINISHED;
     WinningRole = reason?.WinningRole;
+    State       = State.FINISHED;
 
     onlineMessenger?.MessageAll(WinningRole == null ?
       reason?.Message ?? "Game ended." :
@@ -135,7 +135,7 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
 
   private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
 
-  private readonly IScheduler scheduler =
+  protected readonly IScheduler Scheduler =
     provider.GetRequiredService<IScheduler>();
 
   private readonly IPlayerFinder finder =

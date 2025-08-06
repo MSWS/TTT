@@ -1,4 +1,5 @@
 ﻿using CounterStrikeSharp.API;
+using CounterStrikeSharp.API.Core;
 using TTT.API.Game;
 using TTT.API.Role;
 using TTT.CS2.Roles;
@@ -13,7 +14,11 @@ public class CS2Game(IServiceProvider provider) : RoundBasedGame(provider) {
   ];
 
   override protected void StartRound() {
-    Server.NextWorldUpdate(() => { base.StartRound(); });
+    Server.NextWorldUpdate(() => {
+      base.StartRound();
+      var levelChange = new EventNextlevelChanged(true);
+      levelChange.FireEvent(false);
+    });
   }
 
   // Since this can be called off the main thread, we need to ensure

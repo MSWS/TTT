@@ -23,9 +23,6 @@ public class CS2CommandManager(IServiceProvider provider)
     plugin = basePlugin;
 
     RegisterCommand(new TTTCommand(Provider));
-#if DEBUG
-    RegisterCommand(new TestClanCommand(Provider));
-#endif
 
     foreach (var command in Provider.GetServices<ICommand>()) command.Start();
   }
