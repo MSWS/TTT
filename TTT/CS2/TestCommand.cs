@@ -1,6 +1,6 @@
-﻿using System.Globalization;
-using System.Numerics;
 using CounterStrikeSharp.API;
+using System.Globalization;
+using System.Numerics;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Entities.Constants;
 using Microsoft.Extensions.DependencyInjection;
@@ -132,7 +132,7 @@ public class TestCommand(IServiceProvider provider) : ICommand, IPluginModule {
     // ragdoll.AcceptInput("EnableMotion");
     Server.NextFrame(() => {
       if (!ragdoll.IsValid) return;
-      ragdoll.AcceptInput("ClearParent", null, ragdoll, "", 0);
+      ragdoll.AcceptInput("ClearParent", null, ragdoll);
       ragdoll.MoveType = MoveType_t.MOVETYPE_VPHYSICS;
       ragdoll.Teleport(playerOrigin,
         playerController.PlayerPawn!.Value!.AbsRotation, new Vector(0, 0, 0));

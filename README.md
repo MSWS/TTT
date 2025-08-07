@@ -1,7 +1,8 @@
-# TTT
+# TTT | [![ReadMe](https://img.shields.io/badge/ReadMe-018EF5?logo=readme&logoColor=fff&style=for-the-badge)](./TTT/README.md)
 
-![badge](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/MSWS/6289e1f34da3b70fbba5f84f5ffb25a1/raw/code-coverage.json)
+![Code Coverage](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/MSWS/6289e1f34da3b70fbba5f84f5ffb25a1/raw/code-coverage.json)
 ![Discord](https://img.shields.io/discord/623439460683481091?style=for-the-badge&logo=discord&label=Discord)
+![Endpoint Badge](https://img.shields.io/endpoint?url=https%3A%2F%2Fwaka.msws.xyz%2Fapi%2Fcompat%2Fshields%2Fv1%2Fmsws%2Fproject%3ATTT%2Finterval%3Aall_time%26label%3DAll%2520time%26color%3Dblue&style=for-the-badge&label=Dev%20Time)
 
 TTT (Trouble in Terrorist Town) is a game mode similar to Among Us where a group of players are attempting to
 survive while eliminating the traitors among them.

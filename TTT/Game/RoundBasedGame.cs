@@ -1,6 +1,5 @@
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
-using CounterStrikeSharp.API.Modules.Utils;
 using Microsoft.Extensions.DependencyInjection;
 using TTT.API.Events;
 using TTT.API.Game;
@@ -53,7 +52,6 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
 
     get => state;
   }
-
 
   public virtual IObservable<long>? Start(TimeSpan? countdown = null) {
     onlineMessenger?.Debug("Attempting to start the game...");

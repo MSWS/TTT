@@ -41,7 +41,7 @@ public class CS2InventoryManager(
       pawn.WeaponServices.ActiveWeapon.Value?.As<CBaseEntity>();
 
     gamePlayer.DropActiveWeapon();
-    activeWeaponEntity?.AddEntityIOEvent("Kill", activeWeaponEntity, null, "");
+    activeWeaponEntity?.AddEntityIOEvent("Kill", activeWeaponEntity);
   }
 
   public void RemoveAllWeapons(IOnlinePlayer player) {

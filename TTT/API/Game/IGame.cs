@@ -31,7 +31,7 @@ public interface IGame : IDisposable {
 
   bool IsInProgress() { return State is State.COUNTDOWN or State.IN_PROGRESS; }
 
-  ISet<IOnlinePlayer> GetRole(Type roleType) {
+  ISet<IOnlinePlayer> GetOfRole(Type roleType) {
     if (!typeof(IRole).IsAssignableFrom(roleType))
       throw new ArgumentException(
         "roleType must be a type that implements IRole", nameof(roleType));
@@ -45,15 +45,22 @@ public interface IGame : IDisposable {
     return Players.OfType<IOnlinePlayer>().Where(p => p.IsAlive).ToHashSet();
   }
 
-  ISet<IOnlinePlayer> GetAlive(Type roleType) {
+  ISet<IOnlinePlayer> GetAlive(Type roleType, bool loose = true) {
     if (!typeof(IRole).IsAssignableFrom(roleType))
       throw new ArgumentException(
         "roleType must be a type that implements IRole", nameof(roleType));
+
+    if (!loose)
+      return GetAlive()
+       .Where(p => p.Roles.Any(r => r.GetType() == roleType))
+       .ToHashSet();
 
     return GetAlive()
      .Where(p => p.Roles.Any(r => r.GetType().IsAssignableTo(roleType)))
      .ToHashSet();
   }
 
-  ISet<IOnlinePlayer> GetAlive(IRole role) { return GetAlive(role.GetType()); }
+  ISet<IOnlinePlayer> GetAlive(IRole role, bool loose = true) {
+    return GetAlive(role.GetType(), loose);
+  }
 }
