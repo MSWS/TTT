@@ -9,16 +9,16 @@ using TTT.Game;
 namespace TTT.CS2.GameHandlers;
 
 public class RoundStartHandler(IServiceProvider provider) : IPluginModule {
-  public void Dispose() { throw new NotImplementedException(); }
-  public string Name => nameof(RoundStartHandler);
-  public string Version => GitVersionInformation.FullSemVer;
+  private readonly GameConfig config =
+    provider.GetService<IStorage<GameConfig>>()?.Load().GetAwaiter().GetResult()
+    ?? new GameConfig();
 
   private readonly IGameManager games =
     provider.GetRequiredService<IGameManager>();
 
-  private readonly GameConfig config =
-    provider.GetService<IStorage<GameConfig>>()?.Load().GetAwaiter().GetResult()
-    ?? new GameConfig();
+  public void Dispose() { throw new NotImplementedException(); }
+  public string Name => nameof(RoundStartHandler);
+  public string Version => GitVersionInformation.FullSemVer;
 
   public void Start() { }
 

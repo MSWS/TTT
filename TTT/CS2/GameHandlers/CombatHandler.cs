@@ -1,7 +1,6 @@
 using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Core.Attributes.Registration;
-using CounterStrikeSharp.API.Modules.Memory.DynamicFunctions;
 using TTT.API;
 using TTT.API.Events;
 using TTT.API.Player;
@@ -14,6 +13,8 @@ public class CombatHandler(IEventBus bus,
   public string Name => "CombatListeners";
   public string Version => GitVersionInformation.FullSemVer;
   public void Start() { }
+
+  public void Dispose() { }
 
   /// <summary>
   /// </summary>
@@ -50,6 +51,4 @@ public class CombatHandler(IEventBus bus,
 
     return HookResult.Continue;
   }
-
-  public void Dispose() { }
 }

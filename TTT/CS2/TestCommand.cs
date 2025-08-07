@@ -1,5 +1,4 @@
-﻿using System.Numerics;
-using CounterStrikeSharp.API;
+﻿using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Entities.Constants;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,26 +10,14 @@ using Vector = CounterStrikeSharp.API.Modules.Utils.Vector;
 namespace TTT.CS2;
 
 public class TestCommand(IServiceProvider provider) : ICommand, IPluginModule {
-  public void Dispose() { }
-
   private readonly IPlayerConverter<CCSPlayerController> converter =
     provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
+
+  public void Dispose() { }
 
   public string Name => "test";
   public string Version => GitVersionInformation.FullSemVer;
   public void Start() { }
-
-  public void Start(BasePlugin? plugin, bool hotReload) {
-    plugin
-    ?.RegisterListener<CounterStrikeSharp.API.Core.Listeners.CheckTransmit>(
-        checkTransmit);
-  }
-
-  private void checkTransmit(CCheckTransmitInfoList infoList) {
-    foreach (var (info, player) in infoList) {
-      // info.TransmitEntities.Remove();
-    }
-  }
 
   public Task<CommandResult>
     Execute(IOnlinePlayer? executor, ICommandInfo info) {
@@ -47,6 +34,18 @@ public class TestCommand(IServiceProvider provider) : ICommand, IPluginModule {
     }
 
     return Task.FromResult(CommandResult.SUCCESS);
+  }
+
+  public void Start(BasePlugin? plugin, bool hotReload) {
+    plugin
+    ?.RegisterListener<CounterStrikeSharp.API.Core.Listeners.CheckTransmit>(
+        checkTransmit);
+  }
+
+  private void checkTransmit(CCheckTransmitInfoList infoList) {
+    foreach (var (info, player) in infoList) {
+      // info.TransmitEntities.Remove();
+    }
   }
 
   public CRagdollProp CreateRagdoll(CCSPlayerController playerController) {
@@ -84,7 +83,7 @@ public class TestCommand(IServiceProvider provider) : ICommand, IPluginModule {
     // ragdoll.AcceptInput("EnableMotion");
     Server.NextFrame(() => {
       if (!ragdoll.IsValid) return;
-      ragdoll.AcceptInput("ClearParent", null, ragdoll, "", 0);
+      ragdoll.AcceptInput("ClearParent", null, ragdoll);
       ragdoll.MoveType = MoveType_t.MOVETYPE_VPHYSICS;
       ragdoll.Teleport(playerOrigin,
         playerController.PlayerPawn!.Value!.AbsRotation, new Vector(0, 0, 0));
