@@ -14,6 +14,7 @@ using TTT.Game;
 using TTT.Game.Commands;
 using TTT.Game.Roles;
 using TTT.Locale;
+using TTT.Shop;
 using TTT.Test.Abstract;
 using TTT.Test.Fakes;
 
@@ -36,6 +37,7 @@ public class Startup {
     services.AddTransient<IStorage<GameConfig>, FakeConfig>();
     services.AddScoped<IPermissionManager, FakePermissionManager>();
     services.AddScoped<ICommandManager, CommandManager>();
+    services.AddScoped<IShop, TTT.Shop.Shop>();
 
     services.AddModBehavior<GenericInitTester>();
     services.AddModBehavior<PluginInitTester>();

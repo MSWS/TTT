@@ -3,8 +3,8 @@ using TTT.API.Storage;
 
 namespace TTT.Shop;
 
-public interface IShop : IKeyedStorage<IOnlinePlayer, int>,
-  IKeyWritable<IOnlinePlayer, int> {
+public interface IShop : IKeyedStorage<IPlayer, int>,
+  IKeyWritable<IPlayer, int> {
   ISet<IShopItem> Items { get; }
 
   bool RegisterItem(IShopItem item);
