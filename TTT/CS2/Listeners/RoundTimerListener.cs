@@ -3,6 +3,7 @@ using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Entities.Constants;
 using CounterStrikeSharp.API.Modules.Memory.DynamicFunctions;
 using CounterStrikeSharp.API.Modules.Utils;
+using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using TTT.API.Events;
 using TTT.API.Game;
@@ -17,11 +18,6 @@ using TTT.Game.Roles;
 namespace TTT.CS2.Listeners;
 
 public class RoundTimerListener(IServiceProvider provider) : IListener {
-  public static readonly
-    MemoryFunctionVoid<nint, float, RoundEndReason, nint, nint>
-    TerminateRoundFunc =
-      new(GameData.GetSignature("CCSGameRules_TerminateRound"));
-
   private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
 
   private readonly GameConfig config = provider
@@ -33,11 +29,9 @@ public class RoundTimerListener(IServiceProvider provider) : IListener {
   private readonly IPlayerConverter<CCSPlayerController> converter =
     provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
 
-  private readonly IPlayerFinder finder =
-    provider.GetRequiredService<IPlayerFinder>();
-
   public void Dispose() { bus.UnregisterListener(this); }
 
+  [UsedImplicitly]
   [EventHandler(IgnoreCanceled = true)]
   public void OnRoundStart(GameStateUpdateEvent ev) {
     if (ev.NewState == State.COUNTDOWN) {
@@ -62,6 +56,7 @@ public class RoundTimerListener(IServiceProvider provider) : IListener {
     });
   }
 
+  [UsedImplicitly]
   [EventHandler(IgnoreCanceled = true)]
   public void OnRoundEnd(GameStateUpdateEvent ev) {
     if (ev.NewState != State.FINISHED) return;
@@ -77,9 +72,7 @@ public class RoundTimerListener(IServiceProvider provider) : IListener {
        .IsAssignableTo(typeof(TraitorRole)) ?
         RoundEndReason.TerroristsWin :
         RoundEndReason.CTsWin;
-    var gameRules = ServerUtil.GameRulesProxy;
-    if (gameRules == null || gameRules.GameRules == null) return;
-    // TODO: Figure out what these params do
-    TerminateRoundFunc.Invoke(gameRules.GameRules.Handle, 5f, endReason, 0, 0);
+
+    RoundUtil.EndRound(endReason);
   }
 }
