@@ -1,9 +1,9 @@
 ﻿using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 
-namespace TTT.CS2.Extensions;
+namespace TTT.CS2.Utils;
 
-public static class ServerExtensions {
+public static class ServerUtil {
   private static CCSGameRulesProxy? gamerulesProxy;
 
   public static CCSGameRules? GameRules {

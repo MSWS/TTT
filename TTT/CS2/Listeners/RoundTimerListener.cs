@@ -9,6 +9,7 @@ using TTT.API.Game;
 using TTT.API.Player;
 using TTT.API.Storage;
 using TTT.CS2.Extensions;
+using TTT.CS2.Utils;
 using TTT.Game;
 using TTT.Game.Events.Game;
 using TTT.Game.Roles;
@@ -76,7 +77,7 @@ public class RoundTimerListener(IServiceProvider provider) : IListener {
        .IsAssignableTo(typeof(TraitorRole)) ?
         RoundEndReason.TerroristsWin :
         RoundEndReason.CTsWin;
-    var gameRules = ServerExtensions.GameRulesProxy;
+    var gameRules = ServerUtil.GameRulesProxy;
     if (gameRules == null || gameRules.GameRules == null) return;
     // TODO: Figure out what these params do
     TerminateRoundFunc.Invoke(gameRules.GameRules.Handle, 5f, endReason, 0, 0);
