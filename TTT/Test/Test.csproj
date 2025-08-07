@@ -12,7 +12,7 @@
     <ProjectReference Include="..\..\Locale\Locale.csproj"/>
     <ProjectReference Include="..\API\API.csproj"/>
     <ProjectReference Include="..\Plugin\Plugin.csproj"/>
-    <ProjectReference Include="..\Shop\Shop.csproj" />
+    <ProjectReference Include="..\Shop\Shop.csproj"/>
   </ItemGroup>
 
   <ItemGroup>

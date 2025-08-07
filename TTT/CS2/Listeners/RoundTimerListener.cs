@@ -1,7 +1,6 @@
 ﻿using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Entities.Constants;
-using CounterStrikeSharp.API.Modules.Memory.DynamicFunctions;
 using CounterStrikeSharp.API.Modules.Utils;
 using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
@@ -9,7 +8,6 @@ using TTT.API.Events;
 using TTT.API.Game;
 using TTT.API.Player;
 using TTT.API.Storage;
-using TTT.CS2.Extensions;
 using TTT.CS2.Utils;
 using TTT.Game;
 using TTT.Game.Events.Game;

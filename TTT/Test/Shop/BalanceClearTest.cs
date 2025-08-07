@@ -1,4 +1,3 @@
-using System.ComponentModel.Design;
 using Microsoft.Extensions.DependencyInjection;
 using TTT.API.Events;
 using TTT.API.Game;
@@ -9,15 +8,15 @@ using Xunit;
 namespace TTT.Test.Shop;
 
 public class BalanceClearTest(IServiceProvider provider) {
-  private readonly IShop shop = provider.GetRequiredService<IShop>();
-
-  private readonly IGameManager games =
-    provider.GetRequiredService<IGameManager>();
-
   private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
 
   private readonly IPlayerFinder finder =
     provider.GetRequiredService<IPlayerFinder>();
+
+  private readonly IGameManager games =
+    provider.GetRequiredService<IGameManager>();
+
+  private readonly IShop shop = provider.GetRequiredService<IShop>();
 
   [Fact]
   public async Task Balances_ShouldBeCleared_OnGameStart() {
