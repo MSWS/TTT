@@ -44,8 +44,8 @@ public class RoundTimerListener(IServiceProvider provider) : IListener {
         RoundUtil.SetTimeRemaining((int)config.RoundCfg.CountDownDuration
          .TotalSeconds);
         Server.ExecuteCommand("mp_ignore_round_win_conditions 1");
-        foreach (var player in
-          Utilities.GetPlayers().Where(p => !p.PawnIsAlive))
+        foreach (var player in Utilities.GetPlayers()
+         .Where(p => p.LifeState != (int)LifeState_t.LIFE_ALIVE))
           player.Respawn();
       });
 

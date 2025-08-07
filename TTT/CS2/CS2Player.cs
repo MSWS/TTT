@@ -85,7 +85,7 @@ public class CS2Player : IOnlinePlayer {
   }
 
   public bool IsAlive {
-    get => Player != null && Player.PawnIsAlive;
+    get => Player != null && Player.LifeState == (int)LifeState_t.LIFE_ALIVE;
 
     set
       => throw new NotSupportedException(

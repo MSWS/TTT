@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using System.Globalization;
+using System.Numerics;
 using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Entities.Constants;
@@ -15,6 +16,9 @@ public class TestCommand(IServiceProvider provider) : ICommand, IPluginModule {
 
   private readonly IPlayerConverter<CCSPlayerController> converter =
     provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
+
+  private readonly IPlayerFinder finder =
+    provider.GetRequiredService<IPlayerFinder>();
 
   public string Name => "test";
   public string Version => GitVersionInformation.FullSemVer;
@@ -37,14 +41,58 @@ public class TestCommand(IServiceProvider provider) : ICommand, IPluginModule {
     if (executor == null) return Task.FromResult(CommandResult.PLAYER_ONLY);
 
     if (info.ArgCount == 1) {
-      info.ReplySync("Spawning body");
-      Server.NextWorldUpdate(() => {
-        var gamePlayer = converter.GetPlayer(executor);
-        if (gamePlayer == null || !gamePlayer.IsValid) return;
-        if (gamePlayer.AbsOrigin == null) return;
-        var ragdoll = CreateRagdoll(gamePlayer);
-      });
+      info.ReplySync("Unknown command");
+      return Task.FromResult(CommandResult.INVALID_ARGS);
     }
+
+    Server.NextWorldUpdate(() => {
+      var gameExecutor = converter.GetPlayer(executor);
+      switch (info.Args[1].ToLower()) {
+        case "body":
+          info.ReplySync("Spawning body");
+          if (gameExecutor == null || !gameExecutor.IsValid) return;
+          if (gameExecutor.AbsOrigin == null) return;
+          var ragdoll = CreateRagdoll(gameExecutor);
+          break;
+        case "alive":
+          info.ReplySync("marking everyone alive");
+          foreach (var gp in finder.GetOnline()
+           .Select(p => converter.GetPlayer(p))
+           .OfType<CCSPlayerController>()) {
+            gp.PawnIsAlive = true;
+            Utilities.SetStateChanged(gp, "CCSPlayerController",
+              "m_bPawnIsAlive");
+          }
+
+          break;
+        case "dead":
+          info.ReplySync("marking everyone dead");
+
+          foreach (var gp in finder.GetOnline()
+           .Select(p => converter.GetPlayer(p))
+           .OfType<CCSPlayerController>()) {
+            gp.PawnIsAlive = false;
+            // Utilities.SetStateChanged(gp, "CCSPlayerController",
+            //   "m_bPawnIsAlive");
+          }
+
+          break;
+        case "gettarget":
+          var target = gameExecutor?.PlayerPawn.Value?.Target;
+          info.ReplySync(target ?? "null");
+          info.ReplySync(gameExecutor?.PlayerPawn.Value?.LookTargetPosition
+           .ToString() ?? "null");
+          break;
+        case "getdeath":
+          info.ReplySync("DeathInfoTime: "
+            + gameExecutor?.PlayerPawn.Value?.DeathInfoTime.ToString(CultureInfo
+             .CurrentCulture));
+          info.ReplySync("DeathTime: "
+            + gameExecutor?.PlayerPawn.Value?.DeathTime.ToString(CultureInfo
+             .CurrentCulture));
+          break;
+      }
+    });
 
     return Task.FromResult(CommandResult.SUCCESS);
   }
