@@ -53,10 +53,22 @@ jobs:
           github_token: '${{ secrets.GITHUB_TOKEN }}'
           skip_unpack: 'true'
           path: 'build'
-          
+
       - name: Rename artifact
         run: |
           mv build/TTT.zip build/TTT-${{ steps.gitversion.outputs.fullSemVer }}.zip
+
+      - name: Determine Base Tag for Changelog
+        id: base_tag
+        run: |
+          if [ "${{ steps.extract_branch.outputs.branch }}" = "main" ]; then
+            tag=$(gh release list --limit 100 | grep -v 'Pre-release' | head -n1 | awk '{print $1}')
+          else
+            tag=$(gh release list --limit 100 | head -n1 | awk '{print $1}')
+          fi
+          echo "from_tag=$tag" >> $GITHUB_OUTPUT
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Generate Changelog
         id: changelog
@@ -64,6 +76,7 @@ jobs:
         with:
           configuration: '.github/changelogConfig.json'
           mode: "HYBRID"
+          fromTag: ${{ steps.base_tag.outputs.from_tag }}
 
       - name: Create GitHub Release
         if: ${{ steps.extract_branch.outputs.branch == 'main' || steps.extract_branch.outputs.branch == 'dev' }}
