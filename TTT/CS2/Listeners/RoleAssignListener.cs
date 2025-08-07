@@ -35,7 +35,5 @@ public class RoleAssignListener(IServiceProvider provider) : IListener {
     player.SetColor(ev.Role.Color);
     var pawn = player.PlayerPawn.Value;
     if (pawn == null || !pawn.IsValid) return;
-    
-    pawn.SetModel();
   }
 }
