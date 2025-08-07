@@ -124,8 +124,13 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
 
     State     = State.IN_PROGRESS;
     StartedAt = DateTime.Now;
-    assigner.AssignRoles(finder.GetOnline(), Roles);
-    players.AddRange(finder.GetOnline());
+    assigner.AssignRoles(online, Roles);
+    players.AddRange(online);
+
+    var traitors    = ((IGame)this).GetAlive(typeof(TraitorRole)).Count;
+    var nonTraitors = online.Count - traitors;
+    onlineMessenger?.MessageAll(locale[
+      GameMsgs.GAME_STATE_STARTED(traitors, nonTraitors)]);
   }
 
   #region classDeps

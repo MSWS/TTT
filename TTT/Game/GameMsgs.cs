@@ -22,6 +22,10 @@ public static class GameMsgs {
     return MsgFactory.Create(nameof(GAME_STATE_STARTING), span.TotalSeconds);
   }
 
+  public static IMsg GAME_STATE_STARTED(int traitors, int nonTraitors) {
+    return MsgFactory.Create(nameof(GAME_STATE_STARTED), traitors, nonTraitors);
+  }
+
   public static IMsg NOT_ENOUGH_PLAYERS(int minNeeded) {
     return MsgFactory.Create(nameof(NOT_ENOUGH_PLAYERS), minNeeded);
   }
