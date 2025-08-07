@@ -32,6 +32,7 @@ public static class CS2ServiceCollection {
     // collection.AddPluginBehavior<CombatHandler>();
     collection.AddPluginBehavior<PlayerConnectionsHandler>();
     collection.AddPluginBehavior<RoundEndHandler>();
+    collection.AddPluginBehavior<RoundStartHandler>();
     collection.AddPluginBehavior<CombatHandler>();
 
     // Listeners

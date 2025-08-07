@@ -18,7 +18,6 @@ public class PlayerCausesEndListener(IServiceProvider provider)
   [UsedImplicitly]
   public void OnKill(PlayerDeathEvent ev) {
     if (!Games.IsGameActive()) return;
-
     var endGame = getWinningTeam(out var winningTeam);
 
     if (!endGame) return;
@@ -33,7 +32,6 @@ public class PlayerCausesEndListener(IServiceProvider provider)
   [UsedImplicitly]
   public void OnLeave(PlayerLeaveEvent ev) {
     if (!Games.IsGameActive()) return;
-
     var endGame = getWinningTeam(out var winningTeam);
 
     if (!endGame) return;
@@ -49,6 +47,13 @@ public class PlayerCausesEndListener(IServiceProvider provider)
     winningTeam = null;
     if (game is null) return false;
 
+    var traitorRole =
+      game.Roles.First(r => r.GetType().IsAssignableTo(typeof(TraitorRole)));
+    var innocentRole =
+      game.Roles.First(r => r.GetType().IsAssignableTo(typeof(InnocentRole)));
+    var detectiveRole = game.Roles.First(r
+      => r.GetType().IsAssignableTo(typeof(DetectiveRole)));
+
     var traitorsAlive    = game.GetAlive(typeof(TraitorRole)).Count;
     var nonTraitorsAlive = game.GetAlive().Count - traitorsAlive;
     var detectivesAlive  = game.GetAlive(typeof(DetectiveRole)).Count;
@@ -62,12 +67,12 @@ public class PlayerCausesEndListener(IServiceProvider provider)
         winningTeam = null;
         return true;
       case > 0 when nonTraitorsAlive == 0:
-        winningTeam = new TraitorRole(Provider);
+        winningTeam = traitorRole;
         return true;
       case 0 when nonTraitorsAlive > 0:
         winningTeam = nonTraitorsAlive == detectivesAlive ?
-          new DetectiveRole(Provider) :
-          new InnocentRole(Provider);
+          detectiveRole :
+          innocentRole;
         return true;
       default:
         winningTeam = null;

@@ -85,15 +85,7 @@ public class CS2Player : IOnlinePlayer {
   }
 
   public bool IsAlive {
-#if DEBUG
-    get {
-      var val = Player != null && Player.PawnIsAlive;
-      Console.WriteLine($"Checking IsAlive for player {Id} ({Name}) = {val}");
-      return val;
-    }
-#else
     get => Player != null && Player.PawnIsAlive;
-#endif
 
     set
       => throw new NotSupportedException(

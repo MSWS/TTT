@@ -15,7 +15,7 @@ public static class GameServiceCollection {
     // Listeners
     collection.AddListener<GameEndLogsListener>();
     collection.AddListener<GamePlayerActionsListener>();
-    collection.AddListener<GameRestartListener>();
+    // collection.AddListener<GameRestartListener>();
     collection.AddListener<PlayerCausesEndListener>();
     collection.AddListener<PlayerJoinStarting>();
   }

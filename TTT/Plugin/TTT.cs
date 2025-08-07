@@ -1,8 +1,10 @@
+using System.Reactive.Linq;
 using CounterStrikeSharp.API.Core;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using TTT.API;
 using TTT.API.Events;
+using TTT.API.Game;
 
 namespace TTT.Plugin;
 
@@ -48,5 +50,16 @@ public class TTT(IServiceProvider provider) : BasePlugin {
     }
 
     Logger.LogInformation("All modules loaded successfully.");
+  }
+
+  override protected void Dispose(bool disposing) {
+    if (!disposing) {
+      base.Dispose(disposing);
+      return;
+    }
+
+    provider.GetService<IGameManager>()?.Dispose();
+
+    base.Dispose(disposing);
   }
 }

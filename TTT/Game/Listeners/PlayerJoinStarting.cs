@@ -9,10 +9,8 @@ namespace TTT.Game.Listeners;
 public class PlayerJoinStarting(IServiceProvider provider)
   : BaseListener(provider) {
   private readonly GameConfig config =
-    provider.GetRequiredService<IStorage<GameConfig>>()
-     .Load()
-     .GetAwaiter()
-     .GetResult() ?? new GameConfig();
+    provider.GetService<IStorage<GameConfig>>()?.Load().GetAwaiter().GetResult()
+    ?? new GameConfig();
 
   public override string Name => nameof(PlayerJoinStarting);
 

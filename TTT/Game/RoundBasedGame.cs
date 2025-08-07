@@ -1,5 +1,6 @@
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
+using CounterStrikeSharp.API.Modules.Utils;
 using Microsoft.Extensions.DependencyInjection;
 using TTT.API.Events;
 using TTT.API.Game;
@@ -101,12 +102,13 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
     WinningRole = reason?.WinningRole;
     State       = State.FINISHED;
 
-    onlineMessenger?.MessageAll(WinningRole == null ?
-      reason?.Message ?? "Game ended." :
-      reason?.Message ?? $"{WinningRole.Name} won the game!");
+    onlineMessenger?.MessageAll(WinningRole != null ?
+      locale[GameMsgs.GAME_STATE_ENDED_TEAM_WON(WinningRole)] :
+      locale[GameMsgs.GAME_STATE_ENDED_OTHER(reason?.Message ?? "Unknown")]);
   }
 
   public void Dispose() {
+    State = State.WAITING;
     players.Clear();
     Roles.Clear();
     Logger.ClearActions();
