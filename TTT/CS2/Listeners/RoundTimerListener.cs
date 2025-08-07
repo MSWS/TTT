@@ -76,7 +76,7 @@ public class RoundTimerListener(IServiceProvider provider) : IListener {
        .IsAssignableTo(typeof(TraitorRole)) ?
         RoundEndReason.TerroristsWin :
         RoundEndReason.CTsWin;
-    var gameRules = ServerExtensions.GetGameRulesProxy();
+    var gameRules = ServerExtensions.GameRulesProxy;
     if (gameRules == null || gameRules.GameRules == null) return;
     // TODO: Figure out what these params do
     TerminateRoundFunc.Invoke(gameRules.GameRules.Handle, 5f, endReason, 0, 0);

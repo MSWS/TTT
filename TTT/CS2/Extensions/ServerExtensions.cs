@@ -4,20 +4,23 @@ using CounterStrikeSharp.API.Core;
 namespace TTT.CS2.Extensions;
 
 public static class ServerExtensions {
+  private static CCSGameRulesProxy? gamerulesProxy;
+
+  public static CCSGameRules? GameRules {
+    get {
+      if (gamerulesProxy == null || !gamerulesProxy.IsValid) {
+        gamerulesProxy = Utilities
+         .FindAllEntitiesByDesignerName<CCSGameRulesProxy>("cs_gamerules")
+         .FirstOrDefault();
+      }
+
+      return gamerulesProxy?.GameRules;
+    }
+  }
+
   /// <summary>
   ///   Get the current CCSGameRules for the server
   /// </summary>
-  /// <returns></returns>
-  public static CCSGameRules? GetGameRules() {
-    return Utilities
-     .FindAllEntitiesByDesignerName<CCSGameRulesProxy>("cs_gamerules")
-     .First()
-     .GameRules;
-  }
-
-  public static CCSGameRulesProxy? GetGameRulesProxy() {
-    return Utilities
-     .FindAllEntitiesByDesignerName<CCSGameRulesProxy>("cs_gamerules")
-     .FirstOrDefault();
-  }
+  /// <value></value>
+  public static CCSGameRulesProxy? GameRulesProxy => gamerulesProxy;
 }
