@@ -34,6 +34,7 @@ public static class CS2ServiceCollection {
     collection.AddPluginBehavior<RoundEndHandler>();
     collection.AddPluginBehavior<RoundStartHandler>();
     collection.AddPluginBehavior<CombatHandler>();
+    collection.AddPluginBehavior<PropMover>();
 
     // Listeners
     collection.AddListener<RoleAssignListener>();
