@@ -23,7 +23,8 @@ public static class GameMsgs {
   }
 
   public static IMsg GAME_STATE_STARTED(int traitors, int nonTraitors) {
-    return MsgFactory.Create(nameof(GAME_STATE_STARTED), traitors, nonTraitors);
+    return MsgFactory.Create(nameof(GAME_STATE_STARTED),
+      traitors == 1 ? "is" : "are", traitors, nonTraitors);
   }
 
   public static IMsg NOT_ENOUGH_PLAYERS(int minNeeded) {

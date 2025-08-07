@@ -86,4 +86,10 @@ public static class TestMsgs {
   public static IMsg AN_TEST_SUBSTITUTION_UPPER(string name) {
     return MsgFactory.Create(nameof(AN_TEST_SUBSTITUTION_UPPER), name);
   }
+  
+  public static IMsg AN_RED_ELEPHANT => 
+    MsgFactory.Create(nameof(AN_RED_ELEPHANT));
+  
+  public static IMsg AN_RED_BALL => 
+    MsgFactory.Create(nameof(AN_RED_BALL));
 }

@@ -136,4 +136,49 @@ public class RoundBasedGameTest {
     Assert.Equal(State.WAITING, game.State);
     Assert.Null(game.FinishedAt);
   }
+
+  [Fact]
+  public void StartRound_PrintsRoles_WithIs() {
+    var player1 = finder.AddPlayer(TestPlayer.Random()) as TestPlayer;
+    finder.AddPlayer(TestPlayer.Random());
+
+    Assert.NotNull(player1);
+    game.Start();
+
+    Assert.Contains(player1.Messages,
+      m => stripChatColors(m).Contains("1 Traitor"));
+    Assert.Contains(player1.Messages, m => m.Contains(" is "));
+  }
+
+  [Fact]
+  public void StartRound_PrintsRoles_WithAre() {
+    var player1 = finder.AddPlayer(TestPlayer.Random()) as TestPlayer;
+    for (var i = 0; i < 6; i++) finder.AddPlayer(TestPlayer.Random());
+
+    Assert.NotNull(player1);
+    game.Start();
+
+    Assert.Contains(player1.Messages,
+      m => stripChatColors(m).Contains("2 Traitors"));
+    Assert.Contains(player1.Messages, m => m.Contains(" are "));
+  }
+
+  private static string stripChatColors(string s) {
+    return s.Replace("\x01", "")
+     .Replace("\x02", "")
+     .Replace("\x03", "")
+     .Replace("\x04", "")
+     .Replace("\x05", "")
+     .Replace("\x06", "")
+     .Replace("\x07", "")
+     .Replace("\x08", "")
+     .Replace("\x09", "")
+     .Replace("\x0A", "")
+     .Replace("\x0B", "")
+     .Replace("\x0C", "")
+     .Replace("\x0D", "")
+     .Replace("\x0E", "")
+     .Replace("\x0F", "")
+     .Replace("\x10", "");
+  }
 }

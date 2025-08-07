@@ -1,4 +1,5 @@
-﻿using TTT.Locale;
+﻿using CounterStrikeSharp.API.Modules.Utils;
+using TTT.Locale;
 using Xunit;
 
 namespace TTT.Test.Locale;
@@ -242,5 +243,19 @@ public class LocaleTest(IMsgLocalizer localizer) {
     var msg = localizer[TestMsgs.AN_AT_END];
 
     Assert.Equal("Foo a", msg);
+  }
+
+  [Fact]
+  public void Locale_AnRedElephant() {
+    var msg = localizer[TestMsgs.AN_RED_ELEPHANT];
+
+    Assert.Equal($"An {ChatColors.Red}elephant", msg);
+  }
+
+  [Fact]
+  public void Locale_AnRedBall() {
+    var msg = localizer[TestMsgs.AN_RED_BALL];
+
+    Assert.Equal($"A {ChatColors.Red}ball", msg);
   }
 }
