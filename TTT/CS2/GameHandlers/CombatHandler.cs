@@ -1,8 +1,6 @@
 using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Core.Attributes.Registration;
-using CounterStrikeSharp.API.Modules.Memory;
-using CounterStrikeSharp.API.Modules.Memory.DynamicFunctions;
 using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using TTT.API;
@@ -14,17 +12,18 @@ using TTT.Game.Events.Player;
 namespace TTT.CS2.GameHandlers;
 
 public class CombatHandler(IServiceProvider provider) : IPluginModule {
-  public string Name => "CombatListeners";
-  public string Version => GitVersionInformation.FullSemVer;
+  private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
 
   private readonly IPlayerConverter<CCSPlayerController> converter =
     provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
 
-  private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
-
   private readonly IMessenger msg = provider.GetRequiredService<IMessenger>();
+  public string Name => "CombatListeners";
+  public string Version => GitVersionInformation.FullSemVer;
 
   public void Start() { }
+
+  public void Dispose() { }
 
   /// <summary>
   /// </summary>
@@ -79,6 +78,4 @@ public class CombatHandler(IServiceProvider provider) : IPluginModule {
 
     return HookResult.Continue;
   }
-
-  public void Dispose() { }
 }

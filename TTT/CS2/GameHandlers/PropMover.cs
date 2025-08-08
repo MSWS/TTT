@@ -1,6 +1,4 @@
-﻿using System.Drawing;
-using System.Numerics;
-using CounterStrikeSharp.API;
+﻿using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Core.Attributes.Registration;
 using CounterStrikeSharp.API.Modules.Entities.Constants;
@@ -14,23 +12,23 @@ using Vector = CounterStrikeSharp.API.Modules.Utils.Vector;
 namespace TTT.CS2.GameHandlers;
 
 public class PropMover(IServiceProvider provider) : IPluginModule {
-  public void Dispose() { }
-
-  public string Name => nameof(PropMover);
-  public string Version => GitVersionInformation.FullSemVer;
-
-  private readonly Dictionary<CCSPlayerController, MovementInfo>
-    playersPressingE = new();
-
-  private readonly HashSet<CBaseEntity> mapEntities = new();
-  private readonly IMessenger msg = provider.GetRequiredService<IMessenger>();
-
   private static readonly Vector ZERO_VECTOR = new(0, 0, 0);
   private static readonly QAngle ZERO_QANGLE = new(0, 0, 0);
 
   private readonly string[] interactEntities = [
     "prop_physics_multiplayer", "prop_ragdoll"
   ];
+
+  private readonly HashSet<CBaseEntity> mapEntities = new();
+  private readonly IMessenger msg = provider.GetRequiredService<IMessenger>();
+
+  private readonly Dictionary<CCSPlayerController, MovementInfo>
+    playersPressingE = new();
+
+  public void Dispose() { }
+
+  public string Name => nameof(PropMover);
+  public string Version => GitVersionInformation.FullSemVer;
 
   public void Start() { }
 

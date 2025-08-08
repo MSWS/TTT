@@ -10,11 +10,11 @@ using TTT.CS2.Extensions;
 namespace TTT.CS2.GameHandlers;
 
 public class BodyHider(IServiceProvider provider) : IPluginModule {
+  private readonly IMessenger msg = provider.GetRequiredService<IMessenger>();
   public void Dispose() { }
   public string Name => nameof(BodyHider);
   public string Version => GitVersionInformation.FullSemVer;
   public void Start() { }
-  private readonly IMessenger msg = provider.GetRequiredService<IMessenger>();
 
   [GameEventHandler]
   public HookResult OnDeath(EventPlayerDeath ev, GameEventInfo _) {

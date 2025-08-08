@@ -1,40 +1,25 @@
+﻿using System.Globalization;
 using CounterStrikeSharp.API;
-using System.Globalization;
-using System.Numerics;
 using CounterStrikeSharp.API.Core;
-using CounterStrikeSharp.API.Modules.Entities.Constants;
 using Microsoft.Extensions.DependencyInjection;
 using TTT.API;
 using TTT.API.Command;
 using TTT.API.Player;
-using Vector = CounterStrikeSharp.API.Modules.Utils.Vector;
 
 namespace TTT.CS2;
 
 public class TestCommand(IServiceProvider provider) : ICommand, IPluginModule {
-  public void Dispose() { }
-
   private readonly IPlayerConverter<CCSPlayerController> converter =
     provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
 
   private readonly IPlayerFinder finder =
     provider.GetRequiredService<IPlayerFinder>();
 
+  public void Dispose() { }
+
   public string Name => "test";
   public string Version => GitVersionInformation.FullSemVer;
   public void Start() { }
-
-  public void Start(BasePlugin? plugin, bool hotReload) {
-    plugin
-    ?.RegisterListener<CounterStrikeSharp.API.Core.Listeners.CheckTransmit>(
-        checkTransmit);
-  }
-
-  private void checkTransmit(CCheckTransmitInfoList infoList) {
-    foreach (var (info, player) in infoList) {
-      // info.TransmitEntities.Remove();
-    }
-  }
 
   public Task<CommandResult>
     Execute(IOnlinePlayer? executor, ICommandInfo info) {
@@ -64,12 +49,10 @@ public class TestCommand(IServiceProvider provider) : ICommand, IPluginModule {
 
           foreach (var gp in finder.GetOnline()
            .Select(p => converter.GetPlayer(p))
-           .OfType<CCSPlayerController>()) {
+           .OfType<CCSPlayerController>())
             gp.PawnIsAlive = false;
-            // Utilities.SetStateChanged(gp, "CCSPlayerController",
-            //   "m_bPawnIsAlive");
-          }
-
+          // Utilities.SetStateChanged(gp, "CCSPlayerController",
+          //   "m_bPawnIsAlive");
           break;
         case "gettarget":
           var target = gameExecutor?.PlayerPawn.Value?.Target;
@@ -91,4 +74,15 @@ public class TestCommand(IServiceProvider provider) : ICommand, IPluginModule {
     return Task.FromResult(CommandResult.SUCCESS);
   }
 
+  public void Start(BasePlugin? plugin, bool hotReload) {
+    plugin
+    ?.RegisterListener<CounterStrikeSharp.API.Core.Listeners.CheckTransmit>(
+        checkTransmit);
+  }
+
+  private void checkTransmit(CCheckTransmitInfoList infoList) {
+    foreach (var (info, player) in infoList) {
+      // info.TransmitEntities.Remove();
+    }
+  }
 }

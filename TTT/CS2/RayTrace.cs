@@ -66,11 +66,6 @@ public static class RayTrace {
     return null;
   }
 
-  [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-  private unsafe delegate bool TraceShapeDelegate(nint GameTraceManager,
-    nint vecStart, nint vecEnd, nint skip, ulong mask, byte a6,
-    GameTrace* pGameTrace);
-
   public static Vector? FindRayTraceIntersection(CCSPlayerController player) {
     var camera = player.Pawn.Value?.CameraServices;
     if (camera == null || player.PlayerPawn.Value == null) return null;
@@ -83,6 +78,11 @@ public static class RayTrace {
       new Vector(pawn.AbsOrigin.X, pawn.AbsOrigin.Y, pawn.AbsOrigin.Z),
       player.PlayerPawn.Value.EyeAngles, true);
   }
+
+  [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+  private unsafe delegate bool TraceShapeDelegate(nint GameTraceManager,
+    nint vecStart, nint vecEnd, nint skip, ulong mask, byte a6,
+    GameTrace* pGameTrace);
 }
 
 internal static class Address {
