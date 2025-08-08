@@ -48,12 +48,6 @@ public class TestCommand(IServiceProvider provider) : ICommand, IPluginModule {
     Server.NextWorldUpdate(() => {
       var gameExecutor = converter.GetPlayer(executor);
       switch (info.Args[1].ToLower()) {
-        case "body":
-          info.ReplySync("Spawning body");
-          if (gameExecutor == null || !gameExecutor.IsValid) return;
-          if (gameExecutor.AbsOrigin == null) return;
-          var ragdoll = CreateRagdoll(gameExecutor);
-          break;
         case "alive":
           info.ReplySync("marking everyone alive");
           foreach (var gp in finder.GetOnline()
@@ -97,57 +91,4 @@ public class TestCommand(IServiceProvider provider) : ICommand, IPluginModule {
     return Task.FromResult(CommandResult.SUCCESS);
   }
 
-  public CRagdollProp CreateRagdoll(CCSPlayerController playerController) {
-    var ragdoll = Utilities.CreateEntityByName<CRagdollProp>("prop_ragdoll");
-
-    if (ragdoll == null || !ragdoll.IsValid || playerController == null)
-      throw new ArgumentNullException(nameof(ragdoll));
-    var playerOrigin = new Vector {
-      X = playerController.PlayerPawn?.Value?.AbsOrigin!.X ?? 0,
-      Y = playerController.PlayerPawn?.Value?.AbsOrigin!.Y ?? 0,
-      Z = playerController.PlayerPawn?.Value?.AbsOrigin!.Z ?? 0
-    };
-    playerOrigin.Z += 20;
-    ragdoll.Speed  =  0;
-    //ragdoll.RagdollClientSide = false;
-    ragdoll.CBodyComponent!.SceneNode!.Owner!.Entity!.Flags =
-      (uint)(ragdoll.CBodyComponent!.SceneNode!.Owner!.Entity!.Flags
-        & ~(1 << 2));
-    ragdoll.SetModel(
-      playerController.PlayerPawn!.Value!.CBodyComponent!.SceneNode!
-       .GetSkeletonInstance()
-       .ModelState.ModelName);
-    ragdoll.DispatchSpawn();
-    ragdoll.Collision.CollisionGroup =
-      (byte)CollisionGroup.COLLISION_GROUP_DEBRIS;
-    ragdoll.Collision.CollisionAttribute.CollisionGroup =
-      (byte)CollisionGroup.COLLISION_GROUP_DEBRIS;
-    ragdoll.Collision.SolidType = SolidType_t.SOLID_VPHYSICS;
-    ragdoll.MoveType            = MoveType_t.MOVETYPE_VPHYSICS;
-    ragdoll.Entity!.Name        = "player_body__" + playerController.Index;
-    ragdoll.Teleport(playerOrigin,
-      playerController.PlayerPawn!.Value!.AbsRotation, new Vector(0, 0, 0));
-    // ragdoll.AcceptInput("FollowEntity", playerController.PlayerPawn.Value,
-    //   ragdoll, "!activator");
-    // ragdoll.AcceptInput("EnableMotion");
-    Server.NextFrame(() => {
-      if (!ragdoll.IsValid) return;
-      ragdoll.AcceptInput("ClearParent", null, ragdoll);
-      ragdoll.MoveType = MoveType_t.MOVETYPE_VPHYSICS;
-      ragdoll.Teleport(playerOrigin,
-        playerController.PlayerPawn!.Value!.AbsRotation, new Vector(0, 0, 0));
-      Server.NextFrame(() => {
-        if (!ragdoll.IsValid) return;
-        ragdoll.Teleport(playerOrigin,
-          playerController.PlayerPawn!.Value!.AbsRotation, new Vector(0, 0, 0));
-        Server.NextFrame(() => {
-          if (!ragdoll.IsValid) return;
-          ragdoll.Teleport(playerOrigin,
-            playerController.PlayerPawn!.Value!.AbsRotation,
-            new Vector(0, 0, 0));
-        });
-      });
-    });
-    return ragdoll;
-  }
 }

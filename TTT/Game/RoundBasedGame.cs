@@ -106,7 +106,7 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
   }
 
   public void Dispose() {
-    State = State.WAITING;
+    State = State.FINISHED;
     players.Clear();
     Roles.Clear();
     Logger.ClearActions();

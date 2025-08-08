@@ -29,12 +29,12 @@ public static class CS2ServiceCollection {
     collection.AddScoped<IInventoryManager, CS2InventoryManager>();
 
     // GameHandlers
-    // collection.AddPluginBehavior<CombatHandler>();
     collection.AddPluginBehavior<PlayerConnectionsHandler>();
     collection.AddPluginBehavior<RoundEndHandler>();
     collection.AddPluginBehavior<RoundStartHandler>();
     collection.AddPluginBehavior<CombatHandler>();
     collection.AddPluginBehavior<PropMover>();
+    collection.AddPluginBehavior<BodyHider>();
 
     // Listeners
     collection.AddListener<RoleAssignListener>();
