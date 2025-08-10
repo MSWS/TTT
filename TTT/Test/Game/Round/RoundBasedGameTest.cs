@@ -164,21 +164,6 @@ public class RoundBasedGameTest {
   }
 
   private static string stripChatColors(string s) {
-    return s.Replace("\x01", "")
-     .Replace("\x02", "")
-     .Replace("\x03", "")
-     .Replace("\x04", "")
-     .Replace("\x05", "")
-     .Replace("\x06", "")
-     .Replace("\x07", "")
-     .Replace("\x08", "")
-     .Replace("\x09", "")
-     .Replace("\x0A", "")
-     .Replace("\x0B", "")
-     .Replace("\x0C", "")
-     .Replace("\x0D", "")
-     .Replace("\x0E", "")
-     .Replace("\x0F", "")
-     .Replace("\x10", "");
+    return Regex.Replace(s, "[\x01-\x10]", "");
   }
 }
