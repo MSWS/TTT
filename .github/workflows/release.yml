@@ -62,48 +62,47 @@ jobs:
           cur='${{ steps.gitversion.outputs.fullSemVer }}'; cur="${cur#v}"
           base='${{ steps.baseline.outputs.tag }}';        base="${base#v}"
           python3 - <<'PY' | tee -a "$GITHUB_OUTPUT"
-import os,re
-def parse(v):
-    v=(v or "").strip()
-    m=re.match(r'^(\d+)\.(\d+)\.(\d+)(?:-([0-9A-Za-z.-]+))?',v)
-    if not m: return (0,0,0,["0"])
-    a,b,c=map(int,m.group(1,2,3)); pre=m.group(4)
-    parts=[]
-    if pre:
-        for p in pre.split('.'):
-            parts.append(int(p) if re.fullmatch(r'\d+',p) else p)
-    return (a,b,c,parts)
-def cmp(a,b):
-    A=parse(a); B=parse(b)
-    for i in range(3):
-        if A[i]!=B[i]: return 1 if A[i]>B[i] else -1
-    Ap,Bp=A[3],B[3]
-    if not Ap and not Bp: return 0
-    if not Ap and Bp: return 1
-    if Ap and not Bp: return -1
-    for x,y in zip(Ap,Bp):
-        if x==y: continue
-        if isinstance(x,int) and isinstance(y,int): return 1 if x>y else -1
-        if isinstance(x,int): return -1
-        if isinstance(y,int): return 1
-        return 1 if x>y else -1
-    return (1 if len(Ap)>len(Bp) else (-1 if len(Ap)<len(Bp) else 0))
-def core(v):
-    m=re.match(r'^(\d+)\.(\d+)\.(\d+)',v or '')
-    return tuple(int(x) for x in m.groups()) if m else (0,0,0)
+          import os,re
+          def parse(v):
+              v=(v or "").strip()
+              m=re.match(r'^(\d+)\.(\d+)\.(\d+)(?:-([0-9A-Za-z.-]+))?',v)
+              if not m: return (0,0,0,["0"])
+              a,b,c=map(int,m.group(1,2,3)); pre=m.group(4)
+              parts=[]
+              if pre:
+                  for p in pre.split('.'):
+                      parts.append(int(p) if re.fullmatch(r'\d+',p) else p)
+              return (a,b,c,parts)
+          def cmp(a,b):
+              A=parse(a); B=parse(b)
+              for i in range(3):
+                  if A[i]!=B[i]: return 1 if A[i]>B[i] else -1
+              Ap,Bp=A[3],B[3]
+              if not Ap and not Bp: return 0
+              if not Ap and Bp: return 1
+              if Ap and not Bp: return -1
+              for x,y in zip(Ap,Bp):
+                  if x==y: continue
+                  if isinstance(x,int) and isinstance(y,int): return 1 if x>y else -1
+                  if isinstance(x,int): return -1
+                  if isinstance(y,int): return 1
+                  return 1 if x>y else -1
+              return (1 if len(Ap)>len(Bp) else (-1 if len(Ap)<len(Bp) else 0))
+          def core(v):
+              m=re.match(r'^(\d+)\.(\d+)\.(\d+)',v or '')
+              return tuple(int(x) for x in m.groups()) if m else (0,0,0)
 
-branch=os.environ.get("BRANCH","")
-cur=os.environ.get("cur","").strip() or os.environ.get("current","")
-base=os.environ.get("base","").strip() or os.environ.get("BASE","")
+          branch=os.environ.get("BRANCH","")
+          cur=os.environ.get("cur","").strip() or os.environ.get("current","")
+          base=os.environ.get("base","").strip() or os.environ.get("BASE","")
 
-do=False
-if branch=="main":
-    do = core(cur) > core(base)
-else:
-    if not base: base="0.0.0-0"
-    do = (cmp(cur,base) > 0)
-print(f"do_release={'true' if do else 'false'}")
-PY
+          do=False
+          if branch=="main":
+              do = core(cur) > core(base)
+          else:
+              if not base: base="0.0.0-0"
+              do = (cmp(cur,base) > 0)
+          print(f"do_release={'true' if do else 'false'}")
 
   publish:
     needs: [check]
