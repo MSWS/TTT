@@ -8,7 +8,7 @@ public static class VectorExtensions {
   }
 
   public static double DistanceSquared(this Vector vec, Vector other) {
-    return Math.Pow(vec.X - other.X, 2) + Math.Pow(vec.Y - other.Y, 2)
-      + Math.Pow(vec.Z - other.Z, 2);
+    return (vec.X - other.X) * (vec.X - other.X) + (vec.Y - other.Y) * (vec.Y - other.Y)
+      + (vec.Z - other.Z) * (vec.Z - other.Z);
   }
 }
