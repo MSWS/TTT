@@ -7,14 +7,14 @@ using TTT.Locale;
 namespace TTT.Shop;
 
 public class Shop(IServiceProvider provider) : ITerrorModule, IShop {
-  private readonly Dictionary<IOnlinePlayer, int> balances = new();
+  private readonly Dictionary<IPlayer, int> balances = new();
 
   private readonly IMsgLocalizer localizer =
     provider.GetRequiredService<IMsgLocalizer>();
 
   private readonly IMessenger? messenger = provider.GetService<IMessenger>();
 
-  public Task<int> Load(IOnlinePlayer key) {
+  public Task<int> Load(IPlayer key) {
     return Task.FromResult(balances.GetValueOrDefault(key, 0));
   }
 
@@ -42,7 +42,7 @@ public class Shop(IServiceProvider provider) : ITerrorModule, IShop {
 
   public void ClearBalances() { balances.Clear(); }
 
-  public Task Write(IOnlinePlayer key, int newData) {
+  public Task Write(IPlayer key, int newData) {
     balances[key] = newData;
     return Task.CompletedTask;
   }

@@ -39,7 +39,7 @@ foreach (var property in json.EnumerateObject()) {
       break;
     case JsonValueKind.Null:
       // No const nulls in C#, so use string.Empty or 0 as appropriate — or skip
-      line = $"  // {name} is null and omitted";
+      line = $"  public const string {name} = \"\";"; // Assuming string type
       break;
     default:
       // Skip unexpected structures like arrays/objects

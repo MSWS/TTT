@@ -59,6 +59,11 @@ public static class TestMsgs {
 
   public static IMsg AN_AT_END => MsgFactory.Create(nameof(AN_AT_END));
 
+  public static IMsg AN_RED_ELEPHANT
+    => MsgFactory.Create(nameof(AN_RED_ELEPHANT));
+
+  public static IMsg AN_RED_BALL => MsgFactory.Create(nameof(AN_RED_BALL));
+
   public static IMsg SINGLE_SUBSTITUTION(string name) {
     return MsgFactory.Create(nameof(SINGLE_SUBSTITUTION), name);
   }

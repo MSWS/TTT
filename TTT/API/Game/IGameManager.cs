@@ -1,7 +1,13 @@
 ﻿namespace TTT.API.Game;
 
-public interface IGameManager {
-  IGame? ActiveGame { get; }
+public interface IGameManager : IDisposable {
+  IGame? ActiveGame { get; protected set; }
+
+  void IDisposable.Dispose() {
+    ActiveGame?.Dispose();
+    ActiveGame = null;
+  }
+
   IGame? CreateGame();
 
   bool IsGameActive() {

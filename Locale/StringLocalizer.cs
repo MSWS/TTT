@@ -59,7 +59,7 @@ public partial class StringLocalizer : IMsgLocalizer {
         value = value.Replace(key,
           trimmedKey.Contains("PREFIX", StringComparison.OrdinalIgnoreCase) ?
             replacement :
-            replacement.Trim());
+            replacement.TrimStart());
       } catch (NullReferenceException) {
         // Key doesn't exist, move on
       }
@@ -72,7 +72,22 @@ public partial class StringLocalizer : IMsgLocalizer {
     value = HandlePluralization(value);
     value = HandleAn(value);
 
+    if (!string.IsNullOrWhiteSpace(value) && hasChatColor(value)) {
+      var first = value.First(c => !char.IsWhiteSpace(c));
+      if (char.IsAsciiLetterOrDigit(first)) value = value.TrimStart();
+    }
+
     return new LocalizedString(name, value);
+  }
+
+  private static bool isChatColor(char c) {
+    return c is '\x01' or '\x02' or '\x03' or '\x04' or '\x05' or '\x06'
+      or '\x07' or '\x08' or '\x09' or '\x0A' or '\x0B' or '\x0C' or '\x0D'
+      or '\x0E' or '\x0F' or '\x10';
+  }
+
+  private static bool hasChatColor(string value) {
+    return value.Any(isChatColor);
   }
 
   public static string HandlePluralization(string value) {
@@ -136,7 +151,7 @@ public partial class StringLocalizer : IMsgLocalizer {
       var nextWord = suffix.Split(' ')
        .FirstOrDefault(w => !string.IsNullOrWhiteSpace(w)) ?? " ";
       var nextChar =
-        char.ToLowerInvariant(nextWord.FirstOrDefault(char.IsLetter));
+        char.ToLowerInvariant(nextWord.FirstOrDefault(char.IsLetterOrDigit));
       value = nextChar switch {
         'a' or 'e' or 'i' or 'o' or 'u' => prefix + anMatch + suffix,
         _                               => prefix + anMatch[0] + suffix

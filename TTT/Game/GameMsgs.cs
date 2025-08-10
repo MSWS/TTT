@@ -22,6 +22,19 @@ public static class GameMsgs {
     return MsgFactory.Create(nameof(GAME_STATE_STARTING), span.TotalSeconds);
   }
 
+  public static IMsg GAME_STATE_STARTED(int traitors, int nonTraitors) {
+    return MsgFactory.Create(nameof(GAME_STATE_STARTED),
+      traitors == 1 ? "is" : "are", traitors, nonTraitors);
+  }
+
+  public static IMsg GAME_STATE_ENDED_TEAM_WON(IRole team) {
+    return MsgFactory.Create(nameof(GAME_STATE_ENDED_TEAM_WON), team.Name);
+  }
+
+  public static IMsg GAME_STATE_ENDED_OTHER(string reason) {
+    return MsgFactory.Create(nameof(GAME_STATE_ENDED_OTHER), reason);
+  }
+
   public static IMsg NOT_ENOUGH_PLAYERS(int minNeeded) {
     return MsgFactory.Create(nameof(NOT_ENOUGH_PLAYERS), minNeeded);
   }

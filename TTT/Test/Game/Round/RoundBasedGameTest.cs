@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using System.Text.RegularExpressions;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Reactive.Testing;
 using TTT.API.Game;
 using TTT.API.Player;
@@ -6,7 +7,7 @@ using Xunit;
 
 namespace TTT.Test.Game.Round;
 
-public class RoundBasedGameTest {
+public partial class RoundBasedGameTest {
   private readonly IPlayerFinder finder;
 
   private readonly IGame game;
@@ -136,4 +137,37 @@ public class RoundBasedGameTest {
     Assert.Equal(State.WAITING, game.State);
     Assert.Null(game.FinishedAt);
   }
+
+  [Fact]
+  public void StartRound_PrintsRoles_WithIs() {
+    var player1 = finder.AddPlayer(TestPlayer.Random()) as TestPlayer;
+    finder.AddPlayer(TestPlayer.Random());
+
+    Assert.NotNull(player1);
+    game.Start();
+
+    Assert.Contains(player1.Messages,
+      m => stripChatColors(m).Contains("1 Traitor"));
+    Assert.Contains(player1.Messages, m => m.Contains(" is "));
+  }
+
+  [Fact]
+  public void StartRound_PrintsRoles_WithAre() {
+    var player1 = finder.AddPlayer(TestPlayer.Random()) as TestPlayer;
+    for (var i = 0; i < 6; i++) finder.AddPlayer(TestPlayer.Random());
+
+    Assert.NotNull(player1);
+    game.Start();
+
+    Assert.Contains(player1.Messages,
+      m => stripChatColors(m).Contains("2 Traitors"));
+    Assert.Contains(player1.Messages, m => m.Contains(" are "));
+  }
+
+  private static string stripChatColors(string s) {
+    return ChatColorsRegex().Replace(s, "");
+  }
+
+  [GeneratedRegex("[\x01-\x10]")]
+  private static partial Regex ChatColorsRegex();
 }

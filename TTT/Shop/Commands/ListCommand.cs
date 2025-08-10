@@ -11,8 +11,8 @@ public class ListCommand(IServiceProvider provider) : ICommand {
 
   private readonly IShop shop = provider.GetRequiredService<IShop>();
 
-  public void Dispose() {
-  }
+  public void Dispose() { }
+
   public string Name => "list";
   public string Version => GitVersionInformation.FullSemVer;
 

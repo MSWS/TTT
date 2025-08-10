@@ -32,5 +32,8 @@ public class RoleAssignListener(IServiceProvider provider) : IListener {
       CsTeam.Terrorist);
 
     player.SetClan(ev.Role is CS2DetectiveRole ? ev.Role.Name : "", false);
+    player.SetColor(ev.Role.Color);
+    var pawn = player.PlayerPawn.Value;
+    if (pawn == null || !pawn.IsValid) return;
   }
 }

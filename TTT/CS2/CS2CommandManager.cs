@@ -19,10 +19,13 @@ public class CS2CommandManager(IServiceProvider provider)
 
   private BasePlugin? plugin;
 
-  public void Start(BasePlugin? basePlugin, bool _) {
+  public void Start(BasePlugin? basePlugin, bool hotReload) {
     plugin = basePlugin;
 
     RegisterCommand(new TTTCommand(Provider));
+    var testCmd = new TestCommand(Provider);
+    testCmd.Start(basePlugin, hotReload);
+    RegisterCommand(testCmd);
 
     foreach (var command in Provider.GetServices<ICommand>()) command.Start();
   }

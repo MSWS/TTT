@@ -53,7 +53,6 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
     get => state;
   }
 
-
   public virtual IObservable<long>? Start(TimeSpan? countdown = null) {
     onlineMessenger?.Debug("Attempting to start the game...");
     var online = finder.GetOnline();
@@ -101,12 +100,13 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
     WinningRole = reason?.WinningRole;
     State       = State.FINISHED;
 
-    onlineMessenger?.MessageAll(WinningRole == null ?
-      reason?.Message ?? "Game ended." :
-      reason?.Message ?? $"{WinningRole.Name} won the game!");
+    onlineMessenger?.MessageAll(WinningRole != null ?
+      locale[GameMsgs.GAME_STATE_ENDED_TEAM_WON(WinningRole)] :
+      locale[GameMsgs.GAME_STATE_ENDED_OTHER(reason?.Message ?? "Unknown")]);
   }
 
   public void Dispose() {
+    State = State.FINISHED;
     players.Clear();
     Roles.Clear();
     Logger.ClearActions();
@@ -124,8 +124,13 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
 
     State     = State.IN_PROGRESS;
     StartedAt = DateTime.Now;
-    assigner.AssignRoles(finder.GetOnline(), Roles);
-    players.AddRange(finder.GetOnline());
+    assigner.AssignRoles(online, Roles);
+    players.AddRange(online);
+
+    var traitors    = ((IGame)this).GetAlive(typeof(TraitorRole)).Count;
+    var nonTraitors = online.Count - traitors;
+    onlineMessenger?.MessageAll(locale[
+      GameMsgs.GAME_STATE_STARTED(traitors, nonTraitors)]);
   }
 
   #region classDeps
