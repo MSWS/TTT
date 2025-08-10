@@ -100,13 +100,8 @@ public class PropMover(IServiceProvider provider) : IPluginModule {
 
       CBaseEntity? foundEntity = null;
       var          dist        = double.MaxValue;
+      mapEntities.RemoveWhere(ent => !ent.IsValid);
       foreach (var ent in mapEntities) {
-        if (!ent.IsValid) {
-          msg.Debug($"Entity {ent.DesignerName} is not valid, skipping");
-          mapEntities.Remove(ent);
-          continue;
-        }
-
         var entPos = ent.AbsOrigin;
         if (entPos == null) continue;
         dist = entPos.DistanceSquared(target);

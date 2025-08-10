@@ -10,15 +10,13 @@ namespace TTT.CS2;
 public static class RayTrace {
   private static readonly nint TraceFunc = NativeAPI.FindSignature(
     Addresses.ServerPath,
-    Environment.OSVersion.Platform == PlatformID.Unix ?
+    OperatingSystem.IsLinux() ?
       "48 B8 ? ? ? ? ? ? ? ? 55 66 0F EF C0 48 89 E5 41 57 41 56 49 89 D6" :
       "4C 8B DC 49 89 5B ? 49 89 6B ? 49 89 73 ? 57 41 56 41 57 48 81 EC");
 
   private static readonly nint GameTraceManager = NativeAPI.FindSignature(
     Addresses.ServerPath,
-    Environment.OSVersion.Platform == PlatformID.Unix ?
-      "4C 8D 05 ? ? ? ? BB" :
-      "48 8B 0D ? ? ? ? 0C");
+    OperatingSystem.IsLinux() ? "4C 8D 05 ? ? ? ? BB" : "48 8B 0D ? ? ? ? 0C");
 
   public static Vector? TraceShape(Vector _origin, QAngle _viewangles,
     bool fromPlayer = false) {
