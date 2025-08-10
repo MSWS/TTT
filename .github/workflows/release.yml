@@ -22,7 +22,7 @@ jobs:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       BRANCH:   ${{ github.event.workflow_run.head_branch }}
     steps:
-      - name: Checkout (tags only)
+      - name: "Checkout (tags only)"
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
@@ -54,7 +54,7 @@ jobs:
           tag=$(gh api repos/$repo/releases --paginate --jq "[ $jq | {tag_name,created_at}] | sort_by(.created_at) | reverse | .[0].tag_name // \"\"")
           echo "tag=$tag" >> "$GITHUB_OUTPUT"
 
-      - name: Decide (SemVer precise: main=core bump; dev=full precedence)
+      - name: "SemVer bump check (main core; dev full)"
         id: bump
         shell: bash
         run: |
@@ -118,14 +118,14 @@ PY
       BRANCH:   ${{ github.event.workflow_run.head_branch }}
       RUN_ID:   ${{ github.event.workflow_run.id }}
     steps:
-      - name: Checkout exact commit
+      - name: "Checkout exact commit"
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
           fetch-tags: true
           ref: ${{ github.event.workflow_run.head_sha }}
 
-      - name: Download artifact from triggering run
+      - name: "Download artifact from triggering run"
         uses: dawidd6/action-download-artifact@v11
         with:
           run_id: ${{ env.RUN_ID }}
@@ -133,10 +133,10 @@ PY
           path: build
           skip_unpack: true
 
-      - name: Rename artifact with version
+      - name: "Rename artifact with version"
         run: mv build/TTT.zip build/TTT-${{ needs.check.outputs.version }}.zip
 
-      - name: Generate changelog
+      - name: "Generate changelog"
         id: changelog
         uses: mikepenz/release-changelog-builder-action@v5
         with:
@@ -144,7 +144,7 @@ PY
           mode: HYBRID
           fromTag: ${{ needs.check.outputs.baseline }}
 
-      - name: Create GitHub Release
+      - name: "Create GitHub Release"
         uses: softprops/action-gh-release@v2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -157,7 +157,7 @@ PY
           fail_on_unmatched_files: true
           files: build/TTT-${{ needs.check.outputs.version }}.zip
 
-      - name: Prune old prereleases (keep 10)
+      - name: "Prune old prereleases (keep 10)"
         if: ${{ env.BRANCH == 'dev' }}
         shell: bash
         run: |
