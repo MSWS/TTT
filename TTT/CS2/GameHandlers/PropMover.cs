@@ -174,7 +174,7 @@ public class PropMover(IServiceProvider provider) : IPluginModule {
     var targetRay = RayTrace.FindRayTraceIntersection(player);
     if (targetRay != null) {
       msg.DebugInform($"Target ray found at {targetRay}");
-      if (targetRay.LengthSqr() < Math.Pow(info.Distance, 2)) {
+      if (targetRay.LengthSqr() < info.Distance * info.Distance) {
         msg.Debug("Target ray is within distance, moving to target ray");
         addedDist = playerOrigin + targetRay;
       }
