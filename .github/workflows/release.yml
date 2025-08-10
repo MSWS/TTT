@@ -2,89 +2,171 @@ name: Release
 
 on:
   workflow_run:
-    workflows: [ "Nightly" ]
-    types:
-      - completed
-    branches:
-      - main
-      - dev
+    workflows: ["Nightly"]
+    types: [completed]
+    branches: [main, dev]
 
 concurrency:
   group: release-${{ github.event.workflow_run.head_branch }}
-  cancel-in-progress: false
+  cancel-in-progress: ${{ github.event.workflow_run.head_branch == 'dev' }}
 
 jobs:
-  release:
+  check:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      actions: read
-      pull-requests: read
-
+    outputs:
+      do_release: ${{ steps.bump.outputs.do_release }}
+      version:    ${{ steps.gitversion.outputs.fullSemVer }}
+      baseline:   ${{ steps.baseline.outputs.tag }}
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      BRANCH:   ${{ github.event.workflow_run.head_branch }}
     steps:
-      - name: Extract Triggering Branch
-        id: extract_branch
-        run: echo "branch=${{ github.event.workflow_run.head_branch }}" >> $GITHUB_OUTPUT
-
-      - name: Checkout
+      - name: Checkout (tags only)
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
           fetch-tags: true
-          ref: ${{ github.event.workflow_run.head_branch }}
+          ref: ${{ github.event.workflow_run.head_sha }}
 
       - name: Install GitVersion
         uses: GitTools/actions/gitversion/setup@v4.0.1
         with:
-          versionSpec: '6.3.x'
+          versionSpec: 6.3.x
           includePrerelease: true
 
       - name: Run GitVersion
         id: gitversion
         uses: GitTools/actions/gitversion/execute@v4.0.1
 
-      - name: Download artifact
-        id: download-artifact
+      # main → latest stable; dev → absolute newest (stable or prerelease), skipping drafts
+      - name: Resolve baseline tag
+        id: baseline
+        shell: bash
+        run: |
+          set -euo pipefail
+          repo='${{ github.repository }}'
+          if [ "$BRANCH" = "main" ]; then
+            jq='.[] | select(.draft==false and .prerelease==false)'
+          else
+            jq='.[] | select(.draft==false)'
+          fi
+          tag=$(gh api repos/$repo/releases --paginate --jq "[ $jq | {tag_name,created_at}] | sort_by(.created_at) | reverse | .[0].tag_name // \"\"")
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+
+      - name: Decide (SemVer precise: main=core bump; dev=full precedence)
+        id: bump
+        shell: bash
+        run: |
+          set -euo pipefail
+          cur='${{ steps.gitversion.outputs.fullSemVer }}'; cur="${cur#v}"
+          base='${{ steps.baseline.outputs.tag }}';        base="${base#v}"
+          python3 - <<'PY' | tee -a "$GITHUB_OUTPUT"
+import os,re
+def parse(v):
+    v=(v or "").strip()
+    m=re.match(r'^(\d+)\.(\d+)\.(\d+)(?:-([0-9A-Za-z.-]+))?',v)
+    if not m: return (0,0,0,["0"])
+    a,b,c=map(int,m.group(1,2,3)); pre=m.group(4)
+    parts=[]
+    if pre:
+        for p in pre.split('.'):
+            parts.append(int(p) if re.fullmatch(r'\d+',p) else p)
+    return (a,b,c,parts)
+def cmp(a,b):
+    A=parse(a); B=parse(b)
+    for i in range(3):
+        if A[i]!=B[i]: return 1 if A[i]>B[i] else -1
+    Ap,Bp=A[3],B[3]
+    if not Ap and not Bp: return 0
+    if not Ap and Bp: return 1
+    if Ap and not Bp: return -1
+    for x,y in zip(Ap,Bp):
+        if x==y: continue
+        if isinstance(x,int) and isinstance(y,int): return 1 if x>y else -1
+        if isinstance(x,int): return -1
+        if isinstance(y,int): return 1
+        return 1 if x>y else -1
+    return (1 if len(Ap)>len(Bp) else (-1 if len(Ap)<len(Bp) else 0))
+def core(v):
+    m=re.match(r'^(\d+)\.(\d+)\.(\d+)',v or '')
+    return tuple(int(x) for x in m.groups()) if m else (0,0,0)
+
+branch=os.environ.get("BRANCH","")
+cur=os.environ.get("cur","").strip() or os.environ.get("current","")
+base=os.environ.get("base","").strip() or os.environ.get("BASE","")
+
+do=False
+if branch=="main":
+    do = core(cur) > core(base)
+else:
+    if not base: base="0.0.0-0"
+    do = (cmp(cur,base) > 0)
+print(f"do_release={'true' if do else 'false'}")
+PY
+
+  publish:
+    needs: [check]
+    if: ${{ needs.check.outputs.do_release == 'true' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      actions: read
+      pull-requests: read
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      BRANCH:   ${{ github.event.workflow_run.head_branch }}
+      RUN_ID:   ${{ github.event.workflow_run.id }}
+    steps:
+      - name: Checkout exact commit
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+          ref: ${{ github.event.workflow_run.head_sha }}
+
+      - name: Download artifact from triggering run
         uses: dawidd6/action-download-artifact@v11
         with:
+          run_id: ${{ env.RUN_ID }}
           name: TTT
-          workflow: 'nightly.yml'
-          github_token: '${{ secrets.GITHUB_TOKEN }}'
-          skip_unpack: 'true'
-          path: 'build'
+          path: build
+          skip_unpack: true
 
-      - name: Rename artifact
-        run: |
-          mv build/TTT.zip build/TTT-${{ steps.gitversion.outputs.fullSemVer }}.zip
+      - name: Rename artifact with version
+        run: mv build/TTT.zip build/TTT-${{ needs.check.outputs.version }}.zip
 
-      - name: Determine Base Tag for Changelog
-        id: base_tag
-        run: |
-          if [ "${{ steps.extract_branch.outputs.branch }}" = "main" ]; then
-            tag=$(gh release list --limit 100 | grep -v 'Pre-release' | head -n1 | awk '{print $1}')
-          else
-            tag=$(gh release list --limit 100 | head -n1 | awk '{print $1}')
-          fi
-          echo "from_tag=$tag" >> $GITHUB_OUTPUT
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Generate Changelog
+      - name: Generate changelog
         id: changelog
         uses: mikepenz/release-changelog-builder-action@v5
         with:
-          configuration: '.github/changelogConfig.json'
-          mode: "HYBRID"
-          fromTag: ${{ steps.base_tag.outputs.from_tag }}
+          configuration: .github/changelogConfig.json
+          mode: HYBRID
+          fromTag: ${{ needs.check.outputs.baseline }}
 
       - name: Create GitHub Release
-        if: ${{ steps.extract_branch.outputs.branch == 'main' || steps.extract_branch.outputs.branch == 'dev' }}
         uses: softprops/action-gh-release@v2
         with:
-          token: '${{ secrets.GITHUB_TOKEN }}'
-          name: ${{ steps.gitversion.outputs.fullSemVer }}
-          tag_name: ${{ steps.gitversion.outputs.fullSemVer }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          name: v${{ needs.check.outputs.version }}
+          tag_name: v${{ needs.check.outputs.version }}
+          target_commitish: ${{ github.event.workflow_run.head_sha }}
           body: ${{ steps.changelog.outputs.changelog }}
-          prerelease: ${{ steps.extract_branch.outputs.branch == 'dev' }}
-          files: build/TTT-${{ steps.gitversion.outputs.fullSemVer }}.zip
+          prerelease: ${{ env.BRANCH == 'dev' }}
+          make_latest: ${{ env.BRANCH == 'main' && 'true' || 'false' }}
+          fail_on_unmatched_files: true
+          files: build/TTT-${{ needs.check.outputs.version }}.zip
+
+      - name: Prune old prereleases (keep 10)
+        if: ${{ env.BRANCH == 'dev' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mapfile -t ids < <(gh api repos/${{ github.repository }}/releases --paginate \
+            --jq '[.[] | select(.prerelease==true and .draft==false) | {id, created_at}] | sort_by(.created_at) | reverse | .[10:] | .[].id')
+          mapfile -t tags < <(gh api repos/${{ github.repository }}/releases --paginate \
+            --jq '[.[] | select(.prerelease==true and .draft==false) | {tag_name, created_at}] | sort_by(.created_at) | reverse | .[10:] | .[].tag_name')
+          for i in "${!ids[@]}"; do
+            gh api --method DELETE repos/${{ github.repository }}/releases/${ids[$i]} || true
+            gh api --method DELETE repos/${{ github.repository }}/git/refs/tags/${tags[$i]} || true
+          done
