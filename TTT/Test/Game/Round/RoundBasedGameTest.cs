@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using System.Text.RegularExpressions;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Reactive.Testing;
 using TTT.API.Game;
 using TTT.API.Player;
@@ -6,7 +7,7 @@ using Xunit;
 
 namespace TTT.Test.Game.Round;
 
-public class RoundBasedGameTest {
+public partial class RoundBasedGameTest {
   private readonly IPlayerFinder finder;
 
   private readonly IGame game;
@@ -164,6 +165,9 @@ public class RoundBasedGameTest {
   }
 
   private static string stripChatColors(string s) {
-    return Regex.Replace(s, "[\x01-\x10]", "");
+    return ChatColorsRegex().Replace(s, "");
   }
+
+    [GeneratedRegex("[\x01-\x10]")]
+    private static partial Regex ChatColorsRegex();
 }
