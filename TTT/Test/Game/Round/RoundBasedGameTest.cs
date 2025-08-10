@@ -168,6 +168,6 @@ public partial class RoundBasedGameTest {
     return ChatColorsRegex().Replace(s, "");
   }
 
-    [GeneratedRegex("[\x01-\x10]")]
-    private static partial Regex ChatColorsRegex();
+  [GeneratedRegex("[\x01-\x10]")]
+  private static partial Regex ChatColorsRegex();
 }
