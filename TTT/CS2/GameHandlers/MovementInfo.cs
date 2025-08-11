@@ -1,8 +1,10 @@
-﻿using CounterStrikeSharp.API.Core;
+﻿using System.Diagnostics.CodeAnalysis;
+using CounterStrikeSharp.API.Core;
 
 namespace TTT.CS2.GameHandlers;
 
-public readonly struct MovementInfo {
-  public required CBaseEntity Ragdoll { get; init; }
-  public required double Distance { get; init; }
+[method: SetsRequiredMembers]
+public readonly struct MovementInfo(float distance, CBaseEntity ragdoll) {
+  public required CBaseEntity Ragdoll { get; init; } = ragdoll;
+  public required float Distance { get; init; } = distance;
 }

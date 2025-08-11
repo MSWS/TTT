@@ -1,25 +1,32 @@
 ﻿using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Core.Attributes.Registration;
-using CounterStrikeSharp.API.Modules.Entities.Constants;
-using CounterStrikeSharp.API.Modules.Utils;
+using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using TTT.API;
+using TTT.API.Events;
 using TTT.API.Messages;
+using TTT.API.Player;
+using TTT.CS2.Events;
 using TTT.CS2.Extensions;
 using Vector = CounterStrikeSharp.API.Modules.Utils.Vector;
 
 namespace TTT.CS2.GameHandlers;
 
 public class PropMover(IServiceProvider provider) : IPluginModule {
-  private static readonly Vector ZERO_VECTOR = new(0, 0, 0);
-  private static readonly QAngle ZERO_QANGLE = new(0, 0, 0);
+  // TODO: Make this configurable
+  public static readonly float MIN_LOOK_ACCURACY = 100f;
+  public static readonly float MAX_DISTANCE = 1000f;
+  public static readonly float MIN_HOLDING_DISTANCE = 100f;
+  public static readonly float MAX_HOLDING_DISTANCE = 10000f;
+  private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
 
-  private readonly string[] interactEntities = [
-    "prop_physics_multiplayer", "prop_ragdoll"
-  ];
+  private readonly IPlayerConverter<CCSPlayerController> converter =
+    provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
 
-  private readonly HashSet<CBaseEntity> mapEntities = new();
+  private readonly string[] interactEntities = ["prop_physics_multiplayer"];
+
+  public readonly HashSet<CBaseEntity> MapEntities = [];
   private readonly IMessenger msg = provider.GetRequiredService<IMessenger>();
 
   private readonly Dictionary<CCSPlayerController, MovementInfo>
@@ -44,34 +51,16 @@ public class PropMover(IServiceProvider provider) : IPluginModule {
     OnRoundStart(null!, null!);
   }
 
+  [UsedImplicitly]
   [GameEventHandler]
   public HookResult OnRoundStart(EventRoundStart _, GameEventInfo _1) {
     var entities = Utilities.GetAllEntities().ToList();
-    foreach (var ent in entities) {
-      if (!interactEntities.Contains(ent.DesignerName)) continue;
-      msg.Debug($"Added {ent.DesignerName} to interactable entities");
-      if (ent.DesignerName.Equals("prop_physics_multiplayer")) {
-        var propMultiplayer = new CPhysicsPropMultiplayer(ent.Handle);
-        msg.DebugAnnounce(
-          $"Added {propMultiplayer.DesignerName} to map entities {propMultiplayer.AbsOrigin}");
-        mapEntities.Add(propMultiplayer);
-        continue;
-      }
+    foreach (var propMultiplayer in from ent in entities
+      where interactEntities.Contains(ent.DesignerName)
+      where ent.DesignerName.Equals("prop_physics_multiplayer")
+      select new CPhysicsPropMultiplayer(ent.Handle))
+      MapEntities.Add(propMultiplayer);
 
-      msg.Debug(
-        $"Skipping {ent.DesignerName} as it is not a valid interactable entity");
-    }
-
-    return HookResult.Continue;
-  }
-
-  [GameEventHandler]
-  public HookResult OnDeath(EventPlayerDeath ev, GameEventInfo _1) {
-    var user = ev.Userid;
-    if (user == null || !user.IsValid) return HookResult.Continue;
-    if (user.PlayerPawn.Value == null) return HookResult.Continue;
-    var ragdoll = CreateRagdoll(user);
-    mapEntities.Add(ragdoll);
     return HookResult.Continue;
   }
 
@@ -88,43 +77,48 @@ public class PropMover(IServiceProvider provider) : IPluginModule {
     var playerPos = player.PlayerPawn.Value?.AbsOrigin;
     if (playerPos == null) return;
 
-    if (pressed.HasFlag(PlayerButtons.Use)) {
-      msg.DebugAnnounce("Player pressed 'E' key");
-      var target = RayTrace.FindRayTraceIntersection(player);
-      if (target == null) {
-        msg.DebugInform("No target found for player");
-        return;
-      }
+    if (!pressed.HasFlag(PlayerButtons.Use)) return;
 
-      msg.DebugInform(target.ToString());
+    var target = RayTrace.FindRayTraceIntersection(player);
+    if (target == null) return;
 
-      CBaseEntity? foundEntity = null;
-      var          dist        = double.MaxValue;
-      mapEntities.RemoveWhere(ent => !ent.IsValid);
-      foreach (var ent in mapEntities) {
-        var entPos = ent.AbsOrigin;
-        if (entPos == null) continue;
-        dist = entPos.DistanceSquared(target);
-        msg.DebugInform($"Distance from player to {ent.DesignerName}: {dist}");
-        if (dist < 500) {
-          foundEntity = ent;
-          break;
-        }
-      }
+    msg.DebugInform(target.ToString());
 
-      var playerDist = playerPos.Distance(target);
+    CBaseEntity? foundEntity = null;
+    MapEntities.RemoveWhere(ent => !ent.IsValid);
+    var closestDist = double.MaxValue;
+    foreach (var ent in MapEntities) {
+      if (!ent.IsValid) continue;
+      var rayPointDist =
+        ent.AbsOrigin?.DistanceSquared(target) ?? double.MaxValue;
+      if (rayPointDist >= MIN_LOOK_ACCURACY || rayPointDist >= closestDist)
+        continue;
 
-      if (foundEntity == null) {
-        msg.DebugInform("No interactable entity found within range");
-        return;
-      }
-
-      msg.DebugAnnounce($"Moving entity: {foundEntity.DesignerName}");
-      playersPressingE[player] = new MovementInfo {
-        Distance = playerDist, Ragdoll = foundEntity
-      };
-      foundEntity.AcceptInput("DisableMotion");
+      closestDist = rayPointDist;
+      foundEntity = ent;
     }
+
+    var playerDist = playerPos.Distance(target);
+    if (playerDist > MAX_DISTANCE) {
+      msg.DebugInform("Player is too far away to interact with entity");
+      return;
+    }
+
+    if (foundEntity == null) {
+      msg.DebugInform("No interactable entity found within range");
+      return;
+    }
+
+    var apiPlayer   = converter.GetPlayer(player);
+    var pickupEvent = new PropPickupEvent(apiPlayer, foundEntity);
+    bus.Dispatch(pickupEvent);
+    if (pickupEvent.IsCanceled) {
+      msg.Debug("Pickup event was canceled");
+      return;
+    }
+
+    playersPressingE[player] = new MovementInfo(playerDist, pickupEvent.Prop);
+    pickupEvent.Prop.AcceptInput("DisableMotion");
   }
 
   private void onTick() {
@@ -140,7 +134,7 @@ public class PropMover(IServiceProvider provider) : IPluginModule {
 
     var playerPawn = player.PlayerPawn.Value;
     if (playerPawn == null || !playerPawn.IsValid) return;
-    var playerOrigin = playerPawn?.AbsOrigin;
+    var playerOrigin = playerPawn.AbsOrigin;
     if (playerOrigin == null) {
       playersPressingE.Remove(player);
       return;
@@ -157,78 +151,18 @@ public class PropMover(IServiceProvider provider) : IPluginModule {
 
     var eyeAngles = playerPawn!.EyeAngles;
 
-    var forward = new Vector(
-      (float)Math.Cos(eyeAngles.Y * Math.PI / 180)
-      * (float)Math.Cos(eyeAngles.X * Math.PI / 180),
-      (float)Math.Sin(eyeAngles.Y * Math.PI / 180)
-      * (float)Math.Cos(eyeAngles.X * Math.PI / 180),
-      (float)-Math.Sin(eyeAngles.X * Math.PI / 180));
-    var addedDist = playerOrigin
-      + forward * Math.Clamp((float)info.Distance, 100, 100 * 100);
+    var resultingVector = playerOrigin + eyeAngles.ToForward()
+      * Math.Clamp(info.Distance, MIN_HOLDING_DISTANCE, MAX_HOLDING_DISTANCE);
 
     var targetRay = RayTrace.FindRayTraceIntersection(player);
     if (targetRay != null) {
       msg.DebugInform($"Target ray found at {targetRay}");
       if (targetRay.LengthSqr() < info.Distance * info.Distance) {
         msg.Debug("Target ray is within distance, moving to target ray");
-        addedDist = playerOrigin + targetRay;
+        resultingVector = playerOrigin + targetRay;
       }
     }
 
-    ent.Teleport(addedDist, ZERO_QANGLE, ZERO_VECTOR);
-  }
-
-  public CRagdollProp CreateRagdoll(CCSPlayerController playerController) {
-    var ragdoll = Utilities.CreateEntityByName<CRagdollProp>("prop_ragdoll");
-
-    if (ragdoll == null || !ragdoll.IsValid || playerController == null)
-      throw new ArgumentNullException(nameof(ragdoll));
-    var playerOrigin = new Vector {
-      X = playerController.PlayerPawn?.Value?.AbsOrigin!.X ?? 0,
-      Y = playerController.PlayerPawn?.Value?.AbsOrigin!.Y ?? 0,
-      Z = playerController.PlayerPawn?.Value?.AbsOrigin!.Z ?? 0
-    };
-    playerOrigin.Z += 30;
-    ragdoll.Speed  =  0;
-    //ragdoll.RagdollClientSide = false;
-    ragdoll.CBodyComponent!.SceneNode!.Owner!.Entity!.Flags =
-      (uint)(ragdoll.CBodyComponent!.SceneNode!.Owner!.Entity!.Flags
-        & ~(1 << 2));
-    ragdoll.SetModel(
-      playerController.PlayerPawn!.Value!.CBodyComponent!.SceneNode!
-       .GetSkeletonInstance()
-       .ModelState.ModelName);
-    ragdoll.DispatchSpawn();
-    ragdoll.Collision.CollisionGroup =
-      (byte)CollisionGroup.COLLISION_GROUP_DEBRIS;
-    ragdoll.Collision.CollisionAttribute.CollisionGroup =
-      (byte)CollisionGroup.COLLISION_GROUP_DEBRIS;
-    ragdoll.Collision.SolidType = SolidType_t.SOLID_VPHYSICS;
-    ragdoll.MoveType            = MoveType_t.MOVETYPE_VPHYSICS;
-    Utilities.SetStateChanged(ragdoll, "CBaseEntity", "m_MoveType");
-    ragdoll.Entity!.Name = "player_body__" + playerController.Index;
-    ragdoll.Teleport(playerOrigin,
-      playerController.PlayerPawn!.Value!.AbsRotation, ZERO_VECTOR);
-    // ragdoll.AcceptInput("FollowEntity", playerController.PlayerPawn.Value,
-    //   ragdoll, "!activator");
-    // ragdoll.AcceptInput("EnableMotion");
-    Server.NextFrame(() => {
-      if (!ragdoll.IsValid) return;
-      ragdoll.AcceptInput("ClearParent", null, ragdoll);
-      ragdoll.MoveType = MoveType_t.MOVETYPE_FLY;
-      ragdoll.Teleport(playerOrigin,
-        playerController.PlayerPawn!.Value!.AbsRotation, ZERO_VECTOR);
-      Server.NextFrame(() => {
-        if (!ragdoll.IsValid) return;
-        ragdoll.Teleport(playerOrigin,
-          playerController.PlayerPawn!.Value!.AbsRotation, ZERO_VECTOR);
-        Server.NextFrame(() => {
-          if (!ragdoll.IsValid) return;
-          ragdoll.Teleport(playerOrigin,
-            playerController.PlayerPawn!.Value!.AbsRotation, ZERO_VECTOR);
-        });
-      });
-    });
-    return ragdoll;
+    ent.Teleport(resultingVector);
   }
 }

@@ -42,7 +42,7 @@ public class CombatHandler(IServiceProvider provider) : IPluginModule {
 
     info.DontBroadcast = true;
 
-    // These delays are necesary for the game engine
+    // These delays are necessary for the game engine
     Server.NextWorldUpdate(() => {
       var pawn = player.PlayerPawn.Value;
       if (pawn == null || !pawn.IsValid) return;

@@ -34,7 +34,7 @@ public static class CS2ServiceCollection {
     collection.AddPluginBehavior<RoundStartHandler>();
     collection.AddPluginBehavior<CombatHandler>();
     collection.AddPluginBehavior<PropMover>();
-    collection.AddPluginBehavior<BodyHider>();
+    collection.AddPluginBehavior<BodySpawner>();
 
     // Listeners
     collection.AddListener<RoleAssignListener>();

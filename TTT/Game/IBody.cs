@@ -1,0 +1,11 @@
+using TTT.API;
+using TTT.API.Player;
+
+namespace TTT.Game;
+
+public interface IBody {
+  IPlayer OfPlayer { get; }
+  bool IsIdentified { get; }
+  IWeapon? MurderWeapon { get; }
+  IPlayer? Killer { get; }
+}
