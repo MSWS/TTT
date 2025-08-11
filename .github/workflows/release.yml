@@ -30,14 +30,14 @@ jobs:
           ref: ${{ github.event.workflow_run.head_sha }}
 
       - name: Install GitVersion
-        uses: GitTools/actions/gitversion/setup@v4.0.1
+        uses: GitTools/actions/gitversion/setup@v4.1.0
         with:
           versionSpec: 6.3.x
           includePrerelease: true
 
       - name: Run GitVersion
         id: gitversion
-        uses: GitTools/actions/gitversion/execute@v4.0.1
+        uses: GitTools/actions/gitversion/execute@v4.1.0
 
       # main → latest stable; dev → absolute newest (stable or prerelease), skipping drafts
       - name: Resolve baseline tag
