@@ -4,10 +4,12 @@ using CounterStrikeSharp.API.Modules.Utils;
 using Microsoft.Extensions.DependencyInjection;
 using TTT.API;
 using TTT.API.Events;
+using TTT.API.Game;
 using TTT.API.Player;
 using TTT.CS2.Extensions;
 using TTT.CS2.Hats;
 using TTT.CS2.Roles;
+using TTT.Game.Events.Game;
 using TTT.Game.Events.Player;
 
 namespace TTT.CS2.Listeners;
@@ -28,6 +30,13 @@ public class RoleAssignListener(IServiceProvider provider)
     new HashSet<CPointWorldText>();
 
   private readonly ISet<int> traitors = new HashSet<int>();
+
+  [EventHandler(IgnoreCanceled = true)]
+  public void OnRoundStart(GameStateUpdateEvent ev) {
+    if (ev.NewState != State.IN_PROGRESS) return;
+    traitors.Clear();
+    traitorIcons.Clear();
+  }
 
   [EventHandler(IgnoreCanceled = true)]
   public void OnAssigned(PlayerRoleAssignEvent ev) {
