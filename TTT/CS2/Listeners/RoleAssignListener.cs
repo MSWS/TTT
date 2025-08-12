@@ -1,9 +1,11 @@
-﻿using CounterStrikeSharp.API.Core;
+﻿using System.Drawing;
+using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Utils;
 using Microsoft.Extensions.DependencyInjection;
 using TTT.API.Events;
 using TTT.API.Player;
 using TTT.CS2.Extensions;
+using TTT.CS2.Hats;
 using TTT.CS2.Roles;
 using TTT.Game.Events.Player;
 
@@ -14,6 +16,9 @@ public class RoleAssignListener(IServiceProvider provider) : IListener {
 
   private readonly IPlayerConverter<CCSPlayerController> players =
     provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
+
+  private readonly ITextSpawner? textSpawner =
+    provider.GetService<ITextSpawner>();
 
   public void Dispose() { bus.UnregisterListener(this); }
 
@@ -32,8 +37,12 @@ public class RoleAssignListener(IServiceProvider provider) : IListener {
       CsTeam.Terrorist);
 
     player.SetClan(ev.Role is CS2DetectiveRole ? ev.Role.Name : "", false);
-    player.SetColor(ev.Role.Color);
     var pawn = player.PlayerPawn.Value;
     if (pawn == null || !pawn.IsValid) return;
+
+    var textSettings = new TextSetting {
+      msg = ev.Role.Name.First(char.IsAsciiLetter) + "", color = ev.Role.Color
+    };
+    textSpawner?.CreateTextHat(textSettings, player);
   }
 }

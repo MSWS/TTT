@@ -1,6 +1,7 @@
 ﻿using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Core.Attributes.Registration;
+using CounterStrikeSharp.API.Modules.Utils;
 using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using TTT.API;
@@ -9,22 +10,21 @@ using TTT.API.Messages;
 using TTT.API.Player;
 using TTT.CS2.Events;
 using TTT.CS2.Extensions;
+using TTT.CS2.Utils;
 using Vector = CounterStrikeSharp.API.Modules.Utils.Vector;
 
 namespace TTT.CS2.GameHandlers;
 
 public class PropMover(IServiceProvider provider) : IPluginModule {
   // TODO: Make this configurable
-  public static readonly float MIN_LOOK_ACCURACY = 100f;
-  public static readonly float MAX_DISTANCE = 1000f;
+  public static readonly float MIN_LOOK_ACCURACY = 500f;
+  public static readonly float MAX_DISTANCE = 100000f;
   public static readonly float MIN_HOLDING_DISTANCE = 100f;
   public static readonly float MAX_HOLDING_DISTANCE = 10000f;
   private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
 
   private readonly IPlayerConverter<CCSPlayerController> converter =
     provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
-
-  private readonly string[] interactEntities = ["prop_physics_multiplayer"];
 
   public readonly HashSet<CBaseEntity> MapEntities = [];
   private readonly IMessenger msg = provider.GetRequiredService<IMessenger>();
@@ -54,11 +54,17 @@ public class PropMover(IServiceProvider provider) : IPluginModule {
   [UsedImplicitly]
   [GameEventHandler]
   public HookResult OnRoundStart(EventRoundStart _, GameEventInfo _1) {
-    var entities = Utilities.GetAllEntities().ToList();
+    var entities =
+      Utilities.GetAllEntities().Where(ent => ent.IsValid).ToList();
+    foreach (var ent in entities) { }
+
     foreach (var propMultiplayer in from ent in entities
-      where interactEntities.Contains(ent.DesignerName)
       where ent.DesignerName.Equals("prop_physics_multiplayer")
       select new CPhysicsPropMultiplayer(ent.Handle))
+      MapEntities.Add(propMultiplayer);
+    foreach (var propMultiplayer in from ent in entities
+      where ent.DesignerName.Equals("prop_ragdoll")
+      select new CRagdollProp(ent.Handle))
       MapEntities.Add(propMultiplayer);
 
     return HookResult.Continue;
@@ -91,6 +97,8 @@ public class PropMover(IServiceProvider provider) : IPluginModule {
       if (!ent.IsValid) continue;
       var rayPointDist =
         ent.AbsOrigin?.DistanceSquared(target) ?? double.MaxValue;
+      msg.Debug($"Checking entity {ent.DesignerName} at {ent.AbsOrigin}, "
+        + $"distance squared: {rayPointDist}");
       if (rayPointDist >= MIN_LOOK_ACCURACY || rayPointDist >= closestDist)
         continue;
 
@@ -140,7 +148,7 @@ public class PropMover(IServiceProvider provider) : IPluginModule {
       return;
     }
 
-    playerOrigin   = new Vector(playerOrigin.X, playerOrigin.Y, playerOrigin.Z);
+    playerOrigin   =  playerOrigin.Clone()!;
     playerOrigin.Z += 64;
 
     var entOrigin = ent.AbsOrigin;
@@ -149,20 +157,13 @@ public class PropMover(IServiceProvider provider) : IPluginModule {
       return;
     }
 
+    entOrigin = entOrigin.Clone()!;
+
     var eyeAngles = playerPawn!.EyeAngles;
 
-    var resultingVector = playerOrigin + eyeAngles.ToForward()
+    var resultingVector = playerOrigin + eyeAngles.Clone()!.ToForward()
       * Math.Clamp(info.Distance, MIN_HOLDING_DISTANCE, MAX_HOLDING_DISTANCE);
 
-    var targetRay = RayTrace.FindRayTraceIntersection(player);
-    if (targetRay != null) {
-      msg.DebugInform($"Target ray found at {targetRay}");
-      if (targetRay.LengthSqr() < info.Distance * info.Distance) {
-        msg.Debug("Target ray is within distance, moving to target ray");
-        resultingVector = playerOrigin + targetRay;
-      }
-    }
-
-    ent.Teleport(resultingVector);
+    ent.Teleport(resultingVector, QAngle.Zero, Vector.Zero);
   }
 }

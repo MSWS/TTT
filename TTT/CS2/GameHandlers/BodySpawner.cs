@@ -96,14 +96,16 @@ public class BodySpawner(IServiceProvider provider) : IPluginModule {
     ragdoll.MoveType            = MoveType_t.MOVETYPE_VPHYSICS;
     Utilities.SetStateChanged(ragdoll, "CBaseEntity", "m_MoveType");
     ragdoll.Entity!.Name = "player_body__" + playerController.Index;
-    ragdoll.Teleport(origin, pawn.AbsRotation, Vector.Zero);
+    ragdoll.Teleport(origin, rotation, Vector.Zero);
+    Server.NextWorldUpdate(()
+      => correctRagdoll(ragdoll, origin, rotation ?? QAngle.Zero, true));
 
     // TODO: See if we need to do this 4 times
-    for (var i = 0; i < 4; i++) {
-      var j = i;
-      Server.RunOnTick(Server.TickCount + i + 1,
-        () => correctRagdoll(ragdoll, origin, rotation ?? QAngle.Zero, j == 0));
-    }
+    // for (var i = 0; i < 4; i++) {
+    //   var j = i;
+    //   Server.RunOnTick(Server.TickCount + i + 1,
+    //     () => correctRagdoll(ragdoll, origin, rotation ?? QAngle.Zero, j == 0));
+    // }
 
     return ragdoll;
   }

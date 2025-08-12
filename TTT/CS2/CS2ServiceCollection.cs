@@ -7,6 +7,7 @@ using TTT.API.Messages;
 using TTT.API.Player;
 using TTT.API.Storage;
 using TTT.CS2.GameHandlers;
+using TTT.CS2.Hats;
 using TTT.CS2.Listeners;
 using TTT.Game;
 using TTT.Locale;
@@ -27,6 +28,9 @@ public static class CS2ServiceCollection {
     collection.AddPluginBehavior<ICommandManager, CS2CommandManager>();
     collection.AddScoped<IMessenger, CS2Messenger>();
     collection.AddScoped<IInventoryManager, CS2InventoryManager>();
+    
+    // TTT - CS2 Specific optionals
+    collection.AddScoped<ITextSpawner, TextSpawner>();
 
     // GameHandlers
     collection.AddPluginBehavior<PlayerConnectionsHandler>();
