@@ -29,7 +29,7 @@ public static class CS2ServiceCollection {
     collection.AddPluginBehavior<ICommandManager, CS2CommandManager>();
     collection.AddScoped<IMessenger, CS2Messenger>();
     collection.AddScoped<IInventoryManager, CS2InventoryManager>();
-    
+
     // TTT - CS2 Specific optionals
     collection.AddScoped<ITextSpawner, TextSpawner>();
 

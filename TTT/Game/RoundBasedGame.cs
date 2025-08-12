@@ -21,6 +21,9 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
    .GetAwaiter()
    .GetResult() ?? new GameConfig();
 
+  private readonly IInventoryManager inventory =
+    provider.GetRequiredService<IInventoryManager>();
+
   private readonly IMsgLocalizer locale =
     provider.GetRequiredService<IMsgLocalizer>();
 
@@ -122,7 +125,10 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
       return;
     }
 
-    State     = State.IN_PROGRESS;
+    State = State.IN_PROGRESS;
+
+    foreach (var player in online) inventory.RemoveAllWeapons(player);
+
     StartedAt = DateTime.Now;
     assigner.AssignRoles(online, Roles);
     players.AddRange(online);

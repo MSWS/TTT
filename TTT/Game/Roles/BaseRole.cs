@@ -34,5 +34,9 @@ public abstract class BaseRole(IServiceProvider provider) : IRole {
   public virtual void OnAssign(IOnlinePlayer player) {
     if (Localizer != null)
       msg.Message(player, Localizer[GameMsgs.ROLE_ASSIGNED(this)]);
+
+    if (!Config.RoleCfg.StripWeaponsPriorToEquipping) return;
+
+    Inventory.RemoveAllWeapons(player);
   }
 }

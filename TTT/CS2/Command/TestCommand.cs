@@ -1,5 +1,4 @@
-﻿using System.Globalization;
-using CounterStrikeSharp.API;
+﻿using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using Microsoft.Extensions.DependencyInjection;
 using TTT.API;
@@ -55,18 +54,10 @@ public class TestCommand(IServiceProvider provider) : ICommand, IPluginModule {
           //   "m_bPawnIsAlive");
           break;
         case "gettarget":
-          var target = gameExecutor?.PlayerPawn.Value?.Target;
+          var target = gameExecutor?.Pawn.Value?.Target;
           info.ReplySync(target ?? "null");
-          info.ReplySync(gameExecutor?.PlayerPawn.Value?.LookTargetPosition
-           .ToString() ?? "null");
-          break;
-        case "getdeath":
-          info.ReplySync("DeathInfoTime: "
-            + gameExecutor?.PlayerPawn.Value?.DeathInfoTime.ToString(CultureInfo
-             .CurrentCulture));
-          info.ReplySync("DeathTime: "
-            + gameExecutor?.PlayerPawn.Value?.DeathTime.ToString(CultureInfo
-             .CurrentCulture));
+          info.ReplySync(gameExecutor?.Pawn.Value?.LookTargetPosition.ToString()
+            ?? "null");
           break;
       }
     });

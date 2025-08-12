@@ -1,4 +1,4 @@
-PREFIX: "{darkred}T{red}T{lightred}T{grey}> {grey}"
+PREFIX: "{darkred}T{red}T{lightred}T{grey} | {grey}"
 ROLE_INNOCENT: "Innocent"
 ROLE_DETECTIVE: "Detective"
 ROLE_TRAITOR: "Traitor"

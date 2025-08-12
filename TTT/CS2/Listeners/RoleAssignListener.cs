@@ -1,5 +1,4 @@
-﻿using System.Drawing;
-using CounterStrikeSharp.API.Core;
+﻿using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Utils;
 using Microsoft.Extensions.DependencyInjection;
 using TTT.API;
@@ -24,12 +23,25 @@ public class RoleAssignListener(IServiceProvider provider)
   private readonly ITextSpawner? textSpawner =
     provider.GetService<ITextSpawner>();
 
-  public void Dispose() { bus.UnregisterListener(this); }
-
   private readonly ISet<CPointWorldText> traitorIcons =
     new HashSet<CPointWorldText>();
 
   private readonly ISet<int> traitors = new HashSet<int>();
+
+  public void Dispose() { bus.UnregisterListener(this); }
+
+  public string Name => nameof(RoleAssignListener);
+  public string Version => GitVersionInformation.FullSemVer;
+
+  public void Start() { }
+
+  public void Start(BasePlugin? plugin) {
+    plugin
+    ?.RegisterListener<CounterStrikeSharp.API.Core.Listeners.CheckTransmit>(
+        onTransmit);
+
+    bus.RegisterListener(this);
+  }
 
   [EventHandler(IgnoreCanceled = true)]
   public void OnRoundStart(GameStateUpdateEvent ev) {
@@ -53,8 +65,12 @@ public class RoleAssignListener(IServiceProvider provider)
       CsTeam.Terrorist);
 
     player.SetClan(ev.Role is CS2DetectiveRole ? ev.Role.Name : "", false);
-    var pawn = player.PlayerPawn.Value;
+    var pawn = player.Pawn.Value;
     if (pawn == null || !pawn.IsValid) return;
+
+    pawn.SetModel(ev.Role is CS2DetectiveRole ?
+      "characters/models/ctm_fbi/ctm_fbi_varianth.vmdl" :
+      "characters/models/tm_phoenix/tm_phoenix.vmdl");
 
     if (ev.Role is CS2InnocentRole) return;
 
@@ -69,25 +85,11 @@ public class RoleAssignListener(IServiceProvider provider)
     foreach (var icon in roleIcon) traitorIcons.Add(icon);
   }
 
-  public string Name => nameof(RoleAssignListener);
-  public string Version => GitVersionInformation.FullSemVer;
-
-  public void Start() { }
-
-  public void Start(BasePlugin? plugin) {
-    plugin
-    ?.RegisterListener<CounterStrikeSharp.API.Core.Listeners.CheckTransmit>(
-        onTransmit);
-
-    bus.RegisterListener(this);
-  }
-
   private void onTransmit(CCheckTransmitInfoList infoList) {
     foreach (var (info, player) in infoList) {
       if (player == null || !player.IsValid) continue;
-      if (!traitors.Contains(player.Slot))
-        foreach (var icon in traitorIcons)
-          info.TransmitEntities.Remove(icon);
+      if (traitors.Contains(player.Slot)) continue;
+      foreach (var icon in traitorIcons) info.TransmitEntities.Remove(icon);
     }
   }
 }

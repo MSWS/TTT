@@ -152,6 +152,7 @@ public partial class StringLocalizer : IMsgLocalizer {
        .FirstOrDefault(w => !string.IsNullOrWhiteSpace(w)) ?? " ";
       var nextChar =
         char.ToLowerInvariant(nextWord.FirstOrDefault(char.IsLetterOrDigit));
+      Console.WriteLine($"Next Word: {nextWord}, Next Char: {nextChar}");
       value = nextChar switch {
         'a' or 'e' or 'i' or 'o' or 'u' => prefix + anMatch + suffix,
         _                               => prefix + anMatch[0] + suffix

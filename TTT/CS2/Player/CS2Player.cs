@@ -85,7 +85,7 @@ public class CS2Player : IOnlinePlayer {
   }
 
   public bool IsAlive {
-    get => Player != null && Player.LifeState == (int)LifeState_t.LIFE_ALIVE;
+    get => Player != null && Player.PlayerPawn.Value is { Health: > 0 };
 
     set
       => throw new NotSupportedException(
@@ -95,5 +95,16 @@ public class CS2Player : IOnlinePlayer {
   public static string GetKey(CCSPlayerController player) {
     if (player.IsBot || player.IsHLTV) return player.Index.ToString();
     return player.SteamID.ToString();
+  }
+
+  public override string ToString() {
+    return Roles.Count != 0 ?
+      $"[{getSuffix(Id, 5)}] {Name} ({Roles.First().Name.First(char.IsAsciiLetter)})" :
+      $"[{getSuffix(Id, 5)}] {Name}";
+  }
+
+  private string getSuffix(string s, int len) {
+    if (s.Length <= len) return s;
+    return s[..len];
   }
 }

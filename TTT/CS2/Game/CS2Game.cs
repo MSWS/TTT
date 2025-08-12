@@ -7,7 +7,7 @@ using TTT.CS2.Roles;
 using TTT.CS2.Utils;
 using TTT.Game;
 
-namespace TTT.CS2;
+namespace TTT.CS2.Game;
 
 public class CS2Game(IServiceProvider provider) : RoundBasedGame(provider) {
   public override IList<IRole> Roles { get; } = [

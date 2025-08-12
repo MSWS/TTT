@@ -21,11 +21,23 @@ public class ColoredRoleTest(IServiceProvider provider) {
   }
 
   [Fact]
-  public void RoleAssignMessage_ShouldHaveA_OnVowelName() {
+  public void RoleAssignMessage_ShouldHaveAn_OnVowelName() {
     var msg = locale[GameMsgs.ROLE_ASSIGNED(new ColoredRole("inno"))];
 
     Assert.Contains(" are an ", msg);
   }
+
+  [Theory]
+  [InlineData("detective")]
+  [InlineData("traitor")]
+  [InlineData("Detective")]
+  [InlineData("Traitor")]
+  public void RoleAssignMessage_ShouldHaveA_OnConsonantName(string name) {
+    var msg = locale[GameMsgs.ROLE_ASSIGNED(new ColoredRole(name))];
+
+    Assert.Contains(" are a ", msg);
+  }
+
 
   public class ColoredRole(string name) : IRole {
     public string Id => "test.role.colored";

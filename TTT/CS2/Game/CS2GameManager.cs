@@ -1,4 +1,5 @@
 ﻿using TTT.API.Game;
+using TTT.CS2.Game;
 using TTT.Game;
 using TTT.Game.Events.Game;
 

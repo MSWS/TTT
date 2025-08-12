@@ -31,6 +31,8 @@ public record GameConfig {
     ];
 
     public string[]? InnocentWeapons { get; init; } = ["knife", "pistol"];
+
+    public bool StripWeaponsPriorToEquipping { get; init; } = true;
   }
 
   public record RoundConfig {

@@ -1,5 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using CounterStrikeSharp.API.Modules.Utils;
+﻿using CounterStrikeSharp.API.Modules.Utils;
 
 namespace TTT.CS2.Extensions;
 

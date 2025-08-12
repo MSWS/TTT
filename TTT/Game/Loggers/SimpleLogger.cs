@@ -23,7 +23,7 @@ public class SimpleLogger(IServiceProvider provider) : IActionLogger {
     actions.TryGetValue(timestamp.Date, out var actionSet);
     actionSet ??= new HashSet<IAction>();
     actionSet.Add(action);
-    actions[timestamp.Date] = actionSet;
+    actions[timestamp.DateTime] = actionSet;
   }
 
   public IEnumerable<(DateTime, IAction)> GetActions() {
