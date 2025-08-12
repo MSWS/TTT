@@ -100,13 +100,6 @@ public class BodySpawner(IServiceProvider provider) : IPluginModule {
     Server.NextWorldUpdate(()
       => correctRagdoll(ragdoll, origin, rotation ?? QAngle.Zero, true));
 
-    // TODO: See if we need to do this 4 times
-    // for (var i = 0; i < 4; i++) {
-    //   var j = i;
-    //   Server.RunOnTick(Server.TickCount + i + 1,
-    //     () => correctRagdoll(ragdoll, origin, rotation ?? QAngle.Zero, j == 0));
-    // }
-
     return ragdoll;
   }
 

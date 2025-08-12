@@ -38,7 +38,6 @@ public class RoleAssigner(IServiceProvider provider) : IRoleAssigner {
       player.Roles.Add(ev.Role);
       ev.Role.OnAssign(player);
 
-      onlineMessenger?.Message(player, locale[GameMsgs.ROLE_ASSIGNED(role)]);
       onlineMessenger?.BackgroundMsgAll(
         $"{player.Name} was assigned the role of {role.Name}.");
       return true;

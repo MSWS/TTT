@@ -6,7 +6,7 @@ using TTT.API;
 using TTT.API.Command;
 using TTT.API.Player;
 
-namespace TTT.CS2;
+namespace TTT.CS2.Command;
 
 public class TestCommand(IServiceProvider provider) : ICommand, IPluginModule {
   private readonly IPlayerConverter<CCSPlayerController> converter =
@@ -72,17 +72,5 @@ public class TestCommand(IServiceProvider provider) : ICommand, IPluginModule {
     });
 
     return Task.FromResult(CommandResult.SUCCESS);
-  }
-
-  public void Start(BasePlugin? plugin, bool hotReload) {
-    plugin
-    ?.RegisterListener<CounterStrikeSharp.API.Core.Listeners.CheckTransmit>(
-        checkTransmit);
-  }
-
-  private void checkTransmit(CCheckTransmitInfoList infoList) {
-    foreach (var (info, player) in infoList) {
-      // info.TransmitEntities.Remove();
-    }
   }
 }

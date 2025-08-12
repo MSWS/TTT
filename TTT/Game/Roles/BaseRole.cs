@@ -1,5 +1,6 @@
 ﻿using System.Drawing;
 using Microsoft.Extensions.DependencyInjection;
+using TTT.API.Messages;
 using TTT.API.Player;
 using TTT.API.Role;
 using TTT.API.Storage;
@@ -20,6 +21,8 @@ public abstract class BaseRole(IServiceProvider provider) : IRole {
   protected readonly IMsgLocalizer? Localizer =
     provider.GetService<IMsgLocalizer>();
 
+  protected readonly IMessenger msg = provider.GetRequiredService<IMessenger>();
+
   protected readonly IServiceProvider Provider = provider;
   public abstract string Id { get; }
   public abstract string Name { get; }
@@ -28,5 +31,8 @@ public abstract class BaseRole(IServiceProvider provider) : IRole {
   public abstract IOnlinePlayer?
     FindPlayerToAssign(ISet<IOnlinePlayer> players);
 
-  public virtual void OnAssign(IOnlinePlayer player) { }
+  public virtual void OnAssign(IOnlinePlayer player) {
+    if (Localizer != null)
+      msg.Message(player, Localizer[GameMsgs.ROLE_ASSIGNED(this)]);
+  }
 }

@@ -6,6 +6,7 @@ using TTT.API.Game;
 using TTT.API.Messages;
 using TTT.API.Player;
 using TTT.API.Storage;
+using TTT.CS2.Command;
 using TTT.CS2.GameHandlers;
 using TTT.CS2.Hats;
 using TTT.CS2.Listeners;
@@ -39,9 +40,9 @@ public static class CS2ServiceCollection {
     collection.AddPluginBehavior<CombatHandler>();
     collection.AddPluginBehavior<PropMover>();
     collection.AddPluginBehavior<BodySpawner>();
+    collection.AddPluginBehavior<RoleAssignListener>();
 
     // Listeners
-    collection.AddListener<RoleAssignListener>();
     collection.AddListener<RoundTimerListener>();
 
     collection.AddScoped<IMsgLocalizer, StringLocalizer>();

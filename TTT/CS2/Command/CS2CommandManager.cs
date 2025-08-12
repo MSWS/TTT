@@ -8,7 +8,7 @@ using TTT.API.Player;
 using TTT.Game;
 using TTT.Game.Commands;
 
-namespace TTT.CS2;
+namespace TTT.CS2.Command;
 
 public class CS2CommandManager(IServiceProvider provider)
   : CommandManager(provider), IPluginModule {
@@ -24,8 +24,8 @@ public class CS2CommandManager(IServiceProvider provider)
 
     RegisterCommand(new TTTCommand(Provider));
     var testCmd = new TestCommand(Provider);
-    testCmd.Start(basePlugin, hotReload);
     RegisterCommand(testCmd);
+    RegisterCommand(new SetRoleCommand(Provider));
 
     foreach (var command in Provider.GetServices<ICommand>()) command.Start();
   }
