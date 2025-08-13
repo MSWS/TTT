@@ -5,7 +5,7 @@ using TTT.API;
 using TTT.API.Messages;
 using TTT.API.Player;
 
-namespace TTT.CS2;
+namespace TTT.CS2.Player;
 
 public class CCPlayerConverter(IServiceProvider provider) : IPluginModule,
   IPlayerConverter<CCSPlayerController> {

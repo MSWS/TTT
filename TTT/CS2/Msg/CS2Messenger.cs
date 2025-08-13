@@ -4,7 +4,7 @@ using TTT.API.Messages;
 using TTT.API.Player;
 using TTT.Game;
 
-namespace TTT.CS2;
+namespace TTT.CS2.Msg;
 
 public class CS2Messenger(IServiceProvider provider)
   : EventModifiedMessenger(provider) {

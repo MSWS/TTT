@@ -3,8 +3,9 @@ using Microsoft.Extensions.DependencyInjection;
 using TTT.API.Command;
 using TTT.API.Messages;
 using TTT.API.Player;
+using TTT.CS2.Player;
 
-namespace TTT.CS2;
+namespace TTT.CS2.Command;
 
 /// <summary>
 ///   A CS2-specific implementation of <see cref="ICommandInfo" />

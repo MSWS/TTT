@@ -3,7 +3,7 @@ using CounterStrikeSharp.API.Core;
 using TTT.API.Player;
 using TTT.API.Role;
 
-namespace TTT.CS2;
+namespace TTT.CS2.Player;
 
 /// <summary>
 ///   A CS2-specific implementation of <see cref="IOnlinePlayer" />.

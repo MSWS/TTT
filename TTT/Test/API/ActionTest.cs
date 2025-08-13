@@ -2,7 +2,7 @@
 using TTT.Test.Fakes;
 using Xunit;
 
-namespace TTT.Test.Api;
+namespace TTT.Test.API;
 
 public class ActionTest {
   [Fact]

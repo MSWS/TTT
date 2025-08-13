@@ -1,9 +1,8 @@
 ﻿using TTT.API.Game;
-using TTT.CS2.Game;
 using TTT.Game;
 using TTT.Game.Events.Game;
 
-namespace TTT.CS2;
+namespace TTT.CS2.Game;
 
 public class CS2GameManager(IServiceProvider provider) : GameManager(provider) {
   public override IGame CreateGame() {

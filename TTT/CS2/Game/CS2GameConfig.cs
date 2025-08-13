@@ -7,7 +7,7 @@ using TTT.API.Storage;
 using TTT.CS2.Validators;
 using TTT.Game;
 
-namespace TTT.CS2;
+namespace TTT.CS2.Game;
 
 public class CS2GameConfig : IStorage<GameConfig>, IPluginModule {
   public static readonly FakeConVar<int> CV_ROUND_COUNTDOWN = new(

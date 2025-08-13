@@ -3,7 +3,7 @@ using TTT.API.Game;
 using TTT.Test.Game.Roles;
 using Xunit;
 
-namespace TTT.Test.Api;
+namespace TTT.Test.API;
 
 public class GameTest(IServiceProvider provider) {
   [Fact]

@@ -4,7 +4,7 @@ using CounterStrikeSharp.API.Modules.Admin;
 using CounterStrikeSharp.API.Modules.Entities;
 using TTT.API.Player;
 
-namespace TTT.CS2;
+namespace TTT.CS2.Player;
 
 public class CS2PermManager(IPlayerConverter<CCSPlayerController> converter)
   : IPermissionManager {

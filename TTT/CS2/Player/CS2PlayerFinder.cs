@@ -2,7 +2,7 @@
 using CounterStrikeSharp.API.Core;
 using TTT.API.Player;
 
-namespace TTT.CS2;
+namespace TTT.CS2.Player;
 
 public class CS2PlayerFinder(IPlayerConverter<CCSPlayerController> players)
   : IPlayerFinder {
