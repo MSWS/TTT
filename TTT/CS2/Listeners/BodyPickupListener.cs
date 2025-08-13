@@ -18,13 +18,14 @@ namespace TTT.CS2.Listeners;
 public class BodyPickupListener(IServiceProvider provider) : IListener {
   private readonly Dictionary<CBaseEntity, IBody> bodyCache = new();
   private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
-  private readonly IMessenger msg = provider.GetRequiredService<IMessenger>();
 
   private readonly IPlayerConverter<CCSPlayerController> converter =
     provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
 
   private readonly IMsgLocalizer locale =
     provider.GetRequiredService<IMsgLocalizer>();
+
+  private readonly IMessenger msg = provider.GetRequiredService<IMessenger>();
 
   private readonly IRoleAssigner roles =
     provider.GetRequiredService<IRoleAssigner>();

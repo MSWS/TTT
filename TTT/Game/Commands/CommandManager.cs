@@ -64,6 +64,12 @@ public class CommandManager(IServiceProvider provider)
     return result;
   }
 
+  public virtual string Name => "base.commands";
+  public virtual string Version => GitVersionInformation.FullSemVer;
+  public void Dispose() { }
+
+  public virtual void Start() { RegisterCommand(new LogsCommand(Provider)); }
+
   private void printNoPermission(IOnlinePlayer? executor, ICommand command,
     ICommandInfo info) {
     if (executor == null) {
@@ -82,10 +88,4 @@ public class CommandManager(IServiceProvider provider)
       GameMsgs.GENERIC_NO_PERMISSION_RANK(string.Join(", ",
         command.RequiredGroups))]);
   }
-
-  public virtual string Name => "base.commands";
-  public virtual string Version => GitVersionInformation.FullSemVer;
-  public void Dispose() { }
-
-  public virtual void Start() { RegisterCommand(new LogsCommand(Provider)); }
 }

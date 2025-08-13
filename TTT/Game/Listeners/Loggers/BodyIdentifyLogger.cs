@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using TTT.API.Events;
+﻿using TTT.API.Events;
 using TTT.Game.Actions;
 using TTT.Game.Events.Body;
 
@@ -7,6 +6,8 @@ namespace TTT.Game.Listeners.Loggers;
 
 public class BodyIdentifyLogger(IServiceProvider provider)
   : BaseListener(provider) {
+  public override string Name => nameof(BodyIdentifyLogger);
+
   [EventHandler]
   public void OnBodyIdentify(BodyIdentifyEvent ev) {
     if (!Games.IsGameActive()) return;
@@ -18,6 +19,4 @@ public class BodyIdentifyLogger(IServiceProvider provider)
 
     game.Logger.LogAction(new IdentifyBodyAction(ev));
   }
-
-  public override string Name => nameof(BodyIdentifyLogger);
 }

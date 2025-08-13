@@ -1,6 +1,5 @@
 ﻿using TTT.Game.Actions;
 using TTT.Game.Events.Player;
-using TTT.Game.Listeners;
 using TTT.Game.Listeners.Loggers;
 using Xunit;
 
