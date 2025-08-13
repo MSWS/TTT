@@ -17,11 +17,11 @@ public class TTTCommand(IServiceProvider provider) : ICommand {
 
   public Task<CommandResult>
     Execute(IOnlinePlayer? executor, ICommandInfo info) {
+    var version = GitVersionInformation.FullSemVer;
 #if DEBUG
-    info.ReplySync("DEBUG BUILD");
+    version += "-DEBUG";
 #endif
-    info.ReplySync(
-      localizer[GameMsgs.CMD_TTT(GitVersionInformation.FullSemVer)]);
+    info.ReplySync(localizer[GameMsgs.CMD_TTT(version)]);
     return Task.FromResult(CommandResult.SUCCESS);
   }
 }

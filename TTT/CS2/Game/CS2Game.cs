@@ -26,7 +26,8 @@ public class CS2Game(IServiceProvider provider) : RoundBasedGame(provider) {
 
   // Since this can be called off the main thread, we need to ensure
   // the underlying logic is executed on the main thread.
-  public override IObservable<long> Start(TimeSpan? countdown = null) {
+  public override IObservable<long>? Start(TimeSpan? countdown = null) {
+    if (State != State.WAITING) return null;
     var timer = countdown == null ?
       Observable.Empty<long>() :
       Observable.Timer(countdown.Value);
