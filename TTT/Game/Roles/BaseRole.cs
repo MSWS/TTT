@@ -9,11 +9,11 @@ using TTT.Locale;
 namespace TTT.Game.Roles;
 
 public abstract class BaseRole(IServiceProvider provider) : IRole {
-  protected readonly GameConfig Config = provider
-   .GetRequiredService<IStorage<GameConfig>>()
+  protected readonly TTTConfig Config = provider
+   .GetRequiredService<IStorage<TTTConfig>>()
    .Load()
    .GetAwaiter()
-   .GetResult() ?? new GameConfig();
+   .GetResult() ?? new TTTConfig();
 
   protected readonly IInventoryManager Inventory =
     provider.GetRequiredService<IInventoryManager>();

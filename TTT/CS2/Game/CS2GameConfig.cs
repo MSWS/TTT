@@ -9,7 +9,7 @@ using TTT.Game;
 
 namespace TTT.CS2.Game;
 
-public class CS2GameConfig : IStorage<GameConfig>, IPluginModule {
+public class CS2GameConfig : IStorage<TTTConfig>, IPluginModule {
   public static readonly FakeConVar<int> CV_ROUND_COUNTDOWN = new(
     "css_ttt_round_countdown", "Time to wait before starting a round", 10,
     ConVarFlags.FCVAR_NONE, new RangeValidator<int>(1, 60));
@@ -94,9 +94,9 @@ public class CS2GameConfig : IStorage<GameConfig>, IPluginModule {
     plugin.RegisterFakeConVars(this);
   }
 
-  public Task<GameConfig?> Load() {
-    return Task.FromResult<GameConfig?>(new GameConfig {
-      RoleCfg = new GameConfig.RoleConfig {
+  public Task<TTTConfig?> Load() {
+    return Task.FromResult<TTTConfig?>(new TTTConfig {
+      RoleCfg = new TTTConfig.RoleConfig {
         TraitorHealth   = CV_TRAITOR_HEALTH.Value,
         DetectiveHealth = CV_DETECTIVE_HEALTH.Value,
         InnocentHealth  = CV_INNOCENT_HEALTH.Value,
@@ -127,7 +127,7 @@ public class CS2GameConfig : IStorage<GameConfig>, IPluginModule {
     });
   }
 
-  public record CS2RoundConfig : GameConfig.RoundConfig {
+  public record CS2RoundConfig : TTTConfig.RoundConfig {
     public override TimeSpan RoundDuration(int players) {
       var baseDuration      = CV_ROUND_DURATION_BASE.Value;
       var perPlayerDuration = CV_ROUND_DURATION_PER_PLAYER.Value;

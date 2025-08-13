@@ -34,7 +34,7 @@ public class Startup {
     services.AddScoped<IMsgLocalizer>(s
       => s.GetRequiredService<StringLocalizer>());
     services.AddScoped<IInventoryManager, FakeInventoryManager>();
-    services.AddTransient<IStorage<GameConfig>, FakeConfig>();
+    services.AddTransient<IStorage<TTTConfig>, FakeConfig>();
     services.AddScoped<IPermissionManager, FakePermissionManager>();
     services.AddScoped<ICommandManager, CommandManager>();
     services.AddScoped<IShop, TTT.Shop.Shop>();

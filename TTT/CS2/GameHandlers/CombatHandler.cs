@@ -17,7 +17,6 @@ public class CombatHandler(IServiceProvider provider) : IPluginModule {
   private readonly IPlayerConverter<CCSPlayerController> converter =
     provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
 
-  private readonly IMessenger msg = provider.GetRequiredService<IMessenger>();
   public string Name => "CombatListeners";
   public string Version => GitVersionInformation.FullSemVer;
 
@@ -28,7 +27,6 @@ public class CombatHandler(IServiceProvider provider) : IPluginModule {
   /// <summary>
   /// </summary>
   /// <param name="ev"></param>
-  /// <param name="_"></param>
   /// <param name="info"></param>
   /// <returns></returns>
   [UsedImplicitly]

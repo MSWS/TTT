@@ -60,6 +60,8 @@ public class RoleAssignListener(IServiceProvider provider)
       return;
     }
 
+    traitors.Remove(player.Slot);
+
     player.SwitchTeam(ev.Role is CS2DetectiveRole ?
       CsTeam.CounterTerrorist :
       CsTeam.Terrorist);

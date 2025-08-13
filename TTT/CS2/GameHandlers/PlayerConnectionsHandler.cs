@@ -29,17 +29,13 @@ public class PlayerConnectionsHandler(IServiceProvider provider)
         CounterStrikeSharp.API.Core.Listeners.OnClientDisconnect>(
         disconnectFromServer);
 
-    if (!hotReload) return;
-
-    // Server.NextWorldUpdate(() => {
-    //   foreach (var player in Utilities.GetPlayers()) {
-    //     var gamePlayer = converter.GetPlayer(player);
-    //     var ev         = new PlayerJoinEvent(gamePlayer);
-    //     Console.WriteLine(
-    //       $"Dispatching PlayerJoinEvent for player {gamePlayer.Id} ({gamePlayer.Name})");
-    //     bus.Dispatch(ev);
-    //   }
-    // });
+    Server.NextWorldUpdate(() => {
+      foreach (var player in Utilities.GetPlayers()) {
+        var gamePlayer = converter.GetPlayer(player);
+        var ev         = new PlayerJoinEvent(gamePlayer);
+        bus.Dispatch(ev);
+      }
+    });
   }
 
   public void Dispose() { }

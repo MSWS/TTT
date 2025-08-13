@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using TTT.API;
 using TTT.API.Command;
 using TTT.API.Player;
+using TTT.CS2.Command.Test;
 using TTT.Game;
 using TTT.Game.Commands;
 
@@ -23,9 +24,7 @@ public class CS2CommandManager(IServiceProvider provider)
     plugin = basePlugin;
 
     RegisterCommand(new TTTCommand(Provider));
-    var testCmd = new TestCommand(Provider);
-    RegisterCommand(testCmd);
-    RegisterCommand(new SetRoleCommand(Provider));
+    RegisterCommand(new TestCommand(Provider));
 
     foreach (var command in Provider.GetServices<ICommand>()) command.Start();
   }

@@ -58,10 +58,6 @@ public class PlayerCausesEndListener(IServiceProvider provider)
     var nonTraitorsAlive = game.GetAlive().Count - traitorsAlive;
     var detectivesAlive  = game.GetAlive(typeof(DetectiveRole)).Count;
 
-    msg.DebugAnnounce($"Traitors alive: {traitorsAlive}, "
-      + $"Non-traitors alive: {nonTraitorsAlive}, "
-      + $"Detectives alive: {detectivesAlive}");
-
     switch (traitorsAlive) {
       case 0 when nonTraitorsAlive == 0:
         winningTeam = null;

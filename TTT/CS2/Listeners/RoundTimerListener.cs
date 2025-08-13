@@ -18,11 +18,11 @@ namespace TTT.CS2.Listeners;
 public class RoundTimerListener(IServiceProvider provider) : IListener {
   private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
 
-  private readonly GameConfig config = provider
-   .GetRequiredService<IStorage<GameConfig>>()
+  private readonly TTTConfig config = provider
+   .GetRequiredService<IStorage<TTTConfig>>()
    .Load()
    .GetAwaiter()
-   .GetResult() ?? new GameConfig();
+   .GetResult() ?? new TTTConfig();
 
   private readonly IPlayerConverter<CCSPlayerController> converter =
     provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();

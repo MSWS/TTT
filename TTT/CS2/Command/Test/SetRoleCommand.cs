@@ -7,7 +7,7 @@ using TTT.API.Role;
 using TTT.CS2.Roles;
 using TTT.Game.Events.Player;
 
-namespace TTT.CS2.Command;
+namespace TTT.CS2.Command.Test;
 
 public class SetRoleCommand(IServiceProvider provider) : ICommand {
   private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();

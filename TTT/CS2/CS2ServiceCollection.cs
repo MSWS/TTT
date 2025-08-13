@@ -28,7 +28,7 @@ public static class CS2ServiceCollection {
      .AddModBehavior<IPlayerConverter<CCSPlayerController>,
         CCPlayerConverter>();
     collection.AddScoped<IPlayerFinder, CS2PlayerFinder>();
-    collection.AddModBehavior<IStorage<GameConfig>, CS2GameConfig>();
+    collection.AddModBehavior<IStorage<TTTConfig>, CS2GameConfig>();
     collection.AddPluginBehavior<ICommandManager, CS2CommandManager>();
     collection.AddScoped<IMessenger, CS2Messenger>();
     collection.AddScoped<IInventoryManager, CS2InventoryManager>();

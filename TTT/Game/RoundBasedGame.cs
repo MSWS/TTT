@@ -15,11 +15,11 @@ using TTT.Locale;
 namespace TTT.Game;
 
 public class RoundBasedGame(IServiceProvider provider) : IGame {
-  private readonly GameConfig config = provider
-   .GetRequiredService<IStorage<GameConfig>>()
+  private readonly TTTConfig config = provider
+   .GetRequiredService<IStorage<TTTConfig>>()
    .Load()
    .GetAwaiter()
-   .GetResult() ?? new GameConfig();
+   .GetResult() ?? new TTTConfig();
 
   private readonly IInventoryManager inventory =
     provider.GetRequiredService<IInventoryManager>();
