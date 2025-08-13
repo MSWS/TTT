@@ -56,6 +56,9 @@ public static class GameMsgs {
       role.Name ?? "Unknown Role");
   }
 
+  public static IMsg GAME_LOGS_HEADER
+    => MsgFactory.Create(nameof(GAME_LOGS_HEADER));
+
   #region COMMANDS
 
   public static IMsg CMD_TTT(string version) {

@@ -6,13 +6,14 @@ using TTT.API.Role;
 using TTT.CS2.Roles;
 using TTT.CS2.Utils;
 using TTT.Game;
+using TTT.Game.Roles;
 
 namespace TTT.CS2.Game;
 
 public class CS2Game(IServiceProvider provider) : RoundBasedGame(provider) {
   public override IList<IRole> Roles { get; } = [
-    new SpectatorRole(provider), new CS2InnocentRole(provider),
-    new CS2TraitorRole(provider), new CS2DetectiveRole(provider)
+    new SpectatorRole(provider), new InnocentRole(provider),
+    new TraitorRole(provider), new DetectiveRole(provider)
   ];
 
   override protected void StartRound() {
@@ -25,7 +26,8 @@ public class CS2Game(IServiceProvider provider) : RoundBasedGame(provider) {
 
   // Since this can be called off the main thread, we need to ensure
   // the underlying logic is executed on the main thread.
-  public override IObservable<long> Start(TimeSpan? countdown = null) {
+  public override IObservable<long>? Start(TimeSpan? countdown = null) {
+    if (State != State.WAITING) return null;
     var timer = countdown == null ?
       Observable.Empty<long>() :
       Observable.Timer(countdown.Value);

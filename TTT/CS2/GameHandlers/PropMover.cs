@@ -1,6 +1,8 @@
-﻿using CounterStrikeSharp.API;
+﻿using System.Drawing;
+using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Core.Attributes.Registration;
+using CounterStrikeSharp.API.Modules.Timers;
 using CounterStrikeSharp.API.Modules.Utils;
 using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
@@ -40,8 +42,9 @@ public class PropMover(IServiceProvider provider) : IPluginModule {
   public void Start() { }
 
   public void Start(BasePlugin? plugin, bool hotReload) {
+    plugin?.AddTimer(Server.TickInterval, refreshLines, TimerFlags.REPEAT);
     plugin?.RegisterListener<CounterStrikeSharp.API.Core.Listeners.OnTick>(
-      onTick);
+      refreshBodies);
     plugin
     ?.RegisterListener<
         CounterStrikeSharp.API.Core.Listeners.OnPlayerButtonsChanged>(
@@ -75,6 +78,7 @@ public class PropMover(IServiceProvider provider) : IPluginModule {
       playersPressingE.Remove(player);
       if (!e.Ragdoll.IsValid) return;
       e.Ragdoll.AcceptInput("EnableMotion");
+      if (e.Beam != null && e.Beam.IsValid) e.Beam.AcceptInput("Kill");
       return;
     }
 
@@ -114,15 +118,18 @@ public class PropMover(IServiceProvider provider) : IPluginModule {
     bus.Dispatch(pickupEvent);
     if (pickupEvent.IsCanceled) return;
 
-    playersPressingE[player] = new MovementInfo(playerDist, pickupEvent.Prop);
+    playersPressingE[player] = new MovementInfo(playerDist, pickupEvent.Prop) {
+      Beam = createBeam(playerPos, pickupEvent.Prop.AbsOrigin ?? Vector.Zero)
+    };
     pickupEvent.Prop.AcceptInput("DisableMotion");
   }
 
-  private void onTick() {
-    foreach (var (player, info) in playersPressingE) onTick(player, info);
+  private void refreshBodies() {
+    foreach (var (player, info) in playersPressingE)
+      refreshBodies(player, info);
   }
 
-  private void onTick(CCSPlayerController player, MovementInfo info) {
+  private void refreshBodies(CCSPlayerController player, MovementInfo info) {
     var ent = info.Ragdoll;
     if (!player.IsValid || !ent.IsValid) {
       playersPressingE.Remove(player);
@@ -142,9 +149,68 @@ public class PropMover(IServiceProvider provider) : IPluginModule {
 
     var eyeAngles = playerPawn!.EyeAngles;
 
-    var resultingVector = playerOrigin + eyeAngles.Clone()!.ToForward()
+    var targetVector = playerOrigin + eyeAngles.Clone()!.ToForward()
       * Math.Clamp(info.Distance, MIN_HOLDING_DISTANCE, MAX_HOLDING_DISTANCE);
 
-    ent.Teleport(resultingVector, QAngle.Zero, Vector.Zero);
+    targetVector.Z = Math.Max(targetVector.Z, playerOrigin.Z - 48);
+
+    if (ent.AbsOrigin == null) return;
+    var lerpedVector = ent.AbsOrigin.Lerp(targetVector, 0.3f);
+
+    ent.Teleport(lerpedVector, QAngle.Zero, Vector.Zero);
+  }
+
+  private void refreshLines() {
+    foreach (var (player, info) in playersPressingE) refreshLines(player, info);
+  }
+
+  private void refreshLines(CCSPlayerController player, MovementInfo info) {
+    var ent = info.Ragdoll;
+    if (!player.IsValid || !ent.IsValid) {
+      playersPressingE.Remove(player);
+      return;
+    }
+
+    var playerPawn = player.PlayerPawn.Value;
+    if (playerPawn == null || !playerPawn.IsValid) return;
+    var playerOrigin = playerPawn.AbsOrigin;
+    if (playerOrigin == null) {
+      playersPressingE.Remove(player);
+      return;
+    }
+
+    playerOrigin   =  playerOrigin.Clone()!;
+    playerOrigin.Z += 64;
+
+    var eyeAngles = playerPawn!.EyeAngles;
+
+    var targetVector = playerOrigin + eyeAngles.Clone()!.ToForward()
+      * Math.Clamp(info.Distance, MIN_HOLDING_DISTANCE, MAX_HOLDING_DISTANCE);
+
+    targetVector.Z = Math.Max(targetVector.Z, playerOrigin.Z - 48);
+
+    if (ent.AbsOrigin == null) return;
+    var lerpedVector = ent.AbsOrigin.Lerp(targetVector, 0.3f);
+
+    if (info.Beam != null && info.Beam.IsValid) {
+      info.Beam.AcceptInput("Kill");
+      info.Beam = createBeam(playerOrigin.With(z: playerOrigin.Z - 16),
+        lerpedVector);
+    }
+
+    playersPressingE[player] = info;
+  }
+
+  private CEnvBeam? createBeam(Vector start, Vector end) {
+    var beam = Utilities.CreateEntityByName<CEnvBeam>("env_beam");
+    if (beam == null) return null;
+    beam.RenderMode = RenderMode_t.kRenderTransColor;
+    beam.Width      = 0.5f;
+    beam.Render     = Color.White;
+    beam.EndPos.X   = end.X;
+    beam.EndPos.Y   = end.Y;
+    beam.EndPos.Z   = end.Z;
+    beam.Teleport(start);
+    return beam;
   }
 }

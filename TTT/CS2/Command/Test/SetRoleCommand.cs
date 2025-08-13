@@ -6,6 +6,7 @@ using TTT.API.Player;
 using TTT.API.Role;
 using TTT.CS2.Roles;
 using TTT.Game.Events.Player;
+using TTT.Game.Roles;
 
 namespace TTT.CS2.Command.Test;
 
@@ -25,14 +26,14 @@ public class SetRoleCommand(IServiceProvider provider) : ICommand {
     Execute(IOnlinePlayer? executor, ICommandInfo info) {
     if (executor == null) return Task.FromResult(CommandResult.PLAYER_ONLY);
 
-    IRole roleToAssign = new CS2TraitorRole(provider);
+    IRole roleToAssign = new TraitorRole(provider);
     if (info.ArgCount == 2)
       switch (info.Args[1].ToLowerInvariant()) {
         case "d" or "det" or "detective" or "ct":
-          roleToAssign = new CS2DetectiveRole(provider);
+          roleToAssign = new DetectiveRole(provider);
           break;
         case "i" or "inn" or "innocent":
-          roleToAssign = new CS2InnocentRole(provider);
+          roleToAssign = new InnocentRole(provider);
           break;
       }
 

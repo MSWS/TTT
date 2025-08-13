@@ -82,6 +82,7 @@ public class BodyPickupListener(IServiceProvider provider) : IListener {
     if (onlinePlayer == null || !onlinePlayer.IsValid) return;
 
     onlinePlayer.PawnIsAlive = false;
+    onlinePlayer.SetClan(primaryRole.Name);
     Utilities.SetStateChanged(onlinePlayer, "CCSPlayerController",
       "m_bPawnIsAlive");
   }

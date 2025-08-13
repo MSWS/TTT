@@ -7,7 +7,9 @@ using Microsoft.Extensions.DependencyInjection;
 using TTT.API.Events;
 using TTT.API.Game;
 using TTT.API.Player;
+using TTT.API.Role;
 using TTT.API.Storage;
+using TTT.CS2.Extensions;
 using TTT.CS2.Utils;
 using TTT.Game;
 using TTT.Game.Events.Game;
@@ -17,6 +19,9 @@ namespace TTT.CS2.Listeners;
 
 public class RoundTimerListener(IServiceProvider provider) : IListener {
   private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
+
+  private readonly IRoleAssigner roles =
+    provider.GetRequiredService<IRoleAssigner>();
 
   private readonly TTTConfig config = provider
    .GetRequiredService<IStorage<TTTConfig>>()
@@ -60,10 +65,20 @@ public class RoundTimerListener(IServiceProvider provider) : IListener {
     if (ev.NewState != State.FINISHED) return;
     if (RoundUtil.GetTimeRemaining() <= 1) return;
 
+    foreach (var player in ev.Game.Players) {
+      var csPlayer = converter.GetPlayer(player);
+      if (csPlayer == null || !csPlayer.IsValid) continue;
+      var role = roles.GetRoles(player).FirstOrDefault();
+      if (role == null) continue;
+      csPlayer.SetClan(role.Name, false);
+    }
+
     foreach (var inno in ev.Game.GetAlive(typeof(InnocentRole))) {
       var player = converter.GetPlayer(inno);
       player?.SwitchTeam(CsTeam.CounterTerrorist);
     }
+
+    new EventNextlevelChanged(true).FireEvent(false);
 
     var endReason =
       ev.Game.WinningRole != null && ev.Game.WinningRole.GetType()

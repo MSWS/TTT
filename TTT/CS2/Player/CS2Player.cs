@@ -99,7 +99,6 @@ public class CS2Player : IOnlinePlayer {
   public override string ToString() { return $"({getSuffix(Id, 5)}) {Name}"; }
 
   private string getSuffix(string s, int len) {
-    if (s.Length <= len) return s;
-    return s[..len];
+    return s.Length <= len ? s : s[^len..];
   }
 }
