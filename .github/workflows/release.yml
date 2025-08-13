@@ -90,7 +90,7 @@ jobs:
           tag_name: ${{ steps.gitversion.outputs.MajorMinorPatch }}
           body_path: CHANGELOG.md
           prerelease: ${{ github.ref_name != 'main' }}
-          files: build/TTT/**
+          files: build/TTT/*.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
