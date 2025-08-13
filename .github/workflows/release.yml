@@ -3,7 +3,7 @@ name: Release on Tag
 on:
   push:
     tags:
-      - "*"   # runs for any pushed tag
+      - "*"
 
 concurrency:
   group: release-${{ github.ref_name }}
@@ -54,19 +54,19 @@ jobs:
           dotnet restore TTT/Plugin/Plugin.csproj
           dotnet publish TTT/Plugin/Plugin.csproj --no-restore -c Release -o build/TTT
 
-      - name: Package ZIP
+      - name: Package ZIP (TTT-{MajorMinorPatch}.zip)
         shell: bash
         run: |
-          FULL="${{ steps.gitversion.outputs.FullSemVer }}"
+          VER="${{ steps.gitversion.outputs.MajorMinorPatch }}"
           cd build/TTT
-          zip -r "../TTT-${FULL}.zip" .
+          zip -r "../TTT-${VER}.zip" .
           cd -
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: TTT-${{ steps.gitversion.outputs.FullSemVer }}
-          path: build/TTT-${{ steps.gitversion.outputs.FullSemVer }}.zip
+          name: TTT-${{ steps.gitversion.outputs.MajorMinorPatch }}
+          path: build/TTT-${{ steps.gitversion.outputs.MajorMinorPatch }}.zip
           if-no-files-found: error
 
       - name: Check if tag commit is on main
@@ -90,14 +90,40 @@ jobs:
           fi
           echo "prev_tag=$PREV" >> "$GITHUB_OUTPUT"
 
+      - name: Build release notes with full commit list
+        id: notes
+        shell: bash
+        env:
+          REL_TAG: ${{ steps.gitversion.outputs.SemVer }}
+        run: |
+          PREV="${{ steps.prev.outputs.prev_tag }}"
+          if [ -n "$PREV" ]; then
+            RANGE="$PREV..$GITHUB_SHA"
+          else
+            ROOT=$(git rev-list --max-parents=0 HEAD | tail -n1)
+            RANGE="$ROOT..$GITHUB_SHA"
+          fi
+
+          {
+            echo "## Changes"
+            echo
+            git -c core.abbrev=7 log --pretty=format:'- %h %s (%an)' $RANGE
+            echo
+            if [ -n "$PREV" ]; then
+              echo "Compare: https://github.com/${{ github.repository }}/compare/$PREV...$REL_TAG"
+            fi
+          } > release_notes.md
+
+          echo "body_path=release_notes.md" >> "$GITHUB_OUTPUT"
+
       - name: Create GitHub release
         env:
           GH_TOKEN: ${{ github.token }}
         shell: bash
         run: |
-          TAG="${{ steps.gitversion.outputs.SemVer }}"           # release tag from GitVersion
-          FULL="${{ steps.gitversion.outputs.FullSemVer }}"     # for asset name
-          ASSET="build/TTT-${FULL}.zip"
+          TAG="${{ steps.gitversion.outputs.SemVer }}"                   # release tag from GitVersion
+          FILE_VER="${{ steps.gitversion.outputs.MajorMinorPatch }}"     # for asset name
+          ASSET="build/TTT-${FILE_VER}.zip"
           TITLE="$TAG"
 
           PRERELEASE_FLAG=""
@@ -105,15 +131,10 @@ jobs:
             PRERELEASE_FLAG="--prerelease"
           fi
 
-          NOTES_ARGS="--generate-notes"
-          if [ -n "${{ steps.prev.outputs.prev_tag }}" ]; then
-            NOTES_ARGS="$NOTES_ARGS --notes-start-tag ${{ steps.prev.outputs.prev_tag }}"
-          fi
-
           test -f "$ASSET" || { echo "Asset not found: $ASSET"; exit 1; }
 
           gh release create "$TAG" "$ASSET" \
             --title "$TITLE" \
             $PRERELEASE_FLAG \
-            $NOTES_ARGS \
+            --notes-file "${{ steps.notes.outputs.body_path }}" \
             --target "$GITHUB_SHA"
