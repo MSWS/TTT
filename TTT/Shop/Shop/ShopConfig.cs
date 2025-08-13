@@ -1,13 +1,18 @@
+using Microsoft.Extensions.DependencyInjection;
 using TTT.API.Player;
+using TTT.API.Role;
 using TTT.Game.Events.Player;
 using TTT.Game.Roles;
 
 namespace TTT.Shop;
 
-public record ShopConfig {
+public record ShopConfig(IRoleAssigner assigner) {
   private static readonly Type[] roleConcerns = [
     typeof(TraitorRole), typeof(DetectiveRole), typeof(InnocentRole)
   ];
+
+  public ShopConfig(IServiceProvider provider) : this(
+    provider.GetRequiredService<IRoleAssigner>()) { }
 
   public int CreditsForRoundStart { get; init; } = 10;
   public int CreditsForInnoVInnoKill { get; init; } = -4;
@@ -25,10 +30,10 @@ public record ShopConfig {
 
   public virtual int CreditsForKill(IOnlinePlayer attacker,
     IOnlinePlayer victim) {
-    var attackerRole =
-      attacker.Roles.FirstOrDefault(r => roleConcerns.Contains(r.GetType()));
-    var victimRole =
-      victim.Roles.FirstOrDefault(r => roleConcerns.Contains(r.GetType()));
+    var attackerRole = assigner.GetRoles(attacker)
+     .FirstOrDefault(r => roleConcerns.Contains(r.GetType()));
+    var victimRole = assigner.GetRoles(victim)
+     .FirstOrDefault(r => roleConcerns.Contains(r.GetType()));
 
     if (attackerRole is null || victimRole is null) return CreditsForAnyKill;
 
@@ -57,8 +62,7 @@ public record ShopConfig {
     var killer   = ev.Killer;
     var assister = ev.Assister;
 
-    if (victim == killer || victim is null || killer is null)
-      return (null, null);
+    if (victim == killer || killer is null) return (null, null);
 
     var killerCredits = CreditsForKill(killer, victim);
     var assisterCredits =

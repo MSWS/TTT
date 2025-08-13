@@ -24,6 +24,10 @@ public abstract class BaseRole(IServiceProvider provider) : IRole {
   protected readonly IMessenger msg = provider.GetRequiredService<IMessenger>();
 
   protected readonly IServiceProvider Provider = provider;
+
+  protected readonly IRoleAssigner Roles =
+    provider.GetRequiredService<IRoleAssigner>();
+
   public abstract string Id { get; }
   public abstract string Name { get; }
   public abstract Color Color { get; }

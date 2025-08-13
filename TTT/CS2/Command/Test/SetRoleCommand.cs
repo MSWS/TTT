@@ -10,7 +10,11 @@ using TTT.Game.Events.Player;
 namespace TTT.CS2.Command.Test;
 
 public class SetRoleCommand(IServiceProvider provider) : ICommand {
+  private readonly IRoleAssigner assigner =
+    provider.GetRequiredService<IRoleAssigner>();
+
   private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
+
   public void Dispose() { }
 
   public string Name => "setrole";
@@ -33,7 +37,6 @@ public class SetRoleCommand(IServiceProvider provider) : ICommand {
       }
 
     Server.NextWorldUpdate(() => {
-      executor.Roles.Clear();
       var ev = new PlayerRoleAssignEvent(executor, roleToAssign);
       bus.Dispatch(ev);
       if (ev.IsCanceled) {
@@ -41,7 +44,7 @@ public class SetRoleCommand(IServiceProvider provider) : ICommand {
         return;
       }
 
-      executor.Roles.Add(ev.Role);
+      assigner.Write(executor, [ev.Role]);
       ev.Role.OnAssign(executor);
     });
     return Task.FromResult(CommandResult.SUCCESS);

@@ -15,33 +15,36 @@ public class TestRoles {
     }
   }
 
-  public class RoleGreedy : IRole {
+  public class RoleGreedy(IRoleAssigner roles) : IRole {
     public string Id { get; } = "test.role.always";
     public string Name { get; } = "Always Assigned";
     public Color Color { get; } = Color.Green;
 
     public IOnlinePlayer? FindPlayerToAssign(ISet<IOnlinePlayer> players) {
-      return players.FirstOrDefault(p => p.Roles.All(r => r.Id != Id));
+      return players.FirstOrDefault(p
+        => roles.GetRoles(p).All(r => r.Id != Id));
     }
   }
 
-  public class RoleA : IRole {
+  public class RoleA(IRoleAssigner roles) : IRole {
     public string Id { get; } = "test.role.a";
     public string Name { get; } = "Role A";
     public Color Color { get; } = Color.Blue;
 
     public IOnlinePlayer? FindPlayerToAssign(ISet<IOnlinePlayer> players) {
-      return players.FirstOrDefault(p => p.Roles.All(r => r.Id != Id));
+      return players.FirstOrDefault(p
+        => roles.GetRoles(p).All(r => r.Id != Id));
     }
   }
 
-  public class RoleB : IRole {
+  public class RoleB(IRoleAssigner roles) : IRole {
     public string Id { get; } = "test.role.b";
     public string Name { get; } = "Role B";
     public Color Color { get; } = Color.Yellow;
 
     public IOnlinePlayer? FindPlayerToAssign(ISet<IOnlinePlayer> players) {
-      return players.FirstOrDefault(p => p.Roles.All(r => r.Id != Id));
+      return players.FirstOrDefault(p
+        => roles.GetRoles(p).All(r => r.Id != Id));
     }
   }
 }

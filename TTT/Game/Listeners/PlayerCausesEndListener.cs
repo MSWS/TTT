@@ -1,8 +1,6 @@
 using JetBrains.Annotations;
-using Microsoft.Extensions.DependencyInjection;
 using TTT.API.Events;
 using TTT.API.Game;
-using TTT.API.Messages;
 using TTT.API.Role;
 using TTT.Game.Events.Player;
 using TTT.Game.Roles;
@@ -11,7 +9,6 @@ namespace TTT.Game.Listeners;
 
 public class PlayerCausesEndListener(IServiceProvider provider)
   : BaseListener(provider) {
-  private readonly IMessenger msg = provider.GetRequiredService<IMessenger>();
   public override string Name { get; } = nameof(PlayerCausesEndListener);
 
   [EventHandler]

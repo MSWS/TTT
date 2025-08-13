@@ -9,11 +9,11 @@ namespace TTT.CS2;
 public class CS2Body(CRagdollProp ragdoll, IPlayer player) : IBody {
   public CRagdollProp Ragdoll { get; } = ragdoll;
   public IPlayer OfPlayer { get; } = player;
-  public bool IsIdentified { get; private set; }
+  public bool IsIdentified { get; set; }
   public IWeapon? MurderWeapon { get; private set; }
 
   public IPlayer? Killer { get; private set; }
-
+  public string Id { get; } = ragdoll.Index.ToString();
 
   public CS2Body WithWeapon(IWeapon weapon) {
     MurderWeapon = weapon;

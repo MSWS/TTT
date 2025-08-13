@@ -43,10 +43,11 @@ public static class CS2ServiceCollection {
     collection.AddPluginBehavior<CombatHandler>();
     collection.AddPluginBehavior<PropMover>();
     collection.AddPluginBehavior<BodySpawner>();
-    collection.AddPluginBehavior<RoleAssignListener>();
+    collection.AddPluginBehavior<RoleIconsHandler>();
 
     // Listeners
     collection.AddListener<RoundTimerListener>();
+    collection.AddListener<BodyPickupListener>();
 
     collection.AddScoped<IMsgLocalizer, StringLocalizer>();
     collection.AddScoped<IPermissionManager, CS2PermManager>();

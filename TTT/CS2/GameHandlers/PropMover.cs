@@ -56,8 +56,6 @@ public class PropMover(IServiceProvider provider) : IPluginModule {
   public HookResult OnRoundStart(EventRoundStart _, GameEventInfo _1) {
     var entities =
       Utilities.GetAllEntities().Where(ent => ent.IsValid).ToList();
-    foreach (var ent in entities) { }
-
     foreach (var propMultiplayer in from ent in entities
       where ent.DesignerName.Equals("prop_physics_multiplayer")
       select new CPhysicsPropMultiplayer(ent.Handle))
@@ -140,14 +138,6 @@ public class PropMover(IServiceProvider provider) : IPluginModule {
 
     playerOrigin   =  playerOrigin.Clone()!;
     playerOrigin.Z += 64;
-
-    var entOrigin = ent.AbsOrigin;
-    if (entOrigin == null) {
-      playersPressingE.Remove(player);
-      return;
-    }
-
-    entOrigin = entOrigin.Clone()!;
 
     var eyeAngles = playerPawn!.EyeAngles;
 

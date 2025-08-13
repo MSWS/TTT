@@ -19,7 +19,7 @@ public class RoleAssignerTest(IServiceProvider provider) {
     HashSet<IOnlinePlayer> players = [TestPlayer.Random(), TestPlayer.Random()];
 
     assigner.AssignRoles(players, [new TestRoles.RoleNever()]);
-    Assert.Empty(players.SelectMany(p => p.Roles));
+    Assert.Empty(players.SelectMany(p => assigner.GetRoles(p)));
   }
 
   [Fact]
@@ -27,17 +27,18 @@ public class RoleAssignerTest(IServiceProvider provider) {
     var players = new HashSet<IOnlinePlayer>();
 
     assigner.AssignRoles(players, []);
-    Assert.Empty(players.SelectMany(p => p.Roles));
+    Assert.Empty(players.SelectMany(p => assigner.GetRoles(p)));
   }
 
   [Fact]
   public void AssignRole_AssignsToAllPlayers() {
     HashSet<IOnlinePlayer> players = [TestPlayer.Random(), TestPlayer.Random()];
 
-    assigner.AssignRoles(players, [new TestRoles.RoleGreedy()]);
-    Assert.Equal(2, players.SelectMany(p => p.Roles).Count());
+    assigner.AssignRoles(players, [new TestRoles.RoleGreedy(assigner)]);
+    Assert.Equal(2, players.SelectMany(p => assigner.GetRoles(p)).Count());
     Assert.All(players,
-      p => Assert.Equal([new TestRoles.RoleGreedy()], p.Roles));
+      p => Assert.Equal([new TestRoles.RoleGreedy(assigner)],
+        assigner.GetRoles(p)));
   }
 
   // https://www.desmos.com/calculator/d2s9wkztda
@@ -68,10 +69,12 @@ public class RoleAssignerTest(IServiceProvider provider) {
     var roles = new List<IRole>([innoRole, traitorRole, detectiveRole]);
     assigner.AssignRoles(playerList, roles);
 
-    var assignedInnos    = playerList.Count(p => p.Roles.Contains(innoRole));
-    var assignedTraitors = playerList.Count(p => p.Roles.Contains(traitorRole));
+    var assignedInnos =
+      playerList.Count(p => assigner.GetRoles(p).Contains(innoRole));
+    var assignedTraitors =
+      playerList.Count(p => assigner.GetRoles(p).Contains(traitorRole));
     var assignedDetectives =
-      playerList.Count(p => p.Roles.Contains(detectiveRole));
+      playerList.Count(p => assigner.GetRoles(p).Contains(detectiveRole));
 
     Assert.Equal(players, innos + traitors + detectives);
     Assert.Equal(innos, assignedInnos);
@@ -88,10 +91,10 @@ public class RoleAssignerTest(IServiceProvider provider) {
     };
 
     assigner.AssignRoles(players,
-      [new TestRoles.RoleA(), new TestRoles.RoleB()]);
+      [new TestRoles.RoleA(assigner), new TestRoles.RoleB(assigner)]);
 
     foreach (var player in players)
-      Assert.Equal([new TestRoles.RoleB()], player.Roles);
+      Assert.Equal([new TestRoles.RoleB(assigner)], assigner.GetRoles(player));
   }
 
   [Fact]
@@ -110,7 +113,7 @@ public class RoleAssignerTest(IServiceProvider provider) {
         new DetectiveRole(provider)
       ]);
 
-      firstRoles.AddRange(firstPlayer.Roles);
+      firstRoles.AddRange(assigner.GetRoles(firstPlayer));
       if (firstRoles.Count == 2) return;
     }
 

@@ -20,6 +20,8 @@ public interface IGame : IDisposable {
 
   State State { get; set; }
 
+  IRoleAssigner RoleAssigner { get; init; }
+
   /// <summary>
   ///   Attempts to start a game.
   ///   Depending on implementation, this may start a countdown or immediately start the game.
@@ -30,16 +32,6 @@ public interface IGame : IDisposable {
   void EndGame(EndReason? reason = null);
 
   bool IsInProgress() { return State is State.COUNTDOWN or State.IN_PROGRESS; }
-
-  ISet<IOnlinePlayer> GetOfRole(Type roleType) {
-    if (!typeof(IRole).IsAssignableFrom(roleType))
-      throw new ArgumentException(
-        "roleType must be a type that implements IRole", nameof(roleType));
-
-    return Players.OfType<IOnlinePlayer>()
-     .Where(p => p.Roles.Any(r => r.GetType().IsAssignableTo(roleType)))
-     .ToHashSet();
-  }
 
   ISet<IOnlinePlayer> GetAlive() {
     return Players.OfType<IOnlinePlayer>().Where(p => p.IsAlive).ToHashSet();
@@ -52,11 +44,11 @@ public interface IGame : IDisposable {
 
     if (!loose)
       return GetAlive()
-       .Where(p => p.Roles.Any(r => r.GetType() == roleType))
+       .Where(p => RoleAssigner.GetRoles(p).Any(r => r.GetType() == roleType))
        .ToHashSet();
 
     return GetAlive()
-     .Where(p => p.Roles.Any(r => r.GetType().IsAssignableTo(roleType)))
+     .Where(p => RoleAssigner.GetRoles(p).Any(roleType.IsInstanceOfType))
      .ToHashSet();
   }
 

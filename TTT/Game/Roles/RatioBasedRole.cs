@@ -13,11 +13,12 @@ public abstract class RatioBasedRole(IServiceProvider provider)
 
   public override IOnlinePlayer?
     FindPlayerToAssign(ISet<IOnlinePlayer> players) {
-    var currentCount     = players.Count(p => p.Roles.Any(r => r.Id == Id));
+    var currentCount =
+      players.Count(p => Roles.GetRoles(p).Any(r => r.Id == Id));
     var targetCountValue = TargetCount(players.Count);
 
     return currentCount >= targetCountValue ?
       null : // No need to assign this role
-      players.FirstOrDefault(p => p.Roles.Count == 0);
+      players.FirstOrDefault(p => Roles.GetRoles(p).Count == 0);
   }
 }

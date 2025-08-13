@@ -1,7 +1,6 @@
 using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using TTT.API.Player;
-using TTT.API.Role;
 
 namespace TTT.CS2.Player;
 
@@ -47,7 +46,7 @@ public class CS2Player : IOnlinePlayer {
   public string Id { get; }
   public string Name { get; }
 
-  public ICollection<IRole> Roles { get; } = [];
+  // public ICollection<IRole> Roles { get; } = [];
 
   public int Health {
     get => Player?.Pawn.Value != null ? Player.Pawn.Value.Health : 0;
@@ -97,11 +96,7 @@ public class CS2Player : IOnlinePlayer {
     return player.SteamID.ToString();
   }
 
-  public override string ToString() {
-    return Roles.Count != 0 ?
-      $"[{getSuffix(Id, 5)}] {Name} ({Roles.First().Name.First(char.IsAsciiLetter)})" :
-      $"[{getSuffix(Id, 5)}] {Name}";
-  }
+  public override string ToString() { return $"({getSuffix(Id, 5)}) {Name}"; }
 
   private string getSuffix(string s, int len) {
     if (s.Length <= len) return s;

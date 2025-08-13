@@ -1,17 +1,12 @@
 using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
-using Microsoft.Extensions.DependencyInjection;
 using TTT.API;
-using TTT.API.Messages;
 using TTT.API.Player;
 
 namespace TTT.CS2.Player;
 
-public class CCPlayerConverter(IServiceProvider provider) : IPluginModule,
+public class CCPlayerConverter : IPluginModule,
   IPlayerConverter<CCSPlayerController> {
-  private readonly Lazy<IMessenger> msg =
-    new(provider.GetRequiredService<IMessenger>);
-
   private readonly Dictionary<string, CS2Player> playerCache = new();
 
   public IPlayer GetPlayer(CCSPlayerController player) {

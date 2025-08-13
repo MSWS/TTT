@@ -10,9 +10,13 @@ public class PlayerKillListener(IServiceProvider provider) : IListener {
 
   private readonly ShopConfig config =
     provider.GetService<IStorage<ShopConfig>>()?.Load().GetAwaiter().GetResult()
-    ?? new ShopConfig();
+    ?? new ShopConfig(provider);
 
-  private readonly IShop shop = provider.GetRequiredService<IShop>();
+  // private readonly IRoleAssigner roles =
+  //   provider.GetRequiredService<IRoleAssigner>();
+
+  // private readonly IShop shop = provider.GetRequiredService<IShop>();
+
   public void Dispose() { bus.UnregisterListener(this); }
 
   [EventHandler]
@@ -26,11 +30,11 @@ public class PlayerKillListener(IServiceProvider provider) : IListener {
     // TODO: We'll need to only give credits once the body is ID'd,
     // otherwise obvious meta-gaming can happen.
 
-    if (killer != null && killerReward.HasValue)
-      shop.AddBalance(killer, killerReward.Value,
-        "Killed " + ev.Victim?.Roles.First());
-    if (assister != null && assisterReward.HasValue)
-      shop.AddBalance(assister, assisterReward.Value,
-        "Assist " + ev.Killer?.Name);
+    // if (killer != null && killerReward.HasValue)
+    //   shop.AddBalance(killer, killerReward.Value,
+    //     "Killed " + ev.Victim?.Roles.First());
+    // if (assister != null && assisterReward.HasValue)
+    //   shop.AddBalance(assister, assisterReward.Value,
+    //     "Assist " + ev.Killer?.Name);
   }
 }

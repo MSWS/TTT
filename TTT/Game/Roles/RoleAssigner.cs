@@ -4,24 +4,34 @@ using TTT.API.Messages;
 using TTT.API.Player;
 using TTT.API.Role;
 using TTT.Game.Events.Player;
-using TTT.Locale;
 
 namespace TTT.Game.Roles;
 
 public class RoleAssigner(IServiceProvider provider) : IRoleAssigner {
-  private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
+  private readonly IDictionary<IPlayer, ICollection<IRole>> assignedRoles =
+    new Dictionary<IPlayer, ICollection<IRole>>();
 
-  private readonly IMsgLocalizer locale =
-    provider.GetRequiredService<IMsgLocalizer>();
+  private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
 
   private readonly IMessenger? onlineMessenger =
     provider.GetService<IMessenger>();
 
   public void AssignRoles(ISet<IOnlinePlayer> players, IList<IRole> roles) {
-    foreach (var onlinePlayer in players.ToList()) onlinePlayer.Roles.Clear();
+    assignedRoles.Clear();
+    // foreach (var onlinePlayer in players.ToList()) onlinePlayer.Roles.Clear();
     var  shuffled = players.OrderBy(_ => Guid.NewGuid()).ToHashSet();
     bool roleAssigned;
     do { roleAssigned = tryAssignRole(shuffled, roles); } while (roleAssigned);
+  }
+
+  public Task<ICollection<IRole>?> Load(IPlayer key) {
+    assignedRoles.TryGetValue(key, out var roles);
+    return Task.FromResult(roles);
+  }
+
+  public Task Write(IPlayer key, ICollection<IRole> newData) {
+    assignedRoles[key] = newData;
+    return Task.CompletedTask;
   }
 
   private bool tryAssignRole(HashSet<IOnlinePlayer> players,
@@ -35,7 +45,9 @@ public class RoleAssigner(IServiceProvider provider) : IRoleAssigner {
 
       if (ev.IsCanceled) continue;
 
-      player.Roles.Add(ev.Role);
+      if (!assignedRoles.ContainsKey(player))
+        assignedRoles[player] = new List<IRole>();
+      assignedRoles[player].Add(ev.Role);
       ev.Role.OnAssign(player);
 
       onlineMessenger?.BackgroundMsgAll(

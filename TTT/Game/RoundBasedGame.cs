@@ -45,6 +45,9 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
 
   public IRole? WinningRole { get; set; }
 
+  public IRoleAssigner RoleAssigner { get; init; } = provider
+   .GetRequiredService<IRoleAssigner>();
+
   public State State {
     set {
       var ev = new GameStateUpdateEvent(this, value);
@@ -130,7 +133,7 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
     foreach (var player in online) inventory.RemoveAllWeapons(player);
 
     StartedAt = DateTime.Now;
-    assigner.AssignRoles(online, Roles);
+    RoleAssigner.AssignRoles(online, Roles);
     players.AddRange(online);
 
     var traitors    = ((IGame)this).GetAlive(typeof(TraitorRole)).Count;
@@ -140,9 +143,6 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
   }
 
   #region classDeps
-
-  private readonly IRoleAssigner assigner =
-    provider.GetRequiredService<IRoleAssigner>();
 
   private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
 

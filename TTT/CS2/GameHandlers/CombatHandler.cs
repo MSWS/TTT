@@ -5,7 +5,6 @@ using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using TTT.API;
 using TTT.API.Events;
-using TTT.API.Messages;
 using TTT.API.Player;
 using TTT.Game.Events.Player;
 
@@ -39,6 +38,30 @@ public class CombatHandler(IServiceProvider provider) : IPluginModule {
     Server.NextWorldUpdateAsync(() => bus.Dispatch(deathEvent));
 
     info.DontBroadcast = true;
+    var victimStats = player.ActionTrackingServices?.MatchStats;
+    if (victimStats != null) {
+      victimStats.Deaths -= 1;
+      Utilities.SetStateChanged(player, "CCSPlayerController",
+        "m_pActionTrackingServices");
+    }
+
+    var killerStats = ev.Attacker?.ActionTrackingServices?.MatchStats;
+    if (killerStats != null) {
+      killerStats.Kills  -= 1;
+      killerStats.Damage -= ev.DmgHealth;
+
+      if (ev.Attacker != null)
+        Utilities.SetStateChanged(ev.Attacker, "CCSPlayerController",
+          "m_pActionTrackingServices");
+
+      var assisterStats = ev.Assister?.ActionTrackingServices?.MatchStats;
+      if (assisterStats != null && assisterStats != killerStats)
+        assisterStats.Assists -= 1;
+
+      if (ev.Assister != null)
+        Utilities.SetStateChanged(ev.Assister, "CCSPlayerController",
+          "m_pActionTrackingServices");
+    }
 
     // These delays are necessary for the game engine
     Server.NextWorldUpdate(() => {

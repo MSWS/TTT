@@ -11,9 +11,9 @@ using TTT.CS2.Roles;
 using TTT.Game.Events.Game;
 using TTT.Game.Events.Player;
 
-namespace TTT.CS2.Listeners;
+namespace TTT.CS2.GameHandlers;
 
-public class RoleAssignListener(IServiceProvider provider)
+public class RoleIconsHandler(IServiceProvider provider)
   : IPluginModule, IListener {
   private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
 
@@ -30,7 +30,7 @@ public class RoleAssignListener(IServiceProvider provider)
 
   public void Dispose() { bus.UnregisterListener(this); }
 
-  public string Name => nameof(RoleAssignListener);
+  public string Name => nameof(RoleIconsHandler);
   public string Version => GitVersionInformation.FullSemVer;
 
   public void Start() { }
@@ -87,6 +87,7 @@ public class RoleAssignListener(IServiceProvider provider)
     foreach (var icon in roleIcon) traitorIcons.Add(icon);
   }
 
+  // ReSharper disable once PossiblyImpureMethodCallOnReadonlyVariable
   private void onTransmit(CCheckTransmitInfoList infoList) {
     foreach (var (info, player) in infoList) {
       if (player == null || !player.IsValid) continue;

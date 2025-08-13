@@ -3,20 +3,21 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Reactive.Testing;
 using TTT.API.Game;
 using TTT.API.Player;
+using TTT.API.Role;
 using Xunit;
 
 namespace TTT.Test.Game.Round;
 
 public partial class RoundBasedGameTest {
   private readonly IPlayerFinder finder;
-
   private readonly IGame game;
-
+  private readonly IRoleAssigner roles;
   private readonly TestScheduler scheduler;
 
   public RoundBasedGameTest(IServiceProvider provider) {
     finder    = provider.GetRequiredService<IPlayerFinder>();
     scheduler = provider.GetRequiredService<TestScheduler>();
+    roles     = provider.GetRequiredService<IRoleAssigner>();
     var manager = provider.GetRequiredService<IGameManager>();
     game = manager.CreateGame() ?? throw new InvalidOperationException();
   }
@@ -93,12 +94,7 @@ public partial class RoundBasedGameTest {
     // Do not start the game
     Assert.Empty(game.Players);
 
-    foreach (var player in game.Players) {
-      if (player is not IOnlinePlayer testPlayer)
-        throw new InvalidOperationException("Player is not an online player.");
-
-      Assert.Empty(testPlayer.Roles);
-    }
+    foreach (var player in game.Players) Assert.Empty(roles.GetRoles(player));
   }
 
   [Fact]
@@ -109,12 +105,8 @@ public partial class RoundBasedGameTest {
     game.Start();
 
     Assert.Equal(2, game.Players.Count);
-    foreach (var player in game.Players) {
-      if (player is not IOnlinePlayer testPlayer)
-        throw new InvalidOperationException("Player is not an online player.");
-
-      Assert.Equal(1, testPlayer.Roles.Count);
-    }
+    foreach (var player in game.Players)
+      Assert.Equal(1, roles.GetRoles(player).Count);
   }
 
   [Fact]
