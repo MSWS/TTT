@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using TTT.API.Game;
 using TTT.API.Messages;
 using TTT.API.Player;
+using TTT.Locale;
 
 namespace TTT.Game.Loggers;
 
@@ -14,6 +15,9 @@ public class SimpleLogger(IServiceProvider provider) : IActionLogger {
 
   private readonly IScheduler scheduler = provider
    .GetRequiredService<IScheduler>();
+
+  private readonly IMsgLocalizer locale =
+    provider.GetRequiredService<IMsgLocalizer>();
 
   private DateTime? epoch;
 
@@ -43,11 +47,13 @@ public class SimpleLogger(IServiceProvider provider) : IActionLogger {
   }
 
   public void PrintLogs() {
+    msg.Value.BackgroundMsgAll(locale[GameMsgs.GAME_LOGS_HEADER]);
     foreach (var (time, action) in GetActions())
       msg.Value.BackgroundMsgAll($"{formatTime(time)} {action.Format()}");
   }
 
   public void PrintLogs(IOnlinePlayer? player) {
+    msg.Value.BackgroundMsg(player, locale[GameMsgs.GAME_LOGS_HEADER]);
     foreach (var (time, action) in GetActions())
       msg.Value.BackgroundMsg(player, $"{formatTime(time)} {action.Format()}");
   }

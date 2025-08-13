@@ -11,8 +11,8 @@ public class DamagedAction(IPlayer victim, IPlayer? attacker, string? weapon,
 
   public string? Weapon { get; } = weapon;
   public int Damage { get; } = damage;
-  public IPlayer Player { get; } = victim;
-  public IPlayer? Other { get; } = attacker;
+  public IPlayer Player { get; } = attacker;
+  public IPlayer? Other { get; } = victim;
   public string Id => "basegame.action.attack";
   public string Verb => "damaged";
   public string Details => $"for {Damage} damage with {Weapon}";
