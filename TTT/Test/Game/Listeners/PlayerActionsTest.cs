@@ -1,6 +1,7 @@
 ﻿using TTT.Game.Actions;
 using TTT.Game.Events.Player;
 using TTT.Game.Listeners;
+using TTT.Game.Listeners.Loggers;
 using Xunit;
 
 namespace TTT.Test.Game.Listeners;
@@ -8,7 +9,7 @@ namespace TTT.Test.Game.Listeners;
 public class PlayerActionsTest(IServiceProvider provider) : GameTest(provider) {
   [Fact]
   public void Player_Kill_ShouldBeLogged() {
-    Bus.RegisterListener(new GamePlayerActionsListener(Provider));
+    Bus.RegisterListener(new PlayerActionsLogger(Provider));
 
     var (alice, bob, game) = CreateActiveGame();
 
@@ -22,7 +23,7 @@ public class PlayerActionsTest(IServiceProvider provider) : GameTest(provider) {
 
   [Fact]
   public void Player_Damage_ShouldBeLogged() {
-    Bus.RegisterListener(new GamePlayerActionsListener(Provider));
+    Bus.RegisterListener(new PlayerActionsLogger(Provider));
 
     var (alice, bob, game) = CreateActiveGame();
 
@@ -35,7 +36,7 @@ public class PlayerActionsTest(IServiceProvider provider) : GameTest(provider) {
 
   [Fact]
   public void Player_RoleAssignment_ShouldBeLogged() {
-    Bus.RegisterListener(new GamePlayerActionsListener(Provider));
+    Bus.RegisterListener(new PlayerActionsLogger(Provider));
 
     var (_, _, game) = CreateActiveGame();
 

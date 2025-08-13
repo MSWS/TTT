@@ -3,11 +3,11 @@ using TTT.API.Events;
 using TTT.Game.Actions;
 using TTT.Game.Events.Player;
 
-namespace TTT.Game.Listeners;
+namespace TTT.Game.Listeners.Loggers;
 
-public class GamePlayerActionsListener(IServiceProvider provider)
+public class PlayerActionsLogger(IServiceProvider provider)
   : BaseListener(provider) {
-  public override string Name => nameof(GamePlayerActionsListener);
+  public override string Name => nameof(PlayerActionsLogger);
 
   [EventHandler]
   [UsedImplicitly]

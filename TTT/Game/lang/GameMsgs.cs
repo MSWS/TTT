@@ -1,4 +1,5 @@
-﻿using TTT.API.Role;
+﻿using TTT.API.Player;
+using TTT.API.Role;
 using TTT.Locale;
 
 // ReSharper disable InconsistentNaming
@@ -37,6 +38,13 @@ public static class GameMsgs {
 
   public static IMsg NOT_ENOUGH_PLAYERS(int minNeeded) {
     return MsgFactory.Create(nameof(NOT_ENOUGH_PLAYERS), minNeeded);
+  }
+
+  public static IMsg
+    BODY_IDENTIFIED(IOnlinePlayer identifier, IPlayer ofPlayer, IRole role) {
+    return MsgFactory.Create(nameof(BODY_IDENTIFIED),
+      identifier.ToString() ?? "null", ofPlayer.ToString() ?? "null",
+      role.ToString() ?? "null");
   }
 
   #region COMMANDS

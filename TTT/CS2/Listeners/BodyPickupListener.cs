@@ -3,18 +3,25 @@ using CounterStrikeSharp.API.Core;
 using Microsoft.Extensions.DependencyInjection;
 using TTT.API.Events;
 using TTT.API.Game;
+using TTT.API.Messages;
 using TTT.API.Player;
 using TTT.API.Role;
 using TTT.CS2.Events;
+using TTT.CS2.Extensions;
 using TTT.Game;
 using TTT.Game.Events.Body;
 using TTT.Game.Events.Game;
+using TTT.Locale;
 
 namespace TTT.CS2.Listeners;
 
 public class BodyPickupListener(IServiceProvider provider) : IListener {
   private readonly Dictionary<CBaseEntity, IBody> bodyCache = new();
   private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
+  private readonly IMessenger msg = provider.GetRequiredService<IMessenger>();
+
+  private readonly IMsgLocalizer locale =
+    provider.GetRequiredService<IMsgLocalizer>();
 
   private readonly IRoleAssigner roles =
     provider.GetRequiredService<IRoleAssigner>();
@@ -50,8 +57,10 @@ public class BodyPickupListener(IServiceProvider provider) : IListener {
     if (!bodyCache.TryGetValue(prop, out var body)) return;
     if (body.IsIdentified) return;
 
-    var identifyEvent =
-      new BodyIdentifyEvent(body, (ev.Player as IOnlinePlayer)!);
+    if (ev.Player is not IOnlinePlayer online)
+      throw new InvalidOperationException("Player is not an online player.");
+
+    var identifyEvent = new BodyIdentifyEvent(body, online);
 
     bus.Dispatch(identifyEvent);
     if (identifyEvent.IsCanceled) return;
@@ -59,5 +68,10 @@ public class BodyPickupListener(IServiceProvider provider) : IListener {
     body.IsIdentified = true;
     var role = roles.GetRoles(body.OfPlayer);
     if (role.Count == 0) return;
+    var primaryRole = role.First();
+
+    prop.SetColor(primaryRole.Color);
+    msg.MessageAll(
+      locale[GameMsgs.BODY_IDENTIFIED(online, body.OfPlayer, primaryRole)]);
   }
 }
