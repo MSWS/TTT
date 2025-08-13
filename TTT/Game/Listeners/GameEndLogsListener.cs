@@ -8,11 +8,9 @@ public class GameEndLogsListener(IServiceProvider provider)
   : BaseListener(provider) {
   public override string Name => nameof(GameEndLogsListener);
 
-  [EventHandler(IgnoreCanceled = true, Priority = Priority.LOW)]
+  [EventHandler(IgnoreCanceled = true, Priority = Priority.MONITOR)]
   public void OnGameEnd(GameStateUpdateEvent ev) {
     if (ev.NewState != State.FINISHED) return;
-    var logs = ev.Game.Logger.GetActions();
-    foreach (var (timestamp, action) in logs)
-      _ = Messenger.BackgroundMsgAll($"[{timestamp}] {action.Format()}");
+    ev.Game.Logger.PrintLogs();
   }
 }

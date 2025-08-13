@@ -22,6 +22,7 @@ public class CS2CommandManager(IServiceProvider provider)
 
   public void Start(BasePlugin? basePlugin, bool hotReload) {
     plugin = basePlugin;
+    base.Start();
 
     RegisterCommand(new TTTCommand(Provider));
     RegisterCommand(new TestCommand(Provider));
@@ -29,10 +30,8 @@ public class CS2CommandManager(IServiceProvider provider)
     foreach (var command in Provider.GetServices<ICommand>()) command.Start();
   }
 
-  public void Dispose() { }
-  public string Name => "CommandManager";
-  public string Version => GitVersionInformation.FullSemVer;
-  public void Start() { }
+  public override string Name => "CommandManager";
+  public override string Version => GitVersionInformation.FullSemVer;
 
   public override bool RegisterCommand(ICommand command) {
     command.Start();

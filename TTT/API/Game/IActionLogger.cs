@@ -1,4 +1,6 @@
-﻿namespace TTT.API.Game;
+﻿using TTT.API.Player;
+
+namespace TTT.API.Game;
 
 public interface IActionLogger {
   /// <summary>
@@ -13,4 +15,7 @@ public interface IActionLogger {
   ///   Clears all logged actions.
   /// </summary>
   void ClearActions();
+
+  void PrintLogs();
+  void PrintLogs(IOnlinePlayer? player);
 }

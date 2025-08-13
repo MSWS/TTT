@@ -16,4 +16,4 @@ GAME_STATE_STARTED: "%PREFIX%{lime}Roles assigned! {grey}There {0} {darkred}{1}{
 GAME_STATE_ENDED_TEAM_WON: "%PREFIX%{darkblue}GAME! {default}{0}s {default}won the game!"
 GAME_STATE_ENDED_OTHER: "%PREFIX%{blue}GAME! {default}{0}{grey}."
 NOT_ENOUGH_PLAYERS: "%PREFIX%{red}Game was canceled due having fewer than {yellow}{0}{grey} player%s%."
-BODY_IDENTIFIED: "%PREFIX%{blue}{0}{grey} identified the body of {darkred}{1}{grey}, they were %an% {2}!"
+BODY_IDENTIFIED: "%PREFIX%{lightblue}{0}{grey} identified the body of {blue}{1}{grey}, they were %an% {2}{grey}!"

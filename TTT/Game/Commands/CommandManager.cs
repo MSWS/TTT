@@ -1,11 +1,13 @@
 using Microsoft.Extensions.DependencyInjection;
+using TTT.API;
 using TTT.API.Command;
 using TTT.API.Player;
 using TTT.Locale;
 
 namespace TTT.Game.Commands;
 
-public class CommandManager(IServiceProvider provider) : ICommandManager {
+public class CommandManager(IServiceProvider provider)
+  : ICommandManager, ITerrorModule {
   protected readonly Dictionary<string, ICommand> Commands = new();
 
   protected readonly IMsgLocalizer Localizer =
@@ -80,4 +82,10 @@ public class CommandManager(IServiceProvider provider) : ICommandManager {
       GameMsgs.GENERIC_NO_PERMISSION_RANK(string.Join(", ",
         command.RequiredGroups))]);
   }
+
+  public virtual string Name => "base.commands";
+  public virtual string Version => GitVersionInformation.FullSemVer;
+  public void Dispose() { }
+
+  public virtual void Start() { RegisterCommand(new LogsCommand(Provider)); }
 }

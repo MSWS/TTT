@@ -1,4 +1,5 @@
-﻿using TTT.API.Player;
+﻿using CounterStrikeSharp.API.Modules.Utils;
+using TTT.API.Player;
 using TTT.API.Role;
 using TTT.Locale;
 
@@ -42,9 +43,8 @@ public static class GameMsgs {
 
   public static IMsg
     BODY_IDENTIFIED(IOnlinePlayer identifier, IPlayer ofPlayer, IRole role) {
-    return MsgFactory.Create(nameof(BODY_IDENTIFIED),
-      identifier.ToString() ?? "null", ofPlayer.ToString() ?? "null",
-      role.ToString() ?? "null");
+    return MsgFactory.Create(nameof(BODY_IDENTIFIED), identifier.Name ?? "null",
+      ofPlayer.Name ?? "null", role.Name ?? "null");
   }
 
   #region COMMANDS
