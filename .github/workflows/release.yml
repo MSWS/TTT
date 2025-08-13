@@ -37,25 +37,24 @@ jobs:
         id: gitversion
         uses: gittools/actions/gitversion/execute@v3
 
-      - name: Build
+      - name: Build Locale
         run: |
-          dotnet restore
-          dotnet publish -c Release -o publish
+          mkdir -p build/TTT/lang
+          dotnet restore Locale/Locale.csproj
+          dotnet build Locale/Locale.csproj --no-restore -c Release
+          cp lang/*.json build/TTT/lang
 
-      - name: Package artifact
+      - name: Publish Plugin
         run: |
-          cd publish
-          zip -r ../artifact-${{ steps.gitversion.outputs.SemVer }}.zip .
-          cd -
-          ls -lh artifact-${{ steps.gitversion.outputs.SemVer }}.zip
+          dotnet restore TTT/Plugin/Plugin.csproj
+          dotnet publish TTT/Plugin/Plugin.csproj --no-restore -c Release -o build/TTT
 
-      - name: Upload artifact to workflow run
+      - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: build-${{ steps.gitversion.outputs.SemVer }}
-          path: artifact-${{ steps.gitversion.outputs.SemVer }}.zip
+          name: TTT
+          path: build/TTT
           if-no-files-found: error
-          retention-days: 30
 
       - name: Check if tag commit is on main
         id: branch_check
