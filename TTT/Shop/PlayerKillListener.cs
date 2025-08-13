@@ -35,6 +35,5 @@ public class PlayerKillListener(IServiceProvider provider) : IListener {
     //     "Killed " + ev.Victim?.Roles.First());
     // if (assister != null && assisterReward.HasValue)
     //   shop.AddBalance(assister, assisterReward.Value,
-    //     "Assist " + ev.Killer?.Name);
   }
 }
