@@ -1,140 +1,87 @@
-name: Release on Tag
+name: Auto Release on SemVer Change
 
 on:
   push:
-    tags:
-      - "*"
-
-concurrency:
-  group: release-${{ github.ref_name }}
-  cancel-in-progress: false
+    branches:
+      - main
+      - dev
 
 permissions:
   contents: write
 
 jobs:
-  build-and-release:
+  auto-release:
     runs-on: ubuntu-latest
-    env:
-      DOTNET_CLI_TELEMETRY_OPTOUT: 1
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
+      # 1. Calculate version using GitVersion
+      - name: Install GitVersion
+        uses: gittools/actions/gitversion/setup@v4
         with:
-          dotnet-version: "8.0.x"
+          versionSpec: '6.3.x'
 
-      - name: Setup GitVersion
-        uses: gittools/actions/gitversion/setup@v3
-        with:
-          versionSpec: "5.x"
-
-      - name: Determine version with GitVersion
+      - name: Run GitVersion
         id: gitversion
-        uses: gittools/actions/gitversion/execute@v3
+        uses: gittools/actions/gitversion/execute@v4
 
-      - name: Build Locale
-        shell: bash
+      # 2. Get latest tag
+      - name: Get latest tag
+        id: latest_tag
         run: |
-          mkdir -p build/TTT/lang
-          dotnet restore Locale/Locale.csproj
-          dotnet build Locale/Locale.csproj --no-restore -c Release
-          shopt -s nullglob
-          files=(lang/*.json)
-          if [ ${#files[@]} -gt 0 ]; then
-            cp "${files[@]}" build/TTT/lang/
-          fi
-
-      - name: Publish Plugin
-        run: |
-          dotnet restore TTT/Plugin/Plugin.csproj
-          dotnet publish TTT/Plugin/Plugin.csproj --no-restore -c Release -o build/TTT
-
-      - name: Package ZIP (TTT-{MajorMinorPatch}.zip)
-        shell: bash
-        run: |
-          VER="${{ steps.gitversion.outputs.MajorMinorPatch }}"
-          cd build/TTT
-          zip -r "../TTT-${VER}.zip" .
-          cd -
-
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: TTT-${{ steps.gitversion.outputs.MajorMinorPatch }}
-          path: build/TTT-${{ steps.gitversion.outputs.MajorMinorPatch }}.zip
-          if-no-files-found: error
-
-      - name: Check if tag commit is on main
-        id: branch_check
-        shell: bash
-        run: |
-          if git branch -r --contains "$GITHUB_SHA" | grep -qE 'origin/main'; then
-            echo "is_main=true" >> "$GITHUB_OUTPUT"
+          if git describe --tags --abbrev=0 >/dev/null 2>&1; then
+            echo "tag=$(git describe --tags --abbrev=0)" >> $GITHUB_OUTPUT
           else
-            echo "is_main=false" >> "$GITHUB_OUTPUT"
+            echo "tag=0.0.0" >> $GITHUB_OUTPUT
           fi
 
-      - name: Find previous tag
-        id: prev
-        shell: bash
+      # 3. Tag if new version
+      - name: Create and push new tag
+        if: steps.gitversion.outputs.MajorMinorPatch != steps.latest_tag.outputs.tag
         run: |
-          git fetch --tags --force
-          PREV=$(git describe --tags --abbrev=0 "${GITHUB_SHA}^" 2>/dev/null || true)
-          if [ -z "$PREV" ]; then
-            PREV=$(git tag --sort=-creatordate | grep -v -x "${GITHUB_REF_NAME}" | head -n 1 || true)
-          fi
-          echo "prev_tag=$PREV" >> "$GITHUB_OUTPUT"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git tag ${{ steps.gitversion.outputs.MajorMinorPatch }}
+          git push origin ${{ steps.gitversion.outputs.MajorMinorPatch }}
 
-      - name: Build release notes with full commit list
-        id: notes
-        shell: bash
-        env:
-          REL_TAG: ${{ steps.gitversion.outputs.SemVer }}
+      # 4. Determine previous tag for changelog
+      - name: Determine previous relevant tag
+        id: prev_tag
         run: |
-          PREV="${{ steps.prev.outputs.prev_tag }}"
-          if [ -n "$PREV" ]; then
-            RANGE="$PREV..$GITHUB_SHA"
+          branch="${GITHUB_REF_NAME}"
+          if [[ "$branch" == "main" ]]; then
+            prev=$(git tag --sort=-creatordate | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' | sed -n 2p)
           else
-            ROOT=$(git rev-list --max-parents=0 HEAD | tail -n1)
-            RANGE="$ROOT..$GITHUB_SHA"
+            prev=$(git tag --sort=-creatordate | grep -E '^[0-9]+\.[0-9]+\.[0-9]+-' | sed -n 2p)
           fi
+          echo "tag=${prev:-0.0.0}" >> $GITHUB_OUTPUT
 
-          {
-            echo "## Changes"
-            echo
-            git -c core.abbrev=7 log --pretty=format:'- %h %s (%an)' $RANGE
-            echo
-            if [ -n "$PREV" ]; then
-              echo "Compare: https://github.com/${{ github.repository }}/compare/$PREV...$REL_TAG"
-            fi
-          } > release_notes.md
-
-          echo "body_path=release_notes.md" >> "$GITHUB_OUTPUT"
-
-      - name: Create GitHub release
+      # 5. Generate changelog
+      - name: Generate changelog
+        run: |
+          gh api repos/${{ github.repository }}/compare/${{ steps.prev_tag.outputs.tag }}...${{ steps.gitversion.outputs.MajorMinorPatch }} \
+            --jq '.commits[].commit.message' > CHANGELOG.md
         env:
           GH_TOKEN: ${{ github.token }}
-        shell: bash
+
+      # 6. Create release
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ steps.gitversion.outputs.MajorMinorPatch }}
+          body_path: CHANGELOG.md
+          prerelease: ${{ github.ref_name != 'main' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # 7. Cleanup old pre-releases
+      - name: Delete old pre-releases
+        if: github.ref_name != 'main'
         run: |
-          TAG="${{ steps.gitversion.outputs.MajorMinorPatch }}"                   # release tag from GitVersion
-          FILE_VER="${{ steps.gitversion.outputs.MajorMinorPatch }}"     # for asset name
-          ASSET="build/TTT-${FILE_VER}.zip"
-          TITLE="$TAG"
-
-          PRERELEASE_FLAG=""
-          if [ "${{ steps.branch_check.outputs.is_main }}" != "true" ]; then
-            PRERELEASE_FLAG="--prerelease"
-          fi
-
-          test -f "$ASSET" || { echo "Asset not found: $ASSET"; exit 1; }
-
-          gh release create "$TAG" "$ASSET" \
-            --title "$TITLE" \
-            $PRERELEASE_FLAG \
-            --notes-file "${{ steps.notes.outputs.body_path }}" \
-            --target "$GITHUB_SHA"
+          gh release list --limit 100 --json name,isPrerelease \
+            --jq '.[] | select(.isPrerelease) | .name' | tail -n +11 | \
+            xargs -r -I {} gh release delete "{}" -y
+        env:
+          GH_TOKEN: ${{ github.token }}
