@@ -21,12 +21,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0   # required for GitVersion and tag history
+          fetch-depth: 0
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: "8.0.x" # adjust if needed
+          dotnet-version: "8.0.x"
 
       - name: Setup GitVersion
         uses: gittools/actions/gitversion/setup@v3
@@ -38,22 +38,34 @@ jobs:
         uses: gittools/actions/gitversion/execute@v3
 
       - name: Build Locale
+        shell: bash
         run: |
           mkdir -p build/TTT/lang
           dotnet restore Locale/Locale.csproj
           dotnet build Locale/Locale.csproj --no-restore -c Release
-          cp lang/*.json build/TTT/lang
+          shopt -s nullglob
+          files=(lang/*.json)
+          if [ ${#files[@]} -gt 0 ]; then
+            cp "${files[@]}" build/TTT/lang/
+          fi
 
       - name: Publish Plugin
         run: |
           dotnet restore TTT/Plugin/Plugin.csproj
           dotnet publish TTT/Plugin/Plugin.csproj --no-restore -c Release -o build/TTT
 
+      - name: Package ZIP
+        shell: bash
+        run: |
+          cd build/TTT
+          zip -r "../TTT-${{ steps.gitversion.outputs.SemVer }}.zip" .
+          cd -
+
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: TTT
-          path: build/TTT
+          name: TTT-${{ steps.gitversion.outputs.SemVer }}
+          path: build/TTT-${{ steps.gitversion.outputs.SemVer }}.zip
           if-no-files-found: error
 
       - name: Check if tag commit is on main
@@ -71,10 +83,8 @@ jobs:
         shell: bash
         run: |
           git fetch --tags --force
-          # nearest prior tag reachable from this commit, excluding the current tag
           PREV=$(git describe --tags --abbrev=0 "${GITHUB_SHA}^" 2>/dev/null || true)
           if [ -z "$PREV" ]; then
-            # fallback to previous tag by creation date
             PREV=$(git tag --sort=-creatordate | grep -v -x "${GITHUB_REF_NAME}" | head -n 1 || true)
           fi
           echo "prev_tag=$PREV" >> "$GITHUB_OUTPUT"
@@ -82,8 +92,10 @@ jobs:
       - name: Create GitHub release
         env:
           GH_TOKEN: ${{ github.token }}
+        shell: bash
         run: |
-          TAG="${{ steps.gitversion.outputs.SemVer }}"   # release tag from GitVersion
+          TAG="${{ steps.gitversion.outputs.SemVer }}"
+          ASSET="build/TTT-${TAG}.zip"
           TITLE="$TAG"
           PRERELEASE_FLAG=""
           if [ "${{ steps.branch_check.outputs.is_main }}" != "true" ]; then
@@ -95,8 +107,9 @@ jobs:
             NOTES_ARGS="$NOTES_ARGS --notes-start-tag ${{ steps.prev.outputs.prev_tag }}"
           fi
 
-          # create the release (and the tag if it does not exist), upload asset
-          gh release create "$TAG" "build/TTT/TTT.zip" \
+          test -f "$ASSET" || { echo "Asset not found: $ASSET"; exit 1; }
+
+          gh release create "$TAG" "$ASSET" \
             --title "$TITLE" \
             $PRERELEASE_FLAG \
             $NOTES_ARGS \
