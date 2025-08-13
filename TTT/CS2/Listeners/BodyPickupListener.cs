@@ -20,6 +20,9 @@ public class BodyPickupListener(IServiceProvider provider) : IListener {
   private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
   private readonly IMessenger msg = provider.GetRequiredService<IMessenger>();
 
+  private readonly IPlayerConverter<CCSPlayerController> converter =
+    provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
+
   private readonly IMsgLocalizer locale =
     provider.GetRequiredService<IMsgLocalizer>();
 
@@ -73,5 +76,12 @@ public class BodyPickupListener(IServiceProvider provider) : IListener {
     prop.SetColor(primaryRole.Color);
     msg.MessageAll(
       locale[GameMsgs.BODY_IDENTIFIED(online, body.OfPlayer, primaryRole)]);
+
+    var onlinePlayer = converter.GetPlayer(body.OfPlayer);
+    if (onlinePlayer == null || !onlinePlayer.IsValid) return;
+
+    onlinePlayer.PawnIsAlive = false;
+    Utilities.SetStateChanged(onlinePlayer, "CCSPlayerController",
+      "m_bPawnIsAlive");
   }
 }
