@@ -15,6 +15,8 @@ public class SimpleLogger(IServiceProvider provider) : IActionLogger {
   private readonly IScheduler scheduler = provider
    .GetRequiredService<IScheduler>();
 
+  private DateTime? epoch;
+
   public void LogAction(IAction action) {
 #if DEBUG
     msg.Value.Debug(
@@ -25,6 +27,8 @@ public class SimpleLogger(IServiceProvider provider) : IActionLogger {
     actionSet ??= new HashSet<IAction>();
     actionSet.Add(action);
     actions[timestamp.DateTime] = actionSet;
+
+    if (epoch == null || timestamp > epoch) epoch = timestamp.DateTime;
   }
 
   public IEnumerable<(DateTime, IAction)> GetActions() {
@@ -33,15 +37,24 @@ public class SimpleLogger(IServiceProvider provider) : IActionLogger {
       select (kvp.Key, action);
   }
 
-  public void ClearActions() { actions.Clear(); }
+  public void ClearActions() {
+    actions.Clear();
+    epoch = null;
+  }
 
   public void PrintLogs() {
     foreach (var (time, action) in GetActions())
-      msg.Value.BackgroundMsgAll($"[{time}] {action.Format()}");
+      msg.Value.BackgroundMsgAll($"{formatTime(time)} {action.Format()}");
   }
 
   public void PrintLogs(IOnlinePlayer? player) {
     foreach (var (time, action) in GetActions())
-      msg.Value.BackgroundMsg(player, $"[{time}] {action.Format()}");
+      msg.Value.BackgroundMsg(player, $"{formatTime(time)} {action.Format()}");
+  }
+
+  private string formatTime(DateTime time) {
+    if (epoch == null) return time.ToString("o");
+    var span = time - epoch.Value;
+    return $"[{span.Minutes:D2}:{span.Seconds:D2}]";
   }
 }

@@ -10,6 +10,7 @@ using TTT.CS2.Hats;
 using TTT.CS2.Roles;
 using TTT.Game.Events.Game;
 using TTT.Game.Events.Player;
+using TTT.Game.Roles;
 
 namespace TTT.CS2.GameHandlers;
 
@@ -23,8 +24,8 @@ public class RoleIconsHandler(IServiceProvider provider)
   private readonly ITextSpawner? textSpawner =
     provider.GetService<ITextSpawner>();
 
-  private readonly ISet<CPointWorldText> traitorIcons =
-    new HashSet<CPointWorldText>();
+  private readonly IDictionary<int, IEnumerable<CPointWorldText>> traitorIcons =
+    new Dictionary<int, IEnumerable<CPointWorldText>>();
 
   private readonly ISet<int> traitors = new HashSet<int>();
 
@@ -60,21 +61,29 @@ public class RoleIconsHandler(IServiceProvider provider)
       return;
     }
 
+    traitorIcons.TryGetValue(player.Slot, out var icons);
+    if (icons != null) {
+      foreach (var icon in icons) {
+        if (!icon.IsValid) continue;
+        icon.Remove();
+      }
+    }
+
     traitors.Remove(player.Slot);
 
-    player.SwitchTeam(ev.Role is CS2DetectiveRole ?
+    player.SwitchTeam(ev.Role is DetectiveRole ?
       CsTeam.CounterTerrorist :
       CsTeam.Terrorist);
 
-    player.SetClan(ev.Role is CS2DetectiveRole ? ev.Role.Name : "", false);
+    player.SetClan(ev.Role is DetectiveRole ? ev.Role.Name : "", false);
     var pawn = player.Pawn.Value;
     if (pawn == null || !pawn.IsValid) return;
 
-    pawn.SetModel(ev.Role is CS2DetectiveRole ?
+    pawn.SetModel(ev.Role is DetectiveRole ?
       "characters/models/ctm_fbi/ctm_fbi_varianth.vmdl" :
       "characters/models/tm_phoenix/tm_phoenix.vmdl");
 
-    if (ev.Role is CS2InnocentRole) return;
+    if (ev.Role is InnocentRole) return;
 
     var textSettings = new TextSetting {
       msg = ev.Role.Name.First(char.IsAsciiLetter) + "", color = ev.Role.Color
@@ -82,9 +91,27 @@ public class RoleIconsHandler(IServiceProvider provider)
     var roleIcon = textSpawner?.CreateTextHat(textSettings, player);
     if (roleIcon == null) return;
 
-    if (ev.Role is not CS2TraitorRole) return;
+    if (ev.Role is not TraitorRole) return;
     traitors.Add(player.Slot);
-    foreach (var icon in roleIcon) traitorIcons.Add(icon);
+    traitorIcons[player.Slot] = roleIcon;
+  }
+
+  [EventHandler(Priority = Priority.MONITOR)]
+  public void OnDeath(PlayerDeathEvent ev) {
+    var gamePlayer = players.GetPlayer(ev.Victim);
+    if (gamePlayer == null || !gamePlayer.IsValid) return;
+
+    if (!traitors.Contains(gamePlayer.Slot)) return;
+
+    traitorIcons.TryGetValue(gamePlayer.Slot, out var icons);
+    if (icons != null) {
+      foreach (var icon in icons) {
+        if (!icon.IsValid) continue;
+        icon.Remove();
+      }
+    }
+
+    traitors.Remove(gamePlayer.Slot);
   }
 
   // ReSharper disable once PossiblyImpureMethodCallOnReadonlyVariable
@@ -92,7 +119,8 @@ public class RoleIconsHandler(IServiceProvider provider)
     foreach (var (info, player) in infoList) {
       if (player == null || !player.IsValid) continue;
       if (traitors.Contains(player.Slot)) continue;
-      foreach (var icon in traitorIcons) info.TransmitEntities.Remove(icon);
+      foreach (var icon in traitorIcons.Values.SelectMany(s => s))
+        info.TransmitEntities.Remove(icon);
     }
   }
 }

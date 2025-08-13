@@ -17,6 +17,9 @@ public class TTTCommand(IServiceProvider provider) : ICommand {
 
   public Task<CommandResult>
     Execute(IOnlinePlayer? executor, ICommandInfo info) {
+#if DEBUG
+    info.ReplySync("DEBUG BUILD");
+#endif
     info.ReplySync(
       localizer[GameMsgs.CMD_TTT(GitVersionInformation.FullSemVer)]);
     return Task.FromResult(CommandResult.SUCCESS);

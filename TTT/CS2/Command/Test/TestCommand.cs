@@ -23,6 +23,7 @@ public class TestCommand(IServiceProvider provider) : ICommand, IPluginModule {
 
   public void Start() {
     subCommands.Add("setrole", new SetRoleCommand(provider));
+    subCommands.Add("stop", new StopCommand(provider));
   }
 
   public Task<CommandResult>
