@@ -4,6 +4,7 @@ using CounterStrikeSharp.API.Modules.Utils;
 using Microsoft.Extensions.DependencyInjection;
 using TTT.API.Player;
 using TTT.API.Role;
+using TTT.CS2.lang;
 using TTT.Locale;
 
 namespace TTT.CS2.Roles;

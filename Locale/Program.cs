@@ -72,10 +72,6 @@ public static class Program {
     foreach (var input in inputPaths) {
       var yaml   = File.ReadAllText(input);
       var parsed = deserializer.Deserialize<Dictionary<string, string>>(yaml);
-      if (parsed == null) {
-        Console.Error.WriteLine($"Error: Failed to parse YAML - {input}");
-        continue;
-      }
 
       foreach (var (k, v) in parsed) {
         if (merged.TryGetValue(k, out var existing) && existing != v)

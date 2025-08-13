@@ -1,6 +1,6 @@
 ﻿namespace TTT.Game;
 
-public record GameConfig {
+public record TTTConfig {
   public RoleConfig RoleCfg { get; init; } = new();
   public RoundConfig RoundCfg { get; init; } = new();
   public BalanceConfig BalanceCfg { get; init; } = new();
@@ -31,6 +31,8 @@ public record GameConfig {
     ];
 
     public string[]? InnocentWeapons { get; init; } = ["knife", "pistol"];
+
+    public bool StripWeaponsPriorToEquipping { get; init; } = true;
   }
 
   public record RoundConfig {

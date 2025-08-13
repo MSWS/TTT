@@ -5,7 +5,6 @@ using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using TTT.API;
 using TTT.API.Events;
-using TTT.API.Messages;
 using TTT.API.Player;
 using TTT.Game.Events.Player;
 
@@ -17,7 +16,6 @@ public class CombatHandler(IServiceProvider provider) : IPluginModule {
   private readonly IPlayerConverter<CCSPlayerController> converter =
     provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
 
-  private readonly IMessenger msg = provider.GetRequiredService<IMessenger>();
   public string Name => "CombatListeners";
   public string Version => GitVersionInformation.FullSemVer;
 
@@ -28,7 +26,6 @@ public class CombatHandler(IServiceProvider provider) : IPluginModule {
   /// <summary>
   /// </summary>
   /// <param name="ev"></param>
-  /// <param name="_"></param>
   /// <param name="info"></param>
   /// <returns></returns>
   [UsedImplicitly]
@@ -41,8 +38,32 @@ public class CombatHandler(IServiceProvider provider) : IPluginModule {
     Server.NextWorldUpdateAsync(() => bus.Dispatch(deathEvent));
 
     info.DontBroadcast = true;
+    var victimStats = player.ActionTrackingServices?.MatchStats;
+    if (victimStats != null) {
+      victimStats.Deaths -= 1;
+      Utilities.SetStateChanged(player, "CCSPlayerController",
+        "m_pActionTrackingServices");
+    }
 
-    // These delays are necesary for the game engine
+    var killerStats = ev.Attacker?.ActionTrackingServices?.MatchStats;
+    if (killerStats != null) {
+      killerStats.Kills  -= 1;
+      killerStats.Damage -= ev.DmgHealth;
+
+      if (ev.Attacker != null)
+        Utilities.SetStateChanged(ev.Attacker, "CCSPlayerController",
+          "m_pActionTrackingServices");
+
+      var assisterStats = ev.Assister?.ActionTrackingServices?.MatchStats;
+      if (assisterStats != null && assisterStats != killerStats)
+        assisterStats.Assists -= 1;
+
+      if (ev.Assister != null)
+        Utilities.SetStateChanged(ev.Assister, "CCSPlayerController",
+          "m_pActionTrackingServices");
+    }
+
+    // These delays are necessary for the game engine
     Server.NextWorldUpdate(() => {
       var pawn = player.PlayerPawn.Value;
       if (pawn == null || !pawn.IsValid) return;

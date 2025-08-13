@@ -3,8 +3,8 @@ using TTT.Game;
 
 namespace TTT.Test.Fakes;
 
-public class FakeConfig : IStorage<GameConfig> {
-  public Task<GameConfig?> Load() {
-    return Task.FromResult<GameConfig?>(new GameConfig());
+public class FakeConfig : IStorage<TTTConfig> {
+  public Task<TTTConfig?> Load() {
+    return Task.FromResult<TTTConfig?>(new TTTConfig());
   }
 }

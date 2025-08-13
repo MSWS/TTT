@@ -1,8 +1,10 @@
 using TTT.API.Player;
+using TTT.API.Storage;
 
 namespace TTT.API.Role;
 
-public interface IRoleAssigner {
+public interface IRoleAssigner : IKeyedStorage<IPlayer, ICollection<IRole>>,
+  IKeyWritable<IPlayer, ICollection<IRole>> {
   /// <summary>
   ///   Will attempt to assign roles to all players in the set.
   ///   Note that game-specific behavior and logic will almost certainly
@@ -16,4 +18,8 @@ public interface IRoleAssigner {
   /// <param name="players"></param>
   /// <param name="roles"></param>
   public void AssignRoles(ISet<IOnlinePlayer> players, IList<IRole> roles);
+
+  public ICollection<IRole> GetRoles(IPlayer player) {
+    return Load(player).GetAwaiter().GetResult() ?? Array.Empty<IRole>();
+  }
 }

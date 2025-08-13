@@ -23,7 +23,6 @@ public class TraitorRole(IServiceProvider provider) : RatioBasedRole(provider) {
 
     if (balanceConfig.TraitorWeapons == null) return;
 
-    Inventory.RemoveAllWeapons(player);
     foreach (var weapon in balanceConfig.TraitorWeapons)
       Inventory.GiveWeapon(player, new BaseWeapon(weapon));
   }

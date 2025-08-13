@@ -15,11 +15,14 @@ using TTT.Locale;
 namespace TTT.Game;
 
 public class RoundBasedGame(IServiceProvider provider) : IGame {
-  private readonly GameConfig config = provider
-   .GetRequiredService<IStorage<GameConfig>>()
+  private readonly TTTConfig config = provider
+   .GetRequiredService<IStorage<TTTConfig>>()
    .Load()
    .GetAwaiter()
-   .GetResult() ?? new GameConfig();
+   .GetResult() ?? new TTTConfig();
+
+  private readonly IInventoryManager inventory =
+    provider.GetRequiredService<IInventoryManager>();
 
   private readonly IMsgLocalizer locale =
     provider.GetRequiredService<IMsgLocalizer>();
@@ -41,6 +44,9 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
   public DateTime? FinishedAt { get; protected set; }
 
   public IRole? WinningRole { get; set; }
+
+  public IRoleAssigner RoleAssigner { get; init; } = provider
+   .GetRequiredService<IRoleAssigner>();
 
   public State State {
     set {
@@ -122,9 +128,12 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
       return;
     }
 
-    State     = State.IN_PROGRESS;
+    State = State.IN_PROGRESS;
+
+    foreach (var player in online) inventory.RemoveAllWeapons(player);
+
     StartedAt = DateTime.Now;
-    assigner.AssignRoles(online, Roles);
+    RoleAssigner.AssignRoles(online, Roles);
     players.AddRange(online);
 
     var traitors    = ((IGame)this).GetAlive(typeof(TraitorRole)).Count;
@@ -134,9 +143,6 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
   }
 
   #region classDeps
-
-  private readonly IRoleAssigner assigner =
-    provider.GetRequiredService<IRoleAssigner>();
 
   private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
 

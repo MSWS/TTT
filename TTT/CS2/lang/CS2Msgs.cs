@@ -1,6 +1,6 @@
 ﻿using TTT.Locale;
 
-namespace TTT.CS2;
+namespace TTT.CS2.lang;
 
 public static class CS2Msgs {
   public static IMsg ROLE_SPECTATOR

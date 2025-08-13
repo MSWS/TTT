@@ -3,6 +3,7 @@ using TTT.API.Events;
 using TTT.API.Extensions;
 using TTT.API.Role;
 using TTT.Game.Listeners;
+using TTT.Game.Listeners.Loggers;
 using TTT.Game.Roles;
 
 namespace TTT.Game;
@@ -14,9 +15,9 @@ public static class GameServiceCollection {
 
     // Listeners
     collection.AddListener<GameEndLogsListener>();
-    collection.AddListener<GamePlayerActionsListener>();
-    // collection.AddListener<GameRestartListener>();
     collection.AddListener<PlayerCausesEndListener>();
     collection.AddListener<PlayerJoinStarting>();
+    collection.AddListener<PlayerActionsLogger>();
+    collection.AddListener<BodyIdentifyLogger>();
   }
 }

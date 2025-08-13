@@ -3,7 +3,7 @@ using TTT.API;
 using TTT.API.Player;
 using TTT.CS2.Extensions;
 
-namespace TTT.CS2;
+namespace TTT.CS2.Player;
 
 public class CS2InventoryManager(
   IPlayerConverter<CCSPlayerController> converter) : IInventoryManager {

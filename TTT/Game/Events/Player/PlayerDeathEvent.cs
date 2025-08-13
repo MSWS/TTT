@@ -3,14 +3,7 @@ using TTT.API.Player;
 
 namespace TTT.Game.Events.Player;
 
-public class PlayerDeathEvent : PlayerEvent {
-  public PlayerDeathEvent(IPlayer player) : base(player) {
-    if (player is not IOnlinePlayer online)
-      throw new ArgumentException(
-        "Player must be an online player to create a PlayerDeathEvent.",
-        nameof(player));
-  }
-
+public class PlayerDeathEvent(IPlayer player) : PlayerEvent(player) {
   public PlayerDeathEvent(IPlayerConverter<CCSPlayerController> converter,
     EventPlayerDeath ev) : this(converter.GetPlayer(ev.Userid!)) {
     if (ev.Assister != null)

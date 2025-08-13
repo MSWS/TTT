@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using TTT.API.Game;
 using TTT.API.Messages;
+using TTT.API.Player;
 
 namespace TTT.Game.Loggers;
 
@@ -23,7 +24,7 @@ public class SimpleLogger(IServiceProvider provider) : IActionLogger {
     actions.TryGetValue(timestamp.Date, out var actionSet);
     actionSet ??= new HashSet<IAction>();
     actionSet.Add(action);
-    actions[timestamp.Date] = actionSet;
+    actions[timestamp.DateTime] = actionSet;
   }
 
   public IEnumerable<(DateTime, IAction)> GetActions() {
@@ -33,4 +34,14 @@ public class SimpleLogger(IServiceProvider provider) : IActionLogger {
   }
 
   public void ClearActions() { actions.Clear(); }
+
+  public void PrintLogs() {
+    foreach (var (time, action) in GetActions())
+      msg.Value.BackgroundMsgAll($"[{time}] {action.Format()}");
+  }
+
+  public void PrintLogs(IOnlinePlayer? player) {
+    foreach (var (time, action) in GetActions())
+      msg.Value.BackgroundMsg(player, $"[{time}] {action.Format()}");
+  }
 }

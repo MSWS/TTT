@@ -1,9 +1,8 @@
 using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using TTT.API.Player;
-using TTT.API.Role;
 
-namespace TTT.CS2;
+namespace TTT.CS2.Player;
 
 /// <summary>
 ///   A CS2-specific implementation of <see cref="IOnlinePlayer" />.
@@ -47,7 +46,7 @@ public class CS2Player : IOnlinePlayer {
   public string Id { get; }
   public string Name { get; }
 
-  public ICollection<IRole> Roles { get; } = [];
+  // public ICollection<IRole> Roles { get; } = [];
 
   public int Health {
     get => Player?.Pawn.Value != null ? Player.Pawn.Value.Health : 0;
@@ -85,7 +84,7 @@ public class CS2Player : IOnlinePlayer {
   }
 
   public bool IsAlive {
-    get => Player != null && Player.LifeState == (int)LifeState_t.LIFE_ALIVE;
+    get => Player != null && Player.PlayerPawn.Value is { Health: > 0 };
 
     set
       => throw new NotSupportedException(
@@ -95,5 +94,12 @@ public class CS2Player : IOnlinePlayer {
   public static string GetKey(CCSPlayerController player) {
     if (player.IsBot || player.IsHLTV) return player.Index.ToString();
     return player.SteamID.ToString();
+  }
+
+  public override string ToString() { return $"({getSuffix(Id, 5)}) {Name}"; }
+
+  private string getSuffix(string s, int len) {
+    if (s.Length <= len) return s;
+    return s[..len];
   }
 }

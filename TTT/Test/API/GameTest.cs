@@ -1,11 +1,15 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using TTT.API.Game;
+using TTT.API.Role;
 using TTT.Test.Game.Roles;
 using Xunit;
 
-namespace TTT.Test.Api;
+namespace TTT.Test.API;
 
 public class GameTest(IServiceProvider provider) {
+  private readonly IRoleAssigner roles =
+    provider.GetRequiredService<IRoleAssigner>();
+
   [Fact]
   public void GetAlive_OnlyReturnsAlivePlayers() {
     // Arrange
@@ -29,9 +33,10 @@ public class GameTest(IServiceProvider provider) {
     var game    = provider.GetRequiredService<IGameManager>().CreateGame()!;
     var player1 = new TestPlayer("player1", "Player 1") { IsAlive = true };
     var player2 = new TestPlayer("player2", "Player 2") { IsAlive = true };
-    var roleA   = new TestRoles.RoleA();
-    player1.Roles.Add(roleA);
-    player2.Roles.Add(new TestRoles.RoleB());
+
+    var roleA = new TestRoles.RoleA(roles);
+    roles.Write(player1, [roleA]);
+    roles.Write(player2, [new TestRoles.RoleB(roles)]);
     game.Players.Add(player1);
     game.Players.Add(player2);
 
@@ -51,8 +56,8 @@ public class GameTest(IServiceProvider provider) {
     var player2 = new TestPlayer("player2", "Player 2") { IsAlive = true };
     game.Players.Add(player1);
     game.Players.Add(player2);
-    player1.Roles.Add(new TestRoles.RoleA());
-    player2.Roles.Add(new TestRoles.RoleB());
+    roles.Write(player1, [new TestRoles.RoleA(roles)]);
+    roles.Write(player2, [new TestRoles.RoleB(roles)]);
 
     // Act
     var aliveWithRoleA = game.GetAlive(typeof(TestRoles.RoleA));

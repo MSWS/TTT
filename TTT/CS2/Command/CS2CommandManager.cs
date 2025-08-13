@@ -5,10 +5,11 @@ using Microsoft.Extensions.DependencyInjection;
 using TTT.API;
 using TTT.API.Command;
 using TTT.API.Player;
+using TTT.CS2.Command.Test;
 using TTT.Game;
 using TTT.Game.Commands;
 
-namespace TTT.CS2;
+namespace TTT.CS2.Command;
 
 public class CS2CommandManager(IServiceProvider provider)
   : CommandManager(provider), IPluginModule {
@@ -21,19 +22,16 @@ public class CS2CommandManager(IServiceProvider provider)
 
   public void Start(BasePlugin? basePlugin, bool hotReload) {
     plugin = basePlugin;
+    base.Start();
 
     RegisterCommand(new TTTCommand(Provider));
-    var testCmd = new TestCommand(Provider);
-    testCmd.Start(basePlugin, hotReload);
-    RegisterCommand(testCmd);
+    RegisterCommand(new TestCommand(Provider));
 
     foreach (var command in Provider.GetServices<ICommand>()) command.Start();
   }
 
-  public void Dispose() { }
-  public string Name => "CommandManager";
-  public string Version => GitVersionInformation.FullSemVer;
-  public void Start() { }
+  public override string Name => "CommandManager";
+  public override string Version => GitVersionInformation.FullSemVer;
 
   public override bool RegisterCommand(ICommand command) {
     command.Start();

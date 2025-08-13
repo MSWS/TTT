@@ -9,7 +9,7 @@ using Xunit;
 namespace TTT.Test.Game.Listeners;
 
 public class JoinStartTest(IServiceProvider provider) {
-  private readonly GameConfig config = new();
+  private readonly TTTConfig config = new();
 
   private readonly IPlayerFinder finder =
     provider.GetRequiredService<IPlayerFinder>();

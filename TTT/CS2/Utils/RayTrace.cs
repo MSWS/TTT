@@ -3,11 +3,25 @@ using System.Runtime.InteropServices;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Memory;
 using CounterStrikeSharp.API.Modules.Utils;
+using TTT.CS2.Extensions;
 using Vector = CounterStrikeSharp.API.Modules.Utils.Vector;
 
-namespace TTT.CS2;
+namespace TTT.CS2.Utils;
 
 public static class RayTrace {
+  [Flags]
+  public enum TraceFlags : ulong {
+    None = 0,
+    Bit0 = 1UL << 0,   // 0x000001
+    Bit1 = 1UL << 1,   // 0x000002
+    Bit12 = 1UL << 12, // 0x001000
+    Bit18 = 1UL << 18, // 0x40000
+    Bit19 = 1UL << 19, // 0x80000
+    Bit20 = 1UL << 20, // 0x100000
+
+    TraceMask = Bit0
+  }
+
   private static readonly nint TraceFunc = NativeAPI.FindSignature(
     Addresses.ServerPath,
     OperatingSystem.IsLinux() ?
@@ -48,9 +62,9 @@ public static class RayTrace {
 
       var _trace = stackalloc GameTrace[1];
 
-      const ulong mask = 0x1C1003;
+      // const ulong mask = 0x1C1003;
       var result = _traceShape(*(nint*)_gameTraceManagerAddress, _origin.Handle,
-        _endOrigin.Handle, 0, mask, 4, _trace);
+        _endOrigin.Handle, 0, (ulong)TraceFlags.TraceMask, 4, _trace);
 
       var endPos = new Vector(_trace->EndPos.X, _trace->EndPos.Y,
         _trace->EndPos.Z);
@@ -72,8 +86,7 @@ public static class RayTrace {
       || pawn.CameraServices == null)
       return null;
     if (pawn.AbsOrigin == null) return null;
-    return TraceShape(
-      new Vector(pawn.AbsOrigin.X, pawn.AbsOrigin.Y, pawn.AbsOrigin.Z),
+    return TraceShape(pawn.AbsOrigin.Clone()!,
       player.PlayerPawn.Value.EyeAngles, true);
   }
 

@@ -21,4 +21,5 @@ public static class Priority {
   public const uint LOW = 80;
   public const uint LOWER = 100;
   public const uint LOWEST = 200;
+  public const uint MONITOR = 1000;
 }
