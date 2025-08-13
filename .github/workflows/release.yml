@@ -42,7 +42,7 @@ jobs:
       - name: Zip Artifacts
         run: |
           cd build/TTT
-          zip -r TTT-${{ steps.gitversion.outputs.MajorMinorPatch }}.zip *
+          zip -r TTT-${{ steps.gitversion.outputs.fullSemVer }}.zip *
           
       # 2. Get latest tag
       - name: Get latest tag
@@ -56,12 +56,12 @@ jobs:
 
       # 3. Tag if new version
       - name: Create and push new tag
-        if: steps.gitversion.outputs.MajorMinorPatch != steps.latest_tag.outputs.tag
+        if: steps.gitversion.outputs.fullSemVer != steps.latest_tag.outputs.tag
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git tag ${{ steps.gitversion.outputs.MajorMinorPatch }}
-          git push origin ${{ steps.gitversion.outputs.MajorMinorPatch }}
+          git tag ${{ steps.gitversion.outputs.fullSemVer }}
+          git push origin ${{ steps.gitversion.outputs.fullSemVer }}
 
       # 4. Determine previous tag for changelog
       - name: Determine previous relevant tag
@@ -78,7 +78,7 @@ jobs:
       # 5. Generate changelog
       - name: Generate changelog
         run: |
-          gh api repos/${{ github.repository }}/compare/${{ steps.prev_tag.outputs.tag }}...${{ steps.gitversion.outputs.MajorMinorPatch }} \
+          gh api repos/${{ github.repository }}/compare/${{ steps.prev_tag.outputs.tag }}...${{ steps.gitversion.outputs.fullSemVer }} \
             --jq '.commits[].commit.message' > CHANGELOG.md
         env:
           GH_TOKEN: ${{ github.token }}
@@ -87,7 +87,7 @@ jobs:
       - name: Create GitHub release
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{ steps.gitversion.outputs.MajorMinorPatch }}
+          tag_name: ${{ steps.gitversion.outputs.fullSemVer }}
           body_path: CHANGELOG.md
           prerelease: ${{ github.ref_name != 'main' }}
           files: build/TTT/*.zip
