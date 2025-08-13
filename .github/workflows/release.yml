@@ -96,7 +96,7 @@ jobs:
           fi
 
           # create the release (and the tag if it does not exist), upload asset
-          gh release create "$TAG" "artifact-${TAG}.zip" \
+          gh release create "$TAG" "TTT.zip" \
             --title "$TITLE" \
             $PRERELEASE_FLAG \
             $NOTES_ARGS \
