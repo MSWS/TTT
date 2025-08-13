@@ -48,6 +48,7 @@ public static class CS2ServiceCollection {
     // Listeners
     collection.AddListener<RoundTimerListener>();
     collection.AddListener<BodyPickupListener>();
+    collection.AddListener<PlayerStatsTracker>();
 
     collection.AddScoped<IMsgLocalizer, StringLocalizer>();
     collection.AddScoped<IPermissionManager, CS2PermManager>();
