@@ -27,6 +27,25 @@ jobs:
         id: gitversion
         uses: gittools/actions/gitversion/execute@v4
 
+      - name: Build Locale
+        run: |
+          mkdir -p build/TTT/lang
+          dotnet restore Locale/Locale.csproj
+          dotnet build Locale/Locale.csproj --no-restore -c Release
+          cp lang/*.json build/TTT/lang
+
+      - name: Publish Plugin
+        run: |
+          dotnet restore TTT/Plugin/Plugin.csproj
+          dotnet publish TTT/Plugin/Plugin.csproj --no-restore -c Release -o build/TTT
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: TTT
+          path: build/TTT
+          if-no-files-found: error
+          
       # 2. Get latest tag
       - name: Get latest tag
         id: latest_tag
@@ -73,6 +92,7 @@ jobs:
           tag_name: ${{ steps.gitversion.outputs.MajorMinorPatch }}
           body_path: CHANGELOG.md
           prerelease: ${{ github.ref_name != 'main' }}
+          files: build/TTT/**
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
