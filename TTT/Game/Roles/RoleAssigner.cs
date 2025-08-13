@@ -18,7 +18,6 @@ public class RoleAssigner(IServiceProvider provider) : IRoleAssigner {
 
   public void AssignRoles(ISet<IOnlinePlayer> players, IList<IRole> roles) {
     assignedRoles.Clear();
-    // foreach (var onlinePlayer in players.ToList()) onlinePlayer.Roles.Clear();
     var  shuffled = players.OrderBy(_ => Guid.NewGuid()).ToHashSet();
     bool roleAssigned;
     do { roleAssigned = tryAssignRole(shuffled, roles); } while (roleAssigned);
