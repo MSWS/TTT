@@ -51,7 +51,8 @@ public static class GameMsgs {
         ChatColors.Lime;
 
     return MsgFactory.Create(nameof(BODY_IDENTIFIED), identifier.Name ?? "null",
-      rolePrefix + ofPlayer.Name ?? "null", role.Name ?? "null");
+    return MsgFactory.Create(nameof(BODY_IDENTIFIED), identifier.Name ?? "Unknown Identifier",
+      rolePrefix + (ofPlayer.Name ?? "Unknown Player"), role.Name ?? "Unknown Role");
   }
 
   #region COMMANDS
