@@ -39,12 +39,10 @@ jobs:
           dotnet restore TTT/Plugin/Plugin.csproj
           dotnet publish TTT/Plugin/Plugin.csproj --no-restore -c Release -o build/TTT
 
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: TTT
-          path: build/TTT
-          if-no-files-found: error
+      - name: Zip Artifacts
+        run: |
+          mkdir -p build/TTT
+          zip -r build/TTT/TTT-${{ steps.gitversion.outputs.MajorMinorPatch }}.zip build/TTT/*
           
       # 2. Get latest tag
       - name: Get latest tag
