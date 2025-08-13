@@ -121,7 +121,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         shell: bash
         run: |
-          TAG="${{ steps.gitversion.outputs.SemVer }}"                   # release tag from GitVersion
+          TAG="${{ steps.gitversion.outputs.MajorMinorPatch }}"                   # release tag from GitVersion
           FILE_VER="${{ steps.gitversion.outputs.MajorMinorPatch }}"     # for asset name
           ASSET="build/TTT-${FILE_VER}.zip"
           TITLE="$TAG"
