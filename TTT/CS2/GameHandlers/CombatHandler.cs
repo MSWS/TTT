@@ -5,6 +5,7 @@ using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using TTT.API;
 using TTT.API.Events;
+using TTT.API.Game;
 using TTT.API.Player;
 using TTT.Game.Events.Player;
 
@@ -15,6 +16,9 @@ public class CombatHandler(IServiceProvider provider) : IPluginModule {
 
   private readonly IPlayerConverter<CCSPlayerController> converter =
     provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
+
+  private readonly IGameManager games =
+    provider.GetRequiredService<IGameManager>();
 
   public string Name => "CombatListeners";
   public string Version => GitVersionInformation.FullSemVer;
@@ -31,6 +35,7 @@ public class CombatHandler(IServiceProvider provider) : IPluginModule {
   [UsedImplicitly]
   [GameEventHandler(HookMode.Pre)]
   public HookResult OnPlayerDeath_Pre(EventPlayerDeath ev, GameEventInfo info) {
+    if (!games.IsGameActive()) return HookResult.Continue;
     var player = ev.Userid;
     if (player == null) return HookResult.Continue;
     var deathEvent = new PlayerDeathEvent(converter, ev);
@@ -81,6 +86,7 @@ public class CombatHandler(IServiceProvider provider) : IPluginModule {
 
   [GameEventHandler]
   public HookResult OnPlayerHurt(EventPlayerHurt ev, GameEventInfo _) {
+    if (!games.IsGameActive()) return HookResult.Continue;
     var player = ev.Userid;
     if (player == null) return HookResult.Continue;
 
