@@ -55,7 +55,8 @@ public partial class StringLocalizer : IMsgLocalizer {
         // CS# forces a space before a chat color if the entirety
         // of the strong is a color code. This is undesired
         // in our case, so we trim the value when we have a prefix.
-        var replacement = getString(trimmedKey).Value;
+        var replacement = localizer[trimmedKey].Value;
+        if (replacement == trimmedKey) continue;
         value = value.Replace(key,
           trimmedKey.Contains("PREFIX", StringComparison.OrdinalIgnoreCase) ?
             replacement :
@@ -148,10 +149,7 @@ public partial class StringLocalizer : IMsgLocalizer {
       var suffix  = value[(index + match.Length)..];
 
       // Determine if the next word starts with a vowel sound
-      var nextWord = suffix.Split(' ')
-       .FirstOrDefault(w => !string.IsNullOrWhiteSpace(w)) ?? " ";
-      var nextChar =
-        char.ToLowerInvariant(nextWord.FirstOrDefault(char.IsAsciiLetter));
+      var nextChar = char.ToLower(suffix.FirstOrDefault(char.IsLetterOrDigit));
       value = nextChar switch {
         'a' or 'e' or 'i' or 'o' or 'u' => prefix + anMatch + suffix,
         _                               => prefix + anMatch[0] + suffix

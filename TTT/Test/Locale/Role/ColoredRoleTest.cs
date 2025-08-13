@@ -41,7 +41,7 @@ public class ColoredRoleTest(IServiceProvider provider) {
 
   public class ColoredRole(string name) : IRole {
     public string Id => "test.role.colored";
-    public string Name => ChatColors.Red + name;
+    public string Name => ChatColors.DarkBlue + name;
     public Color Color => Color.Red;
 
     public IOnlinePlayer? FindPlayerToAssign(ISet<IOnlinePlayer> players) {

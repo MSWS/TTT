@@ -18,7 +18,7 @@ namespace TTT.CS2.GameHandlers;
 public class PropMover(IServiceProvider provider) : IPluginModule {
   // TODO: Make this configurable
   public static readonly float MIN_LOOK_ACCURACY = 2000f;
-  public static readonly float MAX_DISTANCE = 100000f;
+  public static readonly float MAX_DISTANCE = 100f;
   public static readonly float MIN_HOLDING_DISTANCE = 100f;
   public static readonly float MAX_HOLDING_DISTANCE = 10000f;
   private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
@@ -105,6 +105,7 @@ public class PropMover(IServiceProvider provider) : IPluginModule {
     }
 
     var playerDist = playerPos.Distance(target);
+    msg.Debug($"Player distance squared to target: {playerDist}");
     if (playerDist > MAX_DISTANCE) return;
     if (foundEntity == null) return;
 
