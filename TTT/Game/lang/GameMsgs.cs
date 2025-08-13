@@ -50,7 +50,6 @@ public static class GameMsgs {
       role.GetType().IsAssignableTo(typeof(DetectiveRole)) ? ChatColors.Blue :
         ChatColors.Lime;
 
-    return MsgFactory.Create(nameof(BODY_IDENTIFIED), identifier.Name ?? "null",
     return MsgFactory.Create(nameof(BODY_IDENTIFIED), identifier.Name ?? "Unknown Identifier",
       rolePrefix + (ofPlayer.Name ?? "Unknown Player"), role.Name ?? "Unknown Role");
   }
