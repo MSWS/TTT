@@ -57,15 +57,16 @@ jobs:
       - name: Package ZIP
         shell: bash
         run: |
+          FULL="${{ steps.gitversion.outputs.FullSemVer }}"
           cd build/TTT
-          zip -r "../TTT-${{ steps.gitversion.outputs.SemVer }}.zip" .
+          zip -r "../TTT-${FULL}.zip" .
           cd -
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: TTT-${{ steps.gitversion.outputs.SemVer }}
-          path: build/TTT-${{ steps.gitversion.outputs.SemVer }}.zip
+          name: TTT-${{ steps.gitversion.outputs.FullSemVer }}
+          path: build/TTT-${{ steps.gitversion.outputs.FullSemVer }}.zip
           if-no-files-found: error
 
       - name: Check if tag commit is on main
@@ -94,9 +95,11 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         shell: bash
         run: |
-          TAG="${{ steps.gitversion.outputs.SemVer }}"
-          ASSET="build/TTT-${TAG}.zip"
+          TAG="${{ steps.gitversion.outputs.SemVer }}"           # release tag from GitVersion
+          FULL="${{ steps.gitversion.outputs.FullSemVer }}"     # for asset name
+          ASSET="build/TTT-${FULL}.zip"
           TITLE="$TAG"
+
           PRERELEASE_FLAG=""
           if [ "${{ steps.branch_check.outputs.is_main }}" != "true" ]; then
             PRERELEASE_FLAG="--prerelease"
