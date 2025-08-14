@@ -1,5 +1,7 @@
-﻿using TTT.API.Player;
+﻿using CounterStrikeSharp.API.Modules.Utils;
+using TTT.API.Player;
 using TTT.API.Role;
+using TTT.Game.Roles;
 using TTT.Locale;
 
 // ReSharper disable InconsistentNaming
@@ -46,10 +48,12 @@ public static class GameMsgs {
   public static IMsg BODY_IDENTIFIED(IOnlinePlayer identifier, IPlayer ofPlayer,
     IRole role) {
     // TODO: Ideally we do this better
-    var roleColor = role.Name.First().ToString();
-    if (char.IsAsciiLetter(roleColor.First())) roleColor = "";
+    var rolePrefix = role.GetType().IsAssignableTo(typeof(TraitorRole)) ?
+      ChatColors.Red :
+      role.GetType().IsAssignableTo(typeof(DetectiveRole)) ? ChatColors.Blue :
+        ChatColors.Lime;
     return MsgFactory.Create(nameof(BODY_IDENTIFIED), identifier.Name,
-      roleColor + ofPlayer.Name, role.Name);
+      rolePrefix + ofPlayer.Name, role.Name);
   }
 
   #region COMMANDS

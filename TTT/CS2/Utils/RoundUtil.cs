@@ -45,7 +45,7 @@ public static class RoundUtil {
     return rules == null || rules.WarmupPeriod;
   }
 
-  public static void EndRound(RoundEndReason reason, float delay = 0) {
+  public static void EndRound(RoundEndReason reason) {
     var gameRules = ServerUtil.GameRulesProxy;
     if (gameRules == null || gameRules.GameRules == null) return;
     // TODO: Figure out what these params do

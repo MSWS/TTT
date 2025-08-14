@@ -1,4 +1,6 @@
 ﻿using System.Drawing;
+using System.Reactive.Concurrency;
+using System.Reactive.Linq;
 using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Entities.Constants;
@@ -32,6 +34,9 @@ public class RoundTimerListener(IServiceProvider provider) : IListener {
 
   private readonly IRoleAssigner roles =
     provider.GetRequiredService<IRoleAssigner>();
+
+  private readonly IScheduler scheduler =
+    provider.GetRequiredService<IScheduler>();
 
   public void Dispose() { bus.UnregisterListener(this); }
 
@@ -76,11 +81,7 @@ public class RoundTimerListener(IServiceProvider provider) : IListener {
       var role = roles.GetRoles(player).FirstOrDefault();
       if (role == null) continue;
       csPlayer.SetClan(role.Name, false);
-    }
-
-    foreach (var inno in ev.Game.GetAlive(typeof(InnocentRole))) {
-      var player = converter.GetPlayer(inno);
-      player?.SwitchTeam(CsTeam.CounterTerrorist);
+      if (role is InnocentRole) csPlayer.SwitchTeam(CsTeam.CounterTerrorist);
     }
 
     new EventNextlevelChanged(true).FireEvent(false);
@@ -91,6 +92,27 @@ public class RoundTimerListener(IServiceProvider provider) : IListener {
         RoundEndReason.TerroristsWin :
         RoundEndReason.CTsWin;
 
-    RoundUtil.EndRound(endReason);
+    EventCsWinPanelRound panelWinEvent = new EventCsWinPanelRound(true);
+    panelWinEvent.Set("final_event", 3);
+    panelWinEvent.FireEvent(false);
+
+    EventRoundEnd roundEndEvent = new EventRoundEnd(true);
+    roundEndEvent.Set("winner",
+      (int)(endReason == RoundEndReason.TerroristsWin ?
+        CsTeam.Terrorist :
+        CsTeam.CounterTerrorist));
+    roundEndEvent.Set("reason", (int)endReason);
+    roundEndEvent.Set("message",
+      endReason == RoundEndReason.TerroristsWin ?
+        "#SFUI_Notice_Terrorists_Win" :
+        "#SFUI_Notice_CTs_Win");
+    roundEndEvent.FireEvent(false);
+
+    var timer =
+      Observable.Timer(
+        config.RoundCfg.TimeBetweenRounds.Add(TimeSpan.FromSeconds(0.5)),
+        scheduler);
+    timer.Subscribe(_
+      => Server.NextWorldUpdate(() => RoundUtil.EndRound(endReason)));
   }
 }

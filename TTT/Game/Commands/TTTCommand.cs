@@ -17,7 +17,8 @@ public class TTTCommand(IServiceProvider provider) : ICommand {
 
   public Task<CommandResult>
     Execute(IOnlinePlayer? executor, ICommandInfo info) {
-    var version = GitVersionInformation.FullSemVer;
+    var version =
+      $"{GitVersionInformation.FullSemVer} ({GitVersionInformation.ShortSha})";
 #if DEBUG
     version += "-DEBUG";
 #endif
