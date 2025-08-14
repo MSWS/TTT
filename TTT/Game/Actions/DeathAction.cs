@@ -12,7 +12,13 @@ public class DeathAction(IPlayer victim, IPlayer? killer) : IAction {
   public IPlayer Player { get; } = victim;
   public IPlayer? Other { get; } = killer;
   public string Id { get; } = "basegame.action.death";
-  public string Verb { get; } = killer is null ? "died" : "was killed by";
+  public string Verb { get; } = killer is null ? "died" : "killed";
 
   public string Details { get; } = string.Empty;
+
+  public string Format() {
+    return Other is not null ?
+      $"{Other} {Verb} {Player} {Details}" :
+      $"{Player} {Verb} {Details}";
+  }
 }

@@ -46,8 +46,6 @@ public class CS2Player : IOnlinePlayer {
   public string Id { get; }
   public string Name { get; }
 
-  // public ICollection<IRole> Roles { get; } = [];
-
   public int Health {
     get => Player?.Pawn.Value != null ? Player.Pawn.Value.Health : 0;
 

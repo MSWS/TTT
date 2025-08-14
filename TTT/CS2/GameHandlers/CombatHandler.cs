@@ -50,14 +50,18 @@ public class CombatHandler(IServiceProvider provider) : IPluginModule {
         "m_pActionTrackingServices");
     }
 
+    ev.FireEventToClient(player);
+
     var killerStats = ev.Attacker?.ActionTrackingServices?.MatchStats;
     if (killerStats != null) {
       killerStats.Kills  -= 1;
       killerStats.Damage -= ev.DmgHealth;
 
-      if (ev.Attacker != null)
+      if (ev.Attacker != null) {
         Utilities.SetStateChanged(ev.Attacker, "CCSPlayerController",
           "m_pActionTrackingServices");
+        ev.FireEventToClient(ev.Attacker);
+      }
 
       var assisterStats = ev.Assister?.ActionTrackingServices?.MatchStats;
       if (assisterStats != null && assisterStats != killerStats)
