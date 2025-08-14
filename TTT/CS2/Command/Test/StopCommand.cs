@@ -7,12 +7,12 @@ using TTT.API.Player;
 namespace TTT.CS2.Command.Test;
 
 public class StopCommand(IServiceProvider provider) : ICommand {
+  private readonly IGameManager games =
+    provider.GetRequiredService<IGameManager>();
+
   public void Dispose() { }
   public string Name => "stop";
   public string Version => GitVersionInformation.FullSemVer;
-
-  private readonly IGameManager games =
-    provider.GetRequiredService<IGameManager>();
 
   public void Start() { }
 

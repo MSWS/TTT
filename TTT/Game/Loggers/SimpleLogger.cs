@@ -10,14 +10,14 @@ namespace TTT.Game.Loggers;
 public class SimpleLogger(IServiceProvider provider) : IActionLogger {
   private readonly SortedDictionary<DateTime, ISet<IAction>> actions = new();
 
+  private readonly IMsgLocalizer locale =
+    provider.GetRequiredService<IMsgLocalizer>();
+
   private readonly Lazy<IMessenger> msg =
     new(provider.GetRequiredService<IMessenger>());
 
   private readonly IScheduler scheduler = provider
    .GetRequiredService<IScheduler>();
-
-  private readonly IMsgLocalizer locale =
-    provider.GetRequiredService<IMsgLocalizer>();
 
   private DateTime? epoch;
 

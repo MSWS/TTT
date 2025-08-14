@@ -14,7 +14,7 @@ public class PlayerCausesEndListener(IServiceProvider provider)
   [EventHandler]
   [UsedImplicitly]
   public void OnKill(PlayerDeathEvent ev) {
-    if (!Games.IsGameActive()) return;
+    if (Games.ActiveGame is not { State: State.IN_PROGRESS }) return;
     var endGame = getWinningTeam(out var winningTeam);
 
     if (!endGame) return;
@@ -28,7 +28,7 @@ public class PlayerCausesEndListener(IServiceProvider provider)
   [EventHandler]
   [UsedImplicitly]
   public void OnLeave(PlayerLeaveEvent ev) {
-    if (!Games.IsGameActive()) return;
+    if (Games.ActiveGame is not { State: State.IN_PROGRESS }) return;
     var endGame = getWinningTeam(out var winningTeam);
 
     if (!endGame) return;

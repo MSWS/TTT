@@ -21,9 +21,6 @@ namespace TTT.CS2.Listeners;
 public class RoundTimerListener(IServiceProvider provider) : IListener {
   private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
 
-  private readonly IRoleAssigner roles =
-    provider.GetRequiredService<IRoleAssigner>();
-
   private readonly TTTConfig config = provider
    .GetRequiredService<IStorage<TTTConfig>>()
    .Load()
@@ -32,6 +29,9 @@ public class RoundTimerListener(IServiceProvider provider) : IListener {
 
   private readonly IPlayerConverter<CCSPlayerController> converter =
     provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
+
+  private readonly IRoleAssigner roles =
+    provider.GetRequiredService<IRoleAssigner>();
 
   public void Dispose() { bus.UnregisterListener(this); }
 

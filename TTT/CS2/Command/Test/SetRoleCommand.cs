@@ -4,7 +4,6 @@ using TTT.API.Command;
 using TTT.API.Events;
 using TTT.API.Player;
 using TTT.API.Role;
-using TTT.CS2.Roles;
 using TTT.Game.Events.Player;
 using TTT.Game.Roles;
 

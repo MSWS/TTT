@@ -4,9 +4,9 @@ using TTT.Game.Events.Player;
 
 namespace TTT.Game.Actions;
 
-public class DamagedAction(IPlayer victim, IPlayer? attacker, string? weapon,
+public class DamagedAction(IPlayer victim, IPlayer attacker, string? weapon,
   int damage) : IAction {
-  public DamagedAction(PlayerDamagedEvent ev) : this(ev.Player, ev.Attacker,
+  public DamagedAction(PlayerDamagedEvent ev) : this(ev.Player, ev.Attacker!,
     ev.Weapon, ev.DmgDealt) { }
 
   public string? Weapon { get; } = weapon;

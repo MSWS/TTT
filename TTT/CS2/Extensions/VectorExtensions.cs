@@ -53,7 +53,7 @@ public static class VectorExtensions {
     float maxDelta) {
     var toVector = target - current;
     var dist     = toVector.Length();
-    if (dist <= maxDelta || dist == 0f) { return target; }
+    if (dist <= maxDelta || dist == 0f) return target;
 
     return current + toVector / dist * maxDelta;
   }

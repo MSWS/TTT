@@ -17,12 +17,12 @@ public class PlayerStatsTracker(IServiceProvider provider) : IListener {
   private readonly IPlayerFinder finder =
     provider.GetRequiredService<IPlayerFinder>();
 
-  public void Dispose() { }
-
   private readonly ISet<int> revealedDeaths = new HashSet<int>();
 
   private readonly IDictionary<int, (int, int)> roundKillsAndAssists =
     new Dictionary<int, (int, int)>();
+
+  public void Dispose() { }
 
   [EventHandler(Priority = Priority.MONITOR)]
   public void OnIdentify(BodyIdentifyEvent ev) {

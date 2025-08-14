@@ -7,6 +7,7 @@ using CounterStrikeSharp.API.Modules.Utils;
 using Microsoft.Extensions.DependencyInjection;
 using TTT.API;
 using TTT.API.Events;
+using TTT.API.Game;
 using TTT.API.Player;
 using TTT.CS2.Extensions;
 using TTT.Game.Events.Body;
@@ -19,6 +20,9 @@ public class BodySpawner(IServiceProvider provider) : IPluginModule {
   private readonly IPlayerConverter<CCSPlayerController> converter =
     provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
 
+  private readonly IGameManager games =
+    provider.GetRequiredService<IGameManager>();
+
   private readonly PropMover mover = provider.GetRequiredService<PropMover>();
 
   public void Dispose() { }
@@ -28,6 +32,8 @@ public class BodySpawner(IServiceProvider provider) : IPluginModule {
 
   [GameEventHandler]
   public HookResult OnDeath(EventPlayerDeath ev, GameEventInfo _) {
+    if (games.ActiveGame is { State: State.IN_PROGRESS })
+      return HookResult.Continue;
     var player = ev.Userid;
     if (player == null || !player.IsValid) return HookResult.Continue;
     player.SetColor(Color.FromArgb(0, 0, 0, 0));

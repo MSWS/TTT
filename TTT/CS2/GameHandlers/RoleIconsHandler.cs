@@ -18,6 +18,9 @@ public class RoleIconsHandler(IServiceProvider provider)
   : IPluginModule, IListener {
   private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
 
+  private readonly IDictionary<int, IEnumerable<CPointWorldText>>
+    detectiveIcons = new Dictionary<int, IEnumerable<CPointWorldText>>();
+
   private readonly IPlayerConverter<CCSPlayerController> players =
     provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
 
@@ -49,6 +52,7 @@ public class RoleIconsHandler(IServiceProvider provider)
     if (ev.NewState != State.IN_PROGRESS) return;
     traitors.Clear();
     traitorIcons.Clear();
+    detectiveIcons.Clear();
   }
 
   [EventHandler(IgnoreCanceled = true)]
@@ -62,12 +66,11 @@ public class RoleIconsHandler(IServiceProvider provider)
     }
 
     traitorIcons.TryGetValue(player.Slot, out var icons);
-    if (icons != null) {
+    if (icons != null)
       foreach (var icon in icons) {
         if (!icon.IsValid) continue;
         icon.Remove();
       }
-    }
 
     traitors.Remove(player.Slot);
 
@@ -91,7 +94,11 @@ public class RoleIconsHandler(IServiceProvider provider)
     var roleIcon = textSpawner?.CreateTextHat(textSettings, player);
     if (roleIcon == null) return;
 
-    if (ev.Role is not TraitorRole) return;
+    if (ev.Role is not TraitorRole) {
+      detectiveIcons[player.Slot] = roleIcon;
+      return;
+    }
+
     traitors.Add(player.Slot);
     traitorIcons[player.Slot] = roleIcon;
   }
@@ -101,17 +108,20 @@ public class RoleIconsHandler(IServiceProvider provider)
     var gamePlayer = players.GetPlayer(ev.Victim);
     if (gamePlayer == null || !gamePlayer.IsValid) return;
 
+    detectiveIcons.TryGetValue(gamePlayer.Slot, out var icons);
+    removeIcons(icons);
     if (!traitors.Contains(gamePlayer.Slot)) return;
 
-    traitorIcons.TryGetValue(gamePlayer.Slot, out var icons);
-    if (icons != null) {
-      foreach (var icon in icons) {
-        if (!icon.IsValid) continue;
-        icon.Remove();
-      }
-    }
+    traitorIcons.TryGetValue(gamePlayer.Slot, out icons);
+    removeIcons(icons);
+  }
 
-    traitors.Remove(gamePlayer.Slot);
+  private void removeIcons(IEnumerable<CPointWorldText>? icons) {
+    if (icons == null) return;
+    foreach (var icon in icons) {
+      if (!icon.IsValid) continue;
+      icon.Remove();
+    }
   }
 
   // ReSharper disable once PossiblyImpureMethodCallOnReadonlyVariable
