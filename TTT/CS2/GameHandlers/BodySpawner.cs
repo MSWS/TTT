@@ -32,7 +32,7 @@ public class BodySpawner(IServiceProvider provider) : IPluginModule {
 
   [GameEventHandler]
   public HookResult OnDeath(EventPlayerDeath ev, GameEventInfo _) {
-    if (games.ActiveGame is { State: State.IN_PROGRESS })
+    if (games.ActiveGame is not { State: State.IN_PROGRESS })
       return HookResult.Continue;
     var player = ev.Userid;
     if (player == null || !player.IsValid) return HookResult.Continue;
