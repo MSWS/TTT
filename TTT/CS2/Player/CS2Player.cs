@@ -70,21 +70,17 @@ public class CS2Player : IOnlinePlayer {
   }
 
   public int Armor {
-    get
-      => Player?.PlayerPawn.Value != null ?
-        Player.PlayerPawn.Value.ArmorValue :
-        0;
+    get => Player?.PawnArmor ?? 0;
 
     set {
-      if (Player?.PlayerPawn.Value == null) return;
-      Player.PlayerPawn.Value.ArmorValue = value;
-      Utilities.SetStateChanged(Player.PlayerPawn.Value, "CCSPlayerPawn",
-        "m_ArmorValue");
+      if (Player == null) return;
+      Player.PawnArmor = value;
+      Utilities.SetStateChanged(Player, "CCSPlayerController", "m_iPawnArmor");
     }
   }
 
   public bool IsAlive {
-    get => Player != null && Player.PlayerPawn.Value is { Health: > 0 };
+    get => Player != null && Player.Pawn.Value is { Health: > 0 };
 
     set
       => throw new NotSupportedException(

@@ -25,7 +25,7 @@ public class CS2InventoryManager(
     var gamePlayer = converter.GetPlayer(player);
     if (gamePlayer == null) return;
 
-    var pawn = gamePlayer.PlayerPawn.Value;
+    var pawn = gamePlayer.Pawn.Value;
 
     if (pawn == null || pawn.WeaponServices == null) return;
 

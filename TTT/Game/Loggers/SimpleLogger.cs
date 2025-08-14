@@ -32,7 +32,7 @@ public class SimpleLogger(IServiceProvider provider) : IActionLogger {
     actionSet.Add(action);
     actions[timestamp.DateTime] = actionSet;
 
-    if (epoch == null || timestamp > epoch) epoch = timestamp.DateTime;
+    if (epoch == null || timestamp < epoch) epoch = timestamp.DateTime;
   }
 
   public IEnumerable<(DateTime, IAction)> GetActions() {

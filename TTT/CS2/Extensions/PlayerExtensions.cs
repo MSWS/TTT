@@ -8,7 +8,7 @@ public static class PlayerExtensions {
   public static CBasePlayerWeapon? GetWeaponBase(
     this CCSPlayerController player, string designerName) {
     if (!player.IsValid) return null;
-    var pawn = player.PlayerPawn.Value;
+    var pawn = player.Pawn.Value;
     if (pawn == null || !pawn.IsValid) return null;
 
     return pawn.WeaponServices?.MyWeapons
@@ -27,11 +27,11 @@ public static class PlayerExtensions {
 
   public static void SetColor(this CCSPlayerController player, Color color) {
     if (!player.IsValid) return;
-    var pawn = player.PlayerPawn.Value;
+    var pawn = player.Pawn.Value;
     if (!player.IsValid || pawn == null || !pawn.IsValid) return;
 
     if (color.A == 255)
       color = Color.FromArgb(pawn.Render.A, color.R, color.G, color.B);
-    player.PlayerPawn.Value.SetColor(color);
+    pawn.SetColor(color);
   }
 }

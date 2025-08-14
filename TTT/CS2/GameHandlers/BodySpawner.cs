@@ -63,20 +63,20 @@ public class BodySpawner(IServiceProvider provider) : IPluginModule {
 
   private CRagdollProp makeGameRagdoll(CCSPlayerController playerController) {
     var ragdoll = Utilities.CreateEntityByName<CRagdollProp>("prop_ragdoll");
-    var pawn    = playerController.PlayerPawn.Value;
+    var pawn    = playerController.Pawn.Value;
 
     if (ragdoll == null || !ragdoll.IsValid || playerController == null)
       throw new ArgumentNullException(nameof(ragdoll));
 
     if (pawn == null || !pawn.IsValid)
-      throw new ArgumentException("PlayerPawn is not valid",
+      throw new ArgumentException("Pawn is not valid",
         nameof(playerController));
 
     var origin   = pawn.AbsOrigin.Clone();
     var rotation = pawn.AbsRotation.Clone();
 
     if (origin == null)
-      throw new ArgumentException("PlayerPawn AbsOrigin is null",
+      throw new ArgumentException("Pawn AbsOrigin is null",
         nameof(playerController));
 
     origin.Z      += 30;
