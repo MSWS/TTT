@@ -1,5 +1,6 @@
 ﻿using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
+using CounterStrikeSharp.API.Modules.Utils;
 using Microsoft.Extensions.DependencyInjection;
 using TTT.API.Events;
 using TTT.API.Game;
@@ -11,6 +12,7 @@ using TTT.CS2.Extensions;
 using TTT.Game;
 using TTT.Game.Events.Body;
 using TTT.Game.Events.Game;
+using TTT.Game.Roles;
 using TTT.Locale;
 
 namespace TTT.CS2.Listeners;
@@ -80,6 +82,9 @@ public class BodyPickupListener(IServiceProvider provider) : IListener {
 
     var onlinePlayer = converter.GetPlayer(body.OfPlayer);
     if (onlinePlayer == null || !onlinePlayer.IsValid) return;
+
+    if (primaryRole is InnocentRole)
+      onlinePlayer.SwitchTeam(CsTeam.CounterTerrorist);
 
     onlinePlayer.PawnIsAlive = false;
     onlinePlayer.SetClan(primaryRole.Name);

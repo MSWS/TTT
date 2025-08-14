@@ -94,24 +94,23 @@ public class RoundTimerListener(IServiceProvider provider) : IListener {
           RoundEndReason.CTsWin;
 
       EventCsWinPanelRound panelWinEvent = new EventCsWinPanelRound(true);
+      var winningTeam = endReason == RoundEndReason.TerroristsWin ?
+        CsTeam.Terrorist :
+        CsTeam.CounterTerrorist;
       panelWinEvent.Set("final_event", 3);
       panelWinEvent.FireEvent(false);
 
-      EventRoundEnd roundEndEvent = new EventRoundEnd(true);
-      roundEndEvent.Set("winner",
-        (int)(endReason == RoundEndReason.TerroristsWin ?
-          CsTeam.Terrorist :
-          CsTeam.CounterTerrorist));
-      roundEndEvent.Set("reason", (int)endReason);
-      roundEndEvent.Set("message",
-        endReason == RoundEndReason.TerroristsWin ?
-          "#SFUI_Notice_Terrorists_Win" :
-          "#SFUI_Notice_CTs_Win");
-      roundEndEvent.FireEvent(false);
+      // EventRoundEnd roundEndEvent = new EventRoundEnd(true);
+      // roundEndEvent.Set("winner", (int)(winningTeam));
+      // roundEndEvent.Set("reason", (int)endReason);
+      // roundEndEvent.Set("message",
+      //   endReason == RoundEndReason.TerroristsWin ?
+      //     "#SFUI_Notice_Terrorists_Win" :
+      //     "#SFUI_Notice_CTs_Win");
+      // roundEndEvent.FireEvent(false);
 
       var timer = Observable.Timer(
-        config.RoundCfg.TimeBetweenRounds.Add(TimeSpan.FromSeconds(0.5)),
-        scheduler);
+        config.RoundCfg.TimeBetweenRounds, scheduler);
       timer.Subscribe(_
         => Server.NextWorldUpdate(() => RoundUtil.EndRound(endReason)));
     });
