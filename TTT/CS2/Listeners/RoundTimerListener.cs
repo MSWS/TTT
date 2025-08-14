@@ -97,7 +97,8 @@ public class RoundTimerListener(IServiceProvider provider) : IListener {
       var winningTeam = endReason == RoundEndReason.TerroristsWin ?
         CsTeam.Terrorist :
         CsTeam.CounterTerrorist;
-      panelWinEvent.Set("final_event", 3);
+      panelWinEvent.Set("final_event",
+        (int)(winningTeam == CsTeam.CounterTerrorist ? 2 : 3));
       panelWinEvent.FireEvent(false);
 
       // EventRoundEnd roundEndEvent = new EventRoundEnd(true);

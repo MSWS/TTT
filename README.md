@@ -10,10 +10,10 @@ survive while eliminating the traitors among them.
 ## Features
 
 - [X] Unit Testing
-- [ ] Basic Gameplay
-    - [ ] Traitors
-    - [ ] Detectives
-    - [ ] Innocents
+- [X] Basic Gameplay
+    - [X] Traitors
+    - [X] Detectives
+    - [X] Innocents
 - [ ] Shop
 - [ ] Karma
 - [ ] Statistics

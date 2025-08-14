@@ -78,13 +78,13 @@ public class PlayerStatsTracker(IServiceProvider provider) : IListener {
      .Where(p => p.IsValid && !revealedDeaths.Contains(p.Slot));
 
     foreach (var player in online) {
+      player.PawnIsAlive = false;
+      Utilities.SetStateChanged(player, "CCSPlayerController",
+        "m_bPawnIsAlive");
       var stats = player.ActionTrackingServices?.MatchStats;
       if (stats == null) continue;
 
-      player.PawnIsAlive = false;
       stats.Deaths++;
-      Utilities.SetStateChanged(player, "CCSPlayerController",
-        "m_bPawnIsAlive");
       Utilities.SetStateChanged(player, "CCSPlayerController",
         "m_pActionTrackingServices");
     }

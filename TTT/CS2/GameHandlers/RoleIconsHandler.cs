@@ -116,6 +116,14 @@ public class RoleIconsHandler(IServiceProvider provider)
     removeIcons(icons);
   }
 
+  public void RevealIconFor(CCSPlayerController player) {
+    traitors.Add(player.Slot);
+  }
+
+  public void HideIconFor(CCSPlayerController player) {
+    traitors.Remove(player.Slot);
+  }
+
   private void removeIcons(IEnumerable<CPointWorldText>? icons) {
     if (icons == null) return;
     foreach (var icon in icons) {
