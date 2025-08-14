@@ -10,6 +10,7 @@ public class CS2GameManager(IServiceProvider provider) : GameManager(provider) {
       throw new InvalidOperationException(
         "A game is already active. Please end the current game before starting a new one.");
 
+    if (ActiveGame is { State: State.WAITING }) return ActiveGame;
     ActiveGame = new CS2Game(Provider);
 
     var ev = new GameInitEvent(ActiveGame);
