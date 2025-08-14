@@ -86,33 +86,34 @@ public class RoundTimerListener(IServiceProvider provider) : IListener {
 
     new EventNextlevelChanged(true).FireEvent(false);
 
-    var endReason =
-      ev.Game.WinningRole != null && ev.Game.WinningRole.GetType()
-       .IsAssignableTo(typeof(TraitorRole)) ?
-        RoundEndReason.TerroristsWin :
-        RoundEndReason.CTsWin;
+    Server.NextWorldUpdate(() => {
+      var endReason =
+        ev.Game.WinningRole != null && ev.Game.WinningRole.GetType()
+         .IsAssignableTo(typeof(TraitorRole)) ?
+          RoundEndReason.TerroristsWin :
+          RoundEndReason.CTsWin;
 
-    EventCsWinPanelRound panelWinEvent = new EventCsWinPanelRound(true);
-    panelWinEvent.Set("final_event", 3);
-    panelWinEvent.FireEvent(false);
+      EventCsWinPanelRound panelWinEvent = new EventCsWinPanelRound(true);
+      panelWinEvent.Set("final_event", 3);
+      panelWinEvent.FireEvent(false);
 
-    EventRoundEnd roundEndEvent = new EventRoundEnd(true);
-    roundEndEvent.Set("winner",
-      (int)(endReason == RoundEndReason.TerroristsWin ?
-        CsTeam.Terrorist :
-        CsTeam.CounterTerrorist));
-    roundEndEvent.Set("reason", (int)endReason);
-    roundEndEvent.Set("message",
-      endReason == RoundEndReason.TerroristsWin ?
-        "#SFUI_Notice_Terrorists_Win" :
-        "#SFUI_Notice_CTs_Win");
-    roundEndEvent.FireEvent(false);
+      EventRoundEnd roundEndEvent = new EventRoundEnd(true);
+      roundEndEvent.Set("winner",
+        (int)(endReason == RoundEndReason.TerroristsWin ?
+          CsTeam.Terrorist :
+          CsTeam.CounterTerrorist));
+      roundEndEvent.Set("reason", (int)endReason);
+      roundEndEvent.Set("message",
+        endReason == RoundEndReason.TerroristsWin ?
+          "#SFUI_Notice_Terrorists_Win" :
+          "#SFUI_Notice_CTs_Win");
+      roundEndEvent.FireEvent(false);
 
-    var timer =
-      Observable.Timer(
+      var timer = Observable.Timer(
         config.RoundCfg.TimeBetweenRounds.Add(TimeSpan.FromSeconds(0.5)),
         scheduler);
-    timer.Subscribe(_
-      => Server.NextWorldUpdate(() => RoundUtil.EndRound(endReason)));
+      timer.Subscribe(_
+        => Server.NextWorldUpdate(() => RoundUtil.EndRound(endReason)));
+    });
   }
 }

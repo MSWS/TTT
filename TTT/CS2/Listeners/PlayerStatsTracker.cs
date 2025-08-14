@@ -81,7 +81,10 @@ public class PlayerStatsTracker(IServiceProvider provider) : IListener {
       var stats = player.ActionTrackingServices?.MatchStats;
       if (stats == null) continue;
 
+      player.PawnIsAlive = false;
       stats.Deaths++;
+      Utilities.SetStateChanged(player, "CCSPlayerController",
+        "m_bPawnIsAlive");
       Utilities.SetStateChanged(player, "CCSPlayerController",
         "m_pActionTrackingServices");
     }
