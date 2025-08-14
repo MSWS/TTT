@@ -45,10 +45,7 @@ public class RoundTimerListener(IServiceProvider provider) : IListener {
         Server.ExecuteCommand("mp_ignore_round_win_conditions 1");
         foreach (var player in Utilities.GetPlayers()
          .Where(p => p.LifeState != (int)LifeState_t.LIFE_ALIVE)) {
-          player.PawnIsAlive = true;
           player.Respawn();
-          Utilities.SetStateChanged(player, "CCSPlayerController",
-            "m_bPawnIsAlive");
         }
 
         foreach (var player in Utilities.GetPlayers())

@@ -1,4 +1,5 @@
-﻿using CounterStrikeSharp.API.Core;
+﻿using CounterStrikeSharp.API;
+using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Memory;
 using CounterStrikeSharp.API.Modules.Memory.DynamicFunctions;
 using Microsoft.Extensions.DependencyInjection;
@@ -37,8 +38,10 @@ public class DamageCanceler(IServiceProvider provider)
     var attacker     = attackerPawn.Value?.As<CCSPlayerController>();
 
     if (attacker == null || !attacker.IsValid
-      || games.ActiveGame is not { State: State.IN_PROGRESS })
+      || games.ActiveGame is { State: State.IN_PROGRESS }) {
       return HookResult.Continue;
+    }
+
     return HookResult.Handled;
   }
 }
