@@ -38,6 +38,58 @@ public class ColoredRoleTest(IServiceProvider provider) {
     Assert.Contains(" are a ", msg);
   }
 
+  [Theory]
+  [InlineData("1 traitor%s%", "1 traitor")]
+  [InlineData("2 traitor%s%", "2 traitors")]
+  [InlineData("1 non-Traitor%s%", "1 non-Traitor")]
+  [InlineData("2 non-Traitor%s%", "2 non-Traitors")]
+  public void HandlePluralization_WorksWithDashes(string input, string output) {
+    var message = StringLocalizer.HandlePluralization(input);
+
+    Assert.Equal(output, message);
+  }
+
+  [Fact]
+  public void HandlePluralization_WorksWithColors_Single() {
+    var message =
+      StringLocalizer.HandlePluralization("1 " + new ColoredRole("traitor").Name
+        + "%s%");
+
+    Assert.Equal("1 " + new ColoredRole("traitor").Name, message);
+  }
+
+  [Fact]
+  public void HandlePluralization_WorksWithColors_Plurals() {
+    var message =
+      StringLocalizer.HandlePluralization("2 " + new ColoredRole("traitor").Name
+        + "%s%");
+
+    Assert.Equal("2 " + new ColoredRole("traitor").Name + "s", message);
+  }
+
+  [Fact]
+  public void HandlePluralization_WorksWithColors_Dashed_Single() {
+    var message = StringLocalizer.HandlePluralization(
+      $"1 {ChatColors.Green}non-{new ColoredRole("traitor").Name}%s%");
+
+    Assert.Equal($"1 {ChatColors.Green}non-{new ColoredRole("traitor").Name}",
+      message);
+  }
+
+  [Fact]
+  public void HandlePluralization_WorksWithColors_Dashed() {
+    var message = StringLocalizer.HandlePluralization(
+      $"2 {ChatColors.Green}non-{new ColoredRole("traitor").Name}%s%");
+
+    Assert.Equal($"2 {ChatColors.Green}non-{new ColoredRole("traitor").Name}s",
+      message);
+  }
+
+  public void HandlePluralization_WorksWithColors(string input, string output) {
+    var message = StringLocalizer.HandlePluralization(input);
+
+    Assert.Equal(output, message);
+  }
 
   public class ColoredRole(string name) : IRole {
     public string Id => "test.role.colored";

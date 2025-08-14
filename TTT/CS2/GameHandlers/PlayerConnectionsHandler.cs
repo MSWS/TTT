@@ -70,8 +70,10 @@ public class PlayerConnectionsHandler(IServiceProvider provider)
     if (games.ActiveGame is { State: State.IN_PROGRESS or State.FINISHED })
       return;
 
-    Server.PrintToChatAll($"Respawning player {player.PlayerName}...");
-
-    player.Respawn();
+    Server.NextWorldUpdate(() => {
+      if (!player.IsValid) return;
+      Server.PrintToChatAll("Respawning...");
+      player.Respawn();
+    });
   }
 }
