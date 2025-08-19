@@ -1,4 +1,6 @@
 ﻿using System.Drawing;
+using System.Reactive.Concurrency;
+using System.Reactive.Linq;
 using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Entities.Constants;
@@ -21,9 +23,6 @@ namespace TTT.CS2.Listeners;
 public class RoundTimerListener(IServiceProvider provider) : IListener {
   private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
 
-  private readonly IRoleAssigner roles =
-    provider.GetRequiredService<IRoleAssigner>();
-
   private readonly TTTConfig config = provider
    .GetRequiredService<IStorage<TTTConfig>>()
    .Load()
@@ -32,6 +31,12 @@ public class RoundTimerListener(IServiceProvider provider) : IListener {
 
   private readonly IPlayerConverter<CCSPlayerController> converter =
     provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
+
+  private readonly IRoleAssigner roles =
+    provider.GetRequiredService<IRoleAssigner>();
+
+  private readonly IScheduler scheduler =
+    provider.GetRequiredService<IScheduler>();
 
   public void Dispose() { bus.UnregisterListener(this); }
 
@@ -45,10 +50,7 @@ public class RoundTimerListener(IServiceProvider provider) : IListener {
         Server.ExecuteCommand("mp_ignore_round_win_conditions 1");
         foreach (var player in Utilities.GetPlayers()
          .Where(p => p.LifeState != (int)LifeState_t.LIFE_ALIVE)) {
-          player.PawnIsAlive = true;
           player.Respawn();
-          Utilities.SetStateChanged(player, "CCSPlayerController",
-            "m_bPawnIsAlive");
         }
 
         foreach (var player in Utilities.GetPlayers())
@@ -79,21 +81,39 @@ public class RoundTimerListener(IServiceProvider provider) : IListener {
       var role = roles.GetRoles(player).FirstOrDefault();
       if (role == null) continue;
       csPlayer.SetClan(role.Name, false);
-    }
-
-    foreach (var inno in ev.Game.GetAlive(typeof(InnocentRole))) {
-      var player = converter.GetPlayer(inno);
-      player?.SwitchTeam(CsTeam.CounterTerrorist);
+      if (role is InnocentRole) csPlayer.SwitchTeam(CsTeam.CounterTerrorist);
     }
 
     new EventNextlevelChanged(true).FireEvent(false);
 
-    var endReason =
-      ev.Game.WinningRole != null && ev.Game.WinningRole.GetType()
-       .IsAssignableTo(typeof(TraitorRole)) ?
-        RoundEndReason.TerroristsWin :
-        RoundEndReason.CTsWin;
+    Server.NextWorldUpdate(() => {
+      var endReason =
+        ev.Game.WinningRole != null && ev.Game.WinningRole.GetType()
+         .IsAssignableTo(typeof(TraitorRole)) ?
+          RoundEndReason.TerroristsWin :
+          RoundEndReason.CTsWin;
 
-    RoundUtil.EndRound(endReason);
+      EventCsWinPanelRound panelWinEvent = new EventCsWinPanelRound(true);
+      var winningTeam = endReason == RoundEndReason.TerroristsWin ?
+        CsTeam.Terrorist :
+        CsTeam.CounterTerrorist;
+      panelWinEvent.Set("final_event",
+        (int)(winningTeam == CsTeam.CounterTerrorist ? 2 : 3));
+      panelWinEvent.FireEvent(false);
+
+      // EventRoundEnd roundEndEvent = new EventRoundEnd(true);
+      // roundEndEvent.Set("winner", (int)(winningTeam));
+      // roundEndEvent.Set("reason", (int)endReason);
+      // roundEndEvent.Set("message",
+      //   endReason == RoundEndReason.TerroristsWin ?
+      //     "#SFUI_Notice_Terrorists_Win" :
+      //     "#SFUI_Notice_CTs_Win");
+      // roundEndEvent.FireEvent(false);
+
+      var timer = Observable.Timer(
+        config.RoundCfg.TimeBetweenRounds, scheduler);
+      timer.Subscribe(_
+        => Server.NextWorldUpdate(() => RoundUtil.EndRound(endReason)));
+    });
   }
 }

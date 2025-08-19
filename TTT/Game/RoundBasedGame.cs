@@ -72,7 +72,6 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
     if (State != State.WAITING) return null;
 
     if (countdown == null) {
-      onlineMessenger?.DebugAnnounce("Starting game without countdown.");
       StartRound();
       return Observable.Empty<long>();
     }

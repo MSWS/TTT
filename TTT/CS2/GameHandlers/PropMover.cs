@@ -90,8 +90,6 @@ public class PropMover(IServiceProvider provider) : IPluginModule {
     var target = RayTrace.FindRayTraceIntersection(player);
     if (target == null) return;
 
-    msg.DebugInform(target.ToString());
-
     CBaseEntity? foundEntity = null;
     MapEntities.RemoveWhere(ent => !ent.IsValid);
     var closestDist = double.MaxValue;
@@ -99,8 +97,6 @@ public class PropMover(IServiceProvider provider) : IPluginModule {
       if (!ent.IsValid) continue;
       var rayPointDist =
         ent.AbsOrigin?.DistanceSquared(target) ?? double.MaxValue;
-      msg.Debug($"Checking entity {ent.DesignerName} at {ent.AbsOrigin}, "
-        + $"distance squared: {rayPointDist}");
       if (rayPointDist >= MIN_LOOK_ACCURACY || rayPointDist >= closestDist)
         continue;
 
@@ -109,7 +105,6 @@ public class PropMover(IServiceProvider provider) : IPluginModule {
     }
 
     var playerDist = playerPos.Distance(target);
-    msg.Debug($"Player distance squared to target: {playerDist}");
     if (playerDist > MAX_DISTANCE) return;
     if (foundEntity == null) return;
 

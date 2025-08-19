@@ -7,6 +7,7 @@ using CounterStrikeSharp.API.Modules.Utils;
 using Microsoft.Extensions.DependencyInjection;
 using TTT.API;
 using TTT.API.Events;
+using TTT.API.Game;
 using TTT.API.Player;
 using TTT.CS2.Extensions;
 using TTT.Game.Events.Body;
@@ -19,6 +20,9 @@ public class BodySpawner(IServiceProvider provider) : IPluginModule {
   private readonly IPlayerConverter<CCSPlayerController> converter =
     provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
 
+  private readonly IGameManager games =
+    provider.GetRequiredService<IGameManager>();
+
   private readonly PropMover mover = provider.GetRequiredService<PropMover>();
 
   public void Dispose() { }
@@ -28,6 +32,8 @@ public class BodySpawner(IServiceProvider provider) : IPluginModule {
 
   [GameEventHandler]
   public HookResult OnDeath(EventPlayerDeath ev, GameEventInfo _) {
+    if (games.ActiveGame is not { State: State.IN_PROGRESS })
+      return HookResult.Continue;
     var player = ev.Userid;
     if (player == null || !player.IsValid) return HookResult.Continue;
     player.SetColor(Color.FromArgb(0, 0, 0, 0));
@@ -63,20 +69,20 @@ public class BodySpawner(IServiceProvider provider) : IPluginModule {
 
   private CRagdollProp makeGameRagdoll(CCSPlayerController playerController) {
     var ragdoll = Utilities.CreateEntityByName<CRagdollProp>("prop_ragdoll");
-    var pawn    = playerController.PlayerPawn.Value;
+    var pawn    = playerController.Pawn.Value;
 
     if (ragdoll == null || !ragdoll.IsValid || playerController == null)
       throw new ArgumentNullException(nameof(ragdoll));
 
     if (pawn == null || !pawn.IsValid)
-      throw new ArgumentException("PlayerPawn is not valid",
+      throw new ArgumentException("Pawn is not valid",
         nameof(playerController));
 
     var origin   = pawn.AbsOrigin.Clone();
     var rotation = pawn.AbsRotation.Clone();
 
     if (origin == null)
-      throw new ArgumentException("PlayerPawn AbsOrigin is null",
+      throw new ArgumentException("Pawn AbsOrigin is null",
         nameof(playerController));
 
     origin.Z      += 30;

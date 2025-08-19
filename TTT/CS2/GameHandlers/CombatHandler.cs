@@ -50,14 +50,18 @@ public class CombatHandler(IServiceProvider provider) : IPluginModule {
         "m_pActionTrackingServices");
     }
 
+    ev.FireEventToClient(player);
+
     var killerStats = ev.Attacker?.ActionTrackingServices?.MatchStats;
     if (killerStats != null) {
       killerStats.Kills  -= 1;
       killerStats.Damage -= ev.DmgHealth;
 
-      if (ev.Attacker != null)
+      if (ev.Attacker != null) {
         Utilities.SetStateChanged(ev.Attacker, "CCSPlayerController",
           "m_pActionTrackingServices");
+        ev.FireEventToClient(ev.Attacker);
+      }
 
       var assisterStats = ev.Assister?.ActionTrackingServices?.MatchStats;
       if (assisterStats != null && assisterStats != killerStats)
@@ -70,7 +74,7 @@ public class CombatHandler(IServiceProvider provider) : IPluginModule {
 
     // These delays are necessary for the game engine
     Server.NextWorldUpdate(() => {
-      var pawn = player.PlayerPawn.Value;
+      var pawn = player.Pawn.Value;
       if (pawn == null || !pawn.IsValid) return;
       pawn.DeathTime = 0;
       Utilities.SetStateChanged(pawn, "CBasePlayerPawn", "m_flDeathTime");
@@ -94,15 +98,9 @@ public class CombatHandler(IServiceProvider provider) : IPluginModule {
 
     bus.Dispatch(dmgEvent);
 
-    var pawn = player.Pawn.Value;
-    if (pawn != null && pawn.IsValid) {
-      pawn.Health = dmgEvent.HpLeft;
-      if (player.PlayerPawn.Value != null && player.PlayerPawn.Value.IsValid)
-        player.PlayerPawn.Value.ArmorValue = dmgEvent.ArmorRemaining;
-    }
+    ev.Health = dmgEvent.HpLeft;
+    ev.Armor  = dmgEvent.ArmorRemaining;
 
-    if (dmgEvent.IsCanceled) return HookResult.Handled;
-
-    return HookResult.Continue;
+    return dmgEvent.IsCanceled ? HookResult.Handled : HookResult.Continue;
   }
 }

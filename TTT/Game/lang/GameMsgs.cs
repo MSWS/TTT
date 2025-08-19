@@ -17,6 +17,9 @@ public static class GameMsgs {
   public static IMsg ROLE_DETECTIVE
     => MsgFactory.Create(nameof(ROLE_DETECTIVE));
 
+  public static IMsg GAME_LOGS_HEADER
+    => MsgFactory.Create(nameof(GAME_LOGS_HEADER));
+
   public static IMsg ROLE_ASSIGNED(IRole role) {
     return MsgFactory.Create(nameof(ROLE_ASSIGNED), role.Name);
   }
@@ -49,15 +52,9 @@ public static class GameMsgs {
       ChatColors.Red :
       role.GetType().IsAssignableTo(typeof(DetectiveRole)) ? ChatColors.Blue :
         ChatColors.Lime;
-
-    return MsgFactory.Create(nameof(BODY_IDENTIFIED),
-      identifier.Name ?? "Unknown Identifier",
-      rolePrefix + (ofPlayer.Name ?? "Unknown Player"),
-      role.Name ?? "Unknown Role");
+    return MsgFactory.Create(nameof(BODY_IDENTIFIED), identifier.Name,
+      rolePrefix + ofPlayer.Name, role.Name);
   }
-
-  public static IMsg GAME_LOGS_HEADER
-    => MsgFactory.Create(nameof(GAME_LOGS_HEADER));
 
   #region COMMANDS
 

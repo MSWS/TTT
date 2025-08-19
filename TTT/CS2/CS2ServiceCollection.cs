@@ -44,6 +44,7 @@ public static class CS2ServiceCollection {
     collection.AddPluginBehavior<PropMover>();
     collection.AddPluginBehavior<BodySpawner>();
     collection.AddPluginBehavior<RoleIconsHandler>();
+    collection.AddPluginBehavior<DamageCanceler>();
 
     // Listeners
     collection.AddListener<RoundTimerListener>();

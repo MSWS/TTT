@@ -38,8 +38,8 @@ public class TextSpawner : ITextSpawner {
 
   private CPointWorldText spawnHatPart(TextSetting setting,
     CCSPlayerController player, float yRot) {
-    var position = player.PlayerPawn.Value?.AbsOrigin;
-    var rotation = player.PlayerPawn.Value?.AbsRotation;
+    var position = player.Pawn.Value?.AbsOrigin;
+    var rotation = player.Pawn.Value?.AbsRotation;
     if (position == null || rotation == null)
       throw new Exception("Failed to get player position");
     position = position.Clone()!;
@@ -49,7 +49,7 @@ public class TextSpawner : ITextSpawner {
     position.Add(GetRightVector(rotation) * -10);
 
     var ent = CreateText(setting, position, rotation);
-    ent.AcceptInput("SetParent", player.PlayerPawn.Value, null, "!activator");
+    ent.AcceptInput("SetParent", player.Pawn.Value, null, "!activator");
     return ent;
   }
 
