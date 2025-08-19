@@ -80,9 +80,5 @@ public class KarmaStorage(IServiceProvider provider)
     if (karmaUpdateEvent.IsCanceled) return;
 
     karmaCache[key] = newData;
-
-    if (connection is not { State: ConnectionState.Open })
-      throw new InvalidOperationException(
-        "Storage connection is not initialized.");
   }
 }
