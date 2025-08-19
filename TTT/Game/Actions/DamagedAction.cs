@@ -6,15 +6,9 @@ namespace TTT.Game.Actions;
 
 public class DamagedAction(IPlayer victim, IPlayer attacker, string? weapon,
   int damage) : IAction {
-  public DamagedAction(PlayerDamagedEvent ev) : this(ev.Player, ev.Attacker!,
-  public DamagedAction(PlayerDamagedEvent ev)
-    : this(
-        ev.Player,
-        ev.Attacker ?? throw new ArgumentNullException(nameof(ev.Attacker), "Attacker cannot be null"),
-        ev.Weapon,
-        ev.DmgDealt
-      )
-  { }
+  public DamagedAction(PlayerDamagedEvent ev) : this(ev.Player,
+    ev.Attacker ?? throw new ArgumentNullException(nameof(ev.Attacker),
+      "Attacker cannot be null"), ev.Weapon, ev.DmgDealt) { }
 
   public string? Weapon { get; } = weapon;
   public int Damage { get; } = damage;
