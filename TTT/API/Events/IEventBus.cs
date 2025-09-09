@@ -4,5 +4,5 @@ public interface IEventBus {
   void RegisterListener(IListener listener);
   void UnregisterListener(IListener listener);
 
-  void Dispatch(Event ev);
+  Task Dispatch(Event ev);
 }

@@ -55,11 +55,13 @@ public class EventBus : IEventBus {
     }
   }
 
-  public void Dispatch(Event ev) {
+  public Task Dispatch(Event ev) {
     var type = ev.GetType();
-    if (!handlers.TryGetValue(type, out var list)) return;
+    if (!handlers.TryGetValue(type, out var list)) return Task.CompletedTask;
     ICancelableEvent? cancelable           = null;
     if (ev is ICancelableEvent) cancelable = (ICancelableEvent)ev;
+
+    List<Task> tasks = [];
 
     foreach (var (listener, method) in list) {
       if (cancelable is { IsCanceled: true } && method
@@ -67,7 +69,10 @@ public class EventBus : IEventBus {
       ?.IgnoreCanceled == true)
         continue;
 
-      method.Invoke(listener, [ev]);
+      var result = method.Invoke(listener, [ev]);
+      if (result is Task task) tasks.Add(task);
     }
+
+    return Task.WhenAll(tasks);
   }
 }
