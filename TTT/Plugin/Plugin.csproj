@@ -10,6 +10,7 @@
   <ItemGroup>
     <ProjectReference Include="..\API\API.csproj"/>
     <ProjectReference Include="..\CS2\CS2.csproj"/>
+    <ProjectReference Include="..\Karma\Karma.csproj"/>
   </ItemGroup>
 
   <PropertyGroup>

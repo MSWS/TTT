@@ -12,8 +12,7 @@ using TTT.Karma.Events;
 
 namespace TTT.Karma;
 
-public class KarmaStorage(IServiceProvider provider)
-  : IKeyedStorage<IPlayer, int>, IKeyWritable<IPlayer, int>, ITerrorModule {
+public class KarmaStorage(IServiceProvider provider) : IKarmaService {
   private readonly KarmaConfig config =
     provider.GetService<IStorage<KarmaConfig>>()?.Load().Result
     ?? new KarmaConfig();
