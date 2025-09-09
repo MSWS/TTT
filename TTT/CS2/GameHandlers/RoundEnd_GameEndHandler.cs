@@ -7,13 +7,13 @@ using TTT.Game.Roles;
 
 namespace TTT.CS2.GameHandlers;
 
-public class RoundEndHandler(IServiceProvider provider) : IPluginModule {
+public class RoundEnd_GameEndHandler(IServiceProvider provider) : IPluginModule {
   private readonly IGameManager games =
     provider.GetRequiredService<IGameManager>();
 
   public void Dispose() { }
 
-  public string Name => nameof(RoundEndHandler);
+  public string Name => nameof(RoundEnd_GameEndHandler);
   public string Version => GitVersionInformation.FullSemVer;
 
   public void Start() { }
