@@ -68,7 +68,7 @@ public class KarmaStorage(IServiceProvider provider) : IKarmaService {
         $"Karma must be between {config.MinKarma} and {config.MaxKarma(key)} for player {key.Id}.");
 
     if (!karmaCache.TryGetValue(key, out var oldKarma)) {
-      oldKarma        = await Load(key) ?? config.DefaultKarma;
+      oldKarma        = await Load(key);
       karmaCache[key] = oldKarma;
     }
 
