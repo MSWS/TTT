@@ -16,4 +16,9 @@ public interface IShop : IKeyedStorage<IPlayer, int>,
     bool print = true);
 
   void ClearBalances();
+  void ClearItems();
+
+  void GiveItem(IOnlinePlayer player, IShopItem item);
+  IList<IShopItem> GetOwnedItems(IOnlinePlayer player);
+  void RemoveItem(IOnlinePlayer player, IShopItem item);
 }

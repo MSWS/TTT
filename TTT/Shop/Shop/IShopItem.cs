@@ -1,9 +1,11 @@
+using TTT.API;
 using TTT.API.Player;
 
 namespace TTT.Shop;
 
-public interface IShopItem {
-  string Name { get; }
+public interface IShopItem : ITerrorModule {
+  new string Name { get; }
+  string Id { get; }
   string Description { get; }
   ShopItemConfig Config { get; }
   void OnPurchase(IOnlinePlayer player);
