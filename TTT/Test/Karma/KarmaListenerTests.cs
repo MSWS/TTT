@@ -11,15 +11,15 @@ using Xunit;
 namespace TTT.Test.Karma;
 
 public class KarmaListenerTests {
-  private readonly IGameManager games;
-  private readonly IRoleAssigner roles;
-  private readonly IEventBus bus;
-  private readonly IKarmaService karma;
-  private readonly IPlayerFinder players;
-
   public enum RoleEnum {
     Innocent, Traitor, Detective
   }
+
+  private readonly IEventBus bus;
+  private readonly IGameManager games;
+  private readonly IKarmaService karma;
+  private readonly IPlayerFinder players;
+  private readonly IRoleAssigner roles;
 
   private readonly IList<IRole> roleSet;
 
