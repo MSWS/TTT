@@ -26,7 +26,7 @@ public interface IGame : IDisposable {
   ///   Attempts to start a game.
   ///   Depending on implementation, this may start a countdown or immediately start the game.
   /// </summary>
-  /// <param name="countdown"></param>
+  /// <param name="countdown">TimeSpan for countdown, null means start immediately</param>
   IObservable<long>? Start(TimeSpan? countdown = null);
 
   void EndGame(EndReason? reason = null);

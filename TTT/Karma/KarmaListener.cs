@@ -1,6 +1,8 @@
 using System.Diagnostics.Tracing;
+using System.Reactive.Concurrency;
 using Microsoft.Extensions.DependencyInjection;
 using TTT.API.Events;
+using TTT.API.Game;
 using TTT.API.Role;
 using TTT.Game.Events.Game;
 using TTT.Game.Events.Player;
@@ -11,6 +13,9 @@ namespace TTT.Karma;
 public class KarmaListener(IServiceProvider provider) : IListener {
   private readonly IRoleAssigner roles =
     provider.GetRequiredService<IRoleAssigner>();
+
+  private readonly IGameManager games =
+    provider.GetRequiredService<IGameManager>();
 
   public void Dispose() { }
 
@@ -30,11 +35,13 @@ public class KarmaListener(IServiceProvider provider) : IListener {
   public void OnRoundStart(GameStateUpdateEvent ev) { innoOnInnoKills.Clear(); }
 
   [EventHandler]
-  public void OnKill(PlayerDeathEvent ev) {
+  public Task OnKill(PlayerDeathEvent ev) {
+    if (games.ActiveGame is not { State: State.IN_PROGRESS }) return Task.CompletedTask;
+
     var victim = ev.Victim;
     var killer = ev.Killer;
 
-    if (killer == null) return;
+    if (killer == null) return Task.CompletedTask;
 
     var victimRole = roles.GetRoles(victim).First();
     var killerRole = roles.GetRoles(killer).First();
@@ -43,14 +50,14 @@ public class KarmaListener(IServiceProvider provider) : IListener {
     var killerKarmaDelta = 0;
 
     if (victimRole is InnocentRole) {
-      if (killerRole is TraitorRole) return;
+      if (killerRole is TraitorRole) return Task.CompletedTask;
       victimKarmaDelta = INNO_ON_INNO_VICTIM;
       killerKarmaDelta = INNO_ON_INNO;
 
-      innoOnInnoKills.TryGetValue(killer.Id, out var badRoundKills);
+      innoOnInnoKills[killer.Id] =
+        innoOnInnoKills.GetValueOrDefault(killer.Id, 0) + 1;
 
-      killerKarmaDelta           *= badRoundKills;
-      innoOnInnoKills[killer.Id] =  badRoundKills + 1;
+      killerKarmaDelta *= innoOnInnoKills[killer.Id];
     }
 
     if (victimRole is TraitorRole) {
@@ -65,7 +72,7 @@ public class KarmaListener(IServiceProvider provider) : IListener {
         INNO_ON_DETECTIVE;
     }
 
-    Task.Run(async () => {
+    return Task.Run(async () => {
       var newKillerKarma = await karma.Load(killer) + killerKarmaDelta;
       var newVictimKarma = await karma.Load(victim) + victimKarmaDelta;
 
