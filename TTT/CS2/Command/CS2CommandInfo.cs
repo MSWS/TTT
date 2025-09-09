@@ -80,4 +80,8 @@ public class CS2CommandInfo : ICommandInfo {
         break;
     }
   }
+
+  public ICommandInfo Skip(int count = 1) {
+    return new CS2CommandInfo(provider, this, count);
+  }
 }

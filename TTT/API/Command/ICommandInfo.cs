@@ -10,4 +10,5 @@ public interface ICommandInfo {
   string GetCommandString => string.Join(' ', Args);
   int ArgCount => Args.Length;
   void ReplySync(string message);
+  ICommandInfo Skip(int count = 1);
 }
