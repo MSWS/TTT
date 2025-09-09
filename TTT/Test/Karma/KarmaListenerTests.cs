@@ -79,10 +79,8 @@ public class KarmaListenerTests {
     Assert.NotNull(game);
     game.Start();
 
-    await roles.Write(victim, (List<IRole>) [roleSet[(int)victimRole]]);
-    await roles.Write(attacker, (List<IRole>) [roleSet[(int)attackerRole]]);
-    game.Players.Add(victim);
-    game.Players.Add(attacker);
+    roles.SetRole(victim, roleSet[(int)victimRole]);
+    roles.SetRole(attacker, roleSet[(int)attackerRole]);
 
     var deathEvent = new PlayerDeathEvent(victim);
     deathEvent.WithKiller(attacker);
@@ -94,5 +92,82 @@ public class KarmaListenerTests {
 
     Assert.Equal(expVictimKarma, victimKarma);
     Assert.Equal(expAttackerKarma, attackerKarma);
+  }
+
+  [Fact]
+  public async Task OnKill_WithMultiple_StacksKarma() {
+    var attacker = TestPlayer.Random();
+    var victim1  = TestPlayer.Random();
+    var victim2  = TestPlayer.Random();
+    var victim3  = TestPlayer.Random();
+
+    players.AddPlayers(attacker, victim1, victim2, victim3);
+
+    var game = games.CreateGame();
+    Assert.NotNull(game);
+    game.Start();
+
+    roles.SetRole(attacker, roleSet[(int)RoleEnum.Innocent]);
+    roles.SetRole(victim1, roleSet[(int)RoleEnum.Innocent]);
+    roles.SetRole(victim2, roleSet[(int)RoleEnum.Innocent]);
+    roles.SetRole(victim3, roleSet[(int)RoleEnum.Detective]);
+
+    var deathEvent1 = new PlayerDeathEvent(victim1);
+    deathEvent1.WithKiller(attacker);
+    var deathEvent2 = new PlayerDeathEvent(victim2);
+    deathEvent2.WithKiller(attacker);
+    var deathEvent3 = new PlayerDeathEvent(victim3);
+    deathEvent3.WithKiller(attacker);
+
+    await bus.Dispatch(deathEvent1); // First kill => 50 - (4*1) = 46
+    var killerKarma = await karma.Load(attacker);
+    Assert.Equal(46, killerKarma);
+
+    await bus.Dispatch(deathEvent2); // Second kill => 46 - (4*2) = 38
+    killerKarma = await karma.Load(attacker);
+    Assert.Equal(38, killerKarma);
+
+    await bus.Dispatch(
+      deathEvent3); // Third kill (detective) => 38 - (6*3) = 20
+    killerKarma = await karma.Load(attacker);
+    Assert.Equal(20, killerKarma);
+  }
+
+  [Fact]
+  public async Task OnKill_WithValidKills_DoesNotStack() {
+    var attacker = TestPlayer.Random();
+    var victim1  = TestPlayer.Random();
+    var victim2  = TestPlayer.Random();
+    var victim3  = TestPlayer.Random();
+
+    players.AddPlayers(attacker, victim1, victim2, victim3);
+
+    var game = games.CreateGame();
+    Assert.NotNull(game);
+    game.Start();
+
+    roles.SetRole(attacker, roleSet[(int)RoleEnum.Innocent]);
+    roles.SetRole(victim1, roleSet[(int)RoleEnum.Traitor]);
+    roles.SetRole(victim2, roleSet[(int)RoleEnum.Traitor]);
+    roles.SetRole(victim3, roleSet[(int)RoleEnum.Innocent]);
+
+    var deathEvent1 = new PlayerDeathEvent(victim1);
+    deathEvent1.WithKiller(attacker);
+    var deathEvent2 = new PlayerDeathEvent(victim2);
+    deathEvent2.WithKiller(attacker);
+    var deathEvent3 = new PlayerDeathEvent(victim3);
+    deathEvent3.WithKiller(attacker);
+
+    await bus.Dispatch(deathEvent1); // First kill => 50 + 2 = 52
+    var killerKarma = await karma.Load(attacker);
+    Assert.Equal(52, killerKarma);
+
+    await bus.Dispatch(deathEvent2); // Second kill => 52 + 2 = 54
+    killerKarma = await karma.Load(attacker);
+    Assert.Equal(54, killerKarma);
+
+    await bus.Dispatch(deathEvent3); // Third kill (inno) => 54 - 4 = 50
+    killerKarma = await karma.Load(attacker);
+    Assert.Equal(50, killerKarma);
   }
 }

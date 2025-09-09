@@ -2,6 +2,11 @@ namespace TTT.API.Player;
 
 public interface IPlayerFinder {
   public IOnlinePlayer AddPlayer(IOnlinePlayer player);
+
+  public void AddPlayers(params IOnlinePlayer[] players) {
+    foreach (var p in players) AddPlayer(p);
+  }
+
   public IPlayer RemovePlayer(IPlayer player);
 
   ISet<IOnlinePlayer> GetOnline();

@@ -20,7 +20,7 @@ public class KarmaListener(IServiceProvider provider) : IListener {
   private readonly IGameManager games =
     provider.GetRequiredService<IGameManager>();
 
-  private readonly Dictionary<string, int> innoOnInnoKills = new();
+  private readonly Dictionary<string, int> badKills = new();
 
   private readonly IKarmaService karma =
     provider.GetRequiredService<IKarmaService>();
@@ -32,7 +32,7 @@ public class KarmaListener(IServiceProvider provider) : IListener {
 
   [EventHandler]
   [UsedImplicitly]
-  public void OnRoundStart(GameStateUpdateEvent ev) { innoOnInnoKills.Clear(); }
+  public void OnRoundStart(GameStateUpdateEvent ev) { badKills.Clear(); }
 
   [EventHandler]
   [UsedImplicitly]
@@ -51,15 +51,17 @@ public class KarmaListener(IServiceProvider provider) : IListener {
     var victimKarmaDelta = 0;
     var killerKarmaDelta = 0;
 
+    var attackerKarmaMultiplier = 1;
+
+    if (victimRole is TraitorRole == killerRole is TraitorRole) {
+      badKills[killer.Id]     = badKills.GetValueOrDefault(killer.Id, 0) + 1;
+      attackerKarmaMultiplier = badKills[killer.Id];
+    }
+
     if (victimRole is InnocentRole) {
       if (killerRole is TraitorRole) return Task.CompletedTask;
       victimKarmaDelta = INNO_ON_INNO_VICTIM;
       killerKarmaDelta = INNO_ON_INNO;
-
-      innoOnInnoKills[killer.Id] =
-        innoOnInnoKills.GetValueOrDefault(killer.Id, 0) + 1;
-
-      killerKarmaDelta *= innoOnInnoKills[killer.Id];
     }
 
     if (victimRole is TraitorRole)
@@ -67,10 +69,13 @@ public class KarmaListener(IServiceProvider provider) : IListener {
         TRAITOR_ON_TRAITOR :
         INNO_ON_TRAITOR;
 
-    if (victimRole is DetectiveRole)
+    if (victimRole is DetectiveRole) {
       killerKarmaDelta = killerRole is TraitorRole ?
         TRAITOR_ON_DETECTIVE :
         INNO_ON_DETECTIVE;
+    }
+
+    killerKarmaDelta *= attackerKarmaMultiplier;
 
     return Task.Run(async () => {
       var newKillerKarma = await karma.Load(killer) + killerKarmaDelta;
