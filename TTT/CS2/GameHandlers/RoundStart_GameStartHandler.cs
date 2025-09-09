@@ -8,7 +8,8 @@ using TTT.Game;
 
 namespace TTT.CS2.GameHandlers;
 
-public class RoundStartHandler(IServiceProvider provider) : IPluginModule {
+public class RoundStart_GameStartHandler(IServiceProvider provider)
+  : IPluginModule {
   private readonly TTTConfig config =
     provider.GetService<IStorage<TTTConfig>>()?.Load().GetAwaiter().GetResult()
     ?? new TTTConfig();
@@ -16,8 +17,8 @@ public class RoundStartHandler(IServiceProvider provider) : IPluginModule {
   private readonly IGameManager games =
     provider.GetRequiredService<IGameManager>();
 
-  public void Dispose() { throw new NotImplementedException(); }
-  public string Name => nameof(RoundStartHandler);
+  public void Dispose() { }
+  public string Name => nameof(RoundStart_GameStartHandler);
   public string Version => GitVersionInformation.FullSemVer;
 
   public void Start() { }

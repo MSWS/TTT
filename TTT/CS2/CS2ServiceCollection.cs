@@ -38,13 +38,14 @@ public static class CS2ServiceCollection {
 
     // GameHandlers
     collection.AddPluginBehavior<PlayerConnectionsHandler>();
-    collection.AddPluginBehavior<RoundEndHandler>();
-    collection.AddPluginBehavior<RoundStartHandler>();
+    collection.AddPluginBehavior<RoundEnd_GameEndHandler>();
+    collection.AddPluginBehavior<RoundStart_GameStartHandler>();
     collection.AddPluginBehavior<CombatHandler>();
     collection.AddPluginBehavior<PropMover>();
     collection.AddPluginBehavior<BodySpawner>();
     collection.AddPluginBehavior<RoleIconsHandler>();
     collection.AddPluginBehavior<DamageCanceler>();
+    collection.AddPluginBehavior<KarmaSyncer>();
 
     // Listeners
     collection.AddListener<RoundTimerListener>();
