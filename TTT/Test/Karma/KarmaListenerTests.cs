@@ -48,7 +48,7 @@ public class KarmaListenerTests {
     var deathEvent = new PlayerDeathEvent(victim);
     deathEvent.WithKiller(attacker);
 
-    bus.Dispatch(deathEvent);
+    await bus.Dispatch(deathEvent);
 
     var victimKarma   = await karma.Load(victim);
     var attackerKarma = await karma.Load(attacker);

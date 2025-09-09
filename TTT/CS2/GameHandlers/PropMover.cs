@@ -8,7 +8,6 @@ using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using TTT.API;
 using TTT.API.Events;
-using TTT.API.Messages;
 using TTT.API.Player;
 using TTT.CS2.Events;
 using TTT.CS2.Extensions;
@@ -29,7 +28,6 @@ public class PropMover(IServiceProvider provider) : IPluginModule {
     provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
 
   public readonly HashSet<CBaseEntity> MapEntities = [];
-  private readonly IMessenger msg = provider.GetRequiredService<IMessenger>();
 
   private readonly Dictionary<CCSPlayerController, MovementInfo>
     playersPressingE = new();
@@ -120,11 +118,10 @@ public class PropMover(IServiceProvider provider) : IPluginModule {
   }
 
   private void refreshBodies() {
-    foreach (var (player, info) in playersPressingE)
-      refreshBodies(player, info);
+    foreach (var (player, info) in playersPressingE) refreshBody(player, info);
   }
 
-  private void refreshBodies(CCSPlayerController player, MovementInfo info) {
+  private void refreshBody(CCSPlayerController player, MovementInfo info) {
     var ent = info.Ragdoll;
     if (!player.IsValid || !ent.IsValid) {
       playersPressingE.Remove(player);
@@ -142,7 +139,7 @@ public class PropMover(IServiceProvider provider) : IPluginModule {
     playerOrigin   =  playerOrigin.Clone()!;
     playerOrigin.Z += 64;
 
-    var eyeAngles = playerPawn!.EyeAngles;
+    var eyeAngles = playerPawn.EyeAngles;
 
     var targetVector = playerOrigin + eyeAngles.Clone()!.ToForward()
       * Math.Clamp(info.Distance, MIN_HOLDING_DISTANCE, MAX_HOLDING_DISTANCE);
@@ -177,7 +174,7 @@ public class PropMover(IServiceProvider provider) : IPluginModule {
     playerOrigin   =  playerOrigin.Clone()!;
     playerOrigin.Z += 64;
 
-    var eyeAngles = playerPawn!.EyeAngles;
+    var eyeAngles = playerPawn.EyeAngles;
 
     var targetVector = playerOrigin + eyeAngles.Clone()!.ToForward()
       * Math.Clamp(info.Distance, MIN_HOLDING_DISTANCE, MAX_HOLDING_DISTANCE);
