@@ -1,5 +1,4 @@
-using System.Diagnostics.Tracing;
-using System.Reactive.Concurrency;
+using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using TTT.API.Events;
 using TTT.API.Game;
@@ -11,16 +10,6 @@ using TTT.Game.Roles;
 namespace TTT.Karma;
 
 public class KarmaListener(IServiceProvider provider) : IListener {
-  private readonly IRoleAssigner roles =
-    provider.GetRequiredService<IRoleAssigner>();
-
-  private readonly IGameManager games =
-    provider.GetRequiredService<IGameManager>();
-
-  public void Dispose() { }
-
-  private readonly Dictionary<string, int> innoOnInnoKills = new();
-
   private static readonly int INNO_ON_TRAITOR = 2;
   private static readonly int TRAITOR_ON_DETECTIVE = 1;
   private static readonly int INNO_ON_INNO_VICTIM = -1;
@@ -28,15 +17,28 @@ public class KarmaListener(IServiceProvider provider) : IListener {
   private static readonly int TRAITOR_ON_TRAITOR = -5;
   private static readonly int INNO_ON_DETECTIVE = -6;
 
+  private readonly IGameManager games =
+    provider.GetRequiredService<IGameManager>();
+
+  private readonly Dictionary<string, int> innoOnInnoKills = new();
+
   private readonly IKarmaService karma =
     provider.GetRequiredService<IKarmaService>();
 
+  private readonly IRoleAssigner roles =
+    provider.GetRequiredService<IRoleAssigner>();
+
+  public void Dispose() { }
+
   [EventHandler]
+  [UsedImplicitly]
   public void OnRoundStart(GameStateUpdateEvent ev) { innoOnInnoKills.Clear(); }
 
   [EventHandler]
+  [UsedImplicitly]
   public Task OnKill(PlayerDeathEvent ev) {
-    if (games.ActiveGame is not { State: State.IN_PROGRESS }) return Task.CompletedTask;
+    if (games.ActiveGame is not { State: State.IN_PROGRESS })
+      return Task.CompletedTask;
 
     var victim = ev.Victim;
     var killer = ev.Killer;
@@ -60,17 +62,15 @@ public class KarmaListener(IServiceProvider provider) : IListener {
       killerKarmaDelta *= innoOnInnoKills[killer.Id];
     }
 
-    if (victimRole is TraitorRole) {
+    if (victimRole is TraitorRole)
       killerKarmaDelta = killerRole is TraitorRole ?
         TRAITOR_ON_TRAITOR :
         INNO_ON_TRAITOR;
-    }
 
-    if (victimRole is DetectiveRole) {
+    if (victimRole is DetectiveRole)
       killerKarmaDelta = killerRole is TraitorRole ?
         TRAITOR_ON_DETECTIVE :
         INNO_ON_DETECTIVE;
-    }
 
     return Task.Run(async () => {
       var newKillerKarma = await karma.Load(killer) + killerKarmaDelta;

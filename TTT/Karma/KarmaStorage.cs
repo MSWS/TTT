@@ -4,7 +4,6 @@ using System.Reactive.Linq;
 using Dapper;
 using Microsoft.Extensions.DependencyInjection;
 using MySqlConnector;
-using TTT.API;
 using TTT.API.Events;
 using TTT.API.Player;
 using TTT.API.Storage;
@@ -13,16 +12,16 @@ using TTT.Karma.Events;
 namespace TTT.Karma;
 
 public class KarmaStorage(IServiceProvider provider) : IKarmaService {
+  private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
+
   private readonly KarmaConfig config =
     provider.GetService<IStorage<KarmaConfig>>()?.Load().Result
     ?? new KarmaConfig();
 
-  private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
-
-  private IDbConnection? connection;
-
   private readonly IDictionary<IPlayer, int> karmaCache =
     new Dictionary<IPlayer, int>();
+
+  private IDbConnection? connection;
 
   public void Start() {
     connection = new MySqlConnection(config.DbString);
@@ -30,22 +29,6 @@ public class KarmaStorage(IServiceProvider provider) : IKarmaService {
 
     Observable.Interval(TimeSpan.FromMinutes(1), scheduler)
      .Subscribe(_ => updateKarmas());
-  }
-
-  private async void updateKarmas() {
-    if (connection is not { State: ConnectionState.Open })
-      throw new InvalidOperationException(
-        "Storage connection is not initialized.");
-
-    var tasks = new List<Task>();
-    foreach (var (player, karma) in karmaCache) {
-      tasks.Add(connection.ExecuteAsync(
-        "INSERT INTO PlayerKarma (PlayerId, Karma) VALUES (@PlayerId, @Karma) "
-        + "ON DUPLICATE KEY UPDATE Karma = @Karma",
-        new { PlayerId = player.Id, Karma = karma }));
-    }
-
-    await Task.WhenAll(tasks);
   }
 
   public Task<int> Load(IPlayer key) {
@@ -79,5 +62,20 @@ public class KarmaStorage(IServiceProvider provider) : IKarmaService {
     if (karmaUpdateEvent.IsCanceled) return;
 
     karmaCache[key] = newData;
+  }
+
+  private async void updateKarmas() {
+    if (connection is not { State: ConnectionState.Open })
+      throw new InvalidOperationException(
+        "Storage connection is not initialized.");
+
+    var tasks = new List<Task>();
+    foreach (var (player, karma) in karmaCache)
+      tasks.Add(connection.ExecuteAsync(
+        "INSERT INTO PlayerKarma (PlayerId, Karma) VALUES (@PlayerId, @Karma) "
+        + "ON DUPLICATE KEY UPDATE Karma = @Karma",
+        new { PlayerId = player.Id, Karma = karma }));
+
+    await Task.WhenAll(tasks);
   }
 }
