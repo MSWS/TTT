@@ -13,6 +13,7 @@ using TTT.API.Storage;
 using TTT.Game;
 using TTT.Game.Commands;
 using TTT.Game.Roles;
+using TTT.Karma;
 using TTT.Locale;
 using TTT.Shop;
 using TTT.Test.Abstract;
@@ -38,6 +39,7 @@ public class Startup {
     services.AddScoped<IPermissionManager, FakePermissionManager>();
     services.AddScoped<ICommandManager, CommandManager>();
     services.AddScoped<IShop, TTT.Shop.Shop>();
+    services.AddScoped<IKarmaService, MemoryKarmaStorage>();
 
     services.AddModBehavior<GenericInitTester>();
     services.AddModBehavior<PluginInitTester>();
