@@ -12,7 +12,7 @@ public class ShopCommand(IServiceProvider provider) : ICommand {
    .GetRequiredService<IMsgLocalizer>();
 
   private readonly Dictionary<string, ICommand> sub = new() {
-    ["list"] = new ListCommand(provider)
+    ["list"] = new ListCommand(provider), ["buy"] = new BuyCommand(provider)
   };
 
   public void Dispose() { }
