@@ -20,7 +20,6 @@ public class ShopCommand(IServiceProvider provider) : ICommand {
   public string Version => GitVersionInformation.FullSemVer;
 
   public void Start() {
-    provider.GetRequiredService<ICommandManager>().RegisterCommand(this);
   }
 
   public Task<CommandResult>
