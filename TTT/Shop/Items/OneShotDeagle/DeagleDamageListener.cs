@@ -27,7 +27,7 @@ public class DeagleDamageListener(IServiceProvider provider) : IListener {
 
   [EventHandler]
   public void OnDamage(PlayerDamagedEvent ev) {
-    if (games.ActiveGame is { State: State.IN_PROGRESS }) return;
+    if (games.ActiveGame is not { State: State.IN_PROGRESS }) return;
     var attacker = ev.Attacker;
     var victim   = ev.Player;
 
