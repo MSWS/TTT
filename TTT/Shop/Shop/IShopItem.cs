@@ -9,5 +9,5 @@ public interface IShopItem : ITerrorModule {
   string Description { get; }
   ShopItemConfig Config { get; }
   void OnPurchase(IOnlinePlayer player);
-  bool CanPurchase(IOnlinePlayer player);
+  PurchaseResult CanPurchase(IOnlinePlayer player);
 }

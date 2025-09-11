@@ -43,7 +43,9 @@ public class OneShotDeagle(IServiceProvider provider) : IWeapon, IShopItem {
     inventoryManager.GiveWeapon(player, this);
   }
 
-  public bool CanPurchase(IOnlinePlayer player) { return true; }
+  public PurchaseResult CanPurchase(IOnlinePlayer player) {
+    return PurchaseResult.SUCCESS;
+  }
 
   public string Id => deagleConfigStorage.Weapon;
   string IShopItem.Id => ID;
