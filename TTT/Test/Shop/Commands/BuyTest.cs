@@ -51,10 +51,8 @@ public class BuyTest {
   public async Task Buy_WithWrongQuery_Fails() {
     var player = TestPlayer.Random();
     var info   = new TestCommandInfo(provider, player, "buy", "Sword");
-    var result = await manager.ProcessCommand(info);
-
     shop.RegisterItem(new TestShopItem());
-
+    var result = await manager.ProcessCommand(info);
     Assert.Equal(CommandResult.ERROR, result);
     Assert.Contains("Item 'Sword' not found.", player.Messages);
   }
