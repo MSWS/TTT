@@ -3,11 +3,13 @@ using TTT.API;
 using TTT.API.Messages;
 using TTT.API.Player;
 using TTT.Locale;
+using TTT.Shop.Items;
 
 namespace TTT.Shop;
 
 public class Shop(IServiceProvider provider) : ITerrorModule, IShop {
   private readonly Dictionary<IPlayer, int> balances = new();
+  private readonly Dictionary<IPlayer, List<IShopItem>> items = new();
 
   private readonly IMsgLocalizer localizer =
     provider.GetRequiredService<IMsgLocalizer>();
@@ -20,7 +22,10 @@ public class Shop(IServiceProvider provider) : ITerrorModule, IShop {
 
   public ISet<IShopItem> Items { get; } = new HashSet<IShopItem>();
 
-  public bool RegisterItem(IShopItem item) { return Items.Add(item); }
+  public bool RegisterItem(IShopItem item) {
+    item.Start();
+    return Items.Add(item);
+  }
 
   public PurchaseResult TryPurchase(IOnlinePlayer player, IShopItem item,
     bool printReason = true) {
@@ -41,14 +46,35 @@ public class Shop(IServiceProvider provider) : ITerrorModule, IShop {
   }
 
   public void ClearBalances() { balances.Clear(); }
+  public void ClearItems() { items.Clear(); }
+
+  public void GiveItem(IOnlinePlayer player, IShopItem item) {
+    if (!items.ContainsKey(player)) items[player] = [];
+    items[player].Add(item);
+  }
+
+  public IList<IShopItem> GetOwnedItems(IOnlinePlayer player) {
+    return items.GetValueOrDefault(player, []);
+  }
+
+  public void RemoveItem(IOnlinePlayer player, IShopItem item) {
+    if (!items.TryGetValue(player, out var itemList)) return;
+    itemList.Remove(item);
+  }
 
   public Task Write(IPlayer key, int newData) {
     balances[key] = newData;
     return Task.CompletedTask;
   }
 
-  public void Dispose() { }
+  public void Dispose() {
+    foreach (var item in Items) { item.Dispose(); }
+
+    Items.Clear();
+  }
+
   public string Name => "TTT.Shop";
   public string Version => GitVersionInformation.FullSemVer;
-  public void Start() { }
+
+  public void Start() { RegisterItem(new OneShotDeagle(provider)); }
 }

@@ -3,6 +3,7 @@ using CounterStrikeSharp.API.Core;
 using Microsoft.Extensions.DependencyInjection;
 using TTT.CS2;
 using TTT.Game;
+using TTT.Shop;
 
 namespace TTT.Plugin;
 
@@ -12,5 +13,6 @@ public class TTTServiceCollection : IPluginServiceCollection<TTT> {
 
     serviceCollection.AddGameServices();
     serviceCollection.AddCS2Services();
+    serviceCollection.AddShopServices();
   }
 }
