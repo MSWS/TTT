@@ -61,6 +61,11 @@ public class EventBus : IEventBus {
     ICancelableEvent? cancelable           = null;
     if (ev is ICancelableEvent) cancelable = (ICancelableEvent)ev;
 
+#if DEBUG
+    Console.WriteLine(
+      $"Dispatching event {type.Name} to {list.Count} handlers.");
+#endif
+
     foreach (var (listener, method) in list) {
       if (cancelable is { IsCanceled: true } && method
        .GetCustomAttribute<EventHandlerAttribute>()

@@ -14,6 +14,8 @@ public class TTT(IServiceProvider provider) : BasePlugin {
   public override string ModuleVersion
     => $"{GitVersionInformation.BranchName}-{GitVersionInformation.FullSemVer}-{GitVersionInformation.BuildMetaData}";
 
+  private readonly List<ITerrorModule> loadedModules = new();
+
   public override void Load(bool hotReload) {
     Logger.LogInformation($"{ModuleName} {ModuleVersion} Starting... ");
 
@@ -26,6 +28,7 @@ public class TTT(IServiceProvider provider) : BasePlugin {
     foreach (var module in modules) {
       module.Start();
       Logger.LogInformation($"Loaded {module.Name} ({module.Version})");
+      loadedModules.Add(module);
     }
 
     var pluginModules =
@@ -57,7 +60,14 @@ public class TTT(IServiceProvider provider) : BasePlugin {
       return;
     }
 
-    provider.GetService<IGameManager>()?.Dispose();
+    foreach (var module in loadedModules) {
+      try {
+        Logger.LogInformation($"Unloading {module.Name} ({module.Version})");
+        module.Dispose();
+      } catch (Exception e) {
+        Logger.LogError(e, $"Error unloading module {module.Name}");
+      }
+    }
 
     base.Dispose(disposing);
   }
