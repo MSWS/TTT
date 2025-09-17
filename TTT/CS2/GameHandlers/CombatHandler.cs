@@ -20,8 +20,6 @@ public class CombatHandler(IServiceProvider provider) : IPluginModule {
   private readonly IGameManager games =
     provider.GetRequiredService<IGameManager>();
 
-  public string Name => "CombatListeners";
-  public string Version => GitVersionInformation.FullSemVer;
 
   public void Start() { }
 

@@ -7,8 +7,7 @@ using TTT.API.Player;
 
 namespace TTT.Game.Listeners;
 
-public abstract class BaseListener(IServiceProvider provider)
-  : IListener, ITerrorModule {
+public abstract class BaseListener(IServiceProvider provider) : IListener {
   protected readonly IEventBus Bus = provider.GetRequiredService<IEventBus>();
 
   protected readonly IPlayerFinder Finder =
@@ -23,8 +22,6 @@ public abstract class BaseListener(IServiceProvider provider)
   protected readonly IServiceProvider Provider = provider;
 
   public virtual void Dispose() { Bus.UnregisterListener(this); }
-  public abstract string Name { get; }
-  public string Version => GitVersionInformation.FullSemVer;
 
-  public virtual void Start() { Bus.RegisterListener(this); }
+  public virtual void Start() { }
 }

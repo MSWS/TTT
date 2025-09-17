@@ -10,6 +10,7 @@ public interface ICommandManager {
   ///   Registers a command with the manager.
   /// </summary>
   /// <param name="command">True if the command was successfully registered.</param>
+  [Obsolete("Registration is done via the ServiceProvider now.")]
   bool RegisterCommand(ICommand command);
 
   /// <summary>
@@ -26,4 +27,6 @@ public interface ICommandManager {
   /// <param name="info"></param>
   /// <returns>True if the command finished processing successfully.</returns>
   Task<CommandResult> ProcessCommand(ICommandInfo info);
+
+  ISet<ICommand> Commands { get; }
 }

@@ -14,10 +14,10 @@ public static class GameServiceCollection {
     collection.AddScoped<IRoleAssigner, RoleAssigner>();
 
     // Listeners
-    collection.AddListener<GameEndLogsListener>();
-    collection.AddListener<PlayerCausesEndListener>();
-    collection.AddListener<PlayerJoinStarting>();
-    collection.AddListener<PlayerActionsLogger>();
-    collection.AddListener<BodyIdentifyLogger>();
+    collection.AddModBehavior<GameEndLogsListener>();
+    collection.AddModBehavior<PlayerCausesEndListener>();
+    collection.AddModBehavior<PlayerJoinStarting>();
+    collection.AddModBehavior<PlayerActionsLogger>();
+    collection.AddModBehavior<BodyIdentifyLogger>();
   }
 }

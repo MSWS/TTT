@@ -7,6 +7,7 @@ using TTT.API.Messages;
 using TTT.API.Player;
 using TTT.API.Storage;
 using TTT.CS2.Command;
+using TTT.CS2.Command.Test;
 using TTT.CS2.Game;
 using TTT.CS2.GameHandlers;
 using TTT.CS2.Hats;
@@ -14,6 +15,7 @@ using TTT.CS2.lang;
 using TTT.CS2.Listeners;
 using TTT.CS2.Player;
 using TTT.Game;
+using TTT.Game.Commands;
 using TTT.Locale;
 
 namespace TTT.CS2;
@@ -29,7 +31,7 @@ public static class CS2ServiceCollection {
         CCPlayerConverter>();
     collection.AddScoped<IPlayerFinder, CS2PlayerFinder>();
     collection.AddModBehavior<IStorage<TTTConfig>, CS2GameConfig>();
-    collection.AddPluginBehavior<ICommandManager, CS2CommandManager>();
+    collection.AddModBehavior<ICommandManager, CS2CommandManager>();
     collection.AddScoped<IMessenger, CS2Messenger>();
     collection.AddScoped<IInventoryManager, CS2InventoryManager>();
 
@@ -37,19 +39,23 @@ public static class CS2ServiceCollection {
     collection.AddScoped<ITextSpawner, TextSpawner>();
 
     // GameHandlers
-    collection.AddPluginBehavior<PlayerConnectionsHandler>();
-    collection.AddPluginBehavior<RoundEndHandler>();
-    collection.AddPluginBehavior<RoundStartHandler>();
-    collection.AddPluginBehavior<CombatHandler>();
-    collection.AddPluginBehavior<PropMover>();
-    collection.AddPluginBehavior<BodySpawner>();
-    collection.AddPluginBehavior<RoleIconsHandler>();
-    collection.AddPluginBehavior<DamageCanceler>();
+    collection.AddModBehavior<PlayerConnectionsHandler>();
+    collection.AddModBehavior<RoundEndHandler>();
+    collection.AddModBehavior<RoundStartHandler>();
+    collection.AddModBehavior<CombatHandler>();
+    collection.AddModBehavior<PropMover>();
+    collection.AddModBehavior<BodySpawner>();
+    collection.AddModBehavior<RoleIconsHandler>();
+    collection.AddModBehavior<DamageCanceler>();
 
     // Listeners
-    collection.AddListener<RoundTimerListener>();
-    collection.AddListener<BodyPickupListener>();
-    collection.AddListener<PlayerStatsTracker>();
+    collection.AddModBehavior<RoundTimerListener>();
+    collection.AddModBehavior<BodyPickupListener>();
+    collection.AddModBehavior<PlayerStatsTracker>();
+
+    // Commands
+    collection.AddModBehavior<ICommand, TTTCommand>();
+    collection.AddModBehavior<ICommand, TestCommand>();
 
     collection.AddScoped<IMsgLocalizer, StringLocalizer>();
     collection.AddScoped<IPermissionManager, CS2PermManager>();

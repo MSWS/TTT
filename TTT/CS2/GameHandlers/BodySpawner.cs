@@ -26,8 +26,6 @@ public class BodySpawner(IServiceProvider provider) : IPluginModule {
   private readonly PropMover mover = provider.GetRequiredService<PropMover>();
 
   public void Dispose() { }
-  public string Name => nameof(BodySpawner);
-  public string Version => GitVersionInformation.FullSemVer;
   public void Start() { }
 
   [GameEventHandler]

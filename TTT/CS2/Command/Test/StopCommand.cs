@@ -12,7 +12,6 @@ public class StopCommand(IServiceProvider provider) : ICommand {
 
   public void Dispose() { }
   public string Name => "stop";
-  public string Version => GitVersionInformation.FullSemVer;
 
   public void Start() { }
 

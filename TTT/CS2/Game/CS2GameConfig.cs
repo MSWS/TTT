@@ -84,8 +84,6 @@ public class CS2GameConfig : IStorage<TTTConfig>, IPluginModule {
     ConVarFlags.FCVAR_NONE, new RangeValidator<int>(1, 60));
 
   public void Dispose() { }
-  public string Name => "CS2GameConfig";
-  public string Version => GitVersionInformation.FullSemVer;
 
   public void Start() { }
 

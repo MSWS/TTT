@@ -10,7 +10,7 @@ namespace TTT.Shop.Items;
 
 public static class DeagleServiceCollection {
   public static void AddDeagleServices(this IServiceCollection collection) {
-    collection.AddListener<DeagleDamageListener>();
+    collection.AddModBehavior<DeagleDamageListener>();
   }
 }
 
@@ -30,7 +30,6 @@ public class OneShotDeagle(IServiceProvider provider) : IWeapon, IShopItem {
   private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
 
   public string Name => locale[DeagleMsgs.SHOP_ITEM_DEAGLE];
-  public string Version => GitVersionInformation.FullSemVer;
 
   public void Start() { }
 

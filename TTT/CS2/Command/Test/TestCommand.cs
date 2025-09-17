@@ -19,7 +19,6 @@ public class TestCommand(IServiceProvider provider) : ICommand, IPluginModule {
   public void Dispose() { }
 
   public string Name => "test";
-  public string Version => GitVersionInformation.FullSemVer;
 
   public void Start() {
     subCommands.Add("setrole", new SetRoleCommand(provider));

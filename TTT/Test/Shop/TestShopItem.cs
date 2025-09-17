@@ -17,7 +17,6 @@ public class TestShopItem : IShopItem {
     return PurchaseResult.SUCCESS;
   }
 
-  public string Version => GitVersionInformation.FullSemVer;
   public void Start() { }
 }
 

@@ -1,12 +1,15 @@
 using System.Reflection;
+using Microsoft.Extensions.DependencyInjection;
+using TTT.API;
 using TTT.API.Events;
 
 namespace TTT.Game;
 
-public class EventBus : IEventBus {
+public class EventBus(IServiceProvider provider) : IEventBus, ITerrorModule {
   private readonly Dictionary<Type, List<(object listener, MethodInfo method)>>
     handlers = new();
 
+  [Obsolete("Registering listeners is deprecated, use DI instead.")]
   public void RegisterListener(IListener listener) {
     var methods = listener.GetType()
      .GetMethods(BindingFlags.Instance | BindingFlags.Public
@@ -74,5 +77,12 @@ public class EventBus : IEventBus {
 
       method.Invoke(listener, [ev]);
     }
+  }
+
+  public void Dispose() { handlers.Clear(); }
+
+  public void Start() {
+    var listeners = provider.GetServices<IListener>().ToList();
+    foreach (var listener in listeners) RegisterListener(listener);
   }
 }

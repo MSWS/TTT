@@ -17,8 +17,6 @@ public class RoundStartHandler(IServiceProvider provider) : IPluginModule {
     provider.GetRequiredService<IGameManager>();
 
   public void Dispose() { throw new NotImplementedException(); }
-  public string Name => nameof(RoundStartHandler);
-  public string Version => GitVersionInformation.FullSemVer;
 
   public void Start() { }
 

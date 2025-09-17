@@ -1,8 +1,10 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using TTT.API;
+using TTT.API.Command;
 using TTT.API.Messages;
 using TTT.API.Player;
 using TTT.Locale;
+using TTT.Shop.Commands;
 using TTT.Shop.Items;
 
 namespace TTT.Shop;
@@ -72,9 +74,6 @@ public class Shop(IServiceProvider provider) : ITerrorModule, IShop {
 
     Items.Clear();
   }
-
-  public string Name => "TTT.Shop";
-  public string Version => GitVersionInformation.FullSemVer;
 
   public void Start() { RegisterItem(new OneShotDeagle(provider)); }
 }

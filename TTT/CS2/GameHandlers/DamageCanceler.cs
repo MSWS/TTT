@@ -16,8 +16,6 @@ public class DamageCanceler(IServiceProvider provider)
 
   public void Dispose() { }
 
-  public string Name => nameof(DamageCanceler);
-  public string Version => GitVersionInformation.FullSemVer;
 
   public void Start() { }
 

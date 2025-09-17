@@ -8,7 +8,7 @@ namespace TTT.Game.Commands;
 
 public class CommandManager(IServiceProvider provider)
   : ICommandManager, ITerrorModule {
-  protected readonly Dictionary<string, ICommand> Commands = new();
+  protected readonly Dictionary<string, ICommand> cmdMap = new();
 
   protected readonly IMsgLocalizer Localizer =
     provider.GetRequiredService<IMsgLocalizer>();
@@ -19,11 +19,11 @@ public class CommandManager(IServiceProvider provider)
   protected readonly IServiceProvider Provider = provider;
 
   public virtual bool RegisterCommand(ICommand command) {
-    return command.Aliases.All(alias => Commands.TryAdd(alias, command));
+    return command.Aliases.All(alias => cmdMap.TryAdd(alias, command));
   }
 
   public bool UnregisterCommand(ICommand command) {
-    return command.Aliases.All(alias => Commands.Remove(alias));
+    return command.Aliases.All(alias => cmdMap.Remove(alias));
   }
 
   public bool CanExecute(IOnlinePlayer? executor, ICommand command) {
@@ -37,7 +37,7 @@ public class CommandManager(IServiceProvider provider)
     var executor = info.CallingPlayer;
     if (info.ArgCount == 0) return CommandResult.ERROR;
 
-    if (!Commands.TryGetValue(info.Args[0], out var command)) {
+    if (!cmdMap.TryGetValue(info.Args[0], out var command)) {
       info.ReplySync(Localizer[GameMsgs.GENERIC_UNKNOWN(info.Args[0])]);
       return CommandResult.UNKNOWN_COMMAND;
     }
@@ -64,11 +64,14 @@ public class CommandManager(IServiceProvider provider)
     return result;
   }
 
-  public virtual string Name => "base.commands";
-  public virtual string Version => GitVersionInformation.FullSemVer;
+  public ISet<ICommand> Commands => cmdMap.Values.ToHashSet();
+
   public void Dispose() { }
 
-  public virtual void Start() { RegisterCommand(new LogsCommand(Provider)); }
+  public virtual void Start() {
+    var commands = Provider.GetServices<ICommand>();
+    foreach (var command in commands) RegisterCommand(command);
+  }
 
   private void printNoPermission(IOnlinePlayer? executor, ICommand command,
     ICommandInfo info) {

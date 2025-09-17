@@ -34,9 +34,6 @@ public class RoleIconsHandler(IServiceProvider provider)
 
   public void Dispose() { bus.UnregisterListener(this); }
 
-  public string Name => nameof(RoleIconsHandler);
-  public string Version => GitVersionInformation.FullSemVer;
-
   public void Start() { }
 
   public void Start(BasePlugin? plugin) {

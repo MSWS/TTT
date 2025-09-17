@@ -23,21 +23,12 @@ public class CS2CommandManager(IServiceProvider provider)
   public void Start(BasePlugin? basePlugin, bool hotReload) {
     plugin = basePlugin;
     base.Start();
-
-    RegisterCommand(new TTTCommand(Provider));
-    RegisterCommand(new TestCommand(Provider));
-
-    foreach (var command in Provider.GetServices<ICommand>()) command.Start();
   }
 
-  public override string Name => "CommandManager";
-  public override string Version => GitVersionInformation.FullSemVer;
-
   public override bool RegisterCommand(ICommand command) {
-    command.Start();
     var registration = command.Aliases.All(alias
-      => Commands.TryAdd(COMMAND_PREFIX + alias, command));
-    if (registration == false) return false;
+      => cmdMap.TryAdd(COMMAND_PREFIX + alias, command));
+    if (!registration) return false;
     foreach (var alias in command.Aliases)
       plugin?.AddCommand(COMMAND_PREFIX + alias,
         command.Description ?? string.Empty, processInternal);

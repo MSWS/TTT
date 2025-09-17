@@ -12,8 +12,6 @@ public class PlayerJoinStarting(IServiceProvider provider)
     provider.GetService<IStorage<TTTConfig>>()?.Load().GetAwaiter().GetResult()
     ?? new TTTConfig();
 
-  public override string Name => nameof(PlayerJoinStarting);
-
   [EventHandler]
   [UsedImplicitly]
   public void OnJoin(PlayerJoinEvent ev) {

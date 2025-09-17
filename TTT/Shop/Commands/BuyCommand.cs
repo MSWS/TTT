@@ -8,7 +8,6 @@ public class BuyCommand(IServiceProvider provider) : ICommand {
   private readonly IShop shop = provider.GetRequiredService<IShop>();
   public void Dispose() { }
   public string Name => "buy";
-  public string Version => GitVersionInformation.FullSemVer;
   public void Start() { }
   public string[] Aliases => [Name, "purchase", "b"];
 

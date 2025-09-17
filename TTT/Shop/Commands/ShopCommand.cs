@@ -17,9 +17,11 @@ public class ShopCommand(IServiceProvider provider) : ICommand {
 
   public void Dispose() { }
   public string Name => "shop";
-  public string Version => GitVersionInformation.FullSemVer;
 
   public void Start() {
+    // provider.GetRequiredService<ICommandManager>().RegisterCommand(this);
+    provider.GetRequiredService<ICommandManager>()
+     .RegisterCommand(subcommands["buy"]);
   }
 
   public Task<CommandResult>
