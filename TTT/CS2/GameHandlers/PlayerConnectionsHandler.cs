@@ -19,8 +19,6 @@ public class PlayerConnectionsHandler(IServiceProvider provider)
   private readonly IGameManager games =
     provider.GetRequiredService<IGameManager>();
 
-  public string Name => nameof(PlayerConnectionsHandler);
-  public string Version => GitVersionInformation.FullSemVer;
 
   public void Start() { }
 
@@ -72,7 +70,6 @@ public class PlayerConnectionsHandler(IServiceProvider provider)
 
     Server.NextWorldUpdate(() => {
       if (!player.IsValid) return;
-      Server.PrintToChatAll("Respawning...");
       player.Respawn();
     });
   }

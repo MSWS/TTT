@@ -18,7 +18,6 @@ public class SetRoleCommand(IServiceProvider provider) : ICommand {
   public void Dispose() { }
 
   public string Name => "setrole";
-  public string Version => GitVersionInformation.FullSemVer;
   public void Start() { }
 
   public Task<CommandResult>

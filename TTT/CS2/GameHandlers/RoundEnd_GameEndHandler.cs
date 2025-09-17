@@ -13,9 +13,6 @@ public class RoundEnd_GameEndHandler(IServiceProvider provider) : IPluginModule 
 
   public void Dispose() { }
 
-  public string Name => nameof(RoundEnd_GameEndHandler);
-  public string Version => GitVersionInformation.FullSemVer;
-
   public void Start() { }
 
   [GameEventHandler]

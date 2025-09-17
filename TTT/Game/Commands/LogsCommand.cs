@@ -12,7 +12,6 @@ public class LogsCommand(IServiceProvider provider) : ICommand {
   public void Dispose() { }
 
   public string Name => "logs";
-  public string Version => GitVersionInformation.FullSemVer;
   public void Start() { }
 
   public Task<CommandResult>

@@ -3,6 +3,7 @@ using TTT.API.Events;
 using TTT.API.Game;
 using TTT.API.Player;
 using TTT.Shop;
+using TTT.Shop.Listeners;
 using Xunit;
 
 namespace TTT.Test.Shop;
@@ -20,7 +21,7 @@ public class BalanceClearTest(IServiceProvider provider) {
 
   [Fact]
   public async Task Balances_ShouldBeCleared_OnGameStart() {
-    bus.RegisterListener(new RoundBalanceClearer(provider));
+    bus.RegisterListener(new RoundShopClearer(provider));
     var player = TestPlayer.Random();
     finder.AddPlayer(player);
     finder.AddPlayer(TestPlayer.Random());

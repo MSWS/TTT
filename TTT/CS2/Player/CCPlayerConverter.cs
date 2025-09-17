@@ -38,8 +38,6 @@ public class CCPlayerConverter : IPluginModule,
   }
 
   public void Dispose() { playerCache.Clear(); }
-  public string Name => "PlayerConverter";
-  public string Version => GitVersionInformation.FullSemVer;
 
   public void Start() { }
 }

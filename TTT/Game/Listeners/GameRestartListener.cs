@@ -20,8 +20,6 @@ public class GameRestartListener(IServiceProvider provider)
   private readonly IScheduler scheduler =
     provider.GetRequiredService<IScheduler>();
 
-  public override string Name => nameof(GameRestartListener);
-
   [EventHandler]
   [UsedImplicitly]
   public void OnGameEnd(GameStateUpdateEvent ev) {

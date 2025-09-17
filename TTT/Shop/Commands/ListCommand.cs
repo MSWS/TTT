@@ -14,7 +14,6 @@ public class ListCommand(IServiceProvider provider) : ICommand {
   public void Dispose() { }
 
   public string Name => "list";
-  public string Version => GitVersionInformation.FullSemVer;
 
   public void Start() { }
 

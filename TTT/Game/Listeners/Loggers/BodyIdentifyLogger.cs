@@ -6,8 +6,6 @@ namespace TTT.Game.Listeners.Loggers;
 
 public class BodyIdentifyLogger(IServiceProvider provider)
   : BaseListener(provider) {
-  public override string Name => nameof(BodyIdentifyLogger);
-
   [EventHandler]
   public void OnBodyIdentify(BodyIdentifyEvent ev) {
     if (!Games.IsGameActive()) return;

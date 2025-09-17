@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using TTT.API;
 using TTT.API.Events;
 using TTT.API.Game;
+using TTT.API.Messages;
 using TTT.API.Player;
 using TTT.CS2.Extensions;
 using TTT.CS2.Hats;
@@ -32,19 +33,15 @@ public class RoleIconsHandler(IServiceProvider provider)
 
   private readonly ISet<int> traitors = new HashSet<int>();
 
+  private readonly IMessenger messenger =
+    provider.GetRequiredService<IMessenger>();
+
   public void Dispose() { bus.UnregisterListener(this); }
-
-  public string Name => nameof(RoleIconsHandler);
-  public string Version => GitVersionInformation.FullSemVer;
-
-  public void Start() { }
 
   public void Start(BasePlugin? plugin) {
     plugin
     ?.RegisterListener<CounterStrikeSharp.API.Core.Listeners.CheckTransmit>(
         onTransmit);
-
-    bus.RegisterListener(this);
   }
 
   [EventHandler(IgnoreCanceled = true)]
@@ -108,11 +105,11 @@ public class RoleIconsHandler(IServiceProvider provider)
     var gamePlayer = players.GetPlayer(ev.Victim);
     if (gamePlayer == null || !gamePlayer.IsValid) return;
 
-    detectiveIcons.TryGetValue(gamePlayer.Slot, out var icons);
+    detectiveIcons.Remove(gamePlayer.Slot, out var icons);
     removeIcons(icons);
     if (!traitors.Contains(gamePlayer.Slot)) return;
 
-    traitorIcons.TryGetValue(gamePlayer.Slot, out icons);
+    traitorIcons.Remove(gamePlayer.Slot, out icons);
     removeIcons(icons);
   }
 
@@ -128,7 +125,7 @@ public class RoleIconsHandler(IServiceProvider provider)
     if (icons == null) return;
     foreach (var icon in icons) {
       if (!icon.IsValid) continue;
-      icon.Remove();
+      icon.AcceptInput("Kill");
     }
   }
 

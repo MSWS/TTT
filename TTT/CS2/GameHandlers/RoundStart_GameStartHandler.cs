@@ -17,9 +17,7 @@ public class RoundStart_GameStartHandler(IServiceProvider provider)
   private readonly IGameManager games =
     provider.GetRequiredService<IGameManager>();
 
-  public void Dispose() { }
-  public string Name => nameof(RoundStart_GameStartHandler);
-  public string Version => GitVersionInformation.FullSemVer;
+  public void Dispose() { throw new NotImplementedException(); }
 
   public void Start() { }
 

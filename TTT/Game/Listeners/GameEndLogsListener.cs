@@ -6,8 +6,6 @@ namespace TTT.Game.Listeners;
 
 public class GameEndLogsListener(IServiceProvider provider)
   : BaseListener(provider) {
-  public override string Name => nameof(GameEndLogsListener);
-
   [EventHandler(IgnoreCanceled = true, Priority = Priority.MONITOR)]
   public void OnGameEnd(GameStateUpdateEvent ev) {
     if (ev.NewState != State.FINISHED) return;

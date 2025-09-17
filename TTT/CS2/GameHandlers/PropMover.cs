@@ -34,8 +34,6 @@ public class PropMover(IServiceProvider provider) : IPluginModule {
 
   public void Dispose() { }
 
-  public string Name => nameof(PropMover);
-  public string Version => GitVersionInformation.FullSemVer;
 
   public void Start() { }
 

@@ -1,22 +1,26 @@
-﻿using CounterStrikeSharp.API.Core;
+﻿using CounterStrikeSharp.API;
+using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Memory;
 using CounterStrikeSharp.API.Modules.Memory.DynamicFunctions;
 using Microsoft.Extensions.DependencyInjection;
 using TTT.API;
 using TTT.API.Events;
 using TTT.API.Game;
+using TTT.API.Player;
+using TTT.Game.Events.Player;
 
 namespace TTT.CS2.GameHandlers;
 
-public class DamageCanceler(IServiceProvider provider)
-  : IPluginModule, IListener {
+public class DamageCanceler(IServiceProvider provider) : IPluginModule {
   private readonly IGameManager games =
     provider.GetRequiredService<IGameManager>();
 
-  public void Dispose() { }
+  private readonly IPlayerConverter<CCSPlayerController> converter =
+    provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
 
-  public string Name => nameof(DamageCanceler);
-  public string Version => GitVersionInformation.FullSemVer;
+  private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
+
+  public void Dispose() { }
 
   public void Start() { }
 
@@ -36,10 +40,19 @@ public class DamageCanceler(IServiceProvider provider)
     var attackerPawn = info.Attacker;
     var attacker     = attackerPawn.Value?.As<CCSPlayerController>();
 
-    if (attacker == null || !attacker.IsValid
-      || games.ActiveGame is { State: State.IN_PROGRESS })
-      return HookResult.Continue;
+    var damagedEvent = new PlayerDamagedEvent(converter, hook);
 
-    return HookResult.Handled;
+    bus.Dispatch(damagedEvent);
+
+    if (damagedEvent.IsCanceled) return HookResult.Handled;
+
+    if (damagedEvent.HpModified) {
+      if (damagedEvent.Player is not IOnlinePlayer onlinePlayer)
+        return HookResult.Continue;
+      onlinePlayer.Health = damagedEvent.HpLeft;
+      return HookResult.Handled;
+    }
+
+    return HookResult.Continue;
   }
 }
