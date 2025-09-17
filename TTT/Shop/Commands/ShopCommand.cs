@@ -19,9 +19,6 @@ public class ShopCommand(IServiceProvider provider) : ICommand {
   public string Name => "shop";
 
   public void Start() {
-    // provider.GetRequiredService<ICommandManager>().RegisterCommand(this);
-    provider.GetRequiredService<ICommandManager>()
-     .RegisterCommand(subcommands["buy"]);
   }
 
   public Task<CommandResult>

@@ -70,7 +70,6 @@ public class PlayerConnectionsHandler(IServiceProvider provider)
 
     Server.NextWorldUpdate(() => {
       if (!player.IsValid) return;
-      Server.PrintToChatAll("Respawning...");
       player.Respawn();
     });
   }

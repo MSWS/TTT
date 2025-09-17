@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using TTT.API.Command;
 using TTT.API.Events;
 
 namespace TTT.API.Extensions;
@@ -11,7 +12,7 @@ public static class ServiceCollectionExtensions {
   public static void AddModBehavior<TExtension>(
     this IServiceCollection collection)
     where TExtension : class, ITerrorModule {
-    if (typeof(IPluginModule).IsAssignableFrom(typeof(TExtension))) {
+    if (typeof(TExtension).IsAssignableTo(typeof(IPluginModule))) {
 # if DEBUG
       Console.WriteLine(
         $"[DEBUG] Registering {typeof(TExtension).Name} as IPluginModule");
@@ -27,6 +28,15 @@ public static class ServiceCollectionExtensions {
 # endif
       collection.AddTransient<IListener>(provider
         => (provider.GetRequiredService<TExtension>() as IListener)!);
+    }
+
+    if (typeof(TExtension).IsAssignableTo(typeof(ICommand))) {
+#if DEBUG
+      Console.WriteLine(
+        $"[DEBUG] Registering {typeof(TExtension).Name} as ICommand");
+#endif
+      collection.AddTransient<ICommand>(provider
+        => (provider.GetRequiredService<TExtension>() as ICommand)!);
     }
 
     collection.AddScoped<TExtension>();

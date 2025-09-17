@@ -12,7 +12,7 @@ public static class ShopServiceCollection {
     collection.AddModBehavior<IShop, Shop>();
     collection.AddModBehavior<RoundShopClearer>();
 
-    collection.AddModBehavior<ICommand, ShopCommand>();
+    collection.AddModBehavior<ShopCommand>();
 
     collection.AddDeagleServices();
   }

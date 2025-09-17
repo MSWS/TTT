@@ -10,6 +10,7 @@ using TTT.CS2.Command;
 using TTT.CS2.Command.Test;
 using TTT.CS2.Game;
 using TTT.CS2.GameHandlers;
+using TTT.CS2.GameHandlers.DamageCancelers;
 using TTT.CS2.Hats;
 using TTT.CS2.lang;
 using TTT.CS2.Listeners;
@@ -48,14 +49,18 @@ public static class CS2ServiceCollection {
     collection.AddModBehavior<RoleIconsHandler>();
     collection.AddModBehavior<DamageCanceler>();
 
+    // Damage Cancelers
+    collection.AddModBehavior<OutOfRoundCanceler>();
+    collection.AddModBehavior<TaserListenCanceler>();
+
     // Listeners
     collection.AddModBehavior<RoundTimerListener>();
     collection.AddModBehavior<BodyPickupListener>();
     collection.AddModBehavior<PlayerStatsTracker>();
 
     // Commands
-    collection.AddModBehavior<ICommand, TTTCommand>();
-    collection.AddModBehavior<ICommand, TestCommand>();
+    collection.AddModBehavior<TTTCommand>();
+    collection.AddModBehavior<TestCommand>();
 
     collection.AddScoped<IMsgLocalizer, StringLocalizer>();
     collection.AddScoped<IPermissionManager, CS2PermManager>();

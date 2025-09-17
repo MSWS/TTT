@@ -50,8 +50,8 @@ public static class GameMsgs {
     // TODO: Ideally we do this better
     var rolePrefix = role.GetType().IsAssignableTo(typeof(TraitorRole)) ?
       ChatColors.Red :
-      role.GetType().IsAssignableTo(typeof(DetectiveRole)) ? ChatColors.Blue :
-        ChatColors.Lime;
+      role.GetType().IsAssignableTo(typeof(DetectiveRole)) ?
+        ChatColors.DarkBlue : ChatColors.Lime;
     return MsgFactory.Create(nameof(BODY_IDENTIFIED), identifier.Name,
       rolePrefix + ofPlayer.Name, role.Name);
   }

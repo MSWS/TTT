@@ -6,6 +6,8 @@ using Microsoft.Extensions.DependencyInjection;
 using TTT.API;
 using TTT.API.Events;
 using TTT.API.Game;
+using TTT.API.Player;
+using TTT.Game.Events.Player;
 
 namespace TTT.CS2.GameHandlers;
 
@@ -13,8 +15,12 @@ public class DamageCanceler(IServiceProvider provider) : IPluginModule {
   private readonly IGameManager games =
     provider.GetRequiredService<IGameManager>();
 
-  public void Dispose() { }
+  private readonly IPlayerConverter<CCSPlayerController> converter =
+    provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
 
+  private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
+
+  public void Dispose() { }
 
   public void Start() { }
 
@@ -34,11 +40,19 @@ public class DamageCanceler(IServiceProvider provider) : IPluginModule {
     var attackerPawn = info.Attacker;
     var attacker     = attackerPawn.Value?.As<CCSPlayerController>();
 
-    if (attacker == null || !attacker.IsValid
-      || games.ActiveGame is { State: State.IN_PROGRESS }) {
-      return HookResult.Continue;
+    var damagedEvent = new PlayerDamagedEvent(converter, hook);
+
+    bus.Dispatch(damagedEvent);
+
+    if (damagedEvent.IsCanceled) return HookResult.Handled;
+
+    if (damagedEvent.HpModified) {
+      if (damagedEvent.Player is not IOnlinePlayer onlinePlayer)
+        return HookResult.Continue;
+      onlinePlayer.Health = damagedEvent.HpLeft;
+      return HookResult.Handled;
     }
 
-    return HookResult.Handled;
+    return HookResult.Continue;
   }
 }
