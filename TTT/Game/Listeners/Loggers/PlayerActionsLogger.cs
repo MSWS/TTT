@@ -7,8 +7,6 @@ namespace TTT.Game.Listeners.Loggers;
 
 public class PlayerActionsLogger(IServiceProvider provider)
   : BaseListener(provider) {
-  public override string Name => nameof(PlayerActionsLogger);
-
   [EventHandler]
   [UsedImplicitly]
   public void OnPlayerKill(PlayerDeathEvent ev) {

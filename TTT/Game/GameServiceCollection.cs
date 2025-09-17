@@ -10,7 +10,7 @@ namespace TTT.Game;
 
 public static class GameServiceCollection {
   public static void AddGameServices(this IServiceCollection collection) {
-    collection.AddScoped<IEventBus, EventBus>();
+    collection.AddModBehavior<IEventBus, EventBus>();
     collection.AddScoped<IRoleAssigner, RoleAssigner>();
 
     // Listeners

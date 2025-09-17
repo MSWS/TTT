@@ -9,8 +9,7 @@ using TTT.API.Game;
 
 namespace TTT.CS2.GameHandlers;
 
-public class DamageCanceler(IServiceProvider provider)
-  : IPluginModule, IListener {
+public class DamageCanceler(IServiceProvider provider) : IPluginModule {
   private readonly IGameManager games =
     provider.GetRequiredService<IGameManager>();
 

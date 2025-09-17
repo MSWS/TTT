@@ -60,14 +60,18 @@ public class EventBus(IServiceProvider provider) : IEventBus, ITerrorModule {
 
   public void Dispatch(Event ev) {
     var type = ev.GetType();
-    if (!handlers.TryGetValue(type, out var list)) return;
-    ICancelableEvent? cancelable           = null;
-    if (ev is ICancelableEvent) cancelable = (ICancelableEvent)ev;
+
+    handlers.TryGetValue(type, out var list);
 
 #if DEBUG
     Console.WriteLine(
-      $"Dispatching event {type.Name} to {list.Count} handlers.");
+      $"Dispatching {type.Name} to {list?.Count ?? 0} handlers.");
 #endif
+
+    if (list == null || list.Count == 0) return;
+
+    ICancelableEvent? cancelable           = null;
+    if (ev is ICancelableEvent) cancelable = (ICancelableEvent)ev;
 
     foreach (var (listener, method) in list) {
       if (cancelable is { IsCanceled: true } && method

@@ -25,19 +25,27 @@ public class TTT(IServiceProvider provider) : BasePlugin {
     Logger.LogInformation($"Found {modules.Count} base modules to load.");
 
     foreach (var module in modules) {
+      if (module is IPluginModule) continue;
       module.Start();
+      loadedModules.Add(module);
       Logger.LogInformation(
         $"Loaded {module.Version} {module.Name} {module.GetType().Namespace}");
-      loadedModules.Add(module);
     }
 
-    var pluginModules =
-      scope.ServiceProvider.GetServices<IPluginModule>().ToList();
+    var pluginModules = modules.Where(m => m is IPluginModule)
+     .Cast<IPluginModule>()
+     .ToList();
 
     Logger.LogInformation(
-      $"Found {pluginModules.Count} plugin modules, registering attributes...");
+      $"Found {pluginModules.Count} plugin modules, loading...");
 
-    foreach (var module in pluginModules) RegisterAllAttributes(module);
+    foreach (var module in pluginModules) {
+      module.Start(this, hotReload);
+      RegisterAllAttributes(module);
+      loadedModules.Add(module);
+      Logger.LogInformation(
+        $"Registered {module.Version} {module.Name} {module.GetType().Namespace}");
+    }
 
     Logger.LogInformation("All modules loaded successfully.");
   }
