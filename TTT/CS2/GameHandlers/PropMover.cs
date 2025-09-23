@@ -12,6 +12,8 @@ using TTT.API.Messages;
 using TTT.API.Player;
 using TTT.CS2.Events;
 using TTT.CS2.Extensions;
+using TTT.CS2.RayTrace.Class;
+using TTT.CS2.RayTrace.Enum;
 using TTT.CS2.Utils;
 using Vector = CounterStrikeSharp.API.Modules.Utils.Vector;
 
@@ -85,8 +87,10 @@ public class PropMover(IServiceProvider provider) : IPluginModule {
 
     if (!pressed.HasFlag(PlayerButtons.Use)) return;
 
-    var target = RayTrace.FindRayTraceIntersection(player);
-    if (target == null) return;
+    // var target = RayTrace.FindRayTraceIntersection(player);
+    var target = player.GetGameTraceByEyePosition(TraceMask.MaskPlayerSolid,
+      Contents.Solid, null);
+    if (!target.HasValue) return;
 
     CBaseEntity? foundEntity = null;
     MapEntities.RemoveWhere(ent => !ent.IsValid);
@@ -94,7 +98,8 @@ public class PropMover(IServiceProvider provider) : IPluginModule {
     foreach (var ent in MapEntities) {
       if (!ent.IsValid) continue;
       var rayPointDist =
-        ent.AbsOrigin?.DistanceSquared(target) ?? double.MaxValue;
+        ent.AbsOrigin?.DistanceSquared(new Vector(target.Value.EndPos.X,
+          target.Value.EndPos.Y, target.Value.EndPos.Z)) ?? double.MaxValue;
       if (rayPointDist >= MIN_LOOK_ACCURACY || rayPointDist >= closestDist)
         continue;
 
@@ -102,7 +107,7 @@ public class PropMover(IServiceProvider provider) : IPluginModule {
       foundEntity = ent;
     }
 
-    var playerDist = playerPos.Distance(target);
+    var playerDist = target.Value.Distance();
     if (playerDist > MAX_DISTANCE) return;
     if (foundEntity == null) return;
 
