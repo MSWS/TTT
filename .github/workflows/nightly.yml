@@ -52,7 +52,14 @@ jobs:
       - name: Publish Plugin
         run: |
           dotnet restore TTT/Plugin/Plugin.csproj
-          dotnet publish TTT/Plugin/Plugin.csproj --no-restore -c Release -o build/TTT
+          if [ "${GITHUB_REF##*/}" = "dev" ]; then
+            dotnet publish TTT/Plugin/Plugin.csproj --no-restore -c Debug -o build/TTT
+          elif [ "${GITHUB_REF##*/}" = "main" ]; then
+            dotnet publish TTT/Plugin/Plugin.csproj --no-restore -c Release -o build/TTT
+          else
+            echo "Branch not recognized, skipping publish."
+            exit 0
+          fi
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
