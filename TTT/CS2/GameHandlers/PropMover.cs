@@ -21,14 +21,16 @@ namespace TTT.CS2.GameHandlers;
 
 public class PropMover(IServiceProvider provider) : IPluginModule {
   // TODO: Make this configurable
-  public static readonly float MIN_LOOK_ACCURACY = 2000f;
-  public static readonly float MAX_DISTANCE = 100f;
-  public static readonly float MIN_HOLDING_DISTANCE = 100f;
-  public static readonly float MAX_HOLDING_DISTANCE = 10000f;
+  public static readonly float MAX_DISTANCE = 200;
+  public static readonly float MIN_HOLDING_DISTANCE = 80;
+  public static readonly float MAX_HOLDING_DISTANCE = 150;
   private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
 
   private readonly IPlayerConverter<CCSPlayerController> converter =
     provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
+
+  private readonly IMessenger messenger =
+    provider.GetRequiredService<IMessenger>();
 
   public readonly HashSet<CBaseEntity> MapEntities = [];
   private readonly IMessenger msg = provider.GetRequiredService<IMessenger>();
@@ -36,8 +38,9 @@ public class PropMover(IServiceProvider provider) : IPluginModule {
   private readonly Dictionary<CCSPlayerController, MovementInfo>
     playersPressingE = new();
 
-  public void Dispose() { }
+  private static QAngle DEAD_ANGLE = new(90, 45, 90);
 
+  public void Dispose() { }
 
   public void Start() { }
 
@@ -87,32 +90,28 @@ public class PropMover(IServiceProvider provider) : IPluginModule {
 
     if (!pressed.HasFlag(PlayerButtons.Use)) return;
 
-    // var target = RayTrace.FindRayTraceIntersection(player);
-    var target = player.GetGameTraceByEyePosition(TraceMask.MaskPlayerSolid,
-      Contents.Solid, null);
-    if (!target.HasValue) return;
+    var target = player.GetGameTraceByEyePosition(TraceMask.MaskSolid,
+      Contents.NoDraw, player);
+    if (target == null) return;
 
-    CBaseEntity? foundEntity = null;
+    var endPos = new Vector(target.Value.EndPos.X, target.Value.EndPos.Y,
+      target.Value.EndPos.Z);
+
+    CBaseEntity? hitEntity = null;
+    target.Value.HitEntityByDesignerName(out hitEntity, "prop_ragdoll");
+
+    if (hitEntity == null || !hitEntity.IsValid)
+      target.Value.HitEntityByDesignerName(out hitEntity,
+        "prop_physics_multiplayer");
+
     MapEntities.RemoveWhere(ent => !ent.IsValid);
-    var closestDist = double.MaxValue;
-    foreach (var ent in MapEntities) {
-      if (!ent.IsValid) continue;
-      var rayPointDist =
-        ent.AbsOrigin?.DistanceSquared(new Vector(target.Value.EndPos.X,
-          target.Value.EndPos.Y, target.Value.EndPos.Z)) ?? double.MaxValue;
-      if (rayPointDist >= MIN_LOOK_ACCURACY || rayPointDist >= closestDist)
-        continue;
-
-      closestDist = rayPointDist;
-      foundEntity = ent;
-    }
 
     var playerDist = target.Value.Distance();
     if (playerDist > MAX_DISTANCE) return;
-    if (foundEntity == null) return;
+    if (hitEntity == null) return;
 
     var apiPlayer   = converter.GetPlayer(player);
-    var pickupEvent = new PropPickupEvent(apiPlayer, foundEntity);
+    var pickupEvent = new PropPickupEvent(apiPlayer, hitEntity);
     bus.Dispatch(pickupEvent);
     if (pickupEvent.IsCanceled) return;
 
@@ -123,11 +122,10 @@ public class PropMover(IServiceProvider provider) : IPluginModule {
   }
 
   private void refreshBodies() {
-    foreach (var (player, info) in playersPressingE)
-      refreshBodies(player, info);
+    foreach (var (player, info) in playersPressingE) refreshBody(player, info);
   }
 
-  private void refreshBodies(CCSPlayerController player, MovementInfo info) {
+  private void refreshBody(CCSPlayerController player, MovementInfo info) {
     var ent = info.Ragdoll;
     if (!player.IsValid || !ent.IsValid) {
       playersPressingE.Remove(player);
@@ -136,26 +134,44 @@ public class PropMover(IServiceProvider provider) : IPluginModule {
 
     var playerPawn = player.PlayerPawn.Value;
     if (playerPawn == null || !playerPawn.IsValid) return;
-    var playerOrigin = playerPawn.AbsOrigin;
+    var playerOrigin = player.GetEyePosition();
     if (playerOrigin == null) {
       playersPressingE.Remove(player);
       return;
     }
 
-    playerOrigin   =  playerOrigin.Clone()!;
-    playerOrigin.Z += 64;
+    var raytrace = player.GetGameTraceByEyePosition(TraceMask.MaskSolid,
+      Contents.NoDraw, player);
 
-    var eyeAngles = playerPawn!.EyeAngles;
+    if (ent.AbsOrigin == null || raytrace == null) return;
 
-    var targetVector = playerOrigin + eyeAngles.Clone()!.ToForward()
-      * Math.Clamp(info.Distance, MIN_HOLDING_DISTANCE, MAX_HOLDING_DISTANCE);
+    var isOnSelf =
+      raytrace.Value.HitEntityByDesignerName(out CBaseEntity? hitEnt,
+        "prop_ragdoll");
 
-    targetVector.Z = Math.Max(targetVector.Z, playerOrigin.Z - 48);
+    var endPos = raytrace.Value.EndPos.toVector();
 
-    if (ent.AbsOrigin == null) return;
-    var lerpedVector = ent.AbsOrigin.Lerp(targetVector, 0.3f);
+    if (isOnSelf || raytrace.Value.Distance() > MAX_HOLDING_DISTANCE) {
+      endPos = playerOrigin
+        + playerPawn.EyeAngles.ToForward() * MAX_HOLDING_DISTANCE;
+    }
 
-    ent.Teleport(lerpedVector, QAngle.Zero, Vector.Zero);
+    var deadRot = DEAD_ANGLE.Clone();
+
+    var rotDeg = (Server.CurrentTime * 64f) % 360;
+    var rotRad = (rotDeg + 0) * (MathF.PI / 180);
+    deadRot.Y += rotDeg;
+
+    var xOff  = MathF.Cos(rotRad) * 32;
+    var yOff  = MathF.Sin(rotRad) * 32;
+    var xBias = MathF.Cos(rotRad + MathF.PI / 2) * 16;
+    var yBias = MathF.Sin(rotRad + MathF.PI / 2) * 16;
+    endPos.X += xBias;
+    endPos.Y += yBias;
+
+    endPos -= new Vector(xOff, yOff, 0);
+
+    ent.Teleport(endPos, deadRot, Vector.Zero);
   }
 
   private void refreshLines() {
