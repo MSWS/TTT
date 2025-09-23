@@ -1,4 +1,7 @@
 ﻿using TTT.API.Events;
+using TTT.API.Game;
+using TTT.API.Player;
+using TTT.CS2.lang;
 using TTT.Game.Events.Player;
 using TTT.Game.Listeners;
 
@@ -8,9 +11,18 @@ public class TaserListenCanceler(IServiceProvider provider)
   : BaseListener(provider) {
   [EventHandler]
   public void OnHurt(PlayerDamagedEvent ev) {
-    Messenger.DebugAnnounce("PlayerDamagedEvent fired, weapon: " + ev.Weapon);
-    if (ev.Weapon != "weapon_taser") return;
+    if (Games.ActiveGame is not { State: State.IN_PROGRESS }) return;
+    if (ev.Weapon == null) return;
+    if (!ev.Weapon.Contains("taser", StringComparison.OrdinalIgnoreCase))
+      return;
     ev.IsCanceled = true;
-    Messenger.DebugAnnounce("Taser damage canceled");
+
+    var victim   = ev.Player;
+    var attacker = ev.Attacker;
+
+    if (attacker == null) return;
+
+    Messenger.Message(attacker,
+      Locale[CS2Msgs.TASER_SCANNED(victim, Roles.GetRoles(victim).First())]);
   }
 }

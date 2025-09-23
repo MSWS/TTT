@@ -48,12 +48,16 @@ public static class GameMsgs {
   public static IMsg BODY_IDENTIFIED(IOnlinePlayer identifier, IPlayer ofPlayer,
     IRole role) {
     // TODO: Ideally we do this better
-    var rolePrefix = role.GetType().IsAssignableTo(typeof(TraitorRole)) ?
+    var rolePrefix = GetRolePrefix(role);
+    return MsgFactory.Create(nameof(BODY_IDENTIFIED), identifier.Name,
+      rolePrefix + ofPlayer.Name, role.Name);
+  }
+  
+  public static char GetRolePrefix(IRole role) {
+    return role.GetType().IsAssignableTo(typeof(TraitorRole)) ?
       ChatColors.Red :
       role.GetType().IsAssignableTo(typeof(DetectiveRole)) ?
         ChatColors.DarkBlue : ChatColors.Lime;
-    return MsgFactory.Create(nameof(BODY_IDENTIFIED), identifier.Name,
-      rolePrefix + ofPlayer.Name, role.Name);
   }
 
   #region COMMANDS
