@@ -4,9 +4,7 @@ using CounterStrikeSharp.API.Modules.Utils;
 using Microsoft.Extensions.DependencyInjection;
 using TTT.API.Events;
 using TTT.API.Game;
-using TTT.API.Messages;
 using TTT.API.Player;
-using TTT.API.Role;
 using TTT.CS2.Events;
 using TTT.CS2.Extensions;
 using TTT.Game;
@@ -14,7 +12,6 @@ using TTT.Game.Events.Body;
 using TTT.Game.Events.Game;
 using TTT.Game.Listeners;
 using TTT.Game.Roles;
-using TTT.Locale;
 
 namespace TTT.CS2.Listeners;
 

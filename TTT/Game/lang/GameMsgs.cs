@@ -52,10 +52,9 @@ public static class GameMsgs {
     return MsgFactory.Create(nameof(BODY_IDENTIFIED), identifier.Name,
       rolePrefix + ofPlayer.Name, role.Name);
   }
-  
+
   public static char GetRolePrefix(IRole role) {
-    return role.GetType().IsAssignableTo(typeof(TraitorRole)) ?
-      ChatColors.Red :
+    return role.GetType().IsAssignableTo(typeof(TraitorRole)) ? ChatColors.Red :
       role.GetType().IsAssignableTo(typeof(DetectiveRole)) ?
         ChatColors.DarkBlue : ChatColors.Lime;
   }

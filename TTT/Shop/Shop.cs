@@ -1,10 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using TTT.API;
-using TTT.API.Command;
 using TTT.API.Messages;
 using TTT.API.Player;
 using TTT.Locale;
-using TTT.Shop.Commands;
 using TTT.Shop.Items;
 
 namespace TTT.Shop;
@@ -70,7 +68,7 @@ public class Shop(IServiceProvider provider) : ITerrorModule, IShop {
   }
 
   public void Dispose() {
-    foreach (var item in Items) { item.Dispose(); }
+    foreach (var item in Items) item.Dispose();
 
     Items.Clear();
   }

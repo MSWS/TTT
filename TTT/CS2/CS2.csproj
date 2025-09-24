@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="RayTrace\" />
+    <Folder Include="RayTrace\"/>
   </ItemGroup>
 
 </Project>

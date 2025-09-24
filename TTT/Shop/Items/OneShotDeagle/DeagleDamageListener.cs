@@ -9,6 +9,12 @@ using TTT.Game.Events.Player;
 namespace TTT.Shop.Items;
 
 public class DeagleDamageListener(IServiceProvider provider) : IListener {
+  private readonly OneShotDeagleConfig config =
+    provider.GetService<IStorage<OneShotDeagleConfig>>()
+    ?.Load()
+     .GetAwaiter()
+     .GetResult() ?? new OneShotDeagleConfig();
+
   private readonly IGameManager games =
     provider.GetRequiredService<IGameManager>();
 
@@ -16,12 +22,6 @@ public class DeagleDamageListener(IServiceProvider provider) : IListener {
     provider.GetRequiredService<IRoleAssigner>();
 
   private readonly IShop shop = provider.GetRequiredService<IShop>();
-
-  private readonly OneShotDeagleConfig config =
-    provider.GetService<IStorage<OneShotDeagleConfig>>()
-    ?.Load()
-     .GetAwaiter()
-     .GetResult() ?? new OneShotDeagleConfig();
 
   public void Dispose() { }
 

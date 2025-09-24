@@ -4,24 +4,23 @@ using System.Runtime.InteropServices;
 namespace TTT.CS2.RayTrace.Struct;
 
 /// <summary>
-/// Represents a 3D capsule shape defined by two centers and a radius.
-/// Commonly used in collision detection and physics systems.
+///   Represents a 3D capsule shape defined by two centers and a radius.
+///   Commonly used in collision detection and physics systems.
 /// </summary>
 [StructLayout(LayoutKind.Sequential)]
-public struct Capsule
-{
+public struct Capsule {
     /// <summary>
-    /// The center point of one end of the capsule.
+    ///   The center point of one end of the capsule.
     /// </summary>
     public Vector3 CenterA;
 
     /// <summary>
-    /// The center point of the opposite end of the capsule.
+    ///   The center point of the opposite end of the capsule.
     /// </summary>
     public Vector3 CenterB;
 
     /// <summary>
-    /// The radius of the capsule.
+    ///   The radius of the capsule.
     /// </summary>
     public float Radius;
 }
