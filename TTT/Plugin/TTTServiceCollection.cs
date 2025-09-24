@@ -1,5 +1,4 @@
 using System.Reactive.Concurrency;
-using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using Microsoft.Extensions.DependencyInjection;
 using TTT.CS2;

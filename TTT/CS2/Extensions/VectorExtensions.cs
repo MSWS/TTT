@@ -1,4 +1,6 @@
-﻿using CounterStrikeSharp.API.Modules.Utils;
+﻿using System.Numerics;
+using CounterStrikeSharp.API.Modules.Utils;
+using Vector = CounterStrikeSharp.API.Modules.Utils.Vector;
 
 namespace TTT.CS2.Extensions;
 
@@ -57,8 +59,8 @@ public static class VectorExtensions {
 
     return current + toVector / dist * maxDelta;
   }
-  
-  public static Vector toVector(this System.Numerics.Vector3 vec) {
+
+  public static Vector toVector(this Vector3 vec) {
     return new Vector(vec.X, vec.Y, vec.Z);
   }
 }

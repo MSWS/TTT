@@ -35,36 +35,32 @@ public class TTTCommand(IServiceProvider provider) : ICommand {
         var modules = provider.GetServices<ITerrorModule>()
          .Where(m => m is not IPluginModule);
         info.ReplySync(prefix + "Loaded Modules:");
-        foreach (var module in modules) {
+        foreach (var module in modules)
           printVersionedEntry(info, module.Version,
             module.Name + " - " + module.GetType().Name);
-        }
 
         info.ReplySync(prefix + "Loaded Plugin Modules:");
         var pluginModules = provider.GetServices<IPluginModule>();
-        foreach (var module in pluginModules) {
+        foreach (var module in pluginModules)
           printVersionedEntry(info, module.Version,
             module.Name + " - " + module.GetType().Name);
-        }
 
         break;
       case "commands":
         var commands = provider.GetRequiredService<ICommandManager>().Commands;
         info.ReplySync(prefix + "Registered Commands:");
-        foreach (var command in commands) {
+        foreach (var command in commands)
           printVersionedEntry(info, command.Version,
             command.Name + " - " + command.GetType().Name);
-        }
 
         break;
 
       case "listeners":
         var listeners = provider.GetServices<IListener>();
         info.ReplySync(prefix + "Registered Listeners:");
-        foreach (var listener in listeners) {
+        foreach (var listener in listeners)
           printVersionedEntry(info, listener.Version,
             listener.Name + " - " + listener.GetType().Name);
-        }
 
         break;
     }
@@ -79,7 +75,7 @@ public class TTTCommand(IServiceProvider provider) : ICommand {
   }
 
   private char getVersionColor(string version) {
-    var asciiSum = version.Sum(c => (int)c);
+    var asciiSum = version.Sum(c => c);
 
     return (asciiSum % 10) switch {
       0 => ChatColors.Red,

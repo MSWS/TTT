@@ -1,6 +1,5 @@
 ﻿using TTT.API.Events;
 using TTT.API.Game;
-using TTT.API.Player;
 using TTT.CS2.lang;
 using TTT.Game.Events.Player;
 using TTT.Game.Listeners;

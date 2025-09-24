@@ -5,7 +5,6 @@ using Microsoft.Extensions.DependencyInjection;
 using TTT.API;
 using TTT.API.Command;
 using TTT.API.Player;
-using TTT.CS2.Command.Test;
 using TTT.Game;
 using TTT.Game.Commands;
 

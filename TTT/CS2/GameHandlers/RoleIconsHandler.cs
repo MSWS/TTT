@@ -22,6 +22,9 @@ public class RoleIconsHandler(IServiceProvider provider)
   private readonly IDictionary<int, IEnumerable<CPointWorldText>>
     detectiveIcons = new Dictionary<int, IEnumerable<CPointWorldText>>();
 
+  private readonly IMessenger messenger =
+    provider.GetRequiredService<IMessenger>();
+
   private readonly IPlayerConverter<CCSPlayerController> players =
     provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
 
@@ -32,9 +35,6 @@ public class RoleIconsHandler(IServiceProvider provider)
     new Dictionary<int, IEnumerable<CPointWorldText>>();
 
   private readonly ISet<int> traitors = new HashSet<int>();
-
-  private readonly IMessenger messenger =
-    provider.GetRequiredService<IMessenger>();
 
   public void Dispose() { bus.UnregisterListener(this); }
 

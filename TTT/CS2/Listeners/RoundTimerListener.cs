@@ -49,9 +49,8 @@ public class RoundTimerListener(IServiceProvider provider) : IListener {
          .TotalSeconds);
         Server.ExecuteCommand("mp_ignore_round_win_conditions 1");
         foreach (var player in Utilities.GetPlayers()
-         .Where(p => p.LifeState != (int)LifeState_t.LIFE_ALIVE)) {
+         .Where(p => p.LifeState != (int)LifeState_t.LIFE_ALIVE))
           player.Respawn();
-        }
 
         foreach (var player in Utilities.GetPlayers())
           player.SetColor(Color.FromArgb(254, 255, 255, 255));
@@ -93,12 +92,12 @@ public class RoundTimerListener(IServiceProvider provider) : IListener {
           RoundEndReason.TerroristsWin :
           RoundEndReason.CTsWin;
 
-      EventCsWinPanelRound panelWinEvent = new EventCsWinPanelRound(true);
+      var panelWinEvent = new EventCsWinPanelRound(true);
       var winningTeam = endReason == RoundEndReason.TerroristsWin ?
         CsTeam.Terrorist :
         CsTeam.CounterTerrorist;
       panelWinEvent.Set("final_event",
-        (int)(winningTeam == CsTeam.CounterTerrorist ? 2 : 3));
+        winningTeam == CsTeam.CounterTerrorist ? 2 : 3);
       panelWinEvent.FireEvent(false);
 
       // EventRoundEnd roundEndEvent = new EventRoundEnd(true);

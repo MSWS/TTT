@@ -1,10 +1,8 @@
 ﻿using System.Drawing;
 using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
-using CounterStrikeSharp.API.Core.Attributes.Registration;
 using CounterStrikeSharp.API.Modules.Timers;
 using CounterStrikeSharp.API.Modules.Utils;
-using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using TTT.API;
 using TTT.API.Events;
@@ -14,7 +12,6 @@ using TTT.CS2.Events;
 using TTT.CS2.Extensions;
 using TTT.CS2.RayTrace.Class;
 using TTT.CS2.RayTrace.Enum;
-using TTT.CS2.Utils;
 using Vector = CounterStrikeSharp.API.Modules.Utils.Vector;
 
 namespace TTT.CS2.GameHandlers;
@@ -24,6 +21,8 @@ public class PropMover(IServiceProvider provider) : IPluginModule {
   public static readonly float MAX_DISTANCE = 200;
   public static readonly float MIN_HOLDING_DISTANCE = 80;
   public static readonly float MAX_HOLDING_DISTANCE = 150;
+
+  private static readonly QAngle DEAD_ANGLE = new(90, 45, 90);
   private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
 
   private readonly IPlayerConverter<CCSPlayerController> converter =
@@ -36,8 +35,6 @@ public class PropMover(IServiceProvider provider) : IPluginModule {
 
   private readonly Dictionary<CCSPlayerController, MovementInfo>
     playersPressingE = new();
-
-  private static QAngle DEAD_ANGLE = new(90, 45, 90);
 
   public void Dispose() { }
 
@@ -128,10 +125,9 @@ public class PropMover(IServiceProvider provider) : IPluginModule {
 
     var endPos = raytrace.Value.EndPos.toVector();
 
-    if (isOnSelf || raytrace.Value.Distance() > MAX_HOLDING_DISTANCE) {
+    if (isOnSelf || raytrace.Value.Distance() > MAX_HOLDING_DISTANCE)
       endPos = playerOrigin
         + playerPawn.EyeAngles.ToForward() * MAX_HOLDING_DISTANCE;
-    }
 
     if (ent.DesignerName == "prop_physics_multiplayer") {
       ent.Teleport(endPos, QAngle.Zero, Vector.Zero);
@@ -140,7 +136,7 @@ public class PropMover(IServiceProvider provider) : IPluginModule {
 
     var deadRot = DEAD_ANGLE.Clone();
 
-    var rotDeg = (Server.CurrentTime * 64f) % 360;
+    var rotDeg = Server.CurrentTime * 64f % 360;
     var rotRad = (rotDeg + 0) * (MathF.PI / 180);
     deadRot.Y += rotDeg;
 

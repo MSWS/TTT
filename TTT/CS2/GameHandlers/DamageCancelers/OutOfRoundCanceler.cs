@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using TTT.API.Events;
+﻿using TTT.API.Events;
 using TTT.API.Game;
 using TTT.CS2.Utils;
 using TTT.Game.Events.Player;

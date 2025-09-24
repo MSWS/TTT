@@ -1,28 +1,27 @@
 ﻿namespace TTT.CS2.RayTrace.Enum;
 
 /// <summary>
-/// Defines base layer indices used for collision detection and tracing
+///   Defines base layer indices used for collision detection and tracing
 /// </summary>
-public enum LayerIndex
-{
-    /// <summary>Solid objects layer</summary>
-    Solid = 0,
+public enum LayerIndex {
+  /// <summary>Solid objects layer</summary>
+  Solid = 0,
 
-    /// <summary>Hitbox collision layer</summary>
-    Hitbox,
+  /// <summary>Hitbox collision layer</summary>
+  Hitbox,
 
-    /// <summary>Trigger volume layer</summary>
-    Trigger,
+  /// <summary>Trigger volume layer</summary>
+  Trigger,
 
-    /// <summary>Skybox layer</summary>
-    Sky,
+  /// <summary>Skybox layer</summary>
+  Sky,
 
-    /// <summary>First available layer for user-defined content</summary>
-    FirstUser,
+  /// <summary>First available layer for user-defined content</summary>
+  FirstUser,
 
-    /// <summary>Special value indicating layer not found</summary>
-    NotFound = -1,
+  /// <summary>Special value indicating layer not found</summary>
+  NotFound = -1,
 
-    /// <summary>Maximum allowed layer index</summary>
-    MaxAllowed = 64
+  /// <summary>Maximum allowed layer index</summary>
+  MaxAllowed = 64
 }

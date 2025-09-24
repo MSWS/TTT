@@ -18,8 +18,7 @@ public class ShopCommand(IServiceProvider provider) : ICommand {
   public void Dispose() { }
   public string Name => "shop";
 
-  public void Start() {
-  }
+  public void Start() { }
 
   public Task<CommandResult>
     Execute(IOnlinePlayer? executor, ICommandInfo info) {

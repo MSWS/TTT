@@ -15,6 +15,10 @@ public static class DeagleServiceCollection {
 }
 
 public class OneShotDeagle(IServiceProvider provider) : IWeapon, IShopItem {
+  public const string ID = "ttt.shop.item.oneshotdeagle";
+
+  private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
+
   private readonly OneShotDeagleConfig deagleConfigStorage =
     provider.GetService<IStorage<OneShotDeagleConfig>>()
     ?.Load()
@@ -26,8 +30,6 @@ public class OneShotDeagle(IServiceProvider provider) : IWeapon, IShopItem {
 
   private readonly IMsgLocalizer locale =
     provider.GetRequiredService<IMsgLocalizer>();
-
-  private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
 
   public string Name => locale[DeagleMsgs.SHOP_ITEM_DEAGLE];
 
@@ -46,10 +48,9 @@ public class OneShotDeagle(IServiceProvider provider) : IWeapon, IShopItem {
     return PurchaseResult.SUCCESS;
   }
 
-  public string Id => deagleConfigStorage.Weapon;
   string IShopItem.Id => ID;
 
-  public const string ID = "ttt.shop.item.oneshotdeagle";
+  public string Id => deagleConfigStorage.Weapon;
 
   public int? ReserveAmmo { get; init; } = 0;
   public int? CurrentAmmo { get; init; } = 1;

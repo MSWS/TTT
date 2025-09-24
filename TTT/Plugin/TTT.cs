@@ -2,20 +2,16 @@ using CounterStrikeSharp.API.Core;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using TTT.API;
-using TTT.API.Command;
-using TTT.API.Events;
-using TTT.API.Game;
 
 namespace TTT.Plugin;
 
 public class TTT(IServiceProvider provider) : BasePlugin {
+  private readonly List<ITerrorModule> loadedModules = [];
   private IServiceScope scope = null!;
   public override string ModuleName => "TTT";
 
   public override string ModuleVersion
     => $"{GitVersionInformation.BranchName}-{GitVersionInformation.FullSemVer}-{GitVersionInformation.BuildMetaData}";
-
-  private readonly List<ITerrorModule> loadedModules = [];
 
   public override void Load(bool hotReload) {
     Logger.LogInformation($"{ModuleName} {ModuleVersion} Starting... ");
@@ -56,14 +52,13 @@ public class TTT(IServiceProvider provider) : BasePlugin {
       return;
     }
 
-    foreach (var module in loadedModules) {
+    foreach (var module in loadedModules)
       try {
         Logger.LogInformation($"Unloading {module.Name} ({module.Version})");
         module.Dispose();
       } catch (Exception e) {
         Logger.LogError(e, $"Error unloading module {module.Name}");
       }
-    }
 
     base.Dispose(disposing);
   }
