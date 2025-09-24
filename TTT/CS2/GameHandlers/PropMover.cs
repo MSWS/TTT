@@ -32,7 +32,6 @@ public class PropMover(IServiceProvider provider) : IPluginModule {
   private readonly IMessenger messenger =
     provider.GetRequiredService<IMessenger>();
 
-  public readonly HashSet<CBaseEntity> MapEntities = [];
   private readonly IMessenger msg = provider.GetRequiredService<IMessenger>();
 
   private readonly Dictionary<CCSPlayerController, MovementInfo>
@@ -52,26 +51,6 @@ public class PropMover(IServiceProvider provider) : IPluginModule {
     ?.RegisterListener<
         CounterStrikeSharp.API.Core.Listeners.OnPlayerButtonsChanged>(
         buttonsChanged);
-
-    if (!hotReload) return;
-    OnRoundStart(null!, null!);
-  }
-
-  [UsedImplicitly]
-  [GameEventHandler]
-  public HookResult OnRoundStart(EventRoundStart _, GameEventInfo _1) {
-    var entities =
-      Utilities.GetAllEntities().Where(ent => ent.IsValid).ToList();
-    foreach (var propMultiplayer in from ent in entities
-      where ent.DesignerName.Equals("prop_physics_multiplayer")
-      select new CPhysicsPropMultiplayer(ent.Handle))
-      MapEntities.Add(propMultiplayer);
-    foreach (var propMultiplayer in from ent in entities
-      where ent.DesignerName.Equals("prop_ragdoll")
-      select new CRagdollProp(ent.Handle))
-      MapEntities.Add(propMultiplayer);
-
-    return HookResult.Continue;
   }
 
   private void buttonsChanged(CCSPlayerController player, PlayerButtons pressed,
@@ -103,8 +82,6 @@ public class PropMover(IServiceProvider provider) : IPluginModule {
     if (hitEntity == null || !hitEntity.IsValid)
       target.Value.HitEntityByDesignerName(out hitEntity,
         "prop_physics_multiplayer");
-
-    MapEntities.RemoveWhere(ent => !ent.IsValid);
 
     var playerDist = target.Value.Distance();
     if (playerDist > MAX_DISTANCE) return;
@@ -147,13 +124,18 @@ public class PropMover(IServiceProvider provider) : IPluginModule {
 
     var isOnSelf =
       raytrace.Value.HitEntityByDesignerName(out CBaseEntity? hitEnt,
-        "prop_ragdoll");
+        ent.DesignerName);
 
     var endPos = raytrace.Value.EndPos.toVector();
 
     if (isOnSelf || raytrace.Value.Distance() > MAX_HOLDING_DISTANCE) {
       endPos = playerOrigin
         + playerPawn.EyeAngles.ToForward() * MAX_HOLDING_DISTANCE;
+    }
+
+    if (ent.DesignerName == "prop_physics_multiplayer") {
+      ent.Teleport(endPos, QAngle.Zero, Vector.Zero);
+      return;
     }
 
     var deadRot = DEAD_ANGLE.Clone();
