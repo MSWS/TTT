@@ -57,4 +57,8 @@ public static class VectorExtensions {
 
     return current + toVector / dist * maxDelta;
   }
+  
+  public static Vector toVector(this System.Numerics.Vector3 vec) {
+    return new Vector(vec.X, vec.Y, vec.Z);
+  }
 }

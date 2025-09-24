@@ -12,27 +12,15 @@ using TTT.CS2.Extensions;
 using TTT.Game;
 using TTT.Game.Events.Body;
 using TTT.Game.Events.Game;
+using TTT.Game.Listeners;
 using TTT.Game.Roles;
 using TTT.Locale;
 
 namespace TTT.CS2.Listeners;
 
-public class BodyPickupListener(IServiceProvider provider) : IListener {
+public class BodyPickupListener(IServiceProvider provider)
+  : BaseListener(provider) {
   private readonly Dictionary<CBaseEntity, IBody> bodyCache = new();
-  private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
-
-  private readonly IPlayerConverter<CCSPlayerController> converter =
-    provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
-
-  private readonly IMsgLocalizer locale =
-    provider.GetRequiredService<IMsgLocalizer>();
-
-  private readonly IMessenger msg = provider.GetRequiredService<IMessenger>();
-
-  private readonly IRoleAssigner roles =
-    provider.GetRequiredService<IRoleAssigner>();
-
-  public void Dispose() { bus.UnregisterListener(this); }
 
   [EventHandler]
   public void OnGameState(GameStateUpdateEvent ev) {
@@ -57,30 +45,30 @@ public class BodyPickupListener(IServiceProvider provider) : IListener {
 
   [EventHandler(Priority = Priority.HIGH)]
   public void OnPropPickup(PropPickupEvent ev) {
-    var prop = ev.Prop as CRagdollProp;
-    if (prop == null || !prop.IsValid) return;
-
-    if (!bodyCache.TryGetValue(prop, out var body)) return;
+    if (!bodyCache.TryGetValue(ev.Prop, out var body)) return;
     if (body.IsIdentified) return;
-
     if (ev.Player is not IOnlinePlayer online)
       throw new InvalidOperationException("Player is not an online player.");
 
     var identifyEvent = new BodyIdentifyEvent(body, online);
 
-    bus.Dispatch(identifyEvent);
+    Bus.Dispatch(identifyEvent);
     if (identifyEvent.IsCanceled) return;
 
     body.IsIdentified = true;
-    var role = roles.GetRoles(body.OfPlayer);
+    var role = Roles.GetRoles(body.OfPlayer);
     if (role.Count == 0) return;
     var primaryRole = role.First();
 
-    prop.SetColor(primaryRole.Color);
-    msg.MessageAll(
-      locale[GameMsgs.BODY_IDENTIFIED(online, body.OfPlayer, primaryRole)]);
+    Messenger.MessageAll(
+      Locale[GameMsgs.BODY_IDENTIFIED(online, body.OfPlayer, primaryRole)]);
 
-    var onlinePlayer = converter.GetPlayer(body.OfPlayer);
+    var gameBody =
+      Utilities.GetEntityFromIndex<CRagdollProp>(int.Parse(body.Id));
+    if (gameBody != null && gameBody.IsValid)
+      gameBody.SetColor(role.First().Color);
+
+    var onlinePlayer = Converter.GetPlayer(body.OfPlayer);
     if (onlinePlayer == null || !onlinePlayer.IsValid) return;
 
     if (primaryRole is InnocentRole)

@@ -47,12 +47,7 @@ public class BodySpawner(IServiceProvider provider) : IPluginModule {
     var bodyCreatedEvent = new BodyCreateEvent(body);
     bus.Dispatch(bodyCreatedEvent);
 
-    if (bodyCreatedEvent.IsCanceled) {
-      ragdollBody.AcceptInput("Kill");
-      return HookResult.Continue;
-    }
-
-    mover.MapEntities.Add(ragdollBody);
+    if (bodyCreatedEvent.IsCanceled) ragdollBody.AcceptInput("Kill");
     return HookResult.Continue;
   }
 

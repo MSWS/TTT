@@ -41,9 +41,10 @@ public class PlayerDamagedEvent(IOnlinePlayer player, IOnlinePlayer? attacker,
     if (player == null || !player.IsValid)
       throw new InvalidOperationException("Player is null or invalid.");
 
-    var attackerPawn = info.Attacker;
-    var attacker     = attackerPawn.Value?.As<CCSPlayerController>();
+    var attackerPawn = info.Attacker.Value?.As<CCSPlayerPawn>();
+    var attacker     = attackerPawn?.OriginalController.Value;
 
+    Weapon = info.Ability.Value?.DesignerName;
     Player = converter.GetPlayer(player) as IOnlinePlayer
       ?? throw new InvalidOperationException("Could not convert player.");
     Attacker = attacker == null || !attacker.IsValid ?

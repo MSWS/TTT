@@ -72,7 +72,6 @@ public class RoundTimerListener(IServiceProvider provider) : IListener {
   [EventHandler(IgnoreCanceled = true)]
   public void OnRoundEnd(GameStateUpdateEvent ev) {
     if (ev.NewState != State.FINISHED) return;
-    if (RoundUtil.GetTimeRemaining() <= 1) return;
 
     foreach (var player in ev.Game.Players) {
       var csPlayer = converter.GetPlayer(player);
@@ -82,6 +81,8 @@ public class RoundTimerListener(IServiceProvider provider) : IListener {
       csPlayer.SetClan(role.Name, false);
       if (role is InnocentRole) csPlayer.SwitchTeam(CsTeam.CounterTerrorist);
     }
+    
+    if (RoundUtil.GetTimeRemaining() <= 1) return;
 
     new EventNextlevelChanged(true).FireEvent(false);
 
@@ -99,15 +100,6 @@ public class RoundTimerListener(IServiceProvider provider) : IListener {
       panelWinEvent.Set("final_event",
         winningTeam == CsTeam.CounterTerrorist ? 2 : 3);
       panelWinEvent.FireEvent(false);
-
-      // EventRoundEnd roundEndEvent = new EventRoundEnd(true);
-      // roundEndEvent.Set("winner", (int)(winningTeam));
-      // roundEndEvent.Set("reason", (int)endReason);
-      // roundEndEvent.Set("message",
-      //   endReason == RoundEndReason.TerroristsWin ?
-      //     "#SFUI_Notice_Terrorists_Win" :
-      //     "#SFUI_Notice_CTs_Win");
-      // roundEndEvent.FireEvent(false);
 
       var timer = Observable.Timer(
         config.RoundCfg.TimeBetweenRounds, scheduler);
