@@ -68,7 +68,7 @@ public class EventBus(IServiceProvider provider) : IEventBus, ITerrorModule {
       $"Dispatching {type.Name} to {list?.Count ?? 0} handlers.");
 #endif
 
-    if (list == null || list.Count == 0) return;
+    if (list == null || list.Count == 0) return Task.CompletedTask;
 
     ICancelableEvent? cancelable           = null;
     if (ev is ICancelableEvent) cancelable = (ICancelableEvent)ev;
