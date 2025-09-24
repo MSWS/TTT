@@ -22,6 +22,9 @@ public class BodyPickupListener(IServiceProvider provider)
   : BaseListener(provider) {
   private readonly Dictionary<CBaseEntity, IBody> bodyCache = new();
 
+  private readonly IPlayerConverter<CCSPlayerController> converter =
+    provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
+
   [EventHandler]
   public void OnGameState(GameStateUpdateEvent ev) {
     if (ev.NewState != State.IN_PROGRESS) return;
@@ -68,7 +71,7 @@ public class BodyPickupListener(IServiceProvider provider)
     if (gameBody != null && gameBody.IsValid)
       gameBody.SetColor(role.First().Color);
 
-    var onlinePlayer = Converter.GetPlayer(body.OfPlayer);
+    var onlinePlayer = converter.GetPlayer(body.OfPlayer);
     if (onlinePlayer == null || !onlinePlayer.IsValid) return;
 
     if (primaryRole is InnocentRole)
