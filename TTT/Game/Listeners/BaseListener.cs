@@ -29,9 +29,6 @@ public abstract class BaseListener(IServiceProvider provider) : IListener {
   
   protected readonly IMsgLocalizer Locale =
     provider.GetRequiredService<IMsgLocalizer>();
-  
-  protected readonly IPlayerConverter<CCSPlayerController> Converter =
-    provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
 
   public virtual void Dispose() { Bus.UnregisterListener(this); }
 
