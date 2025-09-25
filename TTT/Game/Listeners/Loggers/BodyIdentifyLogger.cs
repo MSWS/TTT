@@ -15,6 +15,6 @@ public class BodyIdentifyLogger(IServiceProvider provider)
       throw new InvalidOperationException(
         "Active game is null, but game is active?");
 
-    game.Logger.LogAction(new IdentifyBodyAction(ev));
+    game.Logger.LogAction(new IdentifyBodyAction(Provider, ev));
   }
 }

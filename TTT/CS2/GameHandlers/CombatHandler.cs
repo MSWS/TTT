@@ -88,7 +88,9 @@ public class CombatHandler(IServiceProvider provider) : IPluginModule {
 
   [GameEventHandler]
   public HookResult OnPlayerHurt(EventPlayerHurt ev, GameEventInfo _) {
-    if (!games.IsGameActive()) return HookResult.Continue;
+    // DamageCanceler already handles this on non-Windows platforms
+    if (!OperatingSystem.IsWindows() || !games.IsGameActive())
+      return HookResult.Continue;
     var player = ev.Userid;
     if (player == null) return HookResult.Continue;
 

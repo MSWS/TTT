@@ -4,7 +4,7 @@ using Xunit;
 
 namespace TTT.Test.API;
 
-public class ActionTest {
+public class ActionTest(IServiceProvider provider) {
   [Fact]
   public void Format_ShouldFormat_ActionWithOther() {
     // Arrange
@@ -12,7 +12,8 @@ public class ActionTest {
     var bob   = new TestPlayer("test-bob", "Bob");
 
     // Act
-    var result = new FakeAction(alice, bob, "action-id", "IDs", "unitly");
+    var result =
+      new FakeAction(alice, bob, null, null, "action-id", "IDs", "unitly");
 
     // Assert
     Assert.Equal($"{alice} IDs {bob} unitly", (result as IAction).Format());
@@ -24,8 +25,8 @@ public class ActionTest {
     var alice = new TestPlayer("test-alice", "Alice");
 
     // Act
-    var result = new FakeAction(alice, null, "action-thinks", "thinks",
-      "deeply");
+    var result = new FakeAction(alice, null, null, null, "action-thinks",
+      "thinks", "deeply");
 
     // Assert
     Assert.Equal($"{alice} thinks deeply", (result as IAction).Format());
