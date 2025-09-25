@@ -3,6 +3,7 @@ using CounterStrikeSharp.API.Core;
 using Microsoft.Extensions.DependencyInjection;
 using TTT.API.Events;
 using TTT.API.Game;
+using TTT.API.Messages;
 using TTT.API.Player;
 using TTT.Game.Events.Body;
 using TTT.Game.Events.Game;
@@ -22,6 +23,9 @@ public class PlayerStatsTracker(IServiceProvider provider) : IListener {
   private readonly IDictionary<int, (int, int)> roundKillsAndAssists =
     new Dictionary<int, (int, int)>();
 
+  private readonly IMessenger messenger =
+    provider.GetRequiredService<IMessenger>();
+
   public void Dispose() { }
 
   [EventHandler(Priority = Priority.MONITOR)]
@@ -38,7 +42,9 @@ public class PlayerStatsTracker(IServiceProvider provider) : IListener {
     revealedDeaths.Add(gamePlayer.Slot);
   }
 
-  [EventHandler]
+  // Needs to be higher so we detect the kill the game ends
+  // in the case that this is the last player
+  [EventHandler(Priority = Priority.HIGHER)]
   public void OnKill(PlayerDeathEvent ev) {
     var killer = ev.Killer == null ? null : converter.GetPlayer(ev.Killer);
     var assister =
