@@ -6,7 +6,6 @@ using CounterStrikeSharp.API.Modules.Utils;
 using Microsoft.Extensions.DependencyInjection;
 using TTT.API;
 using TTT.API.Events;
-using TTT.API.Messages;
 using TTT.API.Player;
 using TTT.CS2.Events;
 using TTT.CS2.Extensions;
@@ -28,11 +27,6 @@ public class PropMover(IServiceProvider provider) : IPluginModule {
   private readonly IPlayerConverter<CCSPlayerController> converter =
     provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
 
-  private readonly IMessenger messenger =
-    provider.GetRequiredService<IMessenger>();
-
-  private readonly IMessenger msg = provider.GetRequiredService<IMessenger>();
-
   private readonly Dictionary<CCSPlayerController, MovementInfo>
     playersPressingE = new();
 
@@ -43,38 +37,34 @@ public class PropMover(IServiceProvider provider) : IPluginModule {
   public void Start(BasePlugin? plugin, bool hotReload) {
     plugin?.AddTimer(Server.TickInterval, refreshLines, TimerFlags.REPEAT);
     plugin?.RegisterListener<CounterStrikeSharp.API.Core.Listeners.OnTick>(
-      refreshBodies);
+      refreshHeld);
     plugin
     ?.RegisterListener<
         CounterStrikeSharp.API.Core.Listeners.OnPlayerButtonsChanged>(
-        buttonsChanged);
+        onButtonsChanged);
   }
 
-  private void buttonsChanged(CCSPlayerController player, PlayerButtons pressed,
-    PlayerButtons released) {
-    if (playersPressingE.TryGetValue(player, out var e)) {
-      if (!released.HasFlag(PlayerButtons.Use)) return;
-      playersPressingE.Remove(player);
-      if (!e.Ragdoll.IsValid) return;
-      e.Ragdoll.AcceptInput("EnableMotion");
-      if (e.Beam != null && e.Beam.IsValid) e.Beam.AcceptInput("Kill");
+  private void onButtonsChanged(CCSPlayerController player,
+    PlayerButtons pressed, PlayerButtons released) {
+    if (playersPressingE.TryGetValue(player, out var heldItem)) {
+      onCeaseUse(player, released, heldItem);
       return;
     }
 
-    var playerPos = player.PlayerPawn.Value?.AbsOrigin;
-    if (playerPos == null) return;
-
     if (!pressed.HasFlag(PlayerButtons.Use)) return;
 
+    onStartUse(player);
+  }
+
+  private void onStartUse(CCSPlayerController player) {
+    var playerPos = player.PlayerPawn.Value?.AbsOrigin;
+    if (playerPos == null) return;
     var target = player.GetGameTraceByEyePosition(TraceMask.MaskSolid,
       Contents.NoDraw, player);
     if (target == null) return;
 
-    var endPos = new Vector(target.Value.EndPos.X, target.Value.EndPos.Y,
-      target.Value.EndPos.Z);
-
-    CBaseEntity? hitEntity = null;
-    target.Value.HitEntityByDesignerName(out hitEntity, "prop_ragdoll");
+    target.Value.HitEntityByDesignerName(out CBaseEntity? hitEntity,
+      "prop_ragdoll");
 
     if (hitEntity == null || !hitEntity.IsValid)
       target.Value.HitEntityByDesignerName(out hitEntity,
@@ -95,13 +85,23 @@ public class PropMover(IServiceProvider provider) : IPluginModule {
     pickupEvent.Prop.AcceptInput("DisableMotion");
   }
 
-  private void refreshBodies() {
-    foreach (var (player, info) in playersPressingE) refreshBody(player, info);
+  private void onCeaseUse(CCSPlayerController player, PlayerButtons released,
+    MovementInfo heldItem) {
+    if (!released.HasFlag(PlayerButtons.Use)) return;
+    playersPressingE.Remove(player);
+    if (!heldItem.Ragdoll.IsValid) return;
+    heldItem.Ragdoll.AcceptInput("EnableMotion");
+    if (heldItem.Beam != null && heldItem.Beam.IsValid)
+      heldItem.Beam.AcceptInput("Kill");
   }
 
-  private void refreshBody(CCSPlayerController player, MovementInfo info) {
+  private void refreshHeld() {
+    foreach (var (player, info) in playersPressingE) refreshHeld(player, info);
+  }
+
+  private void refreshHeld(CCSPlayerController player, MovementInfo info) {
     var ent = info.Ragdoll;
-    if (!player.IsValid || !ent.IsValid) {
+    if (!player.IsValid || !ent.IsValid || ent.AbsOrigin == null) {
       playersPressingE.Remove(player);
       return;
     }
@@ -109,6 +109,7 @@ public class PropMover(IServiceProvider provider) : IPluginModule {
     var playerPawn = player.PlayerPawn.Value;
     if (playerPawn == null || !playerPawn.IsValid) return;
     var playerOrigin = player.GetEyePosition();
+
     if (playerOrigin == null) {
       playersPressingE.Remove(player);
       return;
@@ -117,10 +118,10 @@ public class PropMover(IServiceProvider provider) : IPluginModule {
     var raytrace = player.GetGameTraceByEyePosition(TraceMask.MaskSolid,
       Contents.NoDraw, player);
 
-    if (ent.AbsOrigin == null || raytrace == null) return;
+    if (raytrace == null) return;
 
     var isOnSelf =
-      raytrace.Value.HitEntityByDesignerName(out CBaseEntity? hitEnt,
+      raytrace.Value.HitEntityByDesignerName(out CBaseEntity? _,
         ent.DesignerName);
 
     var endPos = raytrace.Value.EndPos.toVector();
@@ -134,7 +135,11 @@ public class PropMover(IServiceProvider provider) : IPluginModule {
       return;
     }
 
-    var deadRot = DEAD_ANGLE.Clone();
+    moveBody(endPos, ent);
+  }
+
+  private void moveBody(Vector endPos, CBaseEntity ent) {
+    var deadRot = DEAD_ANGLE.Clone()!;
 
     var rotDeg = Server.CurrentTime * 64f % 360;
     var rotRad = (rotDeg + 0) * (MathF.PI / 180);

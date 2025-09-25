@@ -1,3 +1,4 @@
+using System.Reactive.Concurrency;
 using Microsoft.Extensions.DependencyInjection;
 using TTT.API.Events;
 using TTT.API.Game;
@@ -27,6 +28,9 @@ public abstract class BaseListener(IServiceProvider provider) : IListener {
 
   protected readonly IRoleAssigner Roles =
     provider.GetRequiredService<IRoleAssigner>();
+
+  protected readonly IScheduler Scheduler =
+    provider.GetRequiredService<IScheduler>();
 
   public virtual void Dispose() { Bus.UnregisterListener(this); }
 

@@ -114,10 +114,14 @@ public partial class StringLocalizer : IMsgLocalizer {
 
     value = value.Replace("%s%", "s");
 
+    // We have to do this chicanery due to support colors in the string
+    value = handleTrailingS(value);
+
+    return value;
+  }
+
+  private static string handleTrailingS(string value) {
     var trailingIndex = -1;
-
-    // We have to do this chicanery due to supporting colors in the string
-
     while ((trailingIndex =
       value.IndexOf("'s", trailingIndex + 1, StringComparison.Ordinal)) != -1) {
       var startingWordBoundary = value[..trailingIndex].LastIndexOf(' ');

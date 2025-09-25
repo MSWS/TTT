@@ -16,18 +16,14 @@ public class LogsCommand(IServiceProvider provider) : ICommand {
 
   public Task<CommandResult>
     Execute(IOnlinePlayer? executor, ICommandInfo info) {
-    if (!games.IsGameActive()) {
+    if (games.ActiveGame is not {
+      State: State.IN_PROGRESS or State.FINISHED
+    }) {
       info.ReplySync("No active game to show logs for.");
       return Task.FromResult(CommandResult.ERROR);
     }
 
-    var game = games.ActiveGame;
-    if (game == null) {
-      info.ReplySync("No active game to show logs for.");
-      return Task.FromResult(CommandResult.ERROR);
-    }
-
-    game.Logger.PrintLogs(executor);
+    games.ActiveGame.Logger.PrintLogs(executor);
     return Task.FromResult(CommandResult.SUCCESS);
   }
 }

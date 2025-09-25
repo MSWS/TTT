@@ -14,7 +14,9 @@ public record ShopConfig(IRoleAssigner assigner) {
   public ShopConfig(IServiceProvider provider) : this(
     provider.GetRequiredService<IRoleAssigner>()) { }
 
-  public int CreditsForRoundStart { get; init; } = 10;
+  public int StartingInnocentCredits { get; init; } = 100;
+  public int StartingTraitorCredits { get; init; } = 120;
+  public int StartingDetectiveCredits { get; init; } = 150;
   public int CreditsForInnoVInnoKill { get; init; } = -4;
   public int CreditsForInnoVTraitorKill { get; init; } = 8;
   public int CreditsForInnoVDetectiveKill { get; init; } = -6;
@@ -56,6 +58,13 @@ public record ShopConfig(IRoleAssigner assigner) {
       _ => CreditsForAnyKill
     };
   }
+
+  public virtual int StartingCreditsForRole(IRole role)
+    => role switch {
+      TraitorRole   => StartingTraitorCredits,
+      DetectiveRole => StartingDetectiveCredits,
+      _             => StartingInnocentCredits
+    };
 
   public virtual (int?, int?) CreditsFor(PlayerDeathEvent ev) {
     var victim   = ev.Victim;

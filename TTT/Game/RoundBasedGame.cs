@@ -95,7 +95,7 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
   }
 
   public void EndGame(EndReason? reason = null) {
-    if (!((IGame)this).IsInProgress()) {
+    if (State is not State.IN_PROGRESS and not State.COUNTDOWN) {
       Dispose();
       State = State.WAITING;
       return;

@@ -30,42 +30,43 @@ public class TTTCommand(IServiceProvider provider) : ICommand {
 
     if (info.ArgCount < 2) return Task.FromResult(CommandResult.SUCCESS);
 
+    handleSubcommand(info, prefix);
+
+    return Task.FromResult(CommandResult.SUCCESS);
+  }
+
+  private void handleSubcommand(ICommandInfo info, string prefix) {
     switch (info.Args[1].ToLower()) {
       case "modules":
         var modules = provider.GetServices<ITerrorModule>()
          .Where(m => m is not IPluginModule);
         info.ReplySync(prefix + "Loaded Modules:");
-        foreach (var module in modules)
-          printVersionedEntry(info, module.Version,
-            module.Name + " - " + module.GetType().Name);
+        printModules(info, modules);
 
         info.ReplySync(prefix + "Loaded Plugin Modules:");
         var pluginModules = provider.GetServices<IPluginModule>();
-        foreach (var module in pluginModules)
-          printVersionedEntry(info, module.Version,
-            module.Name + " - " + module.GetType().Name);
-
+        printModules(info, pluginModules);
         break;
+
       case "commands":
         var commands = provider.GetRequiredService<ICommandManager>().Commands;
         info.ReplySync(prefix + "Registered Commands:");
-        foreach (var command in commands)
-          printVersionedEntry(info, command.Version,
-            command.Name + " - " + command.GetType().Name);
-
+        printModules(info, commands);
         break;
 
       case "listeners":
         var listeners = provider.GetServices<IListener>();
         info.ReplySync(prefix + "Registered Listeners:");
-        foreach (var listener in listeners)
-          printVersionedEntry(info, listener.Version,
-            listener.Name + " - " + listener.GetType().Name);
-
+        printModules(info, listeners);
         break;
     }
+  }
 
-    return Task.FromResult(CommandResult.SUCCESS);
+  private void printModules(ICommandInfo info,
+    IEnumerable<ITerrorModule> listeners) {
+    foreach (var listener in listeners)
+      printVersionedEntry(info, listener.Version,
+        listener.Name + " - " + listener.GetType().Name);
   }
 
   private void printVersionedEntry(ICommandInfo info, string version,

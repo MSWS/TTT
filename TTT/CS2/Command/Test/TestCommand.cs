@@ -1,18 +1,10 @@
-﻿using CounterStrikeSharp.API.Core;
-using Microsoft.Extensions.DependencyInjection;
-using TTT.API;
+﻿using TTT.API;
 using TTT.API.Command;
 using TTT.API.Player;
 
 namespace TTT.CS2.Command.Test;
 
 public class TestCommand(IServiceProvider provider) : ICommand, IPluginModule {
-  private readonly IPlayerConverter<CCSPlayerController> converter =
-    provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
-
-  private readonly IPlayerFinder finder =
-    provider.GetRequiredService<IPlayerFinder>();
-
   private readonly IDictionary<string, ICommand> subCommands =
     new Dictionary<string, ICommand>(StringComparer.OrdinalIgnoreCase);
 

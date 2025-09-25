@@ -31,6 +31,7 @@ public interface IGame : IDisposable {
 
   void EndGame(EndReason? reason = null);
 
+  [Obsolete("This method is ambiguous, check the game state directly.")]
   bool IsInProgress() { return State is State.COUNTDOWN or State.IN_PROGRESS; }
 
   ISet<IOnlinePlayer> GetAlive() {

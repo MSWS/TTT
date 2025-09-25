@@ -1,5 +1,6 @@
 ﻿using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Core.Attributes.Registration;
+using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using TTT.API;
 using TTT.API.Game;
@@ -21,9 +22,11 @@ public class RoundStart_GameStartHandler(IServiceProvider provider)
 
   public void Start() { }
 
+  [UsedImplicitly]
   [GameEventHandler]
   public HookResult OnRoundStart(EventRoundStart _, GameEventInfo _1) {
-    if (games.IsGameActive()) return HookResult.Continue;
+    if (games.ActiveGame is { State: State.IN_PROGRESS or State.COUNTDOWN })
+      return HookResult.Continue;
 
     var game = games.CreateGame();
     game?.Start(config.RoundCfg.CountDownDuration);

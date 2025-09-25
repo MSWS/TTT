@@ -1,5 +1,5 @@
 namespace TTT.API.Events;
 
-public interface IListener : IDisposable, ITerrorModule {
+public interface IListener : ITerrorModule {
   void ITerrorModule.Start() { }
 }

@@ -1,4 +1,5 @@
 ﻿using TTT.API.Events;
+using TTT.API.Game;
 using TTT.Game.Actions;
 using TTT.Game.Events.Body;
 
@@ -8,13 +9,13 @@ public class BodyIdentifyLogger(IServiceProvider provider)
   : BaseListener(provider) {
   [EventHandler]
   public void OnBodyIdentify(BodyIdentifyEvent ev) {
-    if (!Games.IsGameActive()) return;
+    if (Games.ActiveGame is not { State: State.IN_PROGRESS }) return;
 
     var game = Games.ActiveGame;
     if (game == null)
       throw new InvalidOperationException(
         "Active game is null, but game is active?");
 
-    game.Logger.LogAction(new IdentifyBodyAction(ev));
+    game.Logger.LogAction(new IdentifyBodyAction(Provider, ev));
   }
 }
