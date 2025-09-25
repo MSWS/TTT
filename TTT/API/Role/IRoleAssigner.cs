@@ -19,7 +19,11 @@ public interface IRoleAssigner : IKeyedStorage<IPlayer, ICollection<IRole>>,
   /// <param name="roles"></param>
   public void AssignRoles(ISet<IOnlinePlayer> players, IList<IRole> roles);
 
+  public void SetRole(IOnlinePlayer player, IRole role) {
+    Write(player, new List<IRole> { role }).GetAwaiter().GetResult();
+  }
+
   public ICollection<IRole> GetRoles(IPlayer player) {
-    return Load(player).GetAwaiter().GetResult() ?? Array.Empty<IRole>();
+    return Load(player).GetAwaiter().GetResult() ?? [];
   }
 }

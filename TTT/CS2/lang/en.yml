@@ -1,2 +1,2 @@
 ﻿ROLE_SPECTATOR: "Spectator"
-TASER_SCANNED: "%PREFIX%You scanned {0}{grey}, they are %an% {1}!"
+TASER_SCANNED: "%PREFIX%You scanned {0}{grey}, they are %an% {1}{grey}!"

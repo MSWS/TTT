@@ -9,7 +9,8 @@ using TTT.Game;
 
 namespace TTT.CS2.GameHandlers;
 
-public class RoundStartHandler(IServiceProvider provider) : IPluginModule {
+public class RoundStart_GameStartHandler(IServiceProvider provider)
+  : IPluginModule {
   private readonly TTTConfig config =
     provider.GetService<IStorage<TTTConfig>>()?.Load().GetAwaiter().GetResult()
     ?? new TTTConfig();

@@ -4,18 +4,16 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <RootNamespace>TTT.CS2</RootNamespace>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <RootNamespace>TTT.Karma</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\API\API.csproj"/>
     <ProjectReference Include="..\Game\Game.csproj"/>
-    <ProjectReference Include="..\Karma\Karma.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="RayTrace\"/>
+    <PackageReference Include="Dapper" Version="2.1.66"/>
+    <PackageReference Include="MySqlConnector" Version="2.4.0"/>
   </ItemGroup>
 
 </Project>
