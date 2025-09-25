@@ -43,7 +43,7 @@ public class CombatHandler(IServiceProvider provider) : IPluginModule {
     info.DontBroadcast = true;
     ev.FireEventToClient(player);
 
-    updateStats(ev, player);
+    hideAndTrackStats(ev, player);
 
     // These delays are necessary for the game engine
     Server.NextWorldUpdate(() => {
@@ -61,7 +61,8 @@ public class CombatHandler(IServiceProvider provider) : IPluginModule {
     return HookResult.Continue;
   }
 
-  private void updateStats(EventPlayerDeath ev, CCSPlayerController player) {
+  private void hideAndTrackStats(EventPlayerDeath ev,
+    CCSPlayerController player) {
     var victimStats = player.ActionTrackingServices?.MatchStats;
     if (victimStats != null) {
       victimStats.Deaths -= 1;
