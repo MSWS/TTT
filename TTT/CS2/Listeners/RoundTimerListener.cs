@@ -65,10 +65,18 @@ public class RoundTimerListener(IServiceProvider provider)
 
     revealRoles(ev.Game);
 
+    // If CS caused the round to end, we will have 0 time left
+    // in this case, CS automatically handles the end of round stuff
+    // so we don't need to do anything
     if (RoundUtil.GetTimeRemaining() <= 1) return;
 
     Server.NextWorldUpdate(() => {
       var endReason = endRound(ev);
+
+      RoundUtil.AddTeamScore(
+        endReason == RoundEndReason.CTsWin ?
+          CsTeam.CounterTerrorist :
+          CsTeam.Terrorist, 1);
 
       var timer = Observable.Timer(
         config.RoundCfg.TimeBetweenRounds, Scheduler);

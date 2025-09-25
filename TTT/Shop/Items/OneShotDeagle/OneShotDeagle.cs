@@ -16,11 +16,11 @@ public static class DeagleServiceCollection {
 public class OneShotDeagle(IServiceProvider provider) : IWeapon, IShopItem {
   public const string ID = "ttt.shop.item.oneshotdeagle";
 
-  private readonly OneShotDeagleConfig deagleConfigStorage =
-    provider.GetService<IStorage<OneShotDeagleConfig>>()
-    ?.Load()
-     .GetAwaiter()
-     .GetResult() ?? new OneShotDeagleConfig();
+  private readonly OneShotDeagleConfig deagleConfigStorage = provider
+   .GetService<IStorage<OneShotDeagleConfig>>()
+  ?.Load()
+   .GetAwaiter()
+   .GetResult() ?? new OneShotDeagleConfig();
 
   private readonly IInventoryManager inventoryManager =
     provider.GetRequiredService<IInventoryManager>();

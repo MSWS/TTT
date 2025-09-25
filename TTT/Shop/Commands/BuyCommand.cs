@@ -1,11 +1,20 @@
 using Microsoft.Extensions.DependencyInjection;
 using TTT.API.Command;
+using TTT.API.Game;
 using TTT.API.Player;
+using TTT.Locale;
 
 namespace TTT.Shop.Commands;
 
 public class BuyCommand(IServiceProvider provider) : ICommand {
   private readonly IShop shop = provider.GetRequiredService<IShop>();
+
+  private readonly IGameManager games =
+    provider.GetRequiredService<IGameManager>();
+
+  private readonly IMsgLocalizer locale =
+    provider.GetRequiredService<IMsgLocalizer>();
+
   public void Dispose() { }
   public string Name => "buy";
   public void Start() { }
@@ -16,6 +25,11 @@ public class BuyCommand(IServiceProvider provider) : ICommand {
     if (executor == null) {
       info.ReplySync("You must be a player to buy items.");
       return CommandResult.PLAYER_ONLY;
+    }
+
+    if (games.ActiveGame is not { State: State.IN_PROGRESS }) {
+      info.ReplySync(locale[ShopMsgs.SHOP_INACTIVE]);
+      return CommandResult.SUCCESS;
     }
 
     if (info.ArgCount == 1) {

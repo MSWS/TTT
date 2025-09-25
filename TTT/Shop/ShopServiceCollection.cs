@@ -9,9 +9,13 @@ namespace TTT.Shop;
 public static class ShopServiceCollection {
   public static void AddShopServices(this IServiceCollection collection) {
     collection.AddModBehavior<IShop, Shop>();
+
     collection.AddModBehavior<RoundShopClearer>();
+    collection.AddModBehavior<RoleAssignCreditor>();
 
     collection.AddModBehavior<ShopCommand>();
+    collection.AddModBehavior<BuyCommand>();
+    collection.AddModBehavior<BalanceCommand>();
 
     collection.AddDeagleServices();
   }

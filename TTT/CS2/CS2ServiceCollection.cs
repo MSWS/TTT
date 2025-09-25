@@ -8,6 +8,8 @@ using TTT.API.Player;
 using TTT.API.Storage;
 using TTT.CS2.Command;
 using TTT.CS2.Command.Test;
+using TTT.CS2.Configs;
+using TTT.CS2.Configs.ShopItems;
 using TTT.CS2.Game;
 using TTT.CS2.GameHandlers;
 using TTT.CS2.GameHandlers.DamageCancelers;
@@ -18,6 +20,8 @@ using TTT.CS2.Player;
 using TTT.Game;
 using TTT.Game.Commands;
 using TTT.Locale;
+using TTT.Shop;
+using TTT.Shop.Items;
 
 namespace TTT.CS2;
 
@@ -27,8 +31,13 @@ public static class CS2ServiceCollection {
     collection
      .AddModBehavior<IPlayerConverter<CCSPlayerController>,
         CCPlayerConverter>();
-    collection.AddModBehavior<IStorage<TTTConfig>, CS2GameConfig>();
     collection.AddModBehavior<ICommandManager, CS2CommandManager>();
+
+    // Configs
+    collection.AddModBehavior<IStorage<TTTConfig>, CS2GameConfig>();
+    collection.AddModBehavior<IStorage<ShopConfig>, CS2ShopConfig>();
+    collection
+     .AddModBehavior<IStorage<OneShotDeagleConfig>, CS2OneShotDeagleConfig>();
 
     // TTT - CS2 Specific optionals
     collection.AddScoped<ITextSpawner, TextSpawner>();
@@ -53,7 +62,6 @@ public static class CS2ServiceCollection {
     collection.AddModBehavior<PlayerStatsTracker>();
 
     // Commands
-    collection.AddModBehavior<TTTCommand>();
     collection.AddModBehavior<TestCommand>();
 
     collection.AddScoped<IGameManager, CS2GameManager>();
