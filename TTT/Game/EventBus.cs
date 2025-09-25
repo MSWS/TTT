@@ -64,7 +64,7 @@ public class EventBus(IServiceProvider provider) : IEventBus, ITerrorModule {
     }
   }
 
-  public void Dispatch(Event ev) {
+  public Task Dispatch(Event ev) {
     var type = ev.GetType();
 
     handlers.TryGetValue(type, out var list);
@@ -74,10 +74,12 @@ public class EventBus(IServiceProvider provider) : IEventBus, ITerrorModule {
       $"Dispatching {type.Name} to {list?.Count ?? 0} handlers.");
 #endif
 
-    if (list == null || list.Count == 0) return;
+    if (list == null || list.Count == 0) return Task.CompletedTask;
 
     ICancelableEvent? cancelable           = null;
     if (ev is ICancelableEvent) cancelable = (ICancelableEvent)ev;
+
+    List<Task> tasks = [];
 
     foreach (var (listener, method) in list) {
       if (cancelable is { IsCanceled: true } && method
@@ -85,8 +87,11 @@ public class EventBus(IServiceProvider provider) : IEventBus, ITerrorModule {
       ?.IgnoreCanceled == true)
         continue;
 
-      method.Invoke(listener, [ev]);
+      var result = method.Invoke(listener, [ev]);
+      if (result is Task task) tasks.Add(task);
     }
+
+    return Task.WhenAll(tasks);
   }
 
   public void Dispose() { handlers.Clear(); }

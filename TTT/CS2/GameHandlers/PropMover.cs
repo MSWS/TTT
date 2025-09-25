@@ -179,7 +179,7 @@ public class PropMover(IServiceProvider provider) : IPluginModule {
     playerOrigin   =  playerOrigin.Clone()!;
     playerOrigin.Z += 64;
 
-    var eyeAngles = playerPawn!.EyeAngles;
+    var eyeAngles = playerPawn.EyeAngles;
 
     var targetVector = playerOrigin + eyeAngles.Clone()!.ToForward()
       * Math.Clamp(info.Distance, MIN_HOLDING_DISTANCE, MAX_HOLDING_DISTANCE);

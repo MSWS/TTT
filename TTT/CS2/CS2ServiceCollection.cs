@@ -35,8 +35,8 @@ public static class CS2ServiceCollection {
 
     // GameHandlers
     collection.AddModBehavior<PlayerConnectionsHandler>();
-    collection.AddModBehavior<RoundEndHandler>();
-    collection.AddModBehavior<RoundStartHandler>();
+    collection.AddModBehavior<RoundEnd_GameEndHandler>();
+    collection.AddModBehavior<RoundStart_GameStartHandler>();
     collection.AddModBehavior<CombatHandler>();
     collection.AddModBehavior<PropMover>();
     collection.AddModBehavior<BodySpawner>();
