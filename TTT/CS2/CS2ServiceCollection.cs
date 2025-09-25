@@ -23,18 +23,12 @@ namespace TTT.CS2;
 
 public static class CS2ServiceCollection {
   public static void AddCS2Services(this IServiceCollection collection) {
-    // Base Requirements
-    collection.AddScoped<IGameManager, CS2GameManager>();
-
     // TTT - CS2 Specific requirements
     collection
      .AddModBehavior<IPlayerConverter<CCSPlayerController>,
         CCPlayerConverter>();
-    collection.AddScoped<IPlayerFinder, CS2PlayerFinder>();
     collection.AddModBehavior<IStorage<TTTConfig>, CS2GameConfig>();
     collection.AddModBehavior<ICommandManager, CS2CommandManager>();
-    collection.AddScoped<IMessenger, CS2Messenger>();
-    collection.AddScoped<IInventoryManager, CS2InventoryManager>();
 
     // TTT - CS2 Specific optionals
     collection.AddScoped<ITextSpawner, TextSpawner>();
@@ -62,7 +56,11 @@ public static class CS2ServiceCollection {
     collection.AddModBehavior<TTTCommand>();
     collection.AddModBehavior<TestCommand>();
 
+    collection.AddScoped<IGameManager, CS2GameManager>();
+    collection.AddScoped<IInventoryManager, CS2InventoryManager>();
+    collection.AddScoped<IMessenger, CS2Messenger>();
     collection.AddScoped<IMsgLocalizer, StringLocalizer>();
     collection.AddScoped<IPermissionManager, CS2PermManager>();
+    collection.AddScoped<IPlayerFinder, CS2PlayerFinder>();
   }
 }
