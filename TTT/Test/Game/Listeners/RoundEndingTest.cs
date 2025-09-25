@@ -39,7 +39,7 @@ public class RoundEndingTest {
   }
 
   [Fact]
-  public void Round_EndsWhen_PlayerLeaves() {
+  public void Round_EndsWhen_PlayerLeavesAndDies() {
     bus.RegisterListener(new PlayerCausesEndListener(provider));
     bus.RegisterListener(new PlayerDiesOnLeaveListener(provider));
 

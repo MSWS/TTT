@@ -32,9 +32,9 @@ public class PlayerConnectionsHandler(IServiceProvider provider)
         disconnectFromServer);
 
     Server.NextWorldUpdate(() => {
-      foreach (var player in Utilities.GetPlayers()) {
-        var gamePlayer = converter.GetPlayer(player);
-        var ev         = new PlayerJoinEvent(gamePlayer);
+      foreach (var ev in Utilities.GetPlayers()
+       .Select(player => converter.GetPlayer(player))
+       .Select(gamePlayer => new PlayerJoinEvent(gamePlayer))) {
         bus.Dispatch(ev);
       }
     });
@@ -44,14 +44,11 @@ public class PlayerConnectionsHandler(IServiceProvider provider)
 
   private void disconnectFromServer(int playerSlot) {
     var player = Utilities.GetPlayerFromSlot(playerSlot);
-    Console.WriteLine($"Player {playerSlot} disconnected from server.");
-    if (player == null || !player.IsValid) {
-      Console.WriteLine($"Player {playerSlot} does not exist.");
-      return;
-    }
+    if (player == null || !player.IsValid) return;
 
     var gamePlayer = converter.GetPlayer(player);
-    bus.Dispatch(new PlayerLeaveEvent(gamePlayer));
+    Server.NextWorldUpdate(()
+      => bus.Dispatch(new PlayerLeaveEvent(gamePlayer)));
   }
 
   private void connectToServer(int playerSlot) {
