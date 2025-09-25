@@ -14,6 +14,7 @@ public class TTTCommand(IServiceProvider provider) : ICommand {
 
   public void Dispose() { }
   public string Name => "ttt";
+  public string[] Usage => ["<modules/commands/listeners>"];
 
   public void Start() { }
 
@@ -24,18 +25,18 @@ public class TTTCommand(IServiceProvider provider) : ICommand {
 #if DEBUG
     version += "-DEBUG";
 #endif
-    info.ReplySync(localizer[GameMsgs.CMD_TTT(version)]);
+    if (info.ArgCount == 1) {
+      info.ReplySync(localizer[GameMsgs.CMD_TTT(version)]);
+      return Task.FromResult(CommandResult.SUCCESS);
+    }
 
     var prefix = localizer[GameMsgs.PREFIX];
 
     if (info.ArgCount < 2) return Task.FromResult(CommandResult.SUCCESS);
-
-    handleSubcommand(info, prefix);
-
-    return Task.FromResult(CommandResult.SUCCESS);
+    return Task.FromResult(handleSubcommand(info, prefix));
   }
 
-  private void handleSubcommand(ICommandInfo info, string prefix) {
+  private CommandResult handleSubcommand(ICommandInfo info, string prefix) {
     switch (info.Args[1].ToLower()) {
       case "modules":
         var modules = provider.GetServices<ITerrorModule>()
@@ -46,19 +47,22 @@ public class TTTCommand(IServiceProvider provider) : ICommand {
         info.ReplySync(prefix + "Loaded Plugin Modules:");
         var pluginModules = provider.GetServices<IPluginModule>();
         printModules(info, pluginModules);
-        break;
+        return CommandResult.SUCCESS;
 
       case "commands":
         var commands = provider.GetRequiredService<ICommandManager>().Commands;
         info.ReplySync(prefix + "Registered Commands:");
         printModules(info, commands);
-        break;
+        return CommandResult.SUCCESS;
 
       case "listeners":
         var listeners = provider.GetServices<IListener>();
         info.ReplySync(prefix + "Registered Listeners:");
         printModules(info, listeners);
-        break;
+        return CommandResult.SUCCESS;
+      default:
+        info.ReplySync(prefix + "Unknown specification.");
+        return CommandResult.UNKNOWN_COMMAND;
     }
   }
 

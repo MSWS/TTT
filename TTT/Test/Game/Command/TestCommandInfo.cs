@@ -15,7 +15,7 @@ public class TestCommandInfo(IServiceProvider provider, IOnlinePlayer? caller,
   public string[] Args { get; } = args;
   public CommandCallingContext CallingContext { get; set; }
 
-  public string GetCommandString => string.Join(' ', Args);
+  public string CommandString => string.Join(' ', Args);
   public int ArgCount => Args.Length;
 
   public void ReplySync(string message) {

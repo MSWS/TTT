@@ -38,23 +38,27 @@ public class EventBus(IServiceProvider provider) : IEventBus, ITerrorModule {
     var methods = listener.GetType()
      .GetMethods(BindingFlags.Instance | BindingFlags.Public
         | BindingFlags.NonPublic);
-    foreach (var method in methods) {
-      var attr = method.GetCustomAttribute<EventHandlerAttribute>();
-      if (attr == null) continue;
+    foreach (var method in methods)
+      registerListenerMethod(listener, dirtyTypes, method);
+  }
 
-      var parameters = method.GetParameters();
-      if (parameters.Length != 1
-        || !typeof(Event).IsAssignableFrom(parameters[0].ParameterType))
-        throw new InvalidOperationException(
-          $"Method {method.Name} in {listener.GetType().Name} "
-          + "must have exactly one parameter of type Event or its subclass.");
+  private void registerListenerMethod(IListener listener,
+    HashSet<Type> dirtyTypes, MethodInfo method) {
+    var attr = method.GetCustomAttribute<EventHandlerAttribute>();
+    if (attr == null) return;
 
-      var eventType = parameters[0].ParameterType;
-      if (!handlers.ContainsKey(eventType)) handlers[eventType] = [];
+    var parameters = method.GetParameters();
+    if (parameters.Length != 1
+      || !typeof(Event).IsAssignableFrom(parameters[0].ParameterType))
+      throw new InvalidOperationException(
+        $"Method {method.Name} in {listener.GetType().Name} "
+        + "must have exactly one parameter of type Event or its subclass.");
 
-      handlers[eventType].Add((listener, method));
-      dirtyTypes.Add(eventType);
-    }
+    var eventType = parameters[0].ParameterType;
+    if (!handlers.ContainsKey(eventType)) handlers[eventType] = [];
+
+    handlers[eventType].Add((listener, method));
+    dirtyTypes.Add(eventType);
   }
 
   public void UnregisterListener(IListener listener) {

@@ -14,6 +14,8 @@ public class LogsCommand(IServiceProvider provider) : ICommand {
   public string Name => "logs";
   public void Start() { }
 
+  // TODO: Restrict and verbalize usage
+
   public Task<CommandResult>
     Execute(IOnlinePlayer? executor, ICommandInfo info) {
     if (games.ActiveGame is not {

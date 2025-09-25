@@ -7,7 +7,7 @@ public interface ICommandInfo {
   string[] Args { get; }
   IOnlinePlayer? CallingPlayer { get; }
   CommandCallingContext CallingContext { get; set; }
-  string GetCommandString => string.Join(' ', Args);
+  string CommandString => string.Join(' ', Args);
   int ArgCount => Args.Length;
   void ReplySync(string message);
   ICommandInfo Skip(int count = 1);

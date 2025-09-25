@@ -42,14 +42,14 @@ public class CS2CommandManager(IServiceProvider provider)
       converter.GetPlayer(executor) as IOnlinePlayer;
     Task.Run(async () => {
       try {
-        Console.WriteLine($"Processing command: {cs2Info.GetCommandString}");
+        Console.WriteLine($"Processing command: {cs2Info.CommandString}");
         return await ProcessCommand(cs2Info);
       } catch (Exception e) {
         var msg = e.Message;
         cs2Info.ReplySync(Localizer[GameMsgs.GENERIC_ERROR(msg)]);
         await Server.NextWorldUpdateAsync(() => {
           Console.WriteLine(
-            $"Encountered an error when processing command: \"{cs2Info.GetCommandString}\" by {wrapper?.Id}");
+            $"Encountered an error when processing command: \"{cs2Info.CommandString}\" by {wrapper?.Id}");
           Console.WriteLine(e);
         });
         return CommandResult.ERROR;
