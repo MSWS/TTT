@@ -64,13 +64,5 @@ public class PlayerConnectionsHandler(IServiceProvider provider)
 
     var gamePlayer = converter.GetPlayer(player);
     bus.Dispatch(new PlayerJoinEvent(gamePlayer));
-
-    if (games.ActiveGame is { State: State.IN_PROGRESS or State.FINISHED })
-      return;
-
-    Server.NextWorldUpdate(() => {
-      if (!player.IsValid) return;
-      player.Respawn();
-    });
   }
 }

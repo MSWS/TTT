@@ -43,23 +43,24 @@ public static class CS2ServiceCollection {
     collection.AddScoped<ITextSpawner, TextSpawner>();
 
     // GameHandlers
+    collection.AddModBehavior<BodySpawner>();
+    collection.AddModBehavior<CombatHandler>();
+    collection.AddModBehavior<DamageCanceler>();
     collection.AddModBehavior<PlayerConnectionsHandler>();
+    collection.AddModBehavior<PropMover>();
+    collection.AddModBehavior<RoleIconsHandler>();
     collection.AddModBehavior<RoundEnd_GameEndHandler>();
     collection.AddModBehavior<RoundStart_GameStartHandler>();
-    collection.AddModBehavior<CombatHandler>();
-    collection.AddModBehavior<PropMover>();
-    collection.AddModBehavior<BodySpawner>();
-    collection.AddModBehavior<RoleIconsHandler>();
-    collection.AddModBehavior<DamageCanceler>();
 
     // Damage Cancelers
     collection.AddModBehavior<OutOfRoundCanceler>();
     collection.AddModBehavior<TaserListenCanceler>();
 
     // Listeners
-    collection.AddModBehavior<RoundTimerListener>();
     collection.AddModBehavior<BodyPickupListener>();
+    collection.AddModBehavior<LateSpawnListener>();
     collection.AddModBehavior<PlayerStatsTracker>();
+    collection.AddModBehavior<RoundTimerListener>();
 
     // Commands
     collection.AddModBehavior<TestCommand>();
