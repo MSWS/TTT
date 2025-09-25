@@ -100,7 +100,22 @@ public class CS2Player : IOnlinePlayer {
     return player.SteamID.ToString();
   }
 
-  public override string ToString() { return $"({getSuffix(Id, 5)}) {Name}"; }
+  public override string ToString() { return createPaddedName(); }
+
+  private int namePadding
+    => Math.Min(Utilities.GetPlayers().Select(p => p.PlayerName.Length).Max(),
+      16);
+
+  // Goal: Pad the name to a fixed width for better alignment in logs
+  // Left-align ID, right-align name
+  private string createPaddedName() {
+    var idPart           = $"({getSuffix(Id, 5)})";
+    var effectivePadding = namePadding - idPart.Length;
+    var namePart = Name.Length >= effectivePadding ?
+      getSuffix(Name, effectivePadding) :
+      Name.PadLeft(effectivePadding);
+    return $"{idPart} {namePart}";
+  }
 
   private string getSuffix(string s, int len) {
     return s.Length <= len ? s : s[^len..];

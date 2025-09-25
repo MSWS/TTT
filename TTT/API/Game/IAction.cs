@@ -13,8 +13,12 @@ public interface IAction {
   string Details { get; }
 
   public string Format() {
-    var pRole = PlayerRole != null ? $" [{PlayerRole.Name.First()}]" : "";
-    var oRole = OtherRole != null ? $" [{OtherRole.Name.First()}]" : "";
+    var pRole = PlayerRole != null ?
+      $" [{PlayerRole.Name.First(char.IsAsciiLetter)}]" :
+      "";
+    var oRole = OtherRole != null ?
+      $" [{OtherRole.Name.First(char.IsAsciiLetter)}]" :
+      "";
     return Other is not null ?
       $"{Player}{pRole} {Verb} {Other}{oRole} {Details}" :
       $"{Player}{pRole} {Verb} {Details}";
