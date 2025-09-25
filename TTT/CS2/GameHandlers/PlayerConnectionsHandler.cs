@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using TTT.API;
 using TTT.API.Events;
 using TTT.API.Game;
+using TTT.API.Messages;
 using TTT.API.Player;
 using TTT.Game.Events.Player;
 
@@ -19,6 +20,8 @@ public class PlayerConnectionsHandler(IServiceProvider provider)
   private readonly IGameManager games =
     provider.GetRequiredService<IGameManager>();
 
+  private readonly IMessenger messenger =
+    provider.GetRequiredService<IMessenger>();
 
   public void Start() { }
 
@@ -60,6 +63,7 @@ public class PlayerConnectionsHandler(IServiceProvider provider)
     }
 
     var gamePlayer = converter.GetPlayer(player);
-    bus.Dispatch(new PlayerJoinEvent(gamePlayer));
+
+    Server.NextWorldUpdate(() => bus.Dispatch(new PlayerJoinEvent(gamePlayer)));
   }
 }

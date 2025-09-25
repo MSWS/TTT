@@ -11,6 +11,8 @@ namespace TTT.CS2.Player;
 ///   Note that slot numbers are not guaranteed to be stable across server restarts.
 /// </summary>
 public class CS2Player : IOnlinePlayer {
+  private CCSPlayerController? cachePlayer = null!;
+
   protected CS2Player(string id, string name) {
     Id   = id;
     Name = name;
@@ -33,12 +35,14 @@ public class CS2Player : IOnlinePlayer {
 
   private CCSPlayerController? Player {
     get {
+      if (cachePlayer != null && cachePlayer.IsValid) return cachePlayer;
       var player = Utilities.GetPlayerFromSteamId(ulong.Parse(Id))
         ?? Utilities.GetPlayerFromIndex(int.Parse(Id));
 #if DEBUG
       if (player == null || !player.IsValid)
         Console.WriteLine("Failed to find player with ID: " + Id);
 #endif
+      if (player != null && player.IsValid) cachePlayer = player;
       return player is { IsValid: true } ? player : null;
     }
   }

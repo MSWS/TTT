@@ -33,21 +33,21 @@ public class CS2Messenger(IServiceProvider provider)
 
   public override void Debug(string msg, params object[] args) {
 #if DEBUG
-    _ = ((IMessenger)this).BackgroundMsgAll(msg,
+    _ = ((IMessenger)this).BackgroundMsgAll(
       $"[DEBUG] {string.Format(msg, args)}");
 #endif
   }
 
   public override void DebugAnnounce(string msg, params object[] args) {
 #if DEBUG
-    _ = ((IMessenger)this).MessageAll(msg,
+    _ = ((IMessenger)this).MessageAll(
       $"[DEBUG ANNOUNCE] {string.Format(msg, args)}");
 #endif
   }
 
   public override void DebugInform(string msg, params object[] args) {
 #if DEBUG
-    _ = ((IMessenger)this).ScreenMsgAll(msg,
+    _ = ((IMessenger)this).ScreenMsgAll(
       $"[DEBUG INFORM] {string.Format(msg, args)}");
 #endif
   }

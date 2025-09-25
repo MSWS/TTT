@@ -73,10 +73,11 @@ public class RoundTimerListener(IServiceProvider provider)
     Server.NextWorldUpdate(() => {
       var endReason = endRound(ev);
 
-      RoundUtil.AddTeamScore(
-        endReason == RoundEndReason.CTsWin ?
-          CsTeam.CounterTerrorist :
-          CsTeam.Terrorist, 1);
+      if (ev.Game.WinningRole != null)
+        RoundUtil.AddTeamScore(
+          endReason == RoundEndReason.CTsWin ?
+            CsTeam.CounterTerrorist :
+            CsTeam.Terrorist, 1);
 
       var timer = Observable.Timer(
         config.RoundCfg.TimeBetweenRounds, Scheduler);

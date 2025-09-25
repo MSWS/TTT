@@ -12,29 +12,13 @@ public class PlayerCausesEndListener(IServiceProvider provider)
   [EventHandler]
   [UsedImplicitly]
   public void OnKill(PlayerDeathEvent ev) {
-    if (Games.ActiveGame is not { State: State.IN_PROGRESS }) return;
-    var endGame = getWinningTeam(out var winningTeam);
-
-    if (!endGame) return;
-
-    if (winningTeam == null)
-      Games.ActiveGame?.EndGame(new EndReason("Draw"));
-    else
-      Games.ActiveGame?.EndGame(new EndReason(winningTeam));
+    Games.ActiveGame?.CheckEndConditions();
   }
 
   [EventHandler]
   [UsedImplicitly]
   public void OnLeave(PlayerLeaveEvent ev) {
-    if (Games.ActiveGame is not { State: State.IN_PROGRESS }) return;
-    var endGame = getWinningTeam(out var winningTeam);
-
-    if (!endGame) return;
-
-    if (winningTeam == null)
-      Games.ActiveGame?.EndGame(new EndReason("Draw"));
-    else
-      Games.ActiveGame?.EndGame(new EndReason(winningTeam));
+    Games.ActiveGame?.CheckEndConditions();
   }
 
   private bool getWinningTeam(out IRole? winningTeam) {
