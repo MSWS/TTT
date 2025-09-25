@@ -4,7 +4,7 @@ using Xunit;
 
 namespace TTT.Test.API;
 
-public class ActionTest(IServiceProvider provider) {
+public class ActionTest {
   [Fact]
   public void Format_ShouldFormat_ActionWithOther() {
     // Arrange

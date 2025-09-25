@@ -11,12 +11,33 @@ public class EventBus(IServiceProvider provider) : IEventBus, ITerrorModule {
 
   [Obsolete("Registering listeners is deprecated, use DI instead.")]
   public void RegisterListener(IListener listener) {
+    var dirtyTypes = new HashSet<Type>();
+    appendListener(listener, dirtyTypes);
+
+    if (dirtyTypes.Count == 0)
+      throw new InvalidOperationException(
+        $"Listener {listener.GetType().Name} has no valid event handlers.");
+
+    resortListeners(dirtyTypes);
+  }
+
+  private void resortListeners(HashSet<Type> dirtyTypes) {
+    // Sort handlers by priority
+    foreach (var type in dirtyTypes)
+      handlers[type]
+       .Sort((a, b) => {
+          var aPriority = a.method.GetCustomAttribute<EventHandlerAttribute>()
+          ?.Priority ?? Priority.DEFAULT;
+          var bPriority = b.method.GetCustomAttribute<EventHandlerAttribute>()
+          ?.Priority ?? Priority.DEFAULT;
+          return aPriority.CompareTo(bPriority);
+        });
+  }
+
+  private void appendListener(IListener listener, HashSet<Type> dirtyTypes) {
     var methods = listener.GetType()
      .GetMethods(BindingFlags.Instance | BindingFlags.Public
         | BindingFlags.NonPublic);
-
-    var dirtyTypes = new HashSet<Type>();
-
     foreach (var method in methods) {
       var attr = method.GetCustomAttribute<EventHandlerAttribute>();
       if (attr == null) continue;
@@ -34,21 +55,6 @@ public class EventBus(IServiceProvider provider) : IEventBus, ITerrorModule {
       handlers[eventType].Add((listener, method));
       dirtyTypes.Add(eventType);
     }
-
-    if (dirtyTypes.Count == 0)
-      throw new InvalidOperationException(
-        $"Listener {listener.GetType().Name} has no valid event handlers.");
-
-    // Sort handlers by priority
-    foreach (var type in dirtyTypes)
-      handlers[type]
-       .Sort((a, b) => {
-          var aPriority = a.method.GetCustomAttribute<EventHandlerAttribute>()
-          ?.Priority ?? Priority.DEFAULT;
-          var bPriority = b.method.GetCustomAttribute<EventHandlerAttribute>()
-          ?.Priority ?? Priority.DEFAULT;
-          return aPriority.CompareTo(bPriority);
-        });
   }
 
   public void UnregisterListener(IListener listener) {

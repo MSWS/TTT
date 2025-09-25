@@ -18,7 +18,9 @@ public class StopCommand(IServiceProvider provider) : ICommand {
   public Task<CommandResult>
     Execute(IOnlinePlayer? executor, ICommandInfo info) {
     Server.NextWorldUpdate(() => {
-      if (!games.IsGameActive()) {
+      if (games.ActiveGame is not {
+        State: State.COUNTDOWN or State.IN_PROGRESS
+      }) {
         info.ReplySync("No game is currently running.");
         return;
       }

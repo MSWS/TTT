@@ -20,7 +20,6 @@ public class CombatHandler(IServiceProvider provider) : IPluginModule {
   private readonly IGameManager games =
     provider.GetRequiredService<IGameManager>();
 
-
   public void Start() { }
 
   public void Dispose() { }
@@ -33,7 +32,8 @@ public class CombatHandler(IServiceProvider provider) : IPluginModule {
   [UsedImplicitly]
   [GameEventHandler(HookMode.Pre)]
   public HookResult OnPlayerDeath_Pre(EventPlayerDeath ev, GameEventInfo info) {
-    if (!games.IsGameActive()) return HookResult.Continue;
+    if (games.ActiveGame is not { State: State.IN_PROGRESS })
+      return HookResult.Continue;
     var player = ev.Userid;
     if (player == null) return HookResult.Continue;
     var deathEvent = new PlayerDeathEvent(converter, ev);
@@ -41,34 +41,9 @@ public class CombatHandler(IServiceProvider provider) : IPluginModule {
     Server.NextWorldUpdateAsync(() => bus.Dispatch(deathEvent));
 
     info.DontBroadcast = true;
-    var victimStats = player.ActionTrackingServices?.MatchStats;
-    if (victimStats != null) {
-      victimStats.Deaths -= 1;
-      Utilities.SetStateChanged(player, "CCSPlayerController",
-        "m_pActionTrackingServices");
-    }
-
     ev.FireEventToClient(player);
 
-    var killerStats = ev.Attacker?.ActionTrackingServices?.MatchStats;
-    if (killerStats != null) {
-      killerStats.Kills  -= 1;
-      killerStats.Damage -= ev.DmgHealth;
-
-      if (ev.Attacker != null) {
-        Utilities.SetStateChanged(ev.Attacker, "CCSPlayerController",
-          "m_pActionTrackingServices");
-        ev.FireEventToClient(ev.Attacker);
-      }
-
-      var assisterStats = ev.Assister?.ActionTrackingServices?.MatchStats;
-      if (assisterStats != null && assisterStats != killerStats)
-        assisterStats.Assists -= 1;
-
-      if (ev.Assister != null)
-        Utilities.SetStateChanged(ev.Assister, "CCSPlayerController",
-          "m_pActionTrackingServices");
-    }
+    updateStats(ev, player);
 
     // These delays are necessary for the game engine
     Server.NextWorldUpdate(() => {
@@ -86,11 +61,39 @@ public class CombatHandler(IServiceProvider provider) : IPluginModule {
     return HookResult.Continue;
   }
 
+  private void updateStats(EventPlayerDeath ev, CCSPlayerController player) {
+    var victimStats = player.ActionTrackingServices?.MatchStats;
+    if (victimStats != null) {
+      victimStats.Deaths -= 1;
+      Utilities.SetStateChanged(player, "CCSPlayerController",
+        "m_pActionTrackingServices");
+    }
+
+    var killerStats = ev.Attacker?.ActionTrackingServices?.MatchStats;
+    if (killerStats == null) return;
+    killerStats.Kills  -= 1;
+    killerStats.Damage -= ev.DmgHealth;
+
+    if (ev.Attacker != null) {
+      Utilities.SetStateChanged(ev.Attacker, "CCSPlayerController",
+        "m_pActionTrackingServices");
+      ev.FireEventToClient(ev.Attacker);
+    }
+
+    var assisterStats = ev.Assister?.ActionTrackingServices?.MatchStats;
+    if (assisterStats != null && assisterStats != killerStats)
+      assisterStats.Assists -= 1;
+
+    if (ev.Assister != null)
+      Utilities.SetStateChanged(ev.Assister, "CCSPlayerController",
+        "m_pActionTrackingServices");
+  }
+
+  [UsedImplicitly]
   [GameEventHandler]
   public HookResult OnPlayerHurt(EventPlayerHurt ev, GameEventInfo _) {
     // DamageCanceler already handles this on non-Windows platforms
-    if (!OperatingSystem.IsWindows() || !games.IsGameActive())
-      return HookResult.Continue;
+    if (!OperatingSystem.IsWindows()) return HookResult.Continue;
     var player = ev.Userid;
     if (player == null) return HookResult.Continue;
 

@@ -3,7 +3,6 @@ using Microsoft.Extensions.DependencyInjection;
 using TTT.API.Game;
 using TTT.API.Messages;
 using TTT.API.Player;
-using TTT.API.Role;
 using TTT.Locale;
 
 namespace TTT.Game.Loggers;
@@ -19,9 +18,6 @@ public class SimpleLogger(IServiceProvider provider) : IActionLogger {
 
   private readonly IScheduler scheduler = provider
    .GetRequiredService<IScheduler>();
-
-  private readonly IRoleAssigner roles = provider
-   .GetRequiredService<IRoleAssigner>();
 
   private DateTime? epoch;
 

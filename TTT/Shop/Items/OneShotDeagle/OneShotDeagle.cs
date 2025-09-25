@@ -1,6 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
 using TTT.API;
-using TTT.API.Events;
 using TTT.API.Extensions;
 using TTT.API.Player;
 using TTT.API.Storage;
@@ -16,8 +15,6 @@ public static class DeagleServiceCollection {
 
 public class OneShotDeagle(IServiceProvider provider) : IWeapon, IShopItem {
   public const string ID = "ttt.shop.item.oneshotdeagle";
-
-  private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
 
   private readonly OneShotDeagleConfig deagleConfigStorage =
     provider.GetService<IStorage<OneShotDeagleConfig>>()

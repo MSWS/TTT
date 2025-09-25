@@ -23,8 +23,6 @@ public class BodySpawner(IServiceProvider provider) : IPluginModule {
   private readonly IGameManager games =
     provider.GetRequiredService<IGameManager>();
 
-  private readonly PropMover mover = provider.GetRequiredService<PropMover>();
-
   public void Dispose() { }
   public void Start() { }
 

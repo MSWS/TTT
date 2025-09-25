@@ -26,7 +26,8 @@ public class GameRestartListener(IServiceProvider provider)
     if (ev.NewState != State.FINISHED) return;
     Observable.Timer(config.RoundCfg.TimeBetweenRounds, scheduler)
      .Subscribe(_ => {
-        if (Games.IsGameActive()) return;
+        if (Games.ActiveGame is { State: State.IN_PROGRESS or State.COUNTDOWN })
+          return;
         Games.CreateGame()?.Start(config.RoundCfg.CountDownDuration);
       });
   }
