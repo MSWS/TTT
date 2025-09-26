@@ -27,7 +27,7 @@ public class KarmaStorage(IServiceProvider provider) : IKarmaService {
     connection = new MySqlConnection(config.DbString);
     var scheduler = provider.GetRequiredService<IScheduler>();
 
-    Observable.Interval(TimeSpan.FromMinutes(1), scheduler)
+    Observable.Interval(TimeSpan.FromMinutes(5), scheduler)
      .Subscribe(_ => updateKarmas());
   }
 
@@ -64,7 +64,7 @@ public class KarmaStorage(IServiceProvider provider) : IKarmaService {
     karmaCache[key] = newData;
   }
 
-  private async void updateKarmas() {
+  private async Task updateKarmas() {
     if (connection is not { State: ConnectionState.Open })
       throw new InvalidOperationException(
         "Storage connection is not initialized.");
