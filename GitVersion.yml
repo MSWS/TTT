@@ -1,42 +1,42 @@
 mode: ContinuousDeployment
-tag-prefix: ""
+tag-prefix: ""                       # allow bare numeric tags like 2.0.0
 commit-message-incrementing: Enabled
 
 assembly-versioning-scheme: MajorMinorPatch
-# Prevent any automatic major bumps from commits
-major-version-bump-message: "(?!)"     # never matches
 
-# Only bump when you explicitly ask for it
-minor-version-bump-message: \+semver:\s?(feature|minor)
-patch-version-bump-message: \+semver:\s?(fix|patch)
+# Never allow commit messages to trigger a major bump
+major-version-bump-message: "(?!)"
 
-# Default increments are disabled so version stays on the tagged major unless you opt in
+# Opt-in bumps via tokens
+minor-version-bump-message: \+semver:\s?minor
+patch-version-bump-message: \+semver:\s?patch
+
 branches:
   main:
-    label: ""                  # yields 2.0.0-1, 2.0.0-2, ...
-    increment: None            # ignore default increments on main
-    prevent-increment-of-merged-branch-version: true
+    label: ""                        # clears the default prerelease label
+    increment: None                  # no automatic bump unless +semver token
+    prevent-increment:
+      of-merged-branch: true
+      when-branch-merged: true
+      when-current-commit-tagged: true
   develop:
     label: "dev"
     increment: None
-    prevent-increment-of-merged-branch-version: true
+    prevent-increment:
+      of-merged-branch: true
+      when-branch-merged: true
+      when-current-commit-tagged: true
   feature:
     label: "feat"
     increment: None
-    prevent-increment-of-merged-branch-version: true
   release:
     label: "rc"
     increment: None
-    prevent-increment-of-merged-branch-version: true
   hotfix:
     label: "hotfix"
     increment: None
-    prevent-increment-of-merged-branch-version: true
   pull-request:
     label: "pr"
     increment: None
-    prevent-increment-of-merged-branch-version: true
 
-# Optional formatting for informational version strings
-assembly-informational-format: >
-  {FullSemVer}+Branch.{BranchName}.Sha.{ShortSha}
+assembly-informational-format: "{FullSemVer}+Branch.{BranchName}.Sha.{ShortSha}"
