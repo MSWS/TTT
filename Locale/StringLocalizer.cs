@@ -42,7 +42,10 @@ public partial class StringLocalizer : IMsgLocalizer {
 
   private LocalizedString getString(string name, params object[] arguments) {
     // Get the localized value
-    var value = localizer[name].Value;
+    string value;
+    try { value = localizer[name].Value; } catch (NullReferenceException e) {
+      return new LocalizedString(name, name, true);
+    }
 
     // Replace placeholders like %key% with their respective values
     var matches = percentRegex().Matches(value);

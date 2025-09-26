@@ -1,5 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using TTT.API.Command;
+using TTT.API.Game;
+using TTT.API.Player;
 using TTT.Shop;
 using TTT.Shop.Commands;
 using TTT.Test.Game.Command;
@@ -20,6 +22,15 @@ public class BuyTest {
     manager.RegisterCommand(new BuyCommand(provider));
   }
 
+  private void startGame() {
+    var games   = provider.GetRequiredService<IGameManager>();
+    var players = provider.GetRequiredService<IPlayerFinder>();
+
+    players.AddPlayers(TestPlayer.Random(), TestPlayer.Random());
+
+    games.CreateGame()?.Start();
+  }
+
   [Fact]
   public async Task BuyCommand_Exists() {
     var result =
@@ -30,16 +41,17 @@ public class BuyTest {
 
   [Fact]
   public async Task Buy_WithNoArg_RequiresUsage() {
+    startGame();
     var player = TestPlayer.Random();
     var info   = new TestCommandInfo(provider, player, "buy");
     var result = await manager.ProcessCommand(info);
 
-    Assert.Equal(CommandResult.INVALID_ARGS, result);
-    Assert.Contains("Please specify an item to buy.", player.Messages);
+    Assert.Equal(CommandResult.PRINT_USAGE, result);
   }
 
   [Fact]
   public async Task Buy_NonExistentItem_Fails() {
+    startGame();
     var player = TestPlayer.Random();
     var info = new TestCommandInfo(provider, player, "buy", "NonExistentItem");
     var result = await manager.ProcessCommand(info);
@@ -49,6 +61,7 @@ public class BuyTest {
 
   [Fact]
   public async Task Buy_WithWrongQuery_Fails() {
+    startGame();
     var player = TestPlayer.Random();
     var info   = new TestCommandInfo(provider, player, "buy", "Sword");
     shop.RegisterItem(new TestShopItem());
@@ -59,6 +72,7 @@ public class BuyTest {
 
   [Fact]
   public async Task Buy_TooExpensive_Fails() {
+    startGame();
     var player = TestPlayer.Random();
     var info   = new TestCommandInfo(provider, player, "buy", TestShopItem.ID);
 
@@ -73,6 +87,7 @@ public class BuyTest {
 
   [Fact]
   public async Task Buy_WithSuccess_DecreasesBalance() {
+    startGame();
     var player = TestPlayer.Random();
     var info   = new TestCommandInfo(provider, player, "buy", TestShopItem.ID);
 
@@ -87,6 +102,7 @@ public class BuyTest {
 
   [Fact]
   public async Task Buy_WithSuccess_GivesItem() {
+    startGame();
     var player = TestPlayer.Random();
     var info   = new TestCommandInfo(provider, player, "buy", TestShopItem.ID);
 

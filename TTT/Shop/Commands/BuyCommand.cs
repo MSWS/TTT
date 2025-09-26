@@ -32,10 +32,7 @@ public class BuyCommand(IServiceProvider provider) : ICommand {
       return CommandResult.SUCCESS;
     }
 
-    if (info.ArgCount == 1) {
-      info.ReplySync("Please specify an item to buy.");
-      return CommandResult.INVALID_ARGS;
-    }
+    if (info.ArgCount == 1) return CommandResult.PRINT_USAGE;
 
     var query = string.Join(" ", info.Args.Skip(1));
     info.ReplySync($"Searching for item: {query}");
