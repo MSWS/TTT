@@ -1,0 +1,42 @@
+mode: ContinuousDeployment
+tag-prefix: ""
+commit-message-incrementing: Enabled
+
+assembly-versioning-scheme: MajorMinorPatch
+# Prevent any automatic major bumps from commits
+major-version-bump-message: "(?!)"     # never matches
+
+# Only bump when you explicitly ask for it
+minor-version-bump-message: "\+semver:\s?(feature|minor)"
+patch-version-bump-message: "\+semver:\s?(fix|patch)"
+
+# Default increments are disabled so version stays on the tagged major unless you opt in
+branches:
+  main:
+    label: ""                  # yields 2.0.0-1, 2.0.0-2, ...
+    increment: None            # ignore default increments on main
+    prevent-increment-of-merged-branch-version: true
+  develop:
+    label: "dev"
+    increment: None
+    prevent-increment-of-merged-branch-version: true
+  feature:
+    label: "feat"
+    increment: None
+    prevent-increment-of-merged-branch-version: true
+  release:
+    label: "rc"
+    increment: None
+    prevent-increment-of-merged-branch-version: true
+  hotfix:
+    label: "hotfix"
+    increment: None
+    prevent-increment-of-merged-branch-version: true
+  pull-request:
+    label: "pr"
+    increment: None
+    prevent-increment-of-merged-branch-version: true
+
+# Optional formatting for informational version strings
+assembly-informational-format: >
+  {FullSemVer}+Branch.{BranchName}.Sha.{ShortSha}

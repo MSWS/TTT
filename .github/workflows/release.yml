@@ -34,6 +34,11 @@ jobs:
           dotnet build Locale/Locale.csproj --no-restore -c Release
           cp lang/*.json build/TTT/lang
 
+      - name: Copy Gamedata
+        run: |
+          mkdir -p build/TTT/gamedata
+          cp -r TTT/CS2/gamedata/* build/TTT/gamedata
+
       - name: Publish Plugin
         run: |
           dotnet restore TTT/Plugin/Plugin.csproj
@@ -43,7 +48,7 @@ jobs:
         run: |
           cd build/TTT
           zip -r TTT-${{ steps.gitversion.outputs.fullSemVer }}.zip *
-          
+      
       # 2. Get latest tag
       - name: Get latest tag
         id: latest_tag
