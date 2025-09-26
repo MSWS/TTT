@@ -33,11 +33,6 @@ public class EventBus(IServiceProvider provider) : IEventBus, ITerrorModule {
 
     handlers.TryGetValue(type, out var list);
 
-#if DEBUG
-    Console.WriteLine(
-      $"Dispatching {type.Name} to {list?.Count ?? 0} handlers.");
-#endif
-
     if (list == null || list.Count == 0) return Task.CompletedTask;
 
     ICancelableEvent? cancelable           = null;
