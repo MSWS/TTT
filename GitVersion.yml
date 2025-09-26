@@ -7,8 +7,8 @@ assembly-versioning-scheme: MajorMinorPatch
 major-version-bump-message: "(?!)"     # never matches
 
 # Only bump when you explicitly ask for it
-minor-version-bump-message: "\+semver:\s?(feature|minor)"
-patch-version-bump-message: "\+semver:\s?(fix|patch)"
+minor-version-bump-message: \+semver:\s?(feature|minor)
+patch-version-bump-message: \+semver:\s?(fix|patch)
 
 # Default increments are disabled so version stays on the tagged major unless you opt in
 branches:
