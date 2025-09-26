@@ -5,7 +5,6 @@ using Microsoft.Extensions.DependencyInjection;
 using TTT.API;
 using TTT.API.Command;
 using TTT.API.Player;
-using TTT.CS2.Command.Test;
 using TTT.Game;
 using TTT.Game.Commands;
 
@@ -23,21 +22,12 @@ public class CS2CommandManager(IServiceProvider provider)
   public void Start(BasePlugin? basePlugin, bool hotReload) {
     plugin = basePlugin;
     base.Start();
-
-    RegisterCommand(new TTTCommand(Provider));
-    RegisterCommand(new TestCommand(Provider));
-
-    foreach (var command in Provider.GetServices<ICommand>()) command.Start();
   }
 
-  public override string Name => "CommandManager";
-  public override string Version => GitVersionInformation.FullSemVer;
-
   public override bool RegisterCommand(ICommand command) {
-    command.Start();
     var registration = command.Aliases.All(alias
-      => Commands.TryAdd(COMMAND_PREFIX + alias, command));
-    if (registration == false) return false;
+      => cmdMap.TryAdd(COMMAND_PREFIX + alias, command));
+    if (!registration) return false;
     foreach (var alias in command.Aliases)
       plugin?.AddCommand(COMMAND_PREFIX + alias,
         command.Description ?? string.Empty, processInternal);
@@ -52,14 +42,14 @@ public class CS2CommandManager(IServiceProvider provider)
       converter.GetPlayer(executor) as IOnlinePlayer;
     Task.Run(async () => {
       try {
-        Console.WriteLine($"Processing command: {cs2Info.GetCommandString}");
+        Console.WriteLine($"Processing command: {cs2Info.CommandString}");
         return await ProcessCommand(cs2Info);
       } catch (Exception e) {
         var msg = e.Message;
         cs2Info.ReplySync(Localizer[GameMsgs.GENERIC_ERROR(msg)]);
         await Server.NextWorldUpdateAsync(() => {
           Console.WriteLine(
-            $"Encountered an error when processing command: \"{cs2Info.GetCommandString}\" by {wrapper?.Id}");
+            $"Encountered an error when processing command: \"{cs2Info.CommandString}\" by {wrapper?.Id}");
           Console.WriteLine(e);
         });
         return CommandResult.ERROR;

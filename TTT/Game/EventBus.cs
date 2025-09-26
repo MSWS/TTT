@@ -1,41 +1,66 @@
 using System.Reflection;
+using Microsoft.Extensions.DependencyInjection;
+using TTT.API;
 using TTT.API.Events;
 
 namespace TTT.Game;
 
-public class EventBus : IEventBus {
+public class EventBus(IServiceProvider provider) : IEventBus, ITerrorModule {
   private readonly Dictionary<Type, List<(object listener, MethodInfo method)>>
     handlers = new();
 
+  [Obsolete("Registering listeners is deprecated, use DI instead.")]
   public void RegisterListener(IListener listener) {
-    var methods = listener.GetType()
-     .GetMethods(BindingFlags.Instance | BindingFlags.Public
-        | BindingFlags.NonPublic);
-
     var dirtyTypes = new HashSet<Type>();
-
-    foreach (var method in methods) {
-      var attr = method.GetCustomAttribute<EventHandlerAttribute>();
-      if (attr == null) continue;
-
-      var parameters = method.GetParameters();
-      if (parameters.Length != 1
-        || !typeof(Event).IsAssignableFrom(parameters[0].ParameterType))
-        throw new InvalidOperationException(
-          $"Method {method.Name} in {listener.GetType().Name} "
-          + "must have exactly one parameter of type Event or its subclass.");
-
-      var eventType = parameters[0].ParameterType;
-      if (!handlers.ContainsKey(eventType)) handlers[eventType] = [];
-
-      handlers[eventType].Add((listener, method));
-      dirtyTypes.Add(eventType);
-    }
+    appendListener(listener, dirtyTypes);
 
     if (dirtyTypes.Count == 0)
       throw new InvalidOperationException(
         $"Listener {listener.GetType().Name} has no valid event handlers.");
 
+    resortListeners(dirtyTypes);
+  }
+
+  public void UnregisterListener(IListener listener) {
+    foreach (var kvp in handlers) {
+      kvp.Value.RemoveAll(h => h.listener == listener);
+      if (kvp.Value.Count == 0) handlers.Remove(kvp.Key);
+    }
+  }
+
+  public Task Dispatch(Event ev) {
+    var type = ev.GetType();
+
+    handlers.TryGetValue(type, out var list);
+
+    if (list == null || list.Count == 0) return Task.CompletedTask;
+
+    ICancelableEvent? cancelable           = null;
+    if (ev is ICancelableEvent) cancelable = (ICancelableEvent)ev;
+
+    List<Task> tasks = [];
+
+    foreach (var (listener, method) in list) {
+      if (cancelable is { IsCanceled: true } && method
+       .GetCustomAttribute<EventHandlerAttribute>()
+      ?.IgnoreCanceled == true)
+        continue;
+
+      var result = method.Invoke(listener, [ev]);
+      if (result is Task task) tasks.Add(task);
+    }
+
+    return Task.WhenAll(tasks);
+  }
+
+  public void Dispose() { handlers.Clear(); }
+
+  public void Start() {
+    var listeners = provider.GetServices<IListener>().ToList();
+    foreach (var listener in listeners) RegisterListener(listener);
+  }
+
+  private void resortListeners(HashSet<Type> dirtyTypes) {
     // Sort handlers by priority
     foreach (var type in dirtyTypes)
       handlers[type]
@@ -48,26 +73,30 @@ public class EventBus : IEventBus {
         });
   }
 
-  public void UnregisterListener(IListener listener) {
-    foreach (var kvp in handlers) {
-      kvp.Value.RemoveAll(h => h.listener == listener);
-      if (kvp.Value.Count == 0) handlers.Remove(kvp.Key);
-    }
+  private void appendListener(IListener listener, HashSet<Type> dirtyTypes) {
+    var methods = listener.GetType()
+     .GetMethods(BindingFlags.Instance | BindingFlags.Public
+        | BindingFlags.NonPublic);
+    foreach (var method in methods)
+      registerListenerMethod(listener, dirtyTypes, method);
   }
 
-  public void Dispatch(Event ev) {
-    var type = ev.GetType();
-    if (!handlers.TryGetValue(type, out var list)) return;
-    ICancelableEvent? cancelable           = null;
-    if (ev is ICancelableEvent) cancelable = (ICancelableEvent)ev;
+  private void registerListenerMethod(IListener listener,
+    HashSet<Type> dirtyTypes, MethodInfo method) {
+    var attr = method.GetCustomAttribute<EventHandlerAttribute>();
+    if (attr == null) return;
 
-    foreach (var (listener, method) in list) {
-      if (cancelable is { IsCanceled: true } && method
-       .GetCustomAttribute<EventHandlerAttribute>()
-      ?.IgnoreCanceled == true)
-        continue;
+    var parameters = method.GetParameters();
+    if (parameters.Length != 1
+      || !typeof(Event).IsAssignableFrom(parameters[0].ParameterType))
+      throw new InvalidOperationException(
+        $"Method {method.Name} in {listener.GetType().Name} "
+        + "must have exactly one parameter of type Event or its subclass.");
 
-      method.Invoke(listener, [ev]);
-    }
+    var eventType = parameters[0].ParameterType;
+    if (!handlers.ContainsKey(eventType)) handlers[eventType] = [];
+
+    handlers[eventType].Add((listener, method));
+    dirtyTypes.Add(eventType);
   }
 }

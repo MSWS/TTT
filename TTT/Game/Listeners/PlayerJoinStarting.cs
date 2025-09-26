@@ -1,6 +1,7 @@
 ﻿using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using TTT.API.Events;
+using TTT.API.Game;
 using TTT.API.Storage;
 using TTT.Game.Events.Player;
 
@@ -12,12 +13,11 @@ public class PlayerJoinStarting(IServiceProvider provider)
     provider.GetService<IStorage<TTTConfig>>()?.Load().GetAwaiter().GetResult()
     ?? new TTTConfig();
 
-  public override string Name => nameof(PlayerJoinStarting);
-
   [EventHandler]
   [UsedImplicitly]
   public void OnJoin(PlayerJoinEvent ev) {
-    if (Games.IsGameActive()) return;
+    if (Games.ActiveGame is { State: State.IN_PROGRESS or State.COUNTDOWN })
+      return;
     var playerCount = Finder.GetOnline().Count;
     if (playerCount < config.RoundCfg.MinimumPlayers) return;
 

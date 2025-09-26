@@ -4,8 +4,6 @@ using TTT.API.Role;
 using TTT.Game.Roles;
 using TTT.Locale;
 
-// ReSharper disable InconsistentNaming
-
 namespace TTT.Game;
 
 public static class GameMsgs {
@@ -19,6 +17,9 @@ public static class GameMsgs {
 
   public static IMsg GAME_LOGS_HEADER
     => MsgFactory.Create(nameof(GAME_LOGS_HEADER));
+
+  public static IMsg GAME_LOGS_FOOTER
+    => MsgFactory.Create(nameof(GAME_LOGS_FOOTER));
 
   public static IMsg ROLE_ASSIGNED(IRole role) {
     return MsgFactory.Create(nameof(ROLE_ASSIGNED), role.Name);
@@ -45,15 +46,18 @@ public static class GameMsgs {
     return MsgFactory.Create(nameof(NOT_ENOUGH_PLAYERS), minNeeded);
   }
 
-  public static IMsg BODY_IDENTIFIED(IOnlinePlayer identifier, IPlayer ofPlayer,
-    IRole role) {
+  public static IMsg BODY_IDENTIFIED(IOnlinePlayer? identifier,
+    IPlayer ofPlayer, IRole role) {
     // TODO: Ideally we do this better
-    var rolePrefix = role.GetType().IsAssignableTo(typeof(TraitorRole)) ?
-      ChatColors.Red :
-      role.GetType().IsAssignableTo(typeof(DetectiveRole)) ? ChatColors.Blue :
-        ChatColors.Lime;
-    return MsgFactory.Create(nameof(BODY_IDENTIFIED), identifier.Name,
-      rolePrefix + ofPlayer.Name, role.Name);
+    var rolePrefix = GetRolePrefix(role);
+    return MsgFactory.Create(nameof(BODY_IDENTIFIED),
+      identifier?.Name ?? "Someone", rolePrefix + ofPlayer.Name, role.Name);
+  }
+
+  public static char GetRolePrefix(IRole role) {
+    return role.GetType().IsAssignableTo(typeof(TraitorRole)) ? ChatColors.Red :
+      role.GetType().IsAssignableTo(typeof(DetectiveRole)) ?
+        ChatColors.DarkBlue : ChatColors.Lime;
   }
 
   #region COMMANDS

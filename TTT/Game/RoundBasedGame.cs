@@ -24,7 +24,7 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
   private readonly IInventoryManager inventory =
     provider.GetRequiredService<IInventoryManager>();
 
-  private readonly IMsgLocalizer locale =
+  protected readonly IMsgLocalizer Locale =
     provider.GetRequiredService<IMsgLocalizer>();
 
   private readonly List<IPlayer> players = [];
@@ -38,7 +38,7 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
 
   public ICollection<IPlayer> Players => players;
 
-  public IActionLogger Logger { get; } = new SimpleLogger(provider);
+  public virtual IActionLogger Logger { get; } = new SimpleLogger(provider);
 
   public DateTime? StartedAt { get; protected set; }
   public DateTime? FinishedAt { get; protected set; }
@@ -60,12 +60,12 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
   }
 
   public virtual IObservable<long>? Start(TimeSpan? countdown = null) {
-    onlineMessenger?.Debug("Attempting to start the game...");
+    Messenger?.Debug("Attempting to start the game...");
     var online = finder.GetOnline();
 
     if (online.Count < config.RoundCfg.MinimumPlayers) {
-      onlineMessenger?.MessageAll(
-        locale[GameMsgs.NOT_ENOUGH_PLAYERS(config.RoundCfg.MinimumPlayers)]);
+      Messenger?.MessageAll(
+        Locale[GameMsgs.NOT_ENOUGH_PLAYERS(config.RoundCfg.MinimumPlayers)]);
       return null;
     }
 
@@ -76,15 +76,15 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
       return Observable.Empty<long>();
     }
 
-    onlineMessenger?.MessageAll(
-      locale[GameMsgs.GAME_STATE_STARTING(countdown.Value)]);
+    Messenger?.MessageAll(
+      Locale[GameMsgs.GAME_STATE_STARTING(countdown.Value)]);
     State = State.COUNTDOWN;
     var timer = Observable.Timer(countdown.Value, Scheduler);
 
     timer.Subscribe(_ => {
       if (State != State.COUNTDOWN) {
-        onlineMessenger?.MessageAll(
-          locale[GameMsgs.GENERIC_ERROR("Game was interrupted.")]);
+        Messenger?.MessageAll(
+          Locale[GameMsgs.GENERIC_ERROR("Game was interrupted.")]);
         return;
       }
 
@@ -95,7 +95,7 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
   }
 
   public void EndGame(EndReason? reason = null) {
-    if (!((IGame)this).IsInProgress()) {
+    if (State is not State.IN_PROGRESS and not State.COUNTDOWN) {
       Dispose();
       State = State.WAITING;
       return;
@@ -105,9 +105,21 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
     WinningRole = reason?.WinningRole;
     State       = State.FINISHED;
 
-    onlineMessenger?.MessageAll(WinningRole != null ?
-      locale[GameMsgs.GAME_STATE_ENDED_TEAM_WON(WinningRole)] :
-      locale[GameMsgs.GAME_STATE_ENDED_OTHER(reason?.Message ?? "Unknown")]);
+    Messenger?.MessageAll(WinningRole != null ?
+      Locale[GameMsgs.GAME_STATE_ENDED_TEAM_WON(WinningRole)] :
+      Locale[GameMsgs.GAME_STATE_ENDED_OTHER(reason?.Message ?? "Unknown")]);
+  }
+
+  public bool CheckEndConditions() {
+    if (State != State.IN_PROGRESS) return false;
+
+    var endGame = getWinningTeam(out var winningTeam);
+    if (!endGame) return false;
+
+    EndGame(winningTeam == null ?
+      new EndReason("Draw") :
+      new EndReason(winningTeam));
+    return true;
   }
 
   public void Dispose() {
@@ -117,12 +129,44 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
     Logger.ClearActions();
   }
 
+  private bool getWinningTeam(out IRole? winningTeam) {
+    winningTeam = null;
+
+    var traitorRole =
+      Roles.First(r => r.GetType().IsAssignableTo(typeof(TraitorRole)));
+    var innocentRole =
+      Roles.First(r => r.GetType().IsAssignableTo(typeof(InnocentRole)));
+    var detectiveRole = Roles.First(r
+      => r.GetType().IsAssignableTo(typeof(DetectiveRole)));
+
+    var traitorsAlive    = ((IGame)this).GetAlive(typeof(TraitorRole)).Count;
+    var nonTraitorsAlive = ((IGame)this).GetAlive().Count - traitorsAlive;
+    var detectivesAlive  = ((IGame)this).GetAlive(typeof(DetectiveRole)).Count;
+
+    switch (traitorsAlive) {
+      case 0 when nonTraitorsAlive == 0:
+        winningTeam = null;
+        return true;
+      case > 0 when nonTraitorsAlive == 0:
+        winningTeam = traitorRole;
+        return true;
+      case 0 when nonTraitorsAlive > 0:
+        winningTeam = nonTraitorsAlive == detectivesAlive ?
+          detectiveRole :
+          innocentRole;
+        return true;
+      default:
+        winningTeam = null;
+        return false;
+    }
+  }
+
   virtual protected void StartRound() {
     var online = finder.GetOnline();
 
     if (online.Count < config.RoundCfg.MinimumPlayers) {
-      onlineMessenger?.MessageAll(
-        locale[GameMsgs.NOT_ENOUGH_PLAYERS(config.RoundCfg.MinimumPlayers)]);
+      Messenger?.MessageAll(
+        Locale[GameMsgs.NOT_ENOUGH_PLAYERS(config.RoundCfg.MinimumPlayers)]);
       State = State.WAITING;
       return;
     }
@@ -137,7 +181,7 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
 
     var traitors    = ((IGame)this).GetAlive(typeof(TraitorRole)).Count;
     var nonTraitors = online.Count - traitors;
-    onlineMessenger?.MessageAll(locale[
+    Messenger?.MessageAll(Locale[
       GameMsgs.GAME_STATE_STARTED(traitors, nonTraitors)]);
   }
 
@@ -151,8 +195,7 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
   private readonly IPlayerFinder finder =
     provider.GetRequiredService<IPlayerFinder>();
 
-  private readonly IMessenger? onlineMessenger =
-    provider.GetService<IMessenger>();
+  protected readonly IMessenger? Messenger = provider.GetService<IMessenger>();
 
   #endregion
 }

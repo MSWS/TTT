@@ -6,10 +6,13 @@ namespace TTT.API.Command;
 ///   An interface that allows for registering and processing commands.
 /// </summary>
 public interface ICommandManager {
+  ISet<ICommand> Commands { get; }
+
   /// <summary>
   ///   Registers a command with the manager.
   /// </summary>
   /// <param name="command">True if the command was successfully registered.</param>
+  [Obsolete("Registration is done via the ServiceProvider now.")]
   bool RegisterCommand(ICommand command);
 
   /// <summary>

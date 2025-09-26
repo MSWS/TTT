@@ -1,17 +1,26 @@
 using Microsoft.Extensions.DependencyInjection;
 using TTT.API;
+using TTT.API.Extensions;
 using TTT.API.Player;
 using TTT.API.Storage;
 using TTT.Locale;
 
 namespace TTT.Shop.Items;
 
+public static class DeagleServiceCollection {
+  public static void AddDeagleServices(this IServiceCollection collection) {
+    collection.AddModBehavior<DeagleDamageListener>();
+  }
+}
+
 public class OneShotDeagle(IServiceProvider provider) : IWeapon, IShopItem {
-  private readonly OneShotDeagleConfig deagleConfigStorage =
-    provider.GetService<IStorage<OneShotDeagleConfig>>()
-    ?.Load()
-     .GetAwaiter()
-     .GetResult() ?? new OneShotDeagleConfig();
+  public const string ID = "ttt.shop.item.oneshotdeagle";
+
+  private readonly OneShotDeagleConfig deagleConfigStorage = provider
+   .GetService<IStorage<OneShotDeagleConfig>>()
+  ?.Load()
+   .GetAwaiter()
+   .GetResult() ?? new OneShotDeagleConfig();
 
   private readonly IInventoryManager inventoryManager =
     provider.GetRequiredService<IInventoryManager>();
@@ -20,6 +29,10 @@ public class OneShotDeagle(IServiceProvider provider) : IWeapon, IShopItem {
     provider.GetRequiredService<IMsgLocalizer>();
 
   public string Name => locale[DeagleMsgs.SHOP_ITEM_DEAGLE];
+
+  public void Start() { }
+
+  public void Dispose() { }
   public string Description => locale[DeagleMsgs.SHOP_ITEM_DEAGLE_DESC];
 
   public ShopItemConfig Config => deagleConfigStorage;
@@ -28,7 +41,11 @@ public class OneShotDeagle(IServiceProvider provider) : IWeapon, IShopItem {
     inventoryManager.GiveWeapon(player, this);
   }
 
-  public bool CanPurchase(IOnlinePlayer player) { return true; }
+  public PurchaseResult CanPurchase(IOnlinePlayer player) {
+    return PurchaseResult.SUCCESS;
+  }
+
+  string IShopItem.Id => ID;
 
   public string Id => deagleConfigStorage.Weapon;
 

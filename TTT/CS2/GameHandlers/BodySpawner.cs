@@ -23,11 +23,7 @@ public class BodySpawner(IServiceProvider provider) : IPluginModule {
   private readonly IGameManager games =
     provider.GetRequiredService<IGameManager>();
 
-  private readonly PropMover mover = provider.GetRequiredService<PropMover>();
-
   public void Dispose() { }
-  public string Name => nameof(BodySpawner);
-  public string Version => GitVersionInformation.FullSemVer;
   public void Start() { }
 
   [GameEventHandler]
@@ -39,7 +35,7 @@ public class BodySpawner(IServiceProvider provider) : IPluginModule {
     player.SetColor(Color.FromArgb(0, 0, 0, 0));
 
     var ragdollBody = makeGameRagdoll(player);
-    var body        = new CS2Body(ragdollBody, converter.GetPlayer(player));
+    var body = new CS2Body(provider, ragdollBody, converter.GetPlayer(player));
 
     if (ev.Attacker != null && ev.Attacker.IsValid)
       body.WithKiller(converter.GetPlayer(ev.Attacker));
@@ -49,12 +45,7 @@ public class BodySpawner(IServiceProvider provider) : IPluginModule {
     var bodyCreatedEvent = new BodyCreateEvent(body);
     bus.Dispatch(bodyCreatedEvent);
 
-    if (bodyCreatedEvent.IsCanceled) {
-      ragdollBody.AcceptInput("Kill");
-      return HookResult.Continue;
-    }
-
-    mover.MapEntities.Add(ragdollBody);
+    if (bodyCreatedEvent.IsCanceled) ragdollBody.AcceptInput("Kill");
     return HookResult.Continue;
   }
 

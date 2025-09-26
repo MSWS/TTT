@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using TTT.API;
 using TTT.API.Events;
 using TTT.API.Game;
+using TTT.API.Messages;
 using TTT.API.Player;
 using TTT.Game.Events.Player;
 
@@ -19,8 +20,8 @@ public class PlayerConnectionsHandler(IServiceProvider provider)
   private readonly IGameManager games =
     provider.GetRequiredService<IGameManager>();
 
-  public string Name => nameof(PlayerConnectionsHandler);
-  public string Version => GitVersionInformation.FullSemVer;
+  private readonly IMessenger messenger =
+    provider.GetRequiredService<IMessenger>();
 
   public void Start() { }
 
@@ -34,11 +35,10 @@ public class PlayerConnectionsHandler(IServiceProvider provider)
         disconnectFromServer);
 
     Server.NextWorldUpdate(() => {
-      foreach (var player in Utilities.GetPlayers()) {
-        var gamePlayer = converter.GetPlayer(player);
-        var ev         = new PlayerJoinEvent(gamePlayer);
+      foreach (var ev in Utilities.GetPlayers()
+       .Select(player => converter.GetPlayer(player))
+       .Select(gamePlayer => new PlayerJoinEvent(gamePlayer)))
         bus.Dispatch(ev);
-      }
     });
   }
 
@@ -46,14 +46,11 @@ public class PlayerConnectionsHandler(IServiceProvider provider)
 
   private void disconnectFromServer(int playerSlot) {
     var player = Utilities.GetPlayerFromSlot(playerSlot);
-    Console.WriteLine($"Player {playerSlot} disconnected from server.");
-    if (player == null || !player.IsValid) {
-      Console.WriteLine($"Player {playerSlot} does not exist.");
-      return;
-    }
+    if (player == null || !player.IsValid) return;
 
     var gamePlayer = converter.GetPlayer(player);
-    bus.Dispatch(new PlayerLeaveEvent(gamePlayer));
+    Server.NextWorldUpdate(()
+      => bus.Dispatch(new PlayerLeaveEvent(gamePlayer)));
   }
 
   private void connectToServer(int playerSlot) {
@@ -65,15 +62,7 @@ public class PlayerConnectionsHandler(IServiceProvider provider)
     }
 
     var gamePlayer = converter.GetPlayer(player);
-    bus.Dispatch(new PlayerJoinEvent(gamePlayer));
 
-    if (games.ActiveGame is { State: State.IN_PROGRESS or State.FINISHED })
-      return;
-
-    Server.NextWorldUpdate(() => {
-      if (!player.IsValid) return;
-      Server.PrintToChatAll("Respawning...");
-      player.Respawn();
-    });
+    Server.NextWorldUpdate(() => bus.Dispatch(new PlayerJoinEvent(gamePlayer)));
   }
 }

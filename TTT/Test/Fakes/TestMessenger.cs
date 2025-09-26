@@ -7,6 +7,11 @@ public class TestMessenger(IServiceProvider provider)
   : EventModifiedMessenger(provider) {
   override protected Task<bool> SendMessage(IPlayer? player, string message,
     params object[] args) {
+    if (player == null) {
+      Debug("Message to console: " + message, args);
+      return Task.FromResult(true);
+    }
+
     if (player is not TestPlayer testPlayer)
       throw new ArgumentException("Player must be a TestPlayer",
         nameof(player));

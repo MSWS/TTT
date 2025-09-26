@@ -1,5 +1,6 @@
 ﻿using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Core.Attributes.Registration;
+using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using TTT.API;
 using TTT.API.Game;
@@ -8,7 +9,8 @@ using TTT.Game;
 
 namespace TTT.CS2.GameHandlers;
 
-public class RoundStartHandler(IServiceProvider provider) : IPluginModule {
+public class RoundStart_GameStartHandler(IServiceProvider provider)
+  : IPluginModule {
   private readonly TTTConfig config =
     provider.GetService<IStorage<TTTConfig>>()?.Load().GetAwaiter().GetResult()
     ?? new TTTConfig();
@@ -16,15 +18,15 @@ public class RoundStartHandler(IServiceProvider provider) : IPluginModule {
   private readonly IGameManager games =
     provider.GetRequiredService<IGameManager>();
 
-  public void Dispose() { throw new NotImplementedException(); }
-  public string Name => nameof(RoundStartHandler);
-  public string Version => GitVersionInformation.FullSemVer;
+  public void Dispose() { }
 
   public void Start() { }
 
+  [UsedImplicitly]
   [GameEventHandler]
   public HookResult OnRoundStart(EventRoundStart _, GameEventInfo _1) {
-    if (games.IsGameActive()) return HookResult.Continue;
+    if (games.ActiveGame is { State: State.IN_PROGRESS or State.COUNTDOWN })
+      return HookResult.Continue;
 
     var game = games.CreateGame();
     game?.Start(config.RoundCfg.CountDownDuration);

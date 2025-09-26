@@ -4,5 +4,5 @@ using TTT.API.Player;
 namespace TTT.Game.Events.Player;
 
 public abstract class PlayerEvent(IPlayer player) : Event {
-  public IPlayer Player { get; } = player;
+  public IPlayer Player { get; init; } = player;
 }

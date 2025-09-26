@@ -1,5 +1,4 @@
 ﻿using CounterStrikeSharp.API.Core;
-using Microsoft.Extensions.DependencyInjection;
 using TTT.API;
 using TTT.API.Command;
 using TTT.API.Player;
@@ -7,23 +6,18 @@ using TTT.API.Player;
 namespace TTT.CS2.Command.Test;
 
 public class TestCommand(IServiceProvider provider) : ICommand, IPluginModule {
-  private readonly IPlayerConverter<CCSPlayerController> converter =
-    provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
-
-  private readonly IPlayerFinder finder =
-    provider.GetRequiredService<IPlayerFinder>();
-
   private readonly IDictionary<string, ICommand> subCommands =
     new Dictionary<string, ICommand>(StringComparer.OrdinalIgnoreCase);
 
   public void Dispose() { }
 
   public string Name => "test";
-  public string Version => GitVersionInformation.FullSemVer;
 
   public void Start() {
     subCommands.Add("setrole", new SetRoleCommand(provider));
     subCommands.Add("stop", new StopCommand(provider));
+    subCommands.Add("forcealive", new ForceAliveCommand(provider));
+    subCommands.Add("identifyall", new IdentifyAllCommand(provider));
   }
 
   public Task<CommandResult>
@@ -43,6 +37,12 @@ public class TestCommand(IServiceProvider provider) : ICommand, IPluginModule {
       return Task.FromResult(CommandResult.INVALID_ARGS);
     }
 
-    return cmd.Execute(executor, new CS2CommandInfo(provider, info, 1));
+    return cmd.Execute(executor, info.Skip());
+  }
+
+  public void Start(BasePlugin? plugin, bool hotload) {
+    ((IPluginModule)this).Start();
+    foreach (var cmd in subCommands.Values.OfType<IPluginModule>())
+      cmd.Start(plugin, hotload);
   }
 }

@@ -85,12 +85,6 @@ public class ColoredRoleTest(IServiceProvider provider) {
       message);
   }
 
-  public void HandlePluralization_WorksWithColors(string input, string output) {
-    var message = StringLocalizer.HandlePluralization(input);
-
-    Assert.Equal(output, message);
-  }
-
   public class ColoredRole(string name) : IRole {
     public string Id => "test.role.colored";
     public string Name => ChatColors.DarkBlue + name;

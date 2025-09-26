@@ -10,6 +10,7 @@ public interface IGameManager : IDisposable {
 
   IGame? CreateGame();
 
+  [Obsolete("This method is ambiguous, check the game state directly.")]
   bool IsGameActive() {
     return ActiveGame is not null && ActiveGame.IsInProgress();
   }

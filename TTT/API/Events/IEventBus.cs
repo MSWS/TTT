@@ -1,8 +1,10 @@
 namespace TTT.API.Events;
 
 public interface IEventBus {
+  [Obsolete("Registration should be done via the ServiceProvider")]
   void RegisterListener(IListener listener);
+
   void UnregisterListener(IListener listener);
 
-  void Dispatch(Event ev);
+  Task Dispatch(Event ev);
 }

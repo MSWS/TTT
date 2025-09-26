@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Reactive.Testing;
+using TTT.API.Events;
 using TTT.API.Game;
 using TTT.API.Player;
 using TTT.Game;
@@ -9,6 +10,8 @@ using Xunit;
 namespace TTT.Test.Game.Listeners;
 
 public class JoinStartTest(IServiceProvider provider) {
+  private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
+
   private readonly TTTConfig config = new();
 
   private readonly IPlayerFinder finder =
@@ -23,7 +26,7 @@ public class JoinStartTest(IServiceProvider provider) {
   [Fact]
   public void OnJoin_StartsGame_WhenTwoPlayersJoin() {
     var listener = new PlayerJoinStarting(provider);
-    listener.Start();
+    bus.RegisterListener(listener);
 
     finder.AddPlayer(TestPlayer.Random());
     finder.AddPlayer(TestPlayer.Random());
@@ -39,7 +42,7 @@ public class JoinStartTest(IServiceProvider provider) {
   [Fact]
   public void OnJoin_ShouldPrintStarting_OnJoin() {
     var listener = new PlayerJoinStarting(provider);
-    listener.Start();
+    bus.RegisterListener(listener);
 
     var player1 = TestPlayer.Random();
     var player2 = TestPlayer.Random();

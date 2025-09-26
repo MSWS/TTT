@@ -1,23 +1,21 @@
-﻿using CounterStrikeSharp.API;
-using CounterStrikeSharp.API.Core;
+﻿using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Memory;
 using CounterStrikeSharp.API.Modules.Memory.DynamicFunctions;
 using Microsoft.Extensions.DependencyInjection;
 using TTT.API;
 using TTT.API.Events;
-using TTT.API.Game;
+using TTT.API.Player;
+using TTT.Game.Events.Player;
 
 namespace TTT.CS2.GameHandlers;
 
-public class DamageCanceler(IServiceProvider provider)
-  : IPluginModule, IListener {
-  private readonly IGameManager games =
-    provider.GetRequiredService<IGameManager>();
+public class DamageCanceler(IServiceProvider provider) : IPluginModule {
+  private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
+
+  private readonly IPlayerConverter<CCSPlayerController> converter =
+    provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
 
   public void Dispose() { }
-
-  public string Name => nameof(DamageCanceler);
-  public string Version => GitVersionInformation.FullSemVer;
 
   public void Start() { }
 
@@ -28,20 +26,17 @@ public class DamageCanceler(IServiceProvider provider)
   }
 
   private HookResult onTakeDamage(DynamicHook hook) {
-    var info       = hook.GetParam<CTakeDamageInfo>(1);
-    var playerPawn = hook.GetParam<CCSPlayerPawn>(0);
+    var damagedEvent = new PlayerDamagedEvent(converter, hook);
 
-    var player = playerPawn.Controller.Value?.As<CCSPlayerController>();
-    if (player == null || !player.IsValid) return HookResult.Continue;
+    bus.Dispatch(damagedEvent);
 
-    var attackerPawn = info.Attacker;
-    var attacker     = attackerPawn.Value?.As<CCSPlayerController>();
+    if (damagedEvent.IsCanceled) return HookResult.Handled;
 
-    if (attacker == null || !attacker.IsValid
-      || games.ActiveGame is { State: State.IN_PROGRESS }) {
+    if (!damagedEvent.HpModified
+      || damagedEvent.Player is not IOnlinePlayer onlinePlayer)
       return HookResult.Continue;
-    }
 
+    onlinePlayer.Health = damagedEvent.HpLeft;
     return HookResult.Handled;
   }
 }

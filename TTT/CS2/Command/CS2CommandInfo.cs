@@ -68,7 +68,7 @@ public class CS2CommandInfo : ICommandInfo {
 
   public int ArgCount => Args.Length;
 
-  public string GetCommandString => string.Join(' ', Args);
+  public string CommandString => string.Join(' ', Args);
 
   public void ReplySync(string message) {
     switch (CallingContext) {
@@ -79,5 +79,9 @@ public class CS2CommandInfo : ICommandInfo {
         messenger.BackgroundMsg(CallingPlayer, message);
         break;
     }
+  }
+
+  public ICommandInfo Skip(int count = 1) {
+    return new CS2CommandInfo(provider, this, count);
   }
 }

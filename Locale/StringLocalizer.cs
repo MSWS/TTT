@@ -42,7 +42,10 @@ public partial class StringLocalizer : IMsgLocalizer {
 
   private LocalizedString getString(string name, params object[] arguments) {
     // Get the localized value
-    var value = localizer[name].Value;
+    string value;
+    try { value = localizer[name].Value; } catch (NullReferenceException e) {
+      return new LocalizedString(name, name, true);
+    }
 
     // Replace placeholders like %key% with their respective values
     var matches = percentRegex().Matches(value);
@@ -114,10 +117,14 @@ public partial class StringLocalizer : IMsgLocalizer {
 
     value = value.Replace("%s%", "s");
 
+    // We have to do this chicanery due to support colors in the string
+    value = handleTrailingS(value);
+
+    return value;
+  }
+
+  private static string handleTrailingS(string value) {
     var trailingIndex = -1;
-
-    // We have to do this chicanery due to supporting colors in the string
-
     while ((trailingIndex =
       value.IndexOf("'s", trailingIndex + 1, StringComparison.Ordinal)) != -1) {
       var startingWordBoundary = value[..trailingIndex].LastIndexOf(' ');

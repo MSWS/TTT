@@ -2,6 +2,7 @@
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Entities.Constants;
 using CounterStrikeSharp.API.Modules.Memory.DynamicFunctions;
+using CounterStrikeSharp.API.Modules.Utils;
 
 namespace TTT.CS2.Utils;
 
@@ -10,6 +11,8 @@ public static class RoundUtil {
     MemoryFunctionVoid<nint, float, RoundEndReason, nint, nint>
     TerminateRoundFunc =
       new(GameData.GetSignature("CCSGameRules_TerminateRound"));
+
+  private static IEnumerable<CCSTeam>? _teamManager;
 
   public static int GetTimeElapsed() {
     if (ServerUtil.GameRules == null) return 0;
@@ -50,5 +53,30 @@ public static class RoundUtil {
     if (gameRules == null || gameRules.GameRules == null) return;
     // TODO: Figure out what these params do
     TerminateRoundFunc.Invoke(gameRules.GameRules.Handle, 5f, reason, 0, 0);
+  }
+
+  public static void SetTeamScore(CsTeam team, int score) {
+    _teamManager ??=
+      Utilities.FindAllEntitiesByDesignerName<CCSTeam>("cs_team_manager");
+
+    foreach (var entry in _teamManager) {
+      if (entry.TeamNum != (byte)team) continue;
+      entry.Score = score;
+      Utilities.SetStateChanged(entry, "CTeam", "m_iScore");
+      break;
+    }
+  }
+
+  public static void AddTeamScore(CsTeam team, int score) {
+    SetTeamScore(team, GetTeamScore(team) + score);
+  }
+
+  public static int GetTeamScore(CsTeam team) {
+    _teamManager ??=
+      Utilities.FindAllEntitiesByDesignerName<CCSTeam>("cs_team_manager");
+
+    return (from entry in _teamManager
+      where entry.TeamNum == (byte)team
+      select entry.Score).FirstOrDefault();
   }
 }

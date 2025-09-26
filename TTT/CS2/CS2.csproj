@@ -11,6 +11,12 @@
   <ItemGroup>
     <ProjectReference Include="..\API\API.csproj"/>
     <ProjectReference Include="..\Game\Game.csproj"/>
+    <ProjectReference Include="..\Karma\Karma.csproj"/>
+    <ProjectReference Include="..\Shop\Shop.csproj"/>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="RayTrace\"/>
   </ItemGroup>
 
 </Project>

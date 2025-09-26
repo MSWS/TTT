@@ -20,15 +20,14 @@ public class GameRestartListener(IServiceProvider provider)
   private readonly IScheduler scheduler =
     provider.GetRequiredService<IScheduler>();
 
-  public override string Name => nameof(GameRestartListener);
-
   [EventHandler]
   [UsedImplicitly]
   public void OnGameEnd(GameStateUpdateEvent ev) {
     if (ev.NewState != State.FINISHED) return;
     Observable.Timer(config.RoundCfg.TimeBetweenRounds, scheduler)
      .Subscribe(_ => {
-        if (Games.IsGameActive()) return;
+        if (Games.ActiveGame is { State: State.IN_PROGRESS or State.COUNTDOWN })
+          return;
         Games.CreateGame()?.Start(config.RoundCfg.CountDownDuration);
       });
   }

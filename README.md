@@ -44,8 +44,8 @@ Due to this project being primarily developed with Counter-Strike 2 (and more
 specifically, [CounterStrikeSharp](https://github.com/roflmuffin/CounterStrikeSharp)) in mind, localization has been
 built with flat-file storage based around YML/JSON.
 
-In short, we write our locales in `en.yml`, run `Locale.csproj` to convert and combine all `**/Lang/en.yml` -> a master
-`lang/en.json`, and then run our tests / release pipeliens with it.
+In short, we write our locales in `en.yml`, run `Locale.csproj` to convert and combine all `**/Lang/en.yml` into a master
+`lang/en.json`, and then run our tests / release pipelines with it.
 
 It is recommend to read the [Locale README](./Locale/README.md) for more information on how to use it.
 

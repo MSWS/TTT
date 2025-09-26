@@ -1,3 +1,4 @@
+SHOP_INACTIVE: "%PREFIX%The shop is currently closed."
 SHOP_ITEM_DEAGLE: "One-Hit Deagle"
 SHOP_ITEM_DEAGLE_DESC: "A one-hit kill deagle with a single bullet. Aim carefully!"
 CREDITS_NAME: "credit"

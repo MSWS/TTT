@@ -12,14 +12,15 @@ public class StopCommand(IServiceProvider provider) : ICommand {
 
   public void Dispose() { }
   public string Name => "stop";
-  public string Version => GitVersionInformation.FullSemVer;
 
   public void Start() { }
 
   public Task<CommandResult>
     Execute(IOnlinePlayer? executor, ICommandInfo info) {
     Server.NextWorldUpdate(() => {
-      if (!games.IsGameActive()) {
+      if (games.ActiveGame is not {
+        State: State.COUNTDOWN or State.IN_PROGRESS
+      }) {
         info.ReplySync("No game is currently running.");
         return;
       }

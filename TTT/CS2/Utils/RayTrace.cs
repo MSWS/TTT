@@ -30,7 +30,7 @@ public static class RayTrace {
 
   private static readonly nint GameTraceManager = NativeAPI.FindSignature(
     Addresses.ServerPath,
-    OperatingSystem.IsLinux() ? "4C 8D 05 ? ? ? ? BB" : "48 8B 0D ? ? ? ? 0C");
+    OperatingSystem.IsLinux() ? "4C 8D 0D ? ? ? ? BB" : "48 8B 0D ? ? ? ? 0C");
 
   public static Vector? TraceShape(Vector _origin, QAngle _viewangles,
     bool fromPlayer = false) {

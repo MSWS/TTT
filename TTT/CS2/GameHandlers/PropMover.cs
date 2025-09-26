@@ -1,115 +1,81 @@
 ﻿using System.Drawing;
 using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
-using CounterStrikeSharp.API.Core.Attributes.Registration;
 using CounterStrikeSharp.API.Modules.Timers;
 using CounterStrikeSharp.API.Modules.Utils;
-using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using TTT.API;
 using TTT.API.Events;
-using TTT.API.Messages;
 using TTT.API.Player;
 using TTT.CS2.Events;
 using TTT.CS2.Extensions;
-using TTT.CS2.Utils;
+using TTT.CS2.RayTrace.Class;
+using TTT.CS2.RayTrace.Enum;
 using Vector = CounterStrikeSharp.API.Modules.Utils.Vector;
 
 namespace TTT.CS2.GameHandlers;
 
 public class PropMover(IServiceProvider provider) : IPluginModule {
   // TODO: Make this configurable
-  public static readonly float MIN_LOOK_ACCURACY = 2000f;
-  public static readonly float MAX_DISTANCE = 100f;
-  public static readonly float MIN_HOLDING_DISTANCE = 100f;
-  public static readonly float MAX_HOLDING_DISTANCE = 10000f;
+  public static readonly float MAX_DISTANCE = 200;
+  public static readonly float MIN_HOLDING_DISTANCE = 80;
+  public static readonly float MAX_HOLDING_DISTANCE = 150;
+
+  private static readonly QAngle DEAD_ANGLE = new(90, 45, 90);
   private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
 
   private readonly IPlayerConverter<CCSPlayerController> converter =
     provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
-
-  public readonly HashSet<CBaseEntity> MapEntities = [];
-  private readonly IMessenger msg = provider.GetRequiredService<IMessenger>();
 
   private readonly Dictionary<CCSPlayerController, MovementInfo>
     playersPressingE = new();
 
   public void Dispose() { }
 
-  public string Name => nameof(PropMover);
-  public string Version => GitVersionInformation.FullSemVer;
-
   public void Start() { }
 
   public void Start(BasePlugin? plugin, bool hotReload) {
     plugin?.AddTimer(Server.TickInterval, refreshLines, TimerFlags.REPEAT);
     plugin?.RegisterListener<CounterStrikeSharp.API.Core.Listeners.OnTick>(
-      refreshBodies);
+      refreshHeld);
     plugin
     ?.RegisterListener<
         CounterStrikeSharp.API.Core.Listeners.OnPlayerButtonsChanged>(
-        buttonsChanged);
-
-    if (!hotReload) return;
-    OnRoundStart(null!, null!);
+        onButtonsChanged);
   }
 
-  [UsedImplicitly]
-  [GameEventHandler]
-  public HookResult OnRoundStart(EventRoundStart _, GameEventInfo _1) {
-    var entities =
-      Utilities.GetAllEntities().Where(ent => ent.IsValid).ToList();
-    foreach (var propMultiplayer in from ent in entities
-      where ent.DesignerName.Equals("prop_physics_multiplayer")
-      select new CPhysicsPropMultiplayer(ent.Handle))
-      MapEntities.Add(propMultiplayer);
-    foreach (var propMultiplayer in from ent in entities
-      where ent.DesignerName.Equals("prop_ragdoll")
-      select new CRagdollProp(ent.Handle))
-      MapEntities.Add(propMultiplayer);
-
-    return HookResult.Continue;
-  }
-
-  private void buttonsChanged(CCSPlayerController player, PlayerButtons pressed,
-    PlayerButtons released) {
-    if (playersPressingE.TryGetValue(player, out var e)) {
-      if (!released.HasFlag(PlayerButtons.Use)) return;
-      playersPressingE.Remove(player);
-      if (!e.Ragdoll.IsValid) return;
-      e.Ragdoll.AcceptInput("EnableMotion");
-      if (e.Beam != null && e.Beam.IsValid) e.Beam.AcceptInput("Kill");
+  private void onButtonsChanged(CCSPlayerController player,
+    PlayerButtons pressed, PlayerButtons released) {
+    if (playersPressingE.TryGetValue(player, out var heldItem)) {
+      onCeaseUse(player, released, heldItem);
       return;
     }
 
-    var playerPos = player.PlayerPawn.Value?.AbsOrigin;
-    if (playerPos == null) return;
-
     if (!pressed.HasFlag(PlayerButtons.Use)) return;
 
-    var target = RayTrace.FindRayTraceIntersection(player);
+    onStartUse(player);
+  }
+
+  private void onStartUse(CCSPlayerController player) {
+    var playerPos = player.PlayerPawn.Value?.AbsOrigin;
+    if (playerPos == null) return;
+    var target = player.GetGameTraceByEyePosition(TraceMask.MaskSolid,
+      Contents.NoDraw, player);
     if (target == null) return;
 
-    CBaseEntity? foundEntity = null;
-    MapEntities.RemoveWhere(ent => !ent.IsValid);
-    var closestDist = double.MaxValue;
-    foreach (var ent in MapEntities) {
-      if (!ent.IsValid) continue;
-      var rayPointDist =
-        ent.AbsOrigin?.DistanceSquared(target) ?? double.MaxValue;
-      if (rayPointDist >= MIN_LOOK_ACCURACY || rayPointDist >= closestDist)
-        continue;
+    target.Value.HitEntityByDesignerName(out CBaseEntity? hitEntity,
+      "prop_ragdoll");
 
-      closestDist = rayPointDist;
-      foundEntity = ent;
-    }
+    if (hitEntity == null || !hitEntity.IsValid)
+      target.Value.HitEntityByDesignerName(out hitEntity,
+        "prop_physics_multiplayer");
 
-    var playerDist = playerPos.Distance(target);
+    var playerDist = target.Value.Distance();
     if (playerDist > MAX_DISTANCE) return;
-    if (foundEntity == null) return;
+    if (hitEntity == null) return;
 
     var apiPlayer   = converter.GetPlayer(player);
-    var pickupEvent = new PropPickupEvent(apiPlayer, foundEntity);
+    var pickupEvent = new PropPickupEvent(apiPlayer, hitEntity);
     bus.Dispatch(pickupEvent);
     if (pickupEvent.IsCanceled) return;
 
@@ -119,40 +85,76 @@ public class PropMover(IServiceProvider provider) : IPluginModule {
     pickupEvent.Prop.AcceptInput("DisableMotion");
   }
 
-  private void refreshBodies() {
-    foreach (var (player, info) in playersPressingE)
-      refreshBodies(player, info);
+  private void onCeaseUse(CCSPlayerController player, PlayerButtons released,
+    MovementInfo heldItem) {
+    if (!released.HasFlag(PlayerButtons.Use)) return;
+    playersPressingE.Remove(player);
+    if (!heldItem.Ragdoll.IsValid) return;
+    heldItem.Ragdoll.AcceptInput("EnableMotion");
+    if (heldItem.Beam != null && heldItem.Beam.IsValid)
+      heldItem.Beam.AcceptInput("Kill");
   }
 
-  private void refreshBodies(CCSPlayerController player, MovementInfo info) {
+  private void refreshHeld() {
+    foreach (var (player, info) in playersPressingE) refreshHeld(player, info);
+  }
+
+  private void refreshHeld(CCSPlayerController player, MovementInfo info) {
     var ent = info.Ragdoll;
-    if (!player.IsValid || !ent.IsValid) {
+    if (!player.IsValid || !ent.IsValid || ent.AbsOrigin == null) {
       playersPressingE.Remove(player);
       return;
     }
 
     var playerPawn = player.PlayerPawn.Value;
     if (playerPawn == null || !playerPawn.IsValid) return;
-    var playerOrigin = playerPawn.AbsOrigin;
+    var playerOrigin = player.GetEyePosition();
+
     if (playerOrigin == null) {
       playersPressingE.Remove(player);
       return;
     }
 
-    playerOrigin   =  playerOrigin.Clone()!;
-    playerOrigin.Z += 64;
+    var raytrace = player.GetGameTraceByEyePosition(TraceMask.MaskSolid,
+      Contents.NoDraw, player);
 
-    var eyeAngles = playerPawn!.EyeAngles;
+    if (raytrace == null) return;
 
-    var targetVector = playerOrigin + eyeAngles.Clone()!.ToForward()
-      * Math.Clamp(info.Distance, MIN_HOLDING_DISTANCE, MAX_HOLDING_DISTANCE);
+    var isOnSelf =
+      raytrace.Value.HitEntityByDesignerName(out CBaseEntity? _,
+        ent.DesignerName);
 
-    targetVector.Z = Math.Max(targetVector.Z, playerOrigin.Z - 48);
+    var endPos = raytrace.Value.EndPos.toVector();
 
-    if (ent.AbsOrigin == null) return;
-    var lerpedVector = ent.AbsOrigin.Lerp(targetVector, 0.3f);
+    if (isOnSelf || raytrace.Value.Distance() > MAX_HOLDING_DISTANCE)
+      endPos = playerOrigin
+        + playerPawn.EyeAngles.ToForward() * MAX_HOLDING_DISTANCE;
 
-    ent.Teleport(lerpedVector, QAngle.Zero, Vector.Zero);
+    if (ent.DesignerName == "prop_physics_multiplayer") {
+      ent.Teleport(endPos, QAngle.Zero, Vector.Zero);
+      return;
+    }
+
+    moveBody(endPos, ent);
+  }
+
+  private void moveBody(Vector endPos, CBaseEntity ent) {
+    var deadRot = DEAD_ANGLE.Clone()!;
+
+    var rotDeg = Server.CurrentTime * 64f % 360;
+    var rotRad = (rotDeg + 0) * (MathF.PI / 180);
+    deadRot.Y += rotDeg;
+
+    var xOff  = MathF.Cos(rotRad) * 32;
+    var yOff  = MathF.Sin(rotRad) * 32;
+    var xBias = MathF.Cos(rotRad + MathF.PI / 2) * 16;
+    var yBias = MathF.Sin(rotRad + MathF.PI / 2) * 16;
+    endPos.X += xBias;
+    endPos.Y += yBias;
+
+    endPos -= new Vector(xOff, yOff, 0);
+
+    ent.Teleport(endPos, deadRot, Vector.Zero);
   }
 
   private void refreshLines() {
@@ -177,7 +179,7 @@ public class PropMover(IServiceProvider provider) : IPluginModule {
     playerOrigin   =  playerOrigin.Clone()!;
     playerOrigin.Z += 64;
 
-    var eyeAngles = playerPawn!.EyeAngles;
+    var eyeAngles = playerPawn.EyeAngles;
 
     var targetVector = playerOrigin + eyeAngles.Clone()!.ToForward()
       * Math.Clamp(info.Distance, MIN_HOLDING_DISTANCE, MAX_HOLDING_DISTANCE);

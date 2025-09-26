@@ -26,11 +26,14 @@ public interface IGame : IDisposable {
   ///   Attempts to start a game.
   ///   Depending on implementation, this may start a countdown or immediately start the game.
   /// </summary>
-  /// <param name="countdown"></param>
+  /// <param name="countdown">TimeSpan for countdown, null means start immediately</param>
   IObservable<long>? Start(TimeSpan? countdown = null);
 
   void EndGame(EndReason? reason = null);
 
+  bool CheckEndConditions();
+
+  [Obsolete("This method is ambiguous, check the game state directly.")]
   bool IsInProgress() { return State is State.COUNTDOWN or State.IN_PROGRESS; }
 
   ISet<IOnlinePlayer> GetAlive() {

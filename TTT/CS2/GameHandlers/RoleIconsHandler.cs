@@ -1,22 +1,29 @@
 ﻿using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Utils;
+using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using TTT.API;
 using TTT.API.Events;
 using TTT.API.Game;
 using TTT.API.Player;
+using TTT.API.Role;
 using TTT.CS2.Extensions;
 using TTT.CS2.Hats;
 using TTT.CS2.Roles;
 using TTT.Game.Events.Game;
 using TTT.Game.Events.Player;
+using TTT.Game.Listeners;
 using TTT.Game.Roles;
 
 namespace TTT.CS2.GameHandlers;
 
 public class RoleIconsHandler(IServiceProvider provider)
-  : IPluginModule, IListener {
-  private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
+  : BaseListener(provider), IPluginModule {
+  private static readonly string CT_MODEL =
+    "characters/models/ctm_fbi/ctm_fbi_varianth.vmdl";
+
+  private static readonly string T_MODEL =
+    "characters/models/tm_phoenix/tm_phoenix.vmdl";
 
   private readonly IDictionary<int, IEnumerable<CPointWorldText>>
     detectiveIcons = new Dictionary<int, IEnumerable<CPointWorldText>>();
@@ -32,21 +39,13 @@ public class RoleIconsHandler(IServiceProvider provider)
 
   private readonly ISet<int> traitors = new HashSet<int>();
 
-  public void Dispose() { bus.UnregisterListener(this); }
-
-  public string Name => nameof(RoleIconsHandler);
-  public string Version => GitVersionInformation.FullSemVer;
-
-  public void Start() { }
-
   public void Start(BasePlugin? plugin) {
     plugin
     ?.RegisterListener<CounterStrikeSharp.API.Core.Listeners.CheckTransmit>(
         onTransmit);
-
-    bus.RegisterListener(this);
   }
 
+  [UsedImplicitly]
   [EventHandler(IgnoreCanceled = true)]
   public void OnRoundStart(GameStateUpdateEvent ev) {
     if (ev.NewState != State.IN_PROGRESS) return;
@@ -55,24 +54,19 @@ public class RoleIconsHandler(IServiceProvider provider)
     detectiveIcons.Clear();
   }
 
+  [UsedImplicitly]
   [EventHandler(IgnoreCanceled = true)]
   public void OnAssigned(PlayerRoleAssignEvent ev) {
     var player = players.GetPlayer(ev.Player);
     if (player == null || !player.IsValid) return;
 
     if (player.Team == CsTeam.Spectator) {
-      ev.Role = new SpectatorRole(provider);
+      ev.Role = new SpectatorRole(Provider);
       return;
     }
 
-    traitorIcons.TryGetValue(player.Slot, out var icons);
-    if (icons != null)
-      foreach (var icon in icons) {
-        if (!icon.IsValid) continue;
-        icon.Remove();
-      }
-
-    traitors.Remove(player.Slot);
+    // Remove in case we're re-assigning for some reason
+    removeAllIcons(player);
 
     player.SwitchTeam(ev.Role is DetectiveRole ?
       CsTeam.CounterTerrorist :
@@ -82,19 +76,22 @@ public class RoleIconsHandler(IServiceProvider provider)
     var pawn = player.Pawn.Value;
     if (pawn == null || !pawn.IsValid) return;
 
-    pawn.SetModel(ev.Role is DetectiveRole ?
-      "characters/models/ctm_fbi/ctm_fbi_varianth.vmdl" :
-      "characters/models/tm_phoenix/tm_phoenix.vmdl");
+    pawn.SetModel(ev.Role is DetectiveRole ? CT_MODEL : T_MODEL);
 
     if (ev.Role is InnocentRole) return;
 
+    assignIcon(player, ev.Role);
+  }
+
+  private void assignIcon(CCSPlayerController player, IRole role) {
     var textSettings = new TextSetting {
-      msg = ev.Role.Name.First(char.IsAsciiLetter) + "", color = ev.Role.Color
+      msg = role.Name.First(char.IsAsciiLetter).ToString(), color = role.Color
     };
     var roleIcon = textSpawner?.CreateTextHat(textSettings, player);
+
     if (roleIcon == null) return;
 
-    if (ev.Role is not TraitorRole) {
+    if (role is DetectiveRole) {
       detectiveIcons[player.Slot] = roleIcon;
       return;
     }
@@ -103,33 +100,35 @@ public class RoleIconsHandler(IServiceProvider provider)
     traitorIcons[player.Slot] = roleIcon;
   }
 
-  [EventHandler(Priority = Priority.MONITOR)]
-  public void OnDeath(PlayerDeathEvent ev) {
-    var gamePlayer = players.GetPlayer(ev.Victim);
-    if (gamePlayer == null || !gamePlayer.IsValid) return;
-
-    detectiveIcons.TryGetValue(gamePlayer.Slot, out var icons);
-    removeIcons(icons);
-    if (!traitors.Contains(gamePlayer.Slot)) return;
-
-    traitorIcons.TryGetValue(gamePlayer.Slot, out icons);
-    removeIcons(icons);
+  private void removeAllIcons(CCSPlayerController player) {
+    removeTraitorIcon(player);
+    removeDetectiveIcon(player);
   }
 
-  public void RevealIconFor(CCSPlayerController player) {
-    traitors.Add(player.Slot);
+  private void removeTraitorIcon(CCSPlayerController player) {
+    removeIcons(player.Slot, traitorIcons);
   }
 
-  public void HideIconFor(CCSPlayerController player) {
-    traitors.Remove(player.Slot);
+  private void removeDetectiveIcon(CCSPlayerController player) {
+    removeIcons(player.Slot, detectiveIcons);
   }
 
-  private void removeIcons(IEnumerable<CPointWorldText>? icons) {
+  private void removeIcons(int slot,
+    IDictionary<int, IEnumerable<CPointWorldText>> cache) {
+    cache.Remove(slot, out var icons);
     if (icons == null) return;
     foreach (var icon in icons) {
       if (!icon.IsValid) continue;
       icon.Remove();
     }
+  }
+
+  [EventHandler(Priority = Priority.MONITOR)]
+  public void OnDeath(PlayerDeathEvent ev) {
+    var gamePlayer = players.GetPlayer(ev.Victim);
+    if (gamePlayer == null || !gamePlayer.IsValid) return;
+
+    removeAllIcons(gamePlayer);
   }
 
   // ReSharper disable once PossiblyImpureMethodCallOnReadonlyVariable
