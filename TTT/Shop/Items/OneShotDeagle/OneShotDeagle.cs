@@ -38,7 +38,6 @@ public class OneShotDeagle(IServiceProvider provider) : IWeapon, IShopItem {
   public ShopItemConfig Config => deagleConfigStorage;
 
   public void OnPurchase(IOnlinePlayer player) {
-    inventoryManager.RemoveAllWeapons();
     inventoryManager.GiveWeapon(player, this);
   }
 
