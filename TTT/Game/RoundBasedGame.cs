@@ -122,6 +122,13 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
     return true;
   }
 
+  public void Dispose() {
+    State = State.FINISHED;
+    players.Clear();
+    Roles.Clear();
+    Logger.ClearActions();
+  }
+
   private bool getWinningTeam(out IRole? winningTeam) {
     winningTeam = null;
 
@@ -152,13 +159,6 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
         winningTeam = null;
         return false;
     }
-  }
-
-  public void Dispose() {
-    State = State.FINISHED;
-    players.Clear();
-    Roles.Clear();
-    Logger.ClearActions();
   }
 
   virtual protected void StartRound() {

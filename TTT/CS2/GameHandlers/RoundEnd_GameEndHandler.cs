@@ -8,7 +8,8 @@ using TTT.Game.Roles;
 
 namespace TTT.CS2.GameHandlers;
 
-public class RoundEnd_GameEndHandler(IServiceProvider provider) : IPluginModule {
+public class RoundEnd_GameEndHandler(IServiceProvider provider)
+  : IPluginModule {
   private readonly IGameManager games =
     provider.GetRequiredService<IGameManager>();
 

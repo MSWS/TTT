@@ -5,10 +5,9 @@ using TTT.API.Player;
 namespace TTT.Shop.Commands;
 
 public class BalanceCommand(IServiceProvider provider) : ICommand {
+  private readonly IShop shop = provider.GetRequiredService<IShop>();
   public string Name => "balance";
   public string[] Aliases => [Name, "bal", "credits", "money"];
-
-  private readonly IShop shop = provider.GetRequiredService<IShop>();
 
   public void Dispose() { }
   public void Start() { }

@@ -9,13 +9,13 @@ namespace TTT.CS2.RayTrace.Struct;
 /// </summary>
 [StructLayout(LayoutKind.Sequential)]
 public struct Hull {
-    /// <summary>
-    ///   The minimum corner of the bounding box (usually the lowest x, y, z values).
-    /// </summary>
-    public Vector3 Mins;
+  /// <summary>
+  ///   The minimum corner of the bounding box (usually the lowest x, y, z values).
+  /// </summary>
+  public Vector3 Mins;
 
-    /// <summary>
-    ///   The maximum corner of the bounding box (usually the highest x, y, z values).
-    /// </summary>
-    public Vector3 Maxs;
+  /// <summary>
+  ///   The maximum corner of the bounding box (usually the highest x, y, z values).
+  /// </summary>
+  public Vector3 Maxs;
 }

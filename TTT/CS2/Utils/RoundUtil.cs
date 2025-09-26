@@ -12,6 +12,8 @@ public static class RoundUtil {
     TerminateRoundFunc =
       new(GameData.GetSignature("CCSGameRules_TerminateRound"));
 
+  private static IEnumerable<CCSTeam>? _teamManager;
+
   public static int GetTimeElapsed() {
     if (ServerUtil.GameRules == null) return 0;
     var freezeTime = ServerUtil.GameRules.FreezeTime;
@@ -52,8 +54,6 @@ public static class RoundUtil {
     // TODO: Figure out what these params do
     TerminateRoundFunc.Invoke(gameRules.GameRules.Handle, 5f, reason, 0, 0);
   }
-
-  private static IEnumerable<CCSTeam>? _teamManager;
 
   public static void SetTeamScore(CsTeam team, int score) {
     _teamManager ??=

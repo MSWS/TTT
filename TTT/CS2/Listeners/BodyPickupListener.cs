@@ -3,14 +3,12 @@ using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Utils;
 using Microsoft.Extensions.DependencyInjection;
 using TTT.API.Events;
-using TTT.API.Game;
 using TTT.API.Player;
 using TTT.CS2.API;
 using TTT.CS2.Events;
 using TTT.CS2.Extensions;
 using TTT.Game;
 using TTT.Game.Events.Body;
-using TTT.Game.Events.Game;
 using TTT.Game.Listeners;
 using TTT.Game.Roles;
 
@@ -18,14 +16,14 @@ namespace TTT.CS2.Listeners;
 
 public class BodyPickupListener(IServiceProvider provider)
   : BaseListener(provider) {
+  private readonly IBodyTracker bodies =
+    provider.GetRequiredService<IBodyTracker>();
+
   private readonly IPlayerConverter<CCSPlayerController> converter =
     provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
 
   private readonly IAliveSpoofer? spoofer =
     provider.GetService<IAliveSpoofer>();
-
-  private readonly IBodyTracker bodies =
-    provider.GetRequiredService<IBodyTracker>();
 
   [EventHandler]
   public void OnPropPickup(PropPickupEvent ev) {

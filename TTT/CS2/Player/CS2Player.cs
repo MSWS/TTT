@@ -11,7 +11,7 @@ namespace TTT.CS2.Player;
 ///   Note that slot numbers are not guaranteed to be stable across server restarts.
 /// </summary>
 public class CS2Player : IOnlinePlayer {
-  private CCSPlayerController? cachePlayer = null!;
+  private CCSPlayerController? cachePlayer;
 
   protected CS2Player(string id, string name) {
     Id   = id;
@@ -46,6 +46,10 @@ public class CS2Player : IOnlinePlayer {
       return player is { IsValid: true } ? player : null;
     }
   }
+
+  private int namePadding
+    => Math.Min(Utilities.GetPlayers().Select(p => p.PlayerName.Length).Max(),
+      24);
 
   public string Id { get; }
   public string Name { get; }
@@ -101,10 +105,6 @@ public class CS2Player : IOnlinePlayer {
   }
 
   public override string ToString() { return createPaddedName(); }
-
-  private int namePadding
-    => Math.Min(Utilities.GetPlayers().Select(p => p.PlayerName.Length).Max(),
-      24);
 
   // Goal: Pad the name to a fixed width for better alignment in logs
   // Left-align ID, right-align name

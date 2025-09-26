@@ -9,10 +9,6 @@ using TTT.Shop;
 namespace TTT.CS2.Configs;
 
 public class CS2ShopConfig : IStorage<ShopConfig>, IPluginModule {
-  private readonly IServiceProvider _provider;
-
-  public CS2ShopConfig(IServiceProvider provider) { _provider = provider; }
-
   public static readonly FakeConVar<int> CV_STARTING_INNOCENT_CREDITS = new(
     "css_ttt_shop_start_innocent", "Starting credits for Innocents", 100,
     ConVarFlags.FCVAR_NONE, new RangeValidator<int>(0, 10000));
@@ -80,6 +76,10 @@ public class CS2ShopConfig : IStorage<ShopConfig>, IPluginModule {
     "css_ttt_shop_solo_kill_multiplier",
     "Multiplier applied to killer credits when there is no assist", 1.5f,
     ConVarFlags.FCVAR_NONE, new RangeValidator<float>(0f, 10f));
+
+  private readonly IServiceProvider _provider;
+
+  public CS2ShopConfig(IServiceProvider provider) { _provider = provider; }
 
   public void Dispose() { }
 

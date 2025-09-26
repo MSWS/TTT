@@ -40,10 +40,9 @@ public class CS2Game(IServiceProvider provider) : RoundBasedGame(provider) {
         return;
       }
 
-      if (countdown != null) {
+      if (countdown != null)
         Messenger?.MessageAll(
           Locale[GameMsgs.GAME_STATE_STARTING(countdown.Value)]);
-      }
 
       timer.Subscribe(_ => {
         Server.NextWorldUpdate(() => {

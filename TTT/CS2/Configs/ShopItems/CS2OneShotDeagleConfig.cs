@@ -5,7 +5,6 @@ using CounterStrikeSharp.API.Modules.Cvars.Validators;
 using TTT.API;
 using TTT.API.Storage;
 using TTT.CS2.Validators;
-using TTT.Shop;
 using TTT.Shop.Items;
 
 namespace TTT.CS2.Configs.ShopItems;
@@ -18,8 +17,7 @@ public class CS2OneShotDeagleConfig : IStorage<OneShotDeagleConfig>,
 
   public static readonly FakeConVar<bool> CV_FRIENDLY_FIRE = new(
     "css_ttt_shop_onedeagle_ff",
-    "Whether the One-Shot Deagle damages teammates", true,
-    ConVarFlags.FCVAR_NONE);
+    "Whether the One-Shot Deagle damages teammates", true);
 
   public static readonly FakeConVar<string> CV_WEAPON = new(
     "css_ttt_shop_onedeagle_weapon",

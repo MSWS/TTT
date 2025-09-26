@@ -7,13 +7,13 @@ using TTT.Locale;
 namespace TTT.Shop.Commands;
 
 public class BuyCommand(IServiceProvider provider) : ICommand {
-  private readonly IShop shop = provider.GetRequiredService<IShop>();
-
   private readonly IGameManager games =
     provider.GetRequiredService<IGameManager>();
 
   private readonly IMsgLocalizer locale =
     provider.GetRequiredService<IMsgLocalizer>();
+
+  private readonly IShop shop = provider.GetRequiredService<IShop>();
 
   public void Dispose() { }
   public string Name => "buy";

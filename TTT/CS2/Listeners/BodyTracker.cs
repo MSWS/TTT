@@ -12,8 +12,8 @@ namespace TTT.CS2.Listeners;
 
 public class BodyTracker(IServiceProvider provider)
   : BaseListener(provider), IBodyTracker {
-  public IDictionary<IBody, CRagdollProp> Bodies => bodyCache;
   private readonly Dictionary<IBody, CRagdollProp> bodyCache = new();
+  public IDictionary<IBody, CRagdollProp> Bodies => bodyCache;
 
   [EventHandler]
   public void OnGameState(GameStateUpdateEvent ev) {

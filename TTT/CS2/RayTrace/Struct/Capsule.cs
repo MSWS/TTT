@@ -9,18 +9,18 @@ namespace TTT.CS2.RayTrace.Struct;
 /// </summary>
 [StructLayout(LayoutKind.Sequential)]
 public struct Capsule {
-    /// <summary>
-    ///   The center point of one end of the capsule.
-    /// </summary>
-    public Vector3 CenterA;
+  /// <summary>
+  ///   The center point of one end of the capsule.
+  /// </summary>
+  public Vector3 CenterA;
 
-    /// <summary>
-    ///   The center point of the opposite end of the capsule.
-    /// </summary>
-    public Vector3 CenterB;
+  /// <summary>
+  ///   The center point of the opposite end of the capsule.
+  /// </summary>
+  public Vector3 CenterB;
 
-    /// <summary>
-    ///   The radius of the capsule.
-    /// </summary>
-    public float Radius;
+  /// <summary>
+  ///   The radius of the capsule.
+  /// </summary>
+  public float Radius;
 }

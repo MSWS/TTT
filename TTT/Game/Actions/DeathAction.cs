@@ -13,16 +13,6 @@ public class DeathAction(IRoleAssigner roles, IPlayer victim, IPlayer? killer)
     Details = $"using {ev.Weapon}";
   }
 
-  #region ConstructorAliases
-
-  public DeathAction(IServiceProvider provider, IPlayer victim, IPlayer? killer)
-    : this(provider.GetRequiredService<IRoleAssigner>(), victim, killer) { }
-
-  public DeathAction(IServiceProvider provider, PlayerDeathEvent ev) : this(
-    provider.GetRequiredService<IRoleAssigner>(), ev) { }
-
-  #endregion
-
   public IPlayer Player { get; } = victim;
   public IPlayer? Other { get; } = killer;
   public IRole? PlayerRole { get; } = roles.GetRoles(victim).FirstOrDefault();
@@ -47,4 +37,14 @@ public class DeathAction(IRoleAssigner roles, IPlayer victim, IPlayer? killer)
       $"{Other}{oRole} {Verb} {Player}{pRole} {Details}" :
       $"{Player}{pRole} {Verb} {Details}";
   }
+
+  #region ConstructorAliases
+
+  public DeathAction(IServiceProvider provider, IPlayer victim, IPlayer? killer)
+    : this(provider.GetRequiredService<IRoleAssigner>(), victim, killer) { }
+
+  public DeathAction(IServiceProvider provider, PlayerDeathEvent ev) : this(
+    provider.GetRequiredService<IRoleAssigner>(), ev) { }
+
+  #endregion
 }

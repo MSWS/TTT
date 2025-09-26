@@ -18,13 +18,13 @@ public class PlayerStatsTracker(IServiceProvider provider) : IListener {
   private readonly IPlayerFinder finder =
     provider.GetRequiredService<IPlayerFinder>();
 
+  private readonly IMessenger messenger =
+    provider.GetRequiredService<IMessenger>();
+
   private readonly ISet<int> revealedDeaths = new HashSet<int>();
 
   private readonly IDictionary<int, (int, int)> roundKillsAndAssists =
     new Dictionary<int, (int, int)>();
-
-  private readonly IMessenger messenger =
-    provider.GetRequiredService<IMessenger>();
 
   public void Dispose() { }
 

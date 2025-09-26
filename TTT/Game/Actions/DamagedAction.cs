@@ -13,6 +13,17 @@ public class DamagedAction(IRoleAssigner roles, IPlayer victim,
     ev.Attacker ?? throw new ArgumentNullException(nameof(ev.Attacker),
       "Attacker cannot be null"), ev.Weapon, ev.DmgDealt) { }
 
+
+  public string? Weapon { get; } = weapon;
+  public int Damage { get; } = damage;
+  public IPlayer Player { get; } = attacker;
+  public IPlayer? Other { get; } = victim;
+  public IRole? PlayerRole { get; } = roles.GetRoles(attacker).FirstOrDefault();
+  public IRole? OtherRole { get; } = roles.GetRoles(victim).FirstOrDefault();
+  public string Id => "basegame.action.attack";
+  public string Verb => "damaged";
+  public string Details => $"for {Damage} damage with {Weapon}";
+
   #region ConstructorAliases
 
   public DamagedAction(IServiceProvider provider, IPlayer victim,
@@ -24,15 +35,4 @@ public class DamagedAction(IRoleAssigner roles, IPlayer victim,
     provider.GetRequiredService<IRoleAssigner>(), ev) { }
 
   #endregion
-
-
-  public string? Weapon { get; } = weapon;
-  public int Damage { get; } = damage;
-  public IPlayer Player { get; } = attacker;
-  public IPlayer? Other { get; } = victim;
-  public IRole? PlayerRole { get; } = roles.GetRoles(attacker).FirstOrDefault();
-  public IRole? OtherRole { get; } = roles.GetRoles(victim).FirstOrDefault();
-  public string Id => "basegame.action.attack";
-  public string Verb => "damaged";
-  public string Details => $"for {Damage} damage with {Weapon}";
 }

@@ -20,13 +20,6 @@ public class TestCommand(IServiceProvider provider) : ICommand, IPluginModule {
     subCommands.Add("identifyall", new IdentifyAllCommand(provider));
   }
 
-  public void Start(BasePlugin? plugin, bool hotload) {
-    ((IPluginModule)this).Start();
-    foreach (var cmd in subCommands.Values.OfType<IPluginModule>()) {
-      cmd.Start(plugin, hotload);
-    }
-  }
-
   public Task<CommandResult>
     Execute(IOnlinePlayer? executor, ICommandInfo info) {
     if (executor == null) return Task.FromResult(CommandResult.PLAYER_ONLY);
@@ -45,5 +38,11 @@ public class TestCommand(IServiceProvider provider) : ICommand, IPluginModule {
     }
 
     return cmd.Execute(executor, info.Skip());
+  }
+
+  public void Start(BasePlugin? plugin, bool hotload) {
+    ((IPluginModule)this).Start();
+    foreach (var cmd in subCommands.Values.OfType<IPluginModule>())
+      cmd.Start(plugin, hotload);
   }
 }

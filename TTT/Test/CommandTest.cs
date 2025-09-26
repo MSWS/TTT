@@ -4,8 +4,8 @@ using TTT.API.Command;
 namespace TTT.Test;
 
 public abstract class CommandTest {
-  protected readonly ICommandManager Commands;
   protected readonly ICommand Command;
+  protected readonly ICommandManager Commands;
   protected readonly IServiceProvider Provider;
 
   public CommandTest(IServiceProvider provider, ICommand command) {

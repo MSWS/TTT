@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using TTT.API.Command;
-using TTT.Game.Commands;
+﻿using TTT.Game.Commands;
 using Xunit;
 
 namespace TTT.Test.Game.Command;

@@ -9,24 +9,24 @@ namespace TTT.CS2.RayTrace.Struct;
 /// </summary>
 [StructLayout(LayoutKind.Sequential)]
 public struct Mesh {
-    /// <summary>
-    ///   The minimum bounding coordinates (AABB) of the mesh.
-    /// </summary>
-    public Vector3 Mins;
+  /// <summary>
+  ///   The minimum bounding coordinates (AABB) of the mesh.
+  /// </summary>
+  public Vector3 Mins;
 
-    /// <summary>
-    ///   The maximum bounding coordinates (AABB) of the mesh.
-    /// </summary>
-    public Vector3 Maxs;
+  /// <summary>
+  ///   The maximum bounding coordinates (AABB) of the mesh.
+  /// </summary>
+  public Vector3 Maxs;
 
-    /// <summary>
-    ///   Pointer to an array of vertices in memory.
-    ///   Each vertex is typically a Vector3 or a custom vertex format.
-    /// </summary>
-    public IntPtr Vertices;
+  /// <summary>
+  ///   Pointer to an array of vertices in memory.
+  ///   Each vertex is typically a Vector3 or a custom vertex format.
+  /// </summary>
+  public IntPtr Vertices;
 
-    /// <summary>
-    ///   Number of vertices in the mesh.
-    /// </summary>
-    public int NumVertices;
+  /// <summary>
+  ///   Number of vertices in the mesh.
+  /// </summary>
+  public int NumVertices;
 }

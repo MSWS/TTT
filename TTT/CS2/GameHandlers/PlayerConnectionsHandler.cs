@@ -37,9 +37,8 @@ public class PlayerConnectionsHandler(IServiceProvider provider)
     Server.NextWorldUpdate(() => {
       foreach (var ev in Utilities.GetPlayers()
        .Select(player => converter.GetPlayer(player))
-       .Select(gamePlayer => new PlayerJoinEvent(gamePlayer))) {
+       .Select(gamePlayer => new PlayerJoinEvent(gamePlayer)))
         bus.Dispatch(ev);
-      }
     });
   }
 

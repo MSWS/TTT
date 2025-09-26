@@ -1,6 +1,5 @@
 using JetBrains.Annotations;
 using TTT.API.Events;
-using TTT.API.Game;
 using TTT.API.Role;
 using TTT.Game.Events.Player;
 using TTT.Game.Roles;

@@ -19,6 +19,12 @@ namespace TTT.CS2.GameHandlers;
 
 public class RoleIconsHandler(IServiceProvider provider)
   : BaseListener(provider), IPluginModule {
+  private static readonly string CT_MODEL =
+    "characters/models/ctm_fbi/ctm_fbi_varianth.vmdl";
+
+  private static readonly string T_MODEL =
+    "characters/models/tm_phoenix/tm_phoenix.vmdl";
+
   private readonly IDictionary<int, IEnumerable<CPointWorldText>>
     detectiveIcons = new Dictionary<int, IEnumerable<CPointWorldText>>();
 
@@ -38,12 +44,6 @@ public class RoleIconsHandler(IServiceProvider provider)
     ?.RegisterListener<CounterStrikeSharp.API.Core.Listeners.CheckTransmit>(
         onTransmit);
   }
-
-  private static readonly string CT_MODEL =
-    "characters/models/ctm_fbi/ctm_fbi_varianth.vmdl";
-
-  private static readonly string T_MODEL =
-    "characters/models/tm_phoenix/tm_phoenix.vmdl";
 
   [UsedImplicitly]
   [EventHandler(IgnoreCanceled = true)]

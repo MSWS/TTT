@@ -59,12 +59,13 @@ public record ShopConfig(IRoleAssigner assigner) {
     };
   }
 
-  public virtual int StartingCreditsForRole(IRole role)
-    => role switch {
+  public virtual int StartingCreditsForRole(IRole role) {
+    return role switch {
       TraitorRole   => StartingTraitorCredits,
       DetectiveRole => StartingDetectiveCredits,
       _             => StartingInnocentCredits
     };
+  }
 
   public virtual (int?, int?) CreditsFor(PlayerDeathEvent ev) {
     var victim   = ev.Victim;

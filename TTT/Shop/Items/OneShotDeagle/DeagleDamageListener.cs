@@ -2,7 +2,6 @@ using Microsoft.Extensions.DependencyInjection;
 using TTT.API.Events;
 using TTT.API.Game;
 using TTT.API.Player;
-using TTT.API.Role;
 using TTT.API.Storage;
 using TTT.Game.Events.Player;
 using TTT.Game.Listeners;

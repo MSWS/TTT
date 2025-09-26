@@ -21,46 +21,6 @@ public class EventBus(IServiceProvider provider) : IEventBus, ITerrorModule {
     resortListeners(dirtyTypes);
   }
 
-  private void resortListeners(HashSet<Type> dirtyTypes) {
-    // Sort handlers by priority
-    foreach (var type in dirtyTypes)
-      handlers[type]
-       .Sort((a, b) => {
-          var aPriority = a.method.GetCustomAttribute<EventHandlerAttribute>()
-          ?.Priority ?? Priority.DEFAULT;
-          var bPriority = b.method.GetCustomAttribute<EventHandlerAttribute>()
-          ?.Priority ?? Priority.DEFAULT;
-          return aPriority.CompareTo(bPriority);
-        });
-  }
-
-  private void appendListener(IListener listener, HashSet<Type> dirtyTypes) {
-    var methods = listener.GetType()
-     .GetMethods(BindingFlags.Instance | BindingFlags.Public
-        | BindingFlags.NonPublic);
-    foreach (var method in methods)
-      registerListenerMethod(listener, dirtyTypes, method);
-  }
-
-  private void registerListenerMethod(IListener listener,
-    HashSet<Type> dirtyTypes, MethodInfo method) {
-    var attr = method.GetCustomAttribute<EventHandlerAttribute>();
-    if (attr == null) return;
-
-    var parameters = method.GetParameters();
-    if (parameters.Length != 1
-      || !typeof(Event).IsAssignableFrom(parameters[0].ParameterType))
-      throw new InvalidOperationException(
-        $"Method {method.Name} in {listener.GetType().Name} "
-        + "must have exactly one parameter of type Event or its subclass.");
-
-    var eventType = parameters[0].ParameterType;
-    if (!handlers.ContainsKey(eventType)) handlers[eventType] = [];
-
-    handlers[eventType].Add((listener, method));
-    dirtyTypes.Add(eventType);
-  }
-
   public void UnregisterListener(IListener listener) {
     foreach (var kvp in handlers) {
       kvp.Value.RemoveAll(h => h.listener == listener);
@@ -103,5 +63,45 @@ public class EventBus(IServiceProvider provider) : IEventBus, ITerrorModule {
   public void Start() {
     var listeners = provider.GetServices<IListener>().ToList();
     foreach (var listener in listeners) RegisterListener(listener);
+  }
+
+  private void resortListeners(HashSet<Type> dirtyTypes) {
+    // Sort handlers by priority
+    foreach (var type in dirtyTypes)
+      handlers[type]
+       .Sort((a, b) => {
+          var aPriority = a.method.GetCustomAttribute<EventHandlerAttribute>()
+          ?.Priority ?? Priority.DEFAULT;
+          var bPriority = b.method.GetCustomAttribute<EventHandlerAttribute>()
+          ?.Priority ?? Priority.DEFAULT;
+          return aPriority.CompareTo(bPriority);
+        });
+  }
+
+  private void appendListener(IListener listener, HashSet<Type> dirtyTypes) {
+    var methods = listener.GetType()
+     .GetMethods(BindingFlags.Instance | BindingFlags.Public
+        | BindingFlags.NonPublic);
+    foreach (var method in methods)
+      registerListenerMethod(listener, dirtyTypes, method);
+  }
+
+  private void registerListenerMethod(IListener listener,
+    HashSet<Type> dirtyTypes, MethodInfo method) {
+    var attr = method.GetCustomAttribute<EventHandlerAttribute>();
+    if (attr == null) return;
+
+    var parameters = method.GetParameters();
+    if (parameters.Length != 1
+      || !typeof(Event).IsAssignableFrom(parameters[0].ParameterType))
+      throw new InvalidOperationException(
+        $"Method {method.Name} in {listener.GetType().Name} "
+        + "must have exactly one parameter of type Event or its subclass.");
+
+    var eventType = parameters[0].ParameterType;
+    if (!handlers.ContainsKey(eventType)) handlers[eventType] = [];
+
+    handlers[eventType].Add((listener, method));
+    dirtyTypes.Add(eventType);
   }
 }

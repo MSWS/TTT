@@ -12,10 +12,10 @@ public class KarmaSyncer(IServiceProvider provider) : IPluginModule {
   private readonly IPlayerConverter<CCSPlayerController> converter =
     provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
 
+  private readonly IKarmaService? karma = provider.GetService<IKarmaService>();
+
   private readonly IPlayerFinder players =
     provider.GetRequiredService<IPlayerFinder>();
-
-  private readonly IKarmaService? karma = provider.GetService<IKarmaService>();
 
   public void Dispose() { }
   public string Name => nameof(KarmaSyncer);

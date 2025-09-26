@@ -1,7 +1,5 @@
 ﻿using CounterStrikeSharp.API;
-using CounterStrikeSharp.API.Core;
 using Microsoft.Extensions.DependencyInjection;
-using TTT.API;
 using TTT.API.Command;
 using TTT.API.Player;
 using TTT.CS2.API;
@@ -21,9 +19,7 @@ public class ForceAliveCommand(IServiceProvider provider) : ICommand {
   public Task<CommandResult>
     Execute(IOnlinePlayer? executor, ICommandInfo info) {
     Server.NextWorldUpdate(() => {
-      foreach (var player in Utilities.GetPlayers()) {
-        spoofer.SpoofAlive(player);
-      }
+      foreach (var player in Utilities.GetPlayers()) spoofer.SpoofAlive(player);
     });
 
     info.ReplySync("Attempted to force alive.");

@@ -1,5 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using TTT.API;
 using TTT.API.Events;
 using TTT.API.Messages;
@@ -12,14 +11,14 @@ namespace TTT.Shop;
 
 public class Shop(IServiceProvider provider) : ITerrorModule, IShop {
   private readonly Dictionary<string, int> balances = new();
+
+  private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
   private readonly Dictionary<string, List<IShopItem>> items = new();
 
   private readonly IMsgLocalizer localizer =
     provider.GetRequiredService<IMsgLocalizer>();
 
   private readonly IMessenger? messenger = provider.GetService<IMessenger>();
-
-  private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
 
   public Task<int> Load(IPlayer key) {
     return Task.FromResult(balances.GetValueOrDefault(key.Id, 0));
@@ -50,7 +49,7 @@ public class Shop(IServiceProvider provider) : ITerrorModule, IShop {
     if (balEvent.IsCanceled) return;
     messenger?.Debug(
       $"[Shop] {player.Name} ({player.Id}) balance changed from {balEvent.OldBalance} to {balEvent.NewBalance} "
-      + $"({(balEvent.NewBalance - balEvent.OldBalance)})");
+      + $"({balEvent.NewBalance - balEvent.OldBalance})");
     balances[player.Id] = balEvent.NewBalance;
 
     if (!print || messenger == null) return;

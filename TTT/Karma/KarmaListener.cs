@@ -17,10 +17,10 @@ public class KarmaListener(IServiceProvider provider) : IListener {
   private static readonly int TRAITOR_ON_TRAITOR = -5;
   private static readonly int INNO_ON_DETECTIVE = -6;
 
+  private readonly Dictionary<string, int> badKills = new();
+
   private readonly IGameManager games =
     provider.GetRequiredService<IGameManager>();
-
-  private readonly Dictionary<string, int> badKills = new();
 
   private readonly IKarmaService karma =
     provider.GetRequiredService<IKarmaService>();
@@ -69,11 +69,10 @@ public class KarmaListener(IServiceProvider provider) : IListener {
         TRAITOR_ON_TRAITOR :
         INNO_ON_TRAITOR;
 
-    if (victimRole is DetectiveRole) {
+    if (victimRole is DetectiveRole)
       killerKarmaDelta = killerRole is TraitorRole ?
         TRAITOR_ON_DETECTIVE :
         INNO_ON_DETECTIVE;
-    }
 
     killerKarmaDelta *= attackerKarmaMultiplier;
 
