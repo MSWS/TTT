@@ -35,7 +35,7 @@ public class BodySpawner(IServiceProvider provider) : IPluginModule {
     player.SetColor(Color.FromArgb(0, 0, 0, 0));
 
     var ragdollBody = makeGameRagdoll(player);
-    var body        = new CS2Body(ragdollBody, converter.GetPlayer(player));
+    var body = new CS2Body(provider, ragdollBody, converter.GetPlayer(player));
 
     if (ev.Attacker != null && ev.Attacker.IsValid)
       body.WithKiller(converter.GetPlayer(ev.Attacker));

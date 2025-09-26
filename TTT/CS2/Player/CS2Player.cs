@@ -104,7 +104,7 @@ public class CS2Player : IOnlinePlayer {
 
   private int namePadding
     => Math.Min(Utilities.GetPlayers().Select(p => p.PlayerName.Length).Max(),
-      16);
+      24);
 
   // Goal: Pad the name to a fixed width for better alignment in logs
   // Left-align ID, right-align name

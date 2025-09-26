@@ -6,6 +6,7 @@ using TTT.API.Game;
 using TTT.API.Messages;
 using TTT.API.Player;
 using TTT.API.Storage;
+using TTT.CS2.API;
 using TTT.CS2.Command;
 using TTT.CS2.Command.Test;
 using TTT.CS2.Configs;
@@ -32,6 +33,7 @@ public static class CS2ServiceCollection {
      .AddModBehavior<IPlayerConverter<CCSPlayerController>,
         CCPlayerConverter>();
     collection.AddModBehavior<ICommandManager, CS2CommandManager>();
+    collection.AddModBehavior<IAliveSpoofer, CS2AliveSpoofer>();
 
     // Configs
     collection.AddModBehavior<IStorage<TTTConfig>, CS2GameConfig>();
@@ -58,6 +60,7 @@ public static class CS2ServiceCollection {
 
     // Listeners
     collection.AddModBehavior<BodyPickupListener>();
+    collection.AddModBehavior<IBodyTracker, BodyTracker>();
     collection.AddModBehavior<LateSpawnListener>();
     collection.AddModBehavior<PlayerStatsTracker>();
     collection.AddModBehavior<RoundTimerListener>();

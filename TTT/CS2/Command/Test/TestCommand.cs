@@ -1,4 +1,5 @@
-﻿using TTT.API;
+﻿using CounterStrikeSharp.API.Core;
+using TTT.API;
 using TTT.API.Command;
 using TTT.API.Player;
 
@@ -15,6 +16,15 @@ public class TestCommand(IServiceProvider provider) : ICommand, IPluginModule {
   public void Start() {
     subCommands.Add("setrole", new SetRoleCommand(provider));
     subCommands.Add("stop", new StopCommand(provider));
+    subCommands.Add("forcealive", new ForceAliveCommand(provider));
+    subCommands.Add("identifyall", new IdentifyAllCommand(provider));
+  }
+
+  public void Start(BasePlugin? plugin, bool hotload) {
+    ((IPluginModule)this).Start();
+    foreach (var cmd in subCommands.Values.OfType<IPluginModule>()) {
+      cmd.Start(plugin, hotload);
+    }
   }
 
   public Task<CommandResult>
@@ -34,6 +44,6 @@ public class TestCommand(IServiceProvider provider) : ICommand, IPluginModule {
       return Task.FromResult(CommandResult.INVALID_ARGS);
     }
 
-    return cmd.Execute(executor, new CS2CommandInfo(provider, info, 1));
+    return cmd.Execute(executor, info.Skip());
   }
 }

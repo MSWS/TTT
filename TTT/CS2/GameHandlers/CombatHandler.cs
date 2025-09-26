@@ -7,6 +7,7 @@ using TTT.API;
 using TTT.API.Events;
 using TTT.API.Game;
 using TTT.API.Player;
+using TTT.CS2.API;
 using TTT.Game.Events.Player;
 
 namespace TTT.CS2.GameHandlers;
@@ -19,6 +20,9 @@ public class CombatHandler(IServiceProvider provider) : IPluginModule {
 
   private readonly IGameManager games =
     provider.GetRequiredService<IGameManager>();
+
+  private readonly IAliveSpoofer spoofer =
+    provider.GetRequiredService<IAliveSpoofer>();
 
   public void Start() { }
 
@@ -41,23 +45,10 @@ public class CombatHandler(IServiceProvider provider) : IPluginModule {
     Server.NextWorldUpdateAsync(() => bus.Dispatch(deathEvent));
 
     info.DontBroadcast = true;
-    ev.FireEventToClient(player);
 
     hideAndTrackStats(ev, player);
 
-    // These delays are necessary for the game engine
-    Server.NextWorldUpdate(() => {
-      var pawn = player.Pawn.Value;
-      if (pawn == null || !pawn.IsValid) return;
-      pawn.DeathTime = 0;
-      Utilities.SetStateChanged(pawn, "CBasePlayerPawn", "m_flDeathTime");
-
-      Server.NextWorldUpdate(() => {
-        player.PawnIsAlive = true;
-        Utilities.SetStateChanged(player, "CCSPlayerController",
-          "m_bPawnIsAlive");
-      });
-    });
+    spoofer.SpoofAlive(player);
     return HookResult.Continue;
   }
 

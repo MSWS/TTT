@@ -46,12 +46,12 @@ public static class GameMsgs {
     return MsgFactory.Create(nameof(NOT_ENOUGH_PLAYERS), minNeeded);
   }
 
-  public static IMsg BODY_IDENTIFIED(IOnlinePlayer identifier, IPlayer ofPlayer,
-    IRole role) {
+  public static IMsg BODY_IDENTIFIED(IOnlinePlayer? identifier,
+    IPlayer ofPlayer, IRole role) {
     // TODO: Ideally we do this better
     var rolePrefix = GetRolePrefix(role);
-    return MsgFactory.Create(nameof(BODY_IDENTIFIED), identifier.Name,
-      rolePrefix + ofPlayer.Name, role.Name);
+    return MsgFactory.Create(nameof(BODY_IDENTIFIED),
+      identifier?.Name ?? "Someone", rolePrefix + ofPlayer.Name, role.Name);
   }
 
   public static char GetRolePrefix(IRole role) {

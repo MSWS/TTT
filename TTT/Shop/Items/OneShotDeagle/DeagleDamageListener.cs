@@ -5,41 +5,42 @@ using TTT.API.Player;
 using TTT.API.Role;
 using TTT.API.Storage;
 using TTT.Game.Events.Player;
+using TTT.Game.Listeners;
 
 namespace TTT.Shop.Items;
 
-public class DeagleDamageListener(IServiceProvider provider) : IListener {
+public class DeagleDamageListener(IServiceProvider provider)
+  : BaseListener(provider) {
   private readonly OneShotDeagleConfig config =
     provider.GetService<IStorage<OneShotDeagleConfig>>()
     ?.Load()
      .GetAwaiter()
      .GetResult() ?? new OneShotDeagleConfig();
 
-  private readonly IGameManager games =
-    provider.GetRequiredService<IGameManager>();
-
-  private readonly IRoleAssigner roles =
-    provider.GetRequiredService<IRoleAssigner>();
-
   private readonly IShop shop = provider.GetRequiredService<IShop>();
-
-  public void Dispose() { }
 
   [EventHandler]
   public void OnDamage(PlayerDamagedEvent ev) {
-    if (games.ActiveGame is not { State: State.IN_PROGRESS }) return;
+    Messenger.Debug("DeagleDamageListener: OnDamage");
+    if (Games.ActiveGame is not { State: State.IN_PROGRESS }) return;
     var attacker = ev.Attacker;
     var victim   = ev.Player;
 
     if (attacker == null) return;
+
+    Messenger.Debug("DeagleDamageListener: Attacker is not null");
+
     var deagleItem = shop.GetOwnedItems(attacker)
      .FirstOrDefault(s => s.Id == OneShotDeagle.ID);
     if (deagleItem == null) return;
 
+    Messenger.DebugAnnounce(
+      $"DeagleDamageListener: Attacker has deagle item, weapon: {ev.Weapon}");
+
     if (ev.Weapon != config.Weapon) return;
 
-    var attackerRole = roles.GetRoles(attacker);
-    var victimRole   = roles.GetRoles(victim);
+    var attackerRole = Roles.GetRoles(attacker);
+    var victimRole   = Roles.GetRoles(victim);
 
     shop.RemoveItem(attacker, deagleItem);
     if (!config.DoesFriendlyFire && attackerRole.Intersect(victimRole).Any())

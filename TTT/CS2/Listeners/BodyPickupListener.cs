@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using TTT.API.Events;
 using TTT.API.Game;
 using TTT.API.Player;
+using TTT.CS2.API;
 using TTT.CS2.Events;
 using TTT.CS2.Extensions;
 using TTT.Game;
@@ -17,36 +18,19 @@ namespace TTT.CS2.Listeners;
 
 public class BodyPickupListener(IServiceProvider provider)
   : BaseListener(provider) {
-  private readonly Dictionary<CBaseEntity, IBody> bodyCache = new();
-
   private readonly IPlayerConverter<CCSPlayerController> converter =
     provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
 
-  [EventHandler]
-  public void OnGameState(GameStateUpdateEvent ev) {
-    if (ev.NewState != State.IN_PROGRESS) return;
-    bodyCache.Clear();
-  }
+  private readonly IAliveSpoofer? spoofer =
+    provider.GetService<IAliveSpoofer>();
+
+  private readonly IBodyTracker bodies =
+    provider.GetRequiredService<IBodyTracker>();
 
   [EventHandler]
-  public void OnBodyCreate(BodyCreateEvent ev) {
-    if (!int.TryParse(ev.Body.Id, out var index))
-      throw new ArgumentException(
-        $"Body ID '{ev.Body.Id}' is not a valid entity index.");
-
-    var entity = Utilities.GetEntityFromIndex<CRagdollProp>(index);
-
-    if (entity == null || !entity.IsValid)
-      throw new InvalidOperationException(
-        $"Could not find valid entity for body ID '{ev.Body.Id}'.");
-
-    bodyCache[entity] = ev.Body;
-  }
-
-  [EventHandler(Priority = Priority.HIGH)]
   public void OnPropPickup(PropPickupEvent ev) {
-    if (!bodyCache.TryGetValue(ev.Prop, out var body)) return;
-    if (body.IsIdentified) return;
+    if (!bodies.TryLookup(ev.Prop.Index.ToString(), out var body)) return;
+    if (body == null || body.IsIdentified) return;
     if (ev.Player is not IOnlinePlayer online)
       throw new InvalidOperationException("Player is not an online player.");
 
@@ -54,29 +38,32 @@ public class BodyPickupListener(IServiceProvider provider)
 
     Bus.Dispatch(identifyEvent);
     if (identifyEvent.IsCanceled) return;
+  }
 
-    body.IsIdentified = true;
-    var role = Roles.GetRoles(body.OfPlayer);
+  [EventHandler]
+  public void OnIdentify(BodyIdentifyEvent ev) {
+    ev.Body.IsIdentified = true;
+
+    var role = Roles.GetRoles(ev.Body.OfPlayer);
     if (role.Count == 0) return;
-    var primaryRole = role.First();
 
-    Messenger.MessageAll(
-      Locale[GameMsgs.BODY_IDENTIFIED(online, body.OfPlayer, primaryRole)]);
+    var primary = role.First();
 
-    var gameBody =
-      Utilities.GetEntityFromIndex<CRagdollProp>(int.Parse(body.Id));
-    if (gameBody != null && gameBody.IsValid)
-      gameBody.SetColor(role.First().Color);
+    Messenger.MessageAll(Locale[
+      GameMsgs.BODY_IDENTIFIED(ev.Identifier, ev.Body.OfPlayer, primary)]);
 
-    var onlinePlayer = converter.GetPlayer(body.OfPlayer);
-    if (onlinePlayer == null || !onlinePlayer.IsValid) return;
+    if (!bodies.Bodies.TryGetValue(ev.Body, out var ragdoll)) return;
 
-    if (primaryRole is InnocentRole)
-      onlinePlayer.SwitchTeam(CsTeam.CounterTerrorist);
+    if (ragdoll.IsValid) ragdoll.SetColor(primary.Color);
 
-    onlinePlayer.PawnIsAlive = false;
-    onlinePlayer.SetClan(primaryRole.Name);
-    Utilities.SetStateChanged(onlinePlayer, "CCSPlayerController",
-      "m_bPawnIsAlive");
+    var online = converter.GetPlayer(ev.Body.OfPlayer);
+    if (online is not { IsValid: true }) return;
+
+    if (primary is InnocentRole) online.SwitchTeam(CsTeam.CounterTerrorist);
+
+    spoofer?.UnspoofAlive(online);
+    online.PawnIsAlive = false;
+    online.SetClan(primary.Name);
+    Utilities.SetStateChanged(online, "CCSPlayerController", "m_bPawnIsAlive");
   }
 }

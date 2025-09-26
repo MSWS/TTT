@@ -37,8 +37,12 @@ public class DeathAction(IRoleAssigner roles, IPlayer victim, IPlayer? killer)
   public string Details { get; } = string.Empty;
 
   public string Format() {
-    var pRole = PlayerRole != null ? $" [{PlayerRole.Name.First()}]" : "";
-    var oRole = OtherRole != null ? $" [{OtherRole.Name.First()}]" : "";
+    var pRole = PlayerRole != null ?
+      $" [{PlayerRole.Name.First(char.IsAsciiLetter)}]" :
+      "";
+    var oRole = OtherRole != null ?
+      $" [{OtherRole.Name.First(char.IsAsciiLetter)}]" :
+      "";
     return Other is not null ?
       $"{Other}{oRole} {Verb} {Player}{pRole} {Details}" :
       $"{Player}{pRole} {Verb} {Details}";
