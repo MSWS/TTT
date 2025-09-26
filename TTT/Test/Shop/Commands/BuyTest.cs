@@ -114,4 +114,18 @@ public class BuyTest {
     Assert.Contains(TestShopItem.ID,
       shop.GetOwnedItems(player).Select(s => s.Id));
   }
+
+  [Fact]
+  public async Task Buy_OutsideOfGame_Fails() {
+    var player = TestPlayer.Random();
+    var info   = new TestCommandInfo(provider, player, "buy", TestShopItem.ID);
+
+    shop.RegisterItem(new TestShopItem());
+    await shop.Write(player, 150);
+    var result = await manager.ProcessCommand(info);
+
+    Assert.Equal(CommandResult.SUCCESS, result);
+    Assert.Single(player.Messages);
+    Assert.Contains("currently closed", player.Messages.First());
+  }
 }
