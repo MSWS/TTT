@@ -11,6 +11,8 @@ using TTT.Game.Roles;
 namespace TTT.CS2.Game;
 
 public class CS2Game(IServiceProvider provider) : RoundBasedGame(provider) {
+  public override IActionLogger Logger { get; } = new CS2Logger(provider);
+
   public override IList<IRole> Roles { get; } = [
     new SpectatorRole(provider), new InnocentRole(provider),
     new TraitorRole(provider), new DetectiveRole(provider)

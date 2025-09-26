@@ -47,23 +47,18 @@ public class SimpleLogger(IServiceProvider provider) : IActionLogger {
     epoch = null;
   }
 
-  public void PrintLogs() {
-    Server.NextWorldUpdate(() => {
-      msg.Value.BackgroundMsgAll(locale[GameMsgs.GAME_LOGS_HEADER]);
-      foreach (var (time, action) in GetActions())
-        msg.Value.BackgroundMsgAll($"{formatTime(time)} {action.Format()}");
-      msg.Value.BackgroundMsgAll(locale[GameMsgs.GAME_LOGS_FOOTER]);
-    });
+  public virtual void PrintLogs() {
+    msg.Value.BackgroundMsgAll(locale[GameMsgs.GAME_LOGS_HEADER]);
+    foreach (var (time, action) in GetActions())
+      msg.Value.BackgroundMsgAll($"{formatTime(time)} {action.Format()}");
+    msg.Value.BackgroundMsgAll(locale[GameMsgs.GAME_LOGS_FOOTER]);
   }
 
-  public void PrintLogs(IOnlinePlayer? player) {
-    Server.NextWorldUpdate(() => {
-      msg.Value.BackgroundMsg(player, locale[GameMsgs.GAME_LOGS_HEADER]);
-      foreach (var (time, action) in GetActions())
-        msg.Value.BackgroundMsg(player,
-          $"{formatTime(time)} {action.Format()}");
-      msg.Value.BackgroundMsg(player, locale[GameMsgs.GAME_LOGS_FOOTER]);
-    });
+  public virtual void PrintLogs(IOnlinePlayer? player) {
+    msg.Value.BackgroundMsg(player, locale[GameMsgs.GAME_LOGS_HEADER]);
+    foreach (var (time, action) in GetActions())
+      msg.Value.BackgroundMsg(player, $"{formatTime(time)} {action.Format()}");
+    msg.Value.BackgroundMsg(player, locale[GameMsgs.GAME_LOGS_FOOTER]);
   }
 
   private string formatTime(DateTime time) {

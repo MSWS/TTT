@@ -38,7 +38,7 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
 
   public ICollection<IPlayer> Players => players;
 
-  public IActionLogger Logger { get; } = new SimpleLogger(provider);
+  public virtual IActionLogger Logger { get; } = new SimpleLogger(provider);
 
   public DateTime? StartedAt { get; protected set; }
   public DateTime? FinishedAt { get; protected set; }
