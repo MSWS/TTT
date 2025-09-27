@@ -43,22 +43,21 @@ public class TextSpawner : ITextSpawner {
     return [screen];
   }
 
-  private CPointWorldText spawnScreen(TextSetting setting,
-    CCSPlayerController player) {
+  public CPointWorldText spawnScreen(TextSetting setting,
+    CCSPlayerController player, float xOff = 0, float yOff = 0,
+    float zDist = 50) {
     if (player.Pawn.Value == null || player.Pawn.Value.AbsRotation == null)
       throw new Exception("Failed to get player rotation");
     var eyes       = player.GetEyePosition().Clone()!;
     var localAngle = player.Pawn.Value.AbsRotation.Clone()!;
     var forward    = localAngle.Clone()!.ToForward();
-    var inFront    = eyes + forward * 50;
+    var right      = localAngle.ToRight();
+    var up         = localAngle.ToUp();
+    var inFront    = eyes + forward * zDist;
+    var centered   = inFront + right * xOff + up * yOff;
 
-    var angle = new Angle(localAngle.X, localAngle.Y, 90);
-    // point angle at player
-    angle.Y     += 180;
-    angle.Pitch =  90;
-
-    var ent = CreateText(setting, inFront,
-      new QAngle(angle.X, angle.Y, angle.Z));
+    var ent = CreateText(setting, centered,
+      new QAngle(localAngle.X + 180, localAngle.Y + 90, localAngle.Z + 270));
     ent.AcceptInput("SetParent", player.Pawn.Value, null, "!activator");
     return ent;
   }
@@ -73,19 +72,10 @@ public class TextSpawner : ITextSpawner {
     position.Add(new Vector(0, 0, 72));
     rotation = new QAngle(rotation.X, rotation.Y + yRot, rotation.Z + 90);
 
-    position.Add(GetRightVector(rotation) * -10);
+    position.Add(rotation.ToRight() * -10);
 
     var ent = CreateText(setting, position, rotation);
     ent.AcceptInput("SetParent", player.Pawn.Value, null, "!activator");
     return ent;
-  }
-
-  public static Vector GetRightVector(QAngle rotation) {
-    var forward = new Vector {
-      X = (float)Math.Cos(rotation.Y * Math.PI / 180),
-      Y = (float)Math.Sin(rotation.Y * Math.PI / 180),
-      Z = 0
-    };
-    return forward;
   }
 }

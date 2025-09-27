@@ -18,7 +18,8 @@ public class TestCommand(IServiceProvider provider) : ICommand, IPluginModule {
     subCommands.Add("stop", new StopCommand(provider));
     subCommands.Add("forcealive", new ForceAliveCommand(provider));
     subCommands.Add("identifyall", new IdentifyAllCommand(provider));
-    subCommands.Add("screentext", new ScreenTextCommand(provider));
+    subCommands.Add("state", new StateCommand(provider));
+    subCommands.Add("screencolor", new ScreenColorCommand(provider));
   }
 
   public Task<CommandResult>

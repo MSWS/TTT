@@ -25,6 +25,9 @@ public class PlayerJoinStarting(IServiceProvider provider)
       $"There are {playerCount} Players online, starting the game...");
 
     var game = Games.CreateGame();
+
+    if (game == null)
+      Messenger.DebugAnnounce("Failed to create a new game instance.");
     game?.Start(config.RoundCfg.CountDownDuration);
   }
 }

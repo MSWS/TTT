@@ -63,6 +63,7 @@ public static class CS2ServiceCollection {
     collection.AddModBehavior<LateSpawnListener>();
     collection.AddModBehavior<PlayerStatsTracker>();
     collection.AddModBehavior<RoundTimerListener>();
+    collection.AddModBehavior<ScreenColorApplier>();
 
     // Commands
 #if DEBUG
