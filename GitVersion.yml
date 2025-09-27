@@ -1,0 +1,42 @@
+mode: ContinuousDeployment
+tag-prefix: ""                       # allow bare numeric tags like 2.0.0
+commit-message-incrementing: Enabled
+
+assembly-versioning-scheme: MajorMinorPatch
+
+# Never allow commit messages to trigger a major bump
+major-version-bump-message: "(?!)"
+
+# Opt-in bumps via tokens
+minor-version-bump-message: \+semver:\s?minor
+patch-version-bump-message: \+semver:\s?patch
+
+branches:
+  main:
+    label: ""                        # clears the default prerelease label
+    increment: None                  # no automatic bump unless +semver token
+    prevent-increment:
+      of-merged-branch: true
+      when-branch-merged: true
+      when-current-commit-tagged: true
+  develop:
+    label: "dev"
+    increment: None
+    prevent-increment:
+      of-merged-branch: true
+      when-branch-merged: true
+      when-current-commit-tagged: true
+  feature:
+    label: "feat"
+    increment: None
+  release:
+    label: "rc"
+    increment: None
+  hotfix:
+    label: "hotfix"
+    increment: None
+  pull-request:
+    label: "pr"
+    increment: None
+
+assembly-informational-format: "{FullSemVer}+Branch.{BranchName}.Sha.{ShortSha}"
