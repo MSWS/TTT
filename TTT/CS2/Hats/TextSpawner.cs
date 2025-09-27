@@ -43,20 +43,22 @@ public class TextSpawner : ITextSpawner {
     return [screen];
   }
 
-  private static readonly QAngle screenAngle = new(90, 180, 0);
-
   private CPointWorldText spawnScreen(TextSetting setting,
     CCSPlayerController player) {
     if (player.Pawn.Value == null || player.Pawn.Value.AbsRotation == null)
       throw new Exception("Failed to get player rotation");
     var eyes       = player.GetEyePosition().Clone()!;
-    var forward    = player.Pawn.Value.AbsRotation.Clone()!.ToForward();
-    var inFront    = eyes + forward * 50;
     var localAngle = player.Pawn.Value.AbsRotation.Clone()!;
-    localAngle = new QAngle(screenAngle.X, localAngle.Y + screenAngle.Y,
-      screenAngle.Z);
+    var forward    = localAngle.Clone()!.ToForward();
+    var inFront    = eyes + forward * 50;
 
-    var ent = CreateText(setting, inFront, screenAngle);
+    var angle = new Angle(localAngle.X, localAngle.Y, 90);
+    // point angle at player
+    angle.Y     += 180;
+    angle.Pitch =  90;
+
+    var ent = CreateText(setting, inFront,
+      new QAngle(angle.X, angle.Y, angle.Z));
     ent.AcceptInput("SetParent", player.Pawn.Value, null, "!activator");
     return ent;
   }
