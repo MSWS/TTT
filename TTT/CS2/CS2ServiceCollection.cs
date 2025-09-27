@@ -65,7 +65,9 @@ public static class CS2ServiceCollection {
     collection.AddModBehavior<RoundTimerListener>();
 
     // Commands
+#if DEBUG
     collection.AddModBehavior<TestCommand>();
+#endif
 
     collection.AddScoped<IGameManager, CS2GameManager>();
     collection.AddScoped<IInventoryManager, CS2InventoryManager>();

@@ -2,6 +2,7 @@
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Utils;
 using TTT.CS2.Extensions;
+using TTT.CS2.RayTrace.Class;
 using Vector = CounterStrikeSharp.API.Modules.Utils.Vector;
 
 namespace TTT.CS2.Hats;
@@ -34,6 +35,30 @@ public class TextSpawner : ITextSpawner {
     var two = spawnHatPart(setting, player, 180);
 
     return [one, two];
+  }
+
+  public IEnumerable<CPointWorldText> CreateTextScreen(TextSetting setting,
+    CCSPlayerController player) {
+    var screen = spawnScreen(setting, player);
+    return [screen];
+  }
+
+  private static readonly QAngle screenAngle = new(90, 180, 0);
+
+  private CPointWorldText spawnScreen(TextSetting setting,
+    CCSPlayerController player) {
+    if (player.Pawn.Value == null || player.Pawn.Value.AbsRotation == null)
+      throw new Exception("Failed to get player rotation");
+    var eyes       = player.GetEyePosition().Clone()!;
+    var forward    = player.Pawn.Value.AbsRotation.Clone()!.ToForward();
+    var inFront    = eyes + forward * 50;
+    var localAngle = player.Pawn.Value.AbsRotation.Clone()!;
+    localAngle = new QAngle(screenAngle.X, localAngle.Y + screenAngle.Y,
+      screenAngle.Z);
+
+    var ent = CreateText(setting, inFront, screenAngle);
+    ent.AcceptInput("SetParent", player.Pawn.Value, null, "!activator");
+    return ent;
   }
 
   private CPointWorldText spawnHatPart(TextSetting setting,
