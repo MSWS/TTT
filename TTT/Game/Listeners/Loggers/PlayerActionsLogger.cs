@@ -8,7 +8,8 @@ namespace TTT.Game.Listeners.Loggers;
 
 public class PlayerActionsLogger(IServiceProvider provider)
   : BaseListener(provider) {
-  [EventHandler]
+  // Needs to be higher so we detect the kill before the game ends
+  [EventHandler(Priority = Priority.HIGHER)]
   [UsedImplicitly]
   public void OnPlayerKill(PlayerDeathEvent ev) {
     if (Games.ActiveGame is not { State: State.IN_PROGRESS }) return;

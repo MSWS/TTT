@@ -19,6 +19,7 @@ public interface IInventoryManager {
     RemoveWeapon(player, weapon.Id);
   }
 
+  void RemoveWeaponInSlot(IOnlinePlayer player, int slot);
 
   /// <summary>
   ///   Removes all weapons from the player.

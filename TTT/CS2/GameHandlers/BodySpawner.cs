@@ -11,6 +11,7 @@ using TTT.API.Game;
 using TTT.API.Player;
 using TTT.CS2.Extensions;
 using TTT.Game.Events.Body;
+using TTT.Game.Roles;
 
 namespace TTT.CS2.GameHandlers;
 
@@ -40,7 +41,7 @@ public class BodySpawner(IServiceProvider provider) : IPluginModule {
     if (ev.Attacker != null && ev.Attacker.IsValid)
       body.WithKiller(converter.GetPlayer(ev.Attacker));
 
-    body.WithWeapon(ev.Weapon);
+    body.WithWeapon(new BaseWeapon(ev.Weapon));
 
     var bodyCreatedEvent = new BodyCreateEvent(body);
     bus.Dispatch(bodyCreatedEvent);
