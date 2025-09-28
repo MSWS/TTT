@@ -23,6 +23,7 @@ jobs:
       - uses: actions/checkout@v5
         with:
           fetch-depth: 0
+          fetch-tags: true
 
       # 1. Calculate version using GitVersion
       - name: Install GitVersion
@@ -75,27 +76,63 @@ jobs:
           git tag ${{ steps.gitversion.outputs.fullSemVer }}
           git push origin ${{ steps.gitversion.outputs.fullSemVer }}
 
-      # 4. Determine previous tag for changelog
+      # 4. Determine previous relevant tag (lineage-aware)
       - name: Determine previous relevant tag
         id: prev_tag
         run: |
+          set -euo pipefail
           branch="${GITHUB_REF_NAME}"
-          if [[ "$branch" == "main" ]]; then
-            prev=$(git tag --sort=-creatordate | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' | sed -n 2p)
-          else
-            prev=$(git tag --sort=-creatordate | grep -E '^[0-9]+\.[0-9]+\.[0-9]+-' | sed -n 2p)
-          fi
-          echo "tag=${prev:-0.0.0}" >> $GITHUB_OUTPUT
 
-      # 5. Generate raw changelog
+          # Use HEAD^ to skip the tag we just created. If no parent, fall back to HEAD.
+          if git rev-parse --verify -q HEAD^ >/dev/null; then
+            base_rev="HEAD^"
+          else
+            base_rev="HEAD"
+          fi
+
+          # Match stable tags on main and prerelease tags on non-main
+          if [[ "$branch" == "main" ]]; then
+            pattern='[0-9]*.[0-9]*.[0-9]*'
+          else
+            pattern='[0-9]*.[0-9]*.[0-9]*-*'
+          fi
+
+          # Nearest tag reachable on this lineage, not just "second most recent by date"
+          prev=$(git describe --tags --abbrev=0 --match "$pattern" --tags "$base_rev" 2>/dev/null || true)
+
+          echo "tag=${prev:-0.0.0}" >> "$GITHUB_OUTPUT"
+
+
+      # 5. Generate changelog using local git (no compare API)
       - name: Generate changelog
         run: |
-          gh api repos/${{ github.repository }}/compare/${{ steps.prev_tag.outputs.tag }}...${{ steps.gitversion.outputs.fullSemVer }} \
-            --jq '.commits[].commit.message' > CHANGELOG.md
-        env:
-          GH_TOKEN: ${{ github.token }}
+          set -euo pipefail
 
-      # 5b. Rewrite changelog with OpenAI (Route 2)
+          prev="${{ steps.prev_tag.outputs.tag }}"
+          curr="${{ steps.gitversion.outputs.fullSemVer }}"
+
+          # Choose what you want in the raw feed: %s = subject only, %B = full message
+          GIT_LOG_FORMAT='%s'
+
+          if [[ "$prev" == "0.0.0" ]]; then
+            # First release: whole history to this tag, first-parent to reflect main’s narrative
+            git log --first-parent --no-merges --format="${GIT_LOG_FORMAT}" --reverse "$curr" > CHANGELOG.md
+          else
+            # Strict range between the previous reachable tag and the new tag on this lineage
+            git log --first-parent --no-merges --format="${GIT_LOG_FORMAT}" --reverse "$prev..$curr" > CHANGELOG.md
+          fi
+
+          # Fallback in case nothing was captured
+          if [[ ! -s CHANGELOG.md ]]; then
+            echo "No commits found between $prev and $curr on first-parent. Using full messages without first-parent filter." >&2
+            if [[ "$prev" == "0.0.0" ]]; then
+              git log --no-merges --format="${GIT_LOG_FORMAT}" --reverse "$curr" > CHANGELOG.md
+            else
+              git log --no-merges --format="${GIT_LOG_FORMAT}" --reverse "$prev..$curr" > CHANGELOG.md
+            fi
+          fi
+
+      # 5b. Rewrite changelog with OpenAI
       - name: Rewrite changelog with OpenAI
         id: ai_changelog
         if: success()
