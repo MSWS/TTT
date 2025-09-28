@@ -12,6 +12,13 @@ permissions:
 jobs:
   auto-release:
     runs-on: ubuntu-latest
+    env:
+      # Tweak these if you want a different model or style
+      OPENAI_MODEL: gpt-4o-mini
+      OPENAI_TEMPERATURE: "0.2"
+      # Safety: cap how many characters we feed to the model
+      MAX_CHANGELOG_CHARS: "50000"
+
     steps:
       - uses: actions/checkout@v5
         with:
@@ -48,7 +55,7 @@ jobs:
         run: |
           cd build/TTT
           zip -r TTT-${{ steps.gitversion.outputs.fullSemVer }}.zip *
-      
+
       # 2. Get latest tag
       - name: Get latest tag
         id: latest_tag
@@ -80,7 +87,7 @@ jobs:
           fi
           echo "tag=${prev:-0.0.0}" >> $GITHUB_OUTPUT
 
-      # 5. Generate changelog
+      # 5. Generate raw changelog
       - name: Generate changelog
         run: |
           gh api repos/${{ github.repository }}/compare/${{ steps.prev_tag.outputs.tag }}...${{ steps.gitversion.outputs.fullSemVer }} \
@@ -88,7 +95,71 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
 
-      # 6. Create release
+      # 5b. Rewrite changelog with OpenAI (Route 2)
+      - name: Rewrite changelog with OpenAI
+        id: ai_changelog
+        if: success()
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_MODEL: ${{ env.OPENAI_MODEL }}
+          OPENAI_TEMPERATURE: ${{ env.OPENAI_TEMPERATURE }}
+          MAX_CHANGELOG_CHARS: ${{ env.MAX_CHANGELOG_CHARS }}
+        run: |
+          set -euo pipefail
+
+          # Ensure we have a changelog to work with
+          if [[ ! -s CHANGELOG.md ]]; then
+            echo "CHANGELOG.md is empty. Skipping AI rewrite."
+            echo "skipped=true" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          # Trim the input to a safe size for token limits
+          head -c "${MAX_CHANGELOG_CHARS}" CHANGELOG.md > CHANGELOG_RAW.md
+
+          # Build the JSON body. We feed system guidance and the raw changelog
+          # See OpenAI Responses API docs for the schema and output_text helper. :contentReference[oaicite:0]{index=0}
+          jq -Rs --arg sys "You are an expert release-notes editor. Rewrite the text so it is grouped by Features, Fixes, Docs, and Chore. Use clear user-facing language. Remove internal ticket IDs and commit hashes unless essential. Merge duplicates. Use imperative voice. Output valid Markdown only. Include a short summary at the top." \
+                --arg temp "${OPENAI_TEMPERATURE}" \
+                --arg model "${OPENAI_MODEL}" \
+                '{model:$model, temperature: ($temp|tonumber), input:[{role:"system", content:$sys},{role:"user", content:.}]}' CHANGELOG_RAW.md > request.json
+
+          # Call the API
+          # Basic retry on transient failures
+          for i in 1 2 3; do
+            HTTP_CODE=$(curl -sS -w "%{http_code}" -o ai_response.json \
+              https://api.openai.com/v1/responses \
+              -H "Content-Type: application/json" \
+              -H "Authorization: Bearer $OPENAI_API_KEY" \
+              --data-binary @request.json) && break || true
+            echo "Call attempt $i failed with HTTP $HTTP_CODE"
+            sleep $((i*i))
+          done
+
+          if [[ "${HTTP_CODE:-000}" -lt 200 || "${HTTP_CODE:-000}" -ge 300 ]]; then
+            echo "OpenAI API call failed with HTTP $HTTP_CODE. Keeping raw changelog."
+            echo "skipped=true" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          # Prefer output_text if present. Fallback to first text item. :contentReference[oaicite:1]{index=1}
+          if jq -e '.output_text' ai_response.json >/dev/null; then
+            jq -r '.output_text' ai_response.json > CHANGELOG.md
+          else
+            jq -r '.output[0].content[] | select(.type=="output_text") | .text' ai_response.json | sed '/^[[:space:]]*$/d' > CHANGELOG.md
+          fi
+
+          # If the rewrite somehow produced an empty file, keep the raw one
+          if [[ ! -s CHANGELOG.md ]]; then
+            echo "AI returned empty content. Restoring raw changelog."
+            mv CHANGELOG_RAW.md CHANGELOG.md
+            echo "skipped=true" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          echo "skipped=false" >> $GITHUB_OUTPUT
+
+      # 6. Create release using the (possibly rewritten) changelog
       - name: Create GitHub release
         uses: softprops/action-gh-release@v2
         with:
