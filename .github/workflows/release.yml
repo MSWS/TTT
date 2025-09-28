@@ -131,6 +131,8 @@ jobs:
               git log --no-merges --format="${GIT_LOG_FORMAT}" --reverse "$prev..$curr" > CHANGELOG.md
             fi
           fi
+          
+          cat CHANGELOG.md
 
       # 5b. Rewrite changelog with OpenAI
       - name: Rewrite changelog with OpenAI
@@ -195,6 +197,8 @@ jobs:
           fi
 
           echo "skipped=false" >> $GITHUB_OUTPUT
+          echo "Rewritten changelog:"
+          cat CHANGELOG.md
 
       # 6. Create release using the (possibly rewritten) changelog
       - name: Create GitHub release
