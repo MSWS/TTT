@@ -22,10 +22,10 @@ public class CS2InventoryManager(
     if (player.Team is CsTeam.None or CsTeam.Spectator) return;
 
     // Give the weapon
-    player.GiveNamedItem(weapon.Id);
+    player.GiveNamedItem(weapon.WeaponId);
 
     // Set ammo if applicable
-    var weaponBase = player.GetWeaponBase(weapon.Id);
+    var weaponBase = player.GetWeaponBase(weapon.WeaponId);
     if (weaponBase == null) return;
     if (weapon.CurrentAmmo != null) weaponBase.Clip1 = weapon.CurrentAmmo.Value;
     if (weapon.ReserveAmmo != null) weaponBase.Clip2 = weapon.ReserveAmmo.Value;

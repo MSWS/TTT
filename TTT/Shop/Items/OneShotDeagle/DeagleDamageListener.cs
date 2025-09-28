@@ -1,3 +1,4 @@
+using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using TTT.API.Events;
 using TTT.API.Game;
@@ -18,6 +19,7 @@ public class DeagleDamageListener(IServiceProvider provider)
 
   private readonly IShop shop = provider.GetRequiredService<IShop>();
 
+  [UsedImplicitly]
   [EventHandler]
   public void OnDamage(PlayerDamagedEvent ev) {
     Messenger.Debug("DeagleDamageListener: OnDamage");

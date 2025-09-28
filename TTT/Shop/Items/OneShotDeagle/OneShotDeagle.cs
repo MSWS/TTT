@@ -47,7 +47,7 @@ public class OneShotDeagle(IServiceProvider provider) : IWeapon, IShopItem {
 
   string IShopItem.Id => ID;
 
-  public string Id => deagleConfigStorage.Weapon;
+  public string WeaponId => deagleConfigStorage.Weapon;
 
   public int? ReserveAmmo { get; init; } = 0;
   public int? CurrentAmmo { get; init; } = 1;
