@@ -12,7 +12,7 @@ public class RoundShopClearer(IServiceProvider provider) : IListener {
 
   public void Dispose() { bus.UnregisterListener(this); }
 
-  [EventHandler(IgnoreCanceled = true, Priority = Priority.LOWER)]
+  [EventHandler(IgnoreCanceled = true, Priority = Priority.LOW)]
   [UsedImplicitly]
   public void OnRoundStart(GameStateUpdateEvent ev) {
     // Only clear balances if the round is in progress

@@ -19,4 +19,7 @@ public interface ITextSpawner {
 
   IEnumerable<CPointWorldText> CreateTextHat(TextSetting setting,
     CCSPlayerController player);
+  
+  IEnumerable<CPointWorldText> CreateTextScreen(TextSetting setting,
+    CCSPlayerController player);
 }

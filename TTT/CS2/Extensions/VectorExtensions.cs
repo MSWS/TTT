@@ -46,6 +46,40 @@ public static class VectorExtensions {
       (float)(Math.Sin(yaw) * cosPitch), (float)-Math.Sin(pitch));
   }
 
+  public static Vector ToRight(this QAngle angle) {
+    var pitch = angle.X * (Math.PI / 180.0);
+    var yaw   = angle.Y * (Math.PI / 180.0);
+    var roll  = angle.Z * (Math.PI / 180.0);
+
+    var sinPitch = Math.Sin(pitch);
+    var cosPitch = Math.Cos(pitch);
+    var sinYaw   = Math.Sin(yaw);
+    var cosYaw   = Math.Cos(yaw);
+    var sinRoll  = Math.Sin(roll);
+    var cosRoll  = Math.Cos(roll);
+
+    return new Vector((float)(sinYaw * sinPitch * cosRoll - cosYaw * sinRoll),
+      (float)(-cosYaw * sinPitch * cosRoll - sinYaw * sinRoll),
+      (float)(cosPitch * -sinRoll));
+  }
+
+  public static Vector ToUp(this QAngle angle) {
+    var pitch = angle.X * (Math.PI / 180.0);
+    var yaw   = angle.Y * (Math.PI / 180.0);
+    var roll  = angle.Z * (Math.PI / 180.0);
+
+    var sinPitch = Math.Sin(pitch);
+    var cosPitch = Math.Cos(pitch);
+    var sinYaw   = Math.Sin(yaw);
+    var cosYaw   = Math.Cos(yaw);
+    var sinRoll  = Math.Sin(roll);
+    var cosRoll  = Math.Cos(roll);
+
+    return new Vector((float)(-cosYaw * sinPitch * cosRoll - sinYaw * sinRoll),
+      (float)(-sinYaw * sinPitch * cosRoll + cosYaw * sinRoll),
+      (float)(cosPitch * cosRoll));
+  }
+
   public static Vector Lerp(this Vector from, Vector to, float t) {
     return new Vector(from.X + (to.X - from.X) * t,
       from.Y + (to.Y - from.Y) * t, from.Z + (to.Z - from.Z) * t);

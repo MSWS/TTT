@@ -4,7 +4,7 @@ public interface IWeapon {
   /// <summary>
   ///   The internal ID of the weapon, should match the ID of the weapon in the underlying game.
   /// </summary>
-  public string Id { get; }
+  public string WeaponId { get; }
 
   /// <summary>
   ///   The amount of ammo that is in reserve for this weapon.

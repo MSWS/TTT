@@ -42,9 +42,9 @@ public class PlayerStatsTracker(IServiceProvider provider) : IListener {
     revealedDeaths.Add(gamePlayer.Slot);
   }
 
-  // Needs to be higher so we detect the kill the game ends
+  // Needs to be higher so we detect the kill before the game ends
   // in the case that this is the last player
-  [EventHandler(Priority = Priority.HIGHER)]
+  [EventHandler(Priority = Priority.HIGH)]
   public void OnKill(PlayerDeathEvent ev) {
     var killer = ev.Killer == null ? null : converter.GetPlayer(ev.Killer);
     var assister =

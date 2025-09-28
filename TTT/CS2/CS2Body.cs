@@ -37,10 +37,6 @@ public class CS2Body(IServiceProvider provider, CRagdollProp ragdoll,
     return this;
   }
 
-  public CS2Body WithWeapon(string weapon) {
-    return WithWeapon(new BaseWeapon(weapon));
-  }
-
   public CS2Body WithKiller(IPlayer? killer) {
     Killer = killer;
     return this;

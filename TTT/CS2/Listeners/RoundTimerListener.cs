@@ -43,7 +43,7 @@ public class RoundTimerListener(IServiceProvider provider)
           player.Respawn();
 
         foreach (var player in Utilities.GetPlayers())
-          player.SetColor(Color.FromArgb(254, 255, 255, 255));
+          player.SetColor(Color.White);
       });
 
       return;

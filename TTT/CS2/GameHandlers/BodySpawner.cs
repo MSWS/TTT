@@ -11,6 +11,7 @@ using TTT.API.Game;
 using TTT.API.Player;
 using TTT.CS2.Extensions;
 using TTT.Game.Events.Body;
+using TTT.Game.Roles;
 
 namespace TTT.CS2.GameHandlers;
 
@@ -32,7 +33,7 @@ public class BodySpawner(IServiceProvider provider) : IPluginModule {
       return HookResult.Continue;
     var player = ev.Userid;
     if (player == null || !player.IsValid) return HookResult.Continue;
-    player.SetColor(Color.FromArgb(0, 0, 0, 0));
+    player.SetColor(Color.FromArgb(0, 255, 255, 255));
 
     var ragdollBody = makeGameRagdoll(player);
     var body = new CS2Body(provider, ragdollBody, converter.GetPlayer(player));
@@ -40,7 +41,7 @@ public class BodySpawner(IServiceProvider provider) : IPluginModule {
     if (ev.Attacker != null && ev.Attacker.IsValid)
       body.WithKiller(converter.GetPlayer(ev.Attacker));
 
-    body.WithWeapon(ev.Weapon);
+    body.WithWeapon(new BaseWeapon(ev.Weapon));
 
     var bodyCreatedEvent = new BodyCreateEvent(body);
     bus.Dispatch(bodyCreatedEvent);
@@ -53,7 +54,7 @@ public class BodySpawner(IServiceProvider provider) : IPluginModule {
   public HookResult OnStart(EventRoundStart ev, GameEventInfo _) {
     Server.NextWorldUpdate(() => {
       foreach (var player in Utilities.GetPlayers())
-        player.SetColor(Color.FromArgb(254, 255, 255, 255));
+        player.SetColor(Color.White);
     });
     return HookResult.Continue;
   }

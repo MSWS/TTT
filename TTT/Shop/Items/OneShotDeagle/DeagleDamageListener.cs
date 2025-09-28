@@ -1,3 +1,4 @@
+using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using TTT.API.Events;
 using TTT.API.Game;
@@ -18,6 +19,7 @@ public class DeagleDamageListener(IServiceProvider provider)
 
   private readonly IShop shop = provider.GetRequiredService<IShop>();
 
+  [UsedImplicitly]
   [EventHandler]
   public void OnDamage(PlayerDamagedEvent ev) {
     Messenger.Debug("DeagleDamageListener: OnDamage");
@@ -42,10 +44,16 @@ public class DeagleDamageListener(IServiceProvider provider)
     var victimRole   = Roles.GetRoles(victim);
 
     shop.RemoveItem(attacker, deagleItem);
-    if (!config.DoesFriendlyFire && attackerRole.Intersect(victimRole).Any())
+    if (!config.DoesFriendlyFire && attackerRole.Intersect(victimRole).Any()) {
+      Messenger.DebugAnnounce(
+        "DeagleDamageListener: Friendly fire is off, roles intersect");
       return;
+    }
 
+    Messenger.DebugAnnounce(
+      "DeagleDamageListener: One-shot kill conditions met");
     if (victim is not IOnlinePlayer onlineVictim) return;
+    Messenger.DebugAnnounce("DeagleDamageListener: One-shot kill applied");
     onlineVictim.Health = 0;
   }
 }

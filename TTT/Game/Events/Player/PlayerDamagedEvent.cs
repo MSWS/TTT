@@ -80,6 +80,6 @@ public class PlayerDamagedEvent(IOnlinePlayer player, IOnlinePlayer? attacker,
     }
   }
 
-  public string? Weapon { get; private set; }
+  public string? Weapon { get; init; }
   public bool IsCanceled { get; set; }
 }

@@ -16,7 +16,15 @@ public class TestPlayer(string id, string name) : IOnlinePlayer {
   public int Health { get; set; } = 100;
   public int MaxHealth { get; set; } = 100;
   public int Armor { get; set; } = 100;
-  public bool IsAlive { get; set; } = true;
+
+  public bool IsAlive {
+    get => Health > 0;
+    set {
+      if (!value)
+        Health = 0;
+      else if (Health <= 0) { Health = 1; }
+    }
+  }
 
   public static TestPlayer Random() {
     return new TestPlayer(new Random().NextInt64().ToString(),
