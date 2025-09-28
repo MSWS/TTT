@@ -32,7 +32,8 @@ public static class PlayerExtensions {
     if (!player.IsValid || pawn == null || !pawn.IsValid) return;
 
     if (color.A == 255)
-      color = Color.FromArgb(pawn.Render.A, color.R, color.G, color.B);
+      color = Color.FromArgb(pawn.Render.A == 255 ? 255 : 254, color.R, color.G,
+        color.B);
     pawn.SetColor(color);
   }
 

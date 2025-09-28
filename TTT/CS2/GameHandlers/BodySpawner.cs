@@ -33,7 +33,7 @@ public class BodySpawner(IServiceProvider provider) : IPluginModule {
       return HookResult.Continue;
     var player = ev.Userid;
     if (player == null || !player.IsValid) return HookResult.Continue;
-    player.SetColor(Color.FromArgb(0, 0, 0, 0));
+    player.SetColor(Color.FromArgb(0, 255, 255, 255));
 
     var ragdollBody = makeGameRagdoll(player);
     var body = new CS2Body(provider, ragdollBody, converter.GetPlayer(player));
@@ -54,7 +54,7 @@ public class BodySpawner(IServiceProvider provider) : IPluginModule {
   public HookResult OnStart(EventRoundStart ev, GameEventInfo _) {
     Server.NextWorldUpdate(() => {
       foreach (var player in Utilities.GetPlayers())
-        player.SetColor(Color.FromArgb(254, 255, 255, 255));
+        player.SetColor(Color.White);
     });
     return HookResult.Continue;
   }
