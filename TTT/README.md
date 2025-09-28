@@ -5,7 +5,7 @@ the subsidiary projects (i.e. not [Versioning](../Versioning)).
 
 # Structure
 ## [API](./API)
-The public API for TTT. Use this to add-on extra features, modules, roles, etc.
+The public API for TTT. Include this to add-on extra features, modules, roles, etc.
 
 ## [CS2](./CS2)
 A linker for CS2 to TTT. This adds support for CS2 to TTT.

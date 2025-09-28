@@ -13,28 +13,16 @@ public static class ServiceCollectionExtensions {
     this IServiceCollection collection)
     where TExtension : class, ITerrorModule {
     if (typeof(TExtension).IsAssignableTo(typeof(IPluginModule))) {
-# if DEBUG
-      Console.WriteLine(
-        $"[DEBUG] Registering {typeof(TExtension).Name} as IPluginModule");
-# endif
       collection.AddTransient<IPluginModule>(provider
         => (provider.GetRequiredService<TExtension>() as IPluginModule)!);
     }
 
     if (typeof(TExtension).IsAssignableTo(typeof(IListener))) {
-#if DEBUG
-      Console.WriteLine(
-        $"[DEBUG] Registering {typeof(TExtension).Name} as IListener");
-# endif
       collection.AddTransient<IListener>(provider
         => (provider.GetRequiredService<TExtension>() as IListener)!);
     }
 
     if (typeof(TExtension).IsAssignableTo(typeof(ICommand))) {
-#if DEBUG
-      Console.WriteLine(
-        $"[DEBUG] Registering {typeof(TExtension).Name} as ICommand");
-#endif
       collection.AddTransient<ICommand>(provider
         => (provider.GetRequiredService<TExtension>() as ICommand)!);
     }
