@@ -39,15 +39,21 @@ public class Shop(IServiceProvider provider) : ITerrorModule, IShop {
     if (cost > bal) {
       if (printReason)
         messenger?.Message(player,
-          "You do not have enough credits to purchase this item.");
+          localizer[ShopMsgs.SHOP_INSUFFICIENT_BALANCE(item, bal)]);
       return PurchaseResult.INSUFFICIENT_FUNDS;
     }
 
     var canPurchase = item.CanPurchase(player);
     if (canPurchase != PurchaseResult.SUCCESS) {
-      if (printReason)
+      if (!printReason) return canPurchase;
+      if (canPurchase == PurchaseResult.UNKNOWN_ERROR)
+        messenger?.Message(player, localizer[ShopMsgs.SHOP_CANNOT_PURCHASE]);
+      else
         messenger?.Message(player,
-          "You cannot purchase this item at this time.");
+          localizer[
+            ShopMsgs.SHOP_CANNOT_PURCHASE_WITH_REASON(
+              canPurchase.ToMessage())]);
+
       return canPurchase;
     }
 
