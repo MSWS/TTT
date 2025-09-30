@@ -48,7 +48,10 @@ public class DeagleDamageListener(IServiceProvider provider)
     if (attackerRole.Intersect(victimRole).Any()) {
       if (config.KillShooterOnFF) attacker.Health = 0;
       Messenger.Message(attacker, Locale[DeagleMsgs.SHOP_ITEM_DEAGLE_HIT_FF]);
-      if (!config.DoesFriendlyFire) return;
+      if (!config.DoesFriendlyFire) {
+        ev.IsCanceled = true;
+        return;
+      }
     }
 
     if (victim is not IOnlinePlayer onlineVictim) return;

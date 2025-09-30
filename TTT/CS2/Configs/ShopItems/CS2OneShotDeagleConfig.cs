@@ -17,7 +17,7 @@ public class CS2OneShotDeagleConfig : IStorage<OneShotDeagleConfig>,
 
   public static readonly FakeConVar<bool> CV_FRIENDLY_FIRE = new(
     "css_ttt_shop_onedeagle_ff",
-    "Whether the One-Shot Deagle damages teammates", true);
+    "Whether the One-Shot Deagle damages teammates");
 
   public static readonly FakeConVar<bool> CV_KILL_SHOOTER_ON_FF = new(
     "css_ttt_shop_onedeagle_kill_shooter_on_ff",
@@ -25,13 +25,8 @@ public class CS2OneShotDeagleConfig : IStorage<OneShotDeagleConfig>,
 
   public static readonly FakeConVar<string> CV_WEAPON = new(
     "css_ttt_shop_onedeagle_weapon",
-    "Weapon entity name used for the One-Shot Deagle", "weapon_revolver",
+    "Weapon entity name used for the One-Shot Weapon", "weapon_revolver",
     ConVarFlags.FCVAR_NONE, new ItemValidator(allowEmpty: false));
-
-  // public static readonly FakeConVar<int> CV_WEAPON_SLOT = new(
-  //   "css_ttt_shop_onedeagle_weapon_slot",
-  //   "Weapon slot to give the One-Shot Deagle in", 1,
-  //   ConVarFlags.FCVAR_NONE, new RangeValidator<int>(0, 5));
 
   public void Dispose() { }
 
