@@ -8,6 +8,7 @@ namespace TTT.CS2.Player;
 public class CCPlayerConverter : IPluginModule,
   IPlayerConverter<CCSPlayerController> {
   private readonly Dictionary<string, CS2Player> playerCache = new();
+  private readonly Dictionary<string, CCSPlayerController> reverseCache = new();
 
   public IPlayer GetPlayer(CCSPlayerController player) {
     if (playerCache.TryGetValue(player.SteamID.ToString(),
@@ -28,12 +29,19 @@ public class CCPlayerConverter : IPluginModule,
 
   public CCSPlayerController? GetPlayer(IPlayer player) {
     if (!ulong.TryParse(player.Id, out var steamId)) return null;
+    if (reverseCache.TryGetValue(player.Id, out var cachedPlayer)) {
+      if (cachedPlayer.IsValid) return cachedPlayer;
+
+      reverseCache.Remove(player.Id);
+    }
+
     CCSPlayerController? result = null;
     var                  gamePlayer = Utilities.GetPlayerFromSteamId(steamId);
     if (gamePlayer is { IsValid: true }) result = gamePlayer;
 
     var bot = Utilities.GetPlayerFromIndex((int)steamId);
     if (bot is { IsValid: true }) result = bot;
+    if (result != null) reverseCache[player.Id] = result;
     return result;
   }
 
