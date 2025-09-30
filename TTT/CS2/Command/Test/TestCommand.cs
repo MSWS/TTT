@@ -20,6 +20,7 @@ public class TestCommand(IServiceProvider provider) : ICommand, IPluginModule {
     subCommands.Add("identifyall", new IdentifyAllCommand(provider));
     subCommands.Add("state", new StateCommand(provider));
     subCommands.Add("screencolor", new ScreenColorCommand(provider));
+    subCommands.Add("giveitem", new GiveItemCommand(provider));
   }
 
   public Task<CommandResult>

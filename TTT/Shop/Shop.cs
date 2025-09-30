@@ -33,7 +33,27 @@ public class Shop(IServiceProvider provider) : ITerrorModule, IShop {
 
   public PurchaseResult TryPurchase(IOnlinePlayer player, IShopItem item,
     bool printReason = true) {
-    return PurchaseResult.UNKNOWN_ERROR;
+    var cost = item.Config.Price;
+    var bal  = balances.GetValueOrDefault(player.Id, 0);
+
+    if (cost > bal) {
+      if (printReason)
+        messenger?.Message(player,
+          "You do not have enough credits to purchase this item.");
+      return PurchaseResult.INSUFFICIENT_FUNDS;
+    }
+
+    var canPurchase = item.CanPurchase(player);
+    if (canPurchase != PurchaseResult.SUCCESS) {
+      if (printReason)
+        messenger?.Message(player,
+          "You cannot purchase this item at this time.");
+      return canPurchase;
+    }
+
+    balances[player.Id] = bal - cost;
+    GiveItem(player, item);
+    return PurchaseResult.SUCCESS;
   }
 
   public void AddBalance(IOnlinePlayer player, int amount, string reason = "",
@@ -66,6 +86,7 @@ public class Shop(IServiceProvider provider) : ITerrorModule, IShop {
   public void GiveItem(IOnlinePlayer player, IShopItem item) {
     if (!items.ContainsKey(player.Id)) items[player.Id] = [];
     items[player.Id].Add(item);
+    item.OnPurchase(player);
   }
 
   public IList<IShopItem> GetOwnedItems(IOnlinePlayer player) {

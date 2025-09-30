@@ -38,7 +38,11 @@ public class OneShotDeagle(IServiceProvider provider) : IWeapon, IShopItem {
   public ShopItemConfig Config => deagleConfigStorage;
 
   public void OnPurchase(IOnlinePlayer player) {
-    inventoryManager.GiveWeapon(player, this);
+    Task.Run(async () => {
+      await inventoryManager.RemoveWeaponInSlot(player,
+        deagleConfigStorage.WeaponSlot);
+      await inventoryManager.GiveWeapon(player, this);
+    });
   }
 
   public PurchaseResult CanPurchase(IOnlinePlayer player) {
@@ -57,4 +61,5 @@ public record OneShotDeagleConfig : ShopItemConfig {
   public override int Price { get; init; } = 100;
   public bool DoesFriendlyFire { get; init; } = true;
   public string Weapon { get; init; } = "revolver";
+  public int WeaponSlot { get; init; } = 1;
 }

@@ -44,21 +44,22 @@ public class BuyCommand(IServiceProvider provider) : ICommand {
       return CommandResult.ERROR;
     }
 
-    var bal = await shop.Load(executor);
-    if (item.Config.Price > bal) {
-      info.ReplySync(
-        $"You cannot afford '{item.Name}'. It costs {item.Config.Price}, but you have {bal}.");
-      return CommandResult.ERROR;
-    }
-
-    if (item.CanPurchase(executor) != PurchaseResult.SUCCESS) {
-      info.ReplySync($"You cannot purchase '{item.Name}'.");
-      return CommandResult.ERROR;
-    }
-
-    await shop.Write(executor, bal - item.Config.Price);
-    item.OnPurchase(executor);
-    shop.GiveItem(executor, item);
+    shop.TryPurchase(executor, item);
+    // var bal = await shop.Load(executor);
+    // if (item.Config.Price > bal) {
+    //   info.ReplySync(
+    //     $"You cannot afford '{item.Name}'. It costs {item.Config.Price}, but you have {bal}.");
+    //   return CommandResult.ERROR;
+    // }
+    //
+    // if (item.CanPurchase(executor) != PurchaseResult.SUCCESS) {
+    //   info.ReplySync($"You cannot purchase '{item.Name}'.");
+    //   return CommandResult.ERROR;
+    // }
+    //
+    // await shop.Write(executor, bal - item.Config.Price);
+    // item.OnPurchase(executor);
+    // shop.GiveItem(executor, item);
     return CommandResult.SUCCESS;
   }
 

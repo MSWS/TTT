@@ -1,3 +1,4 @@
+using CounterStrikeSharp.API;
 using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using TTT.API.Events;
@@ -29,16 +30,17 @@ public class DeagleDamageListener(IServiceProvider provider)
 
     if (attacker == null) return;
 
-    Messenger.Debug("DeagleDamageListener: Attacker is not null");
-
     var deagleItem = shop.GetOwnedItems(attacker)
      .FirstOrDefault(s => s.Id == OneShotDeagle.ID);
     if (deagleItem == null) return;
 
-    Messenger.DebugAnnounce(
-      $"DeagleDamageListener: Attacker has deagle item, weapon: {ev.Weapon}");
-
-    if (ev.Weapon != config.Weapon) return;
+    if (ev.Weapon != config.Weapon) {
+      // CS2 specifically causes the weapon to be "weapon_deagle" even if
+      // the player is holding a revolver, so we need to check for that as well
+      if (ev.Weapon is not "weapon_deagle"
+        || !config.Weapon.Equals("weapon_revolver"))
+        return;
+    }
 
     var attackerRole = Roles.GetRoles(attacker);
     var victimRole   = Roles.GetRoles(victim);
@@ -50,10 +52,7 @@ public class DeagleDamageListener(IServiceProvider provider)
       return;
     }
 
-    Messenger.DebugAnnounce(
-      "DeagleDamageListener: One-shot kill conditions met");
     if (victim is not IOnlinePlayer onlineVictim) return;
-    Messenger.DebugAnnounce("DeagleDamageListener: One-shot kill applied");
     onlineVictim.Health = 0;
   }
 }
