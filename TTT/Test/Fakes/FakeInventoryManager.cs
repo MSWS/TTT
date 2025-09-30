@@ -5,18 +5,18 @@ namespace TTT.Test.Fakes;
 
 public class FakeInventoryManager : IInventoryManager {
   public Task GiveWeapon(IOnlinePlayer player, IWeapon weapon) {
-    throw new NotImplementedException();
+    return Task.CompletedTask;
   }
 
   public Task RemoveWeapon(IOnlinePlayer player, string weaponId) {
-    throw new NotImplementedException();
+    return Task.CompletedTask;
   }
 
   public Task RemoveWeaponInSlot(IOnlinePlayer player, int slot) {
-    throw new NotImplementedException();
+    return Task.CompletedTask;
   }
 
   public Task RemoveAllWeapons(IOnlinePlayer player) {
-    throw new NotImplementedException();
+    return Task.CompletedTask;
   }
 }

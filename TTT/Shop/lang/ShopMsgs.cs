@@ -16,4 +16,16 @@ public static class ShopMsgs {
     return MsgFactory.Create(nameof(CREDITS_GIVEN_REASON), amo > 0 ? "+" : "-",
       Math.Abs(amo), reason);
   }
+
+  public static IMsg SHOP_INSUFFICIENT_BALANCE(IShopItem item, int bal) {
+    return MsgFactory.Create(nameof(SHOP_INSUFFICIENT_BALANCE), item.Name,
+      item.Config.Price, bal);
+  }
+
+  public static IMsg SHOP_CANNOT_PURCHASE
+    => MsgFactory.Create(nameof(SHOP_CANNOT_PURCHASE));
+
+  public static IMsg SHOP_CANNOT_PURCHASE_WITH_REASON(string reason) {
+    return MsgFactory.Create(nameof(SHOP_CANNOT_PURCHASE_WITH_REASON), reason);
+  }
 }

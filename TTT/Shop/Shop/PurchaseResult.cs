@@ -37,3 +37,22 @@ public enum PurchaseResult {
   /// </summary>
   ALREADY_OWNED
 }
+
+public static class PurchaseResultExtensions {
+  public static string ToMessage(this PurchaseResult result) {
+    return result switch {
+      PurchaseResult.SUCCESS => "Purchase successful.",
+      PurchaseResult.INSUFFICIENT_FUNDS =>
+        "You do not have enough funds to complete this purchase.",
+      PurchaseResult.ITEM_NOT_FOUND => "The item was not found in the shop.",
+      PurchaseResult.ITEM_NOT_PURCHASABLE =>
+        "You cannot purchase this item at the moment.",
+      PurchaseResult.PURCHASE_CANCELED => "The purchase was canceled.",
+      PurchaseResult.UNKNOWN_ERROR =>
+        "An unknown error occurred during the purchase.",
+      PurchaseResult.ALREADY_OWNED =>
+        "You already own this item and cannot purchase it again.",
+      _ => "An unexpected error occurred."
+    };
+  }
+}

@@ -23,7 +23,6 @@ public class DeagleDamageListener(IServiceProvider provider)
   [UsedImplicitly]
   [EventHandler]
   public void OnDamage(PlayerDamagedEvent ev) {
-    Messenger.Debug("DeagleDamageListener: OnDamage");
     if (Games.ActiveGame is not { State: State.IN_PROGRESS }) return;
     var attacker = ev.Attacker;
     var victim   = ev.Player;
@@ -46,10 +45,10 @@ public class DeagleDamageListener(IServiceProvider provider)
     var victimRole   = Roles.GetRoles(victim);
 
     shop.RemoveItem(attacker, deagleItem);
-    if (!config.DoesFriendlyFire && attackerRole.Intersect(victimRole).Any()) {
-      Messenger.DebugAnnounce(
-        "DeagleDamageListener: Friendly fire is off, roles intersect");
-      return;
+    if (attackerRole.Intersect(victimRole).Any()) {
+      if (config.KillShooterOnFF) attacker.Health = 0;
+      Messenger.Message(attacker, Locale[DeagleMsgs.SHOP_ITEM_DEAGLE_HIT_FF]);
+      if (!config.DoesFriendlyFire) return;
     }
 
     if (victim is not IOnlinePlayer onlineVictim) return;

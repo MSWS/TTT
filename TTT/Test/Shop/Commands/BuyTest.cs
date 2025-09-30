@@ -2,6 +2,7 @@
 using TTT.API.Command;
 using TTT.API.Game;
 using TTT.API.Player;
+using TTT.Locale;
 using TTT.Shop;
 using TTT.Shop.Commands;
 using TTT.Test.Game.Command;
@@ -12,11 +13,14 @@ namespace TTT.Test.Shop.Commands;
 public class BuyTest {
   private readonly ICommandManager manager;
   private readonly IServiceProvider provider;
+  private readonly IMsgLocalizer locale;
   private readonly IShop shop;
 
   public BuyTest(IServiceProvider provider) {
-    manager       = provider.GetRequiredService<ICommandManager>();
-    shop          = provider.GetRequiredService<IShop>();
+    manager = provider.GetRequiredService<ICommandManager>();
+    shop    = provider.GetRequiredService<IShop>();
+    locale  = provider.GetRequiredService<IMsgLocalizer>();
+
     this.provider = provider;
 
     manager.RegisterCommand(new BuyCommand(provider));
@@ -76,12 +80,12 @@ public class BuyTest {
     var player = TestPlayer.Random();
     var info   = new TestCommandInfo(provider, player, "buy", TestShopItem.ID);
 
-    shop.RegisterItem(new TestShopItem());
+    var item = new TestShopItem();
+    shop.RegisterItem(item);
     var result = await manager.ProcessCommand(info);
 
     Assert.Equal(CommandResult.ERROR, result);
-    Assert.Contains(
-      "You cannot afford 'Test Item'. It costs 100, but you have 0.",
+    Assert.Contains(locale[ShopMsgs.SHOP_INSUFFICIENT_BALANCE(item, 0)],
       player.Messages);
   }
 
