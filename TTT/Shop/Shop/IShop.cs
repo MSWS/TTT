@@ -20,5 +20,14 @@ public interface IShop : IKeyedStorage<IPlayer, int>,
 
   void GiveItem(IOnlinePlayer player, IShopItem item);
   IList<IShopItem> GetOwnedItems(IOnlinePlayer player);
+
+  bool HasItem(IOnlinePlayer player, IShopItem item) {
+    return GetOwnedItems(player).Any(i => i.Id == item.Id);
+  }
+  
+  bool HasItem<T>(IOnlinePlayer player) where T : IShopItem {
+    return GetOwnedItems(player).Any(i => i is T);
+  }
+
   void RemoveItem(IOnlinePlayer player, IShopItem item);
 }

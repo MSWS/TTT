@@ -17,7 +17,7 @@ public class LogsTest(IServiceProvider provider) : CommandTest(provider,
   [Fact]
   public async Task LogsCommand_WithoutGame_PrintsNoActiveGame() {
     var player = TestPlayer.Random();
-    var info   = new TestCommandInfo(Provider, player, Command.Name);
+    var info   = new TestCommandInfo(Provider, player, Command.Id);
     var result = await Commands.ProcessCommand(info);
     Assert.Equal(CommandResult.ERROR, result);
     Assert.Single(player.Messages);
@@ -32,7 +32,7 @@ public class LogsTest(IServiceProvider provider) : CommandTest(provider,
 
     Provider.GetRequiredService<IGameManager>().CreateGame()?.Start();
 
-    var info   = new TestCommandInfo(Provider, player, Command.Name);
+    var info   = new TestCommandInfo(Provider, player, Command.Id);
     var result = await Commands.ProcessCommand(info);
     Assert.Equal(CommandResult.SUCCESS, result);
     Assert.Contains(locale[GameMsgs.GAME_LOGS_HEADER], player.Messages);

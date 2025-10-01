@@ -14,7 +14,7 @@ public class IdentifyAllCommand(IServiceProvider provider) : ICommand {
 
   private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
 
-  public string Name => "identifyall";
+  public string Id => "identifyall";
 
   public void Dispose() { }
   public void Start() { }

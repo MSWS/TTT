@@ -16,9 +16,9 @@ public class BuyCommand(IServiceProvider provider) : ICommand {
   private readonly IShop shop = provider.GetRequiredService<IShop>();
 
   public void Dispose() { }
-  public string Name => "buy";
+  public string Id => "buy";
   public void Start() { }
-  public string[] Aliases => [Name, "purchase", "b"];
+  public string[] Aliases => [Id, "purchase", "b"];
 
   public async Task<CommandResult> Execute(IOnlinePlayer? executor,
     ICommandInfo info) {
@@ -52,7 +52,7 @@ public class BuyCommand(IServiceProvider provider) : ICommand {
 
   private IShopItem? searchItem(string query) {
     var item = shop.Items.FirstOrDefault(it
-      => it.Id.Equals(query, StringComparison.OrdinalIgnoreCase));
+      => it.Name.Equals(query, StringComparison.OrdinalIgnoreCase));
 
     if (item != null) return item;
 

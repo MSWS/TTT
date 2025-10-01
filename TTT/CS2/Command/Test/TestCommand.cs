@@ -11,7 +11,7 @@ public class TestCommand(IServiceProvider provider) : ICommand, IPluginModule {
 
   public void Dispose() { }
 
-  public string Name => "test";
+  public string Id => "test";
 
   public void Start() {
     subCommands.Add("setrole", new SetRoleCommand(provider));
@@ -21,6 +21,8 @@ public class TestCommand(IServiceProvider provider) : ICommand, IPluginModule {
     subCommands.Add("state", new StateCommand(provider));
     subCommands.Add("screencolor", new ScreenColorCommand(provider));
     subCommands.Add("giveitem", new GiveItemCommand(provider));
+    subCommands.Add("index", new IndexCommand(provider));
+    subCommands.Add("showicons", new ShowIconsCommand(provider));
   }
 
   public Task<CommandResult>
@@ -30,7 +32,7 @@ public class TestCommand(IServiceProvider provider) : ICommand, IPluginModule {
     if (info.ArgCount == 1) {
       foreach (var c in subCommands.Values)
         info.ReplySync(
-          $"- {c.Name} {c.Usage.FirstOrDefault()}: {c.Description ?? "No description provided."}");
+          $"- {c.Id} {c.Usage.FirstOrDefault()}: {c.Description ?? "No description provided."}");
 
       return Task.FromResult(CommandResult.INVALID_ARGS);
     }

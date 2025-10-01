@@ -6,24 +6,23 @@ using TTT.CS2.API;
 
 namespace TTT.CS2.Command.Test;
 
-public class ForceAliveCommand(IServiceProvider provider) : ICommand {
-  private readonly IAliveSpoofer spoofer =
-    provider.GetRequiredService<IAliveSpoofer>();
+public class ShowIconsCommand(IServiceProvider provider) : ICommand {
+  private readonly IIconManager icons =
+    provider.GetRequiredService<IIconManager>();
+
+  public string Id => "showicons";
 
   public void Dispose() { }
-
-  public string Id => "forcealive";
-
   public void Start() { }
 
   public Task<CommandResult>
     Execute(IOnlinePlayer? executor, ICommandInfo info) {
     Server.NextWorldUpdate(() => {
-      foreach (var player in Utilities.GetPlayers()) spoofer.SpoofAlive(player);
+      for (var i = 0; i < Server.MaxPlayers; i++)
+        icons.SetVisiblePlayers(i, ulong.MaxValue);
     });
 
-    info.ReplySync("Attempted to force alive.");
-
+    info.ReplySync("Set all icons visible");
     return Task.FromResult(CommandResult.SUCCESS);
   }
 }

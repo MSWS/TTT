@@ -13,43 +13,32 @@ public static class DeagleServiceCollection {
   }
 }
 
-public class OneShotDeagle(IServiceProvider provider) : IWeapon, IShopItem {
-  public const string ID = "ttt.shop.item.oneshotdeagle";
-
+public class OneShotDeagle(IServiceProvider provider)
+  : BaseItem(provider), IWeapon {
   private readonly OneShotDeagleConfig deagleConfigStorage = provider
    .GetService<IStorage<OneShotDeagleConfig>>()
   ?.Load()
    .GetAwaiter()
    .GetResult() ?? new OneShotDeagleConfig();
 
-  private readonly IInventoryManager inventoryManager =
-    provider.GetRequiredService<IInventoryManager>();
+  public override string Name => Locale[DeagleMsgs.SHOP_ITEM_DEAGLE];
 
-  private readonly IMsgLocalizer locale =
-    provider.GetRequiredService<IMsgLocalizer>();
+  public override string Description
+    => Locale[DeagleMsgs.SHOP_ITEM_DEAGLE_DESC];
 
-  public string Name => locale[DeagleMsgs.SHOP_ITEM_DEAGLE];
+  public override ShopItemConfig Config => deagleConfigStorage;
 
-  public void Start() { }
-
-  public void Dispose() { }
-  public string Description => locale[DeagleMsgs.SHOP_ITEM_DEAGLE_DESC];
-
-  public ShopItemConfig Config => deagleConfigStorage;
-
-  public void OnPurchase(IOnlinePlayer player) {
+  public override void OnPurchase(IOnlinePlayer player) {
     Task.Run(async () => {
-      await inventoryManager.RemoveWeaponInSlot(player,
+      await Inventory.RemoveWeaponInSlot(player,
         deagleConfigStorage.WeaponSlot);
-      await inventoryManager.GiveWeapon(player, this);
+      await Inventory.GiveWeapon(player, this);
     });
   }
 
-  public PurchaseResult CanPurchase(IOnlinePlayer player) {
+  public override PurchaseResult CanPurchase(IOnlinePlayer player) {
     return PurchaseResult.SUCCESS;
   }
-
-  string IShopItem.Id => ID;
 
   public string WeaponId => deagleConfigStorage.Weapon;
 

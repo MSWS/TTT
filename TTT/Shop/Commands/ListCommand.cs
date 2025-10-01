@@ -13,7 +13,7 @@ public class ListCommand(IServiceProvider provider) : ICommand {
 
   public void Dispose() { }
 
-  public string Name => "list";
+  public string Id => "list";
 
   public void Start() { }
 

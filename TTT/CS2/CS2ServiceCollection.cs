@@ -33,6 +33,7 @@ public static class CS2ServiceCollection {
         CCPlayerConverter>();
     collection.AddModBehavior<ICommandManager, CS2CommandManager>();
     collection.AddModBehavior<IAliveSpoofer, CS2AliveSpoofer>();
+    collection.AddModBehavior<IIconManager, RoleIconsHandler>();
 
     // Configs
     collection.AddModBehavior<IStorage<TTTConfig>, CS2GameConfig>();
@@ -49,7 +50,6 @@ public static class CS2ServiceCollection {
     collection.AddModBehavior<DamageCanceler>();
     collection.AddModBehavior<PlayerConnectionsHandler>();
     collection.AddModBehavior<PropMover>();
-    collection.AddModBehavior<RoleIconsHandler>();
     collection.AddModBehavior<RoundEnd_GameEndHandler>();
     collection.AddModBehavior<RoundStart_GameStartHandler>();
 

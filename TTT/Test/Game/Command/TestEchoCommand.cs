@@ -4,7 +4,7 @@ using TTT.API.Player;
 namespace TTT.Test.Game.Command;
 
 public class TestEchoCommand : ICommand {
-  public string Name => "echo";
+  public string Id => "echo";
   public void Start() { }
   public string[] Aliases => ["echo", "say"];
 

@@ -11,7 +11,7 @@ public class LogsCommand(IServiceProvider provider) : ICommand {
 
   public void Dispose() { }
 
-  public string Name => "logs";
+  public string Id => "logs";
   public void Start() { }
 
   // TODO: Restrict and verbalize usage

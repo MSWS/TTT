@@ -10,7 +10,7 @@ public class GiveItemCommand(IServiceProvider provider) : ICommand {
   public void Dispose() { }
   public void Start() { }
 
-  public string Name => "giveitem";
+  public string Id => "giveitem";
 
   public Task<CommandResult>
     Execute(IOnlinePlayer? executor, ICommandInfo info) {
@@ -33,7 +33,7 @@ public class GiveItemCommand(IServiceProvider provider) : ICommand {
 
   private IShopItem? searchItem(string query) {
     var item = shop.Items.FirstOrDefault(it
-      => it.Id.Equals(query, StringComparison.OrdinalIgnoreCase));
+      => it.Name.Equals(query, StringComparison.OrdinalIgnoreCase));
 
     if (item != null) return item;
 

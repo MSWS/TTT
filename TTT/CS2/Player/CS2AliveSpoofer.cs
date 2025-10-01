@@ -11,27 +11,23 @@ public class CS2AliveSpoofer : IAliveSpoofer, IPluginModule {
 
   public void SpoofAlive(CCSPlayerController player) {
     if (player.IsBot) {
-      player.PawnIsAlive = true;
-      Utilities.SetStateChanged(player, "CCSPlayerController",
-        "m_bPawnIsAlive");
-      return;
+      Server.NextWorldUpdate(() => {
+        var pawn = player.Pawn.Value;
+        if (pawn == null || !pawn.IsValid) return;
+        pawn.DeathTime = 0;
+        Utilities.SetStateChanged(pawn, "CBasePlayerPawn", "m_flDeathTime");
+        Utilities.SetStateChanged(pawn, "CBasePlayerController",
+          "m_flDeathTime");
+
+        Server.NextWorldUpdate(() => {
+          player.PawnIsAlive = true;
+          Utilities.SetStateChanged(player, "CCSPlayerController",
+            "m_bPawnIsAlive");
+        });
+      });
     }
 
     FakeAlivePlayers.Add(player);
-
-    Server.NextWorldUpdate(() => {
-      var pawn = player.Pawn.Value;
-      if (pawn == null || !pawn.IsValid) return;
-      pawn.DeathTime = 0;
-      Utilities.SetStateChanged(pawn, "CBasePlayerPawn", "m_flDeathTime");
-      Utilities.SetStateChanged(pawn, "CBasePlayerController", "m_flDeathTime");
-
-      Server.NextWorldUpdate(() => {
-        player.PawnIsAlive = true;
-        Utilities.SetStateChanged(player, "CCSPlayerController",
-          "m_bPawnIsAlive");
-      });
-    });
   }
 
   public void UnspoofAlive(CCSPlayerController player) {

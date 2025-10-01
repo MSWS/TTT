@@ -18,7 +18,7 @@ public class KarmaSyncer(IServiceProvider provider) : IPluginModule {
     provider.GetRequiredService<IPlayerFinder>();
 
   public void Dispose() { }
-  public string Name => nameof(KarmaSyncer);
+  public string Id => nameof(KarmaSyncer);
   public string Version => GitVersionInformation.FullSemVer;
 
   public void Start() { }

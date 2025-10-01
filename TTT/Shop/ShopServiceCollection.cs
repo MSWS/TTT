@@ -2,6 +2,7 @@ using Microsoft.Extensions.DependencyInjection;
 using TTT.API.Extensions;
 using TTT.Shop.Commands;
 using TTT.Shop.Items;
+using TTT.Shop.Items.Detective.Stickers;
 using TTT.Shop.Listeners;
 
 namespace TTT.Shop;
@@ -18,5 +19,6 @@ public static class ShopServiceCollection {
     collection.AddModBehavior<BalanceCommand>();
 
     collection.AddDeagleServices();
+    collection.AddStickerServices();
   }
 }

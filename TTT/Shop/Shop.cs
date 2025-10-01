@@ -115,5 +115,5 @@ public class Shop(IServiceProvider provider) : ITerrorModule, IShop {
     Items.Clear();
   }
 
-  public void Start() { RegisterItem(new OneShotDeagle(provider)); }
+  public void Start() { }
 }

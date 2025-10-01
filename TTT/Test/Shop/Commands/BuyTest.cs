@@ -116,7 +116,7 @@ public class BuyTest {
 
     Assert.Equal(CommandResult.SUCCESS, result);
     Assert.Contains(TestShopItem.ID,
-      shop.GetOwnedItems(player).Select(s => s.Id));
+      shop.GetOwnedItems(player).Select(s => s.Name));
   }
 
   [Fact]

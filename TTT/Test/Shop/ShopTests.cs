@@ -23,7 +23,7 @@ public class ShopTests(IServiceProvider provider) {
   public void GiveItem_ShowsInInventory() {
     shop.GiveItem(player, new TestShopItem());
     Assert.Single(shop.GetOwnedItems(player));
-    Assert.Equal(TestShopItem.ID, shop.GetOwnedItems(player)[0].Id);
+    Assert.Equal(TestShopItem.ID, shop.GetOwnedItems(player)[0].Name);
   }
 
   [Fact]
