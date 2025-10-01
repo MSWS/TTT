@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using ShopAPI.Configs;
+using TTT.API.Extensions;
 using TTT.API.Player;
 using TTT.API.Storage;
 using TTT.CS2.API;
@@ -9,6 +10,13 @@ using TTT.Shop.Items;
 using TTT.Shop.Items.Detective.DNA;
 
 namespace TTT.CS2.Items.DNA;
+
+public static class DnaScannerServiceCollection {
+  public static void AddDnaScannerServices(this IServiceCollection collection) {
+    collection.AddModBehavior<DnaScanner>();
+    collection.AddModBehavior<DnaListener>();
+  }
+}
 
 public class DnaScanner(IServiceProvider provider)
   : RoleRestrictedItem<DetectiveRole>(provider) {

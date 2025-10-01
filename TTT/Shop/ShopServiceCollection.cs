@@ -1,6 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using ShopAPI;
 using TTT.API.Extensions;
+using TTT.CS2.Items.DNA;
 using TTT.Shop.Commands;
 using TTT.Shop.Items;
 using TTT.Shop.Items.Detective.Stickers;
@@ -21,5 +22,6 @@ public static class ShopServiceCollection {
 
     collection.AddDeagleServices();
     collection.AddStickerServices();
+    collection.AddDnaScannerServices();
   }
 }
