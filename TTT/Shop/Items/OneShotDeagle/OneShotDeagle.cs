@@ -9,6 +9,7 @@ namespace TTT.Shop.Items;
 
 public static class DeagleServiceCollection {
   public static void AddDeagleServices(this IServiceCollection collection) {
+    collection.AddModBehavior<OneShotDeagle>();
     collection.AddModBehavior<DeagleDamageListener>();
   }
 }

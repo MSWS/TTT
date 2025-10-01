@@ -11,6 +11,7 @@ namespace TTT.Shop.Items.Detective.Stickers;
 
 public static class StickerExtensions {
   public static void AddStickerServices(this IServiceCollection services) {
+    services.AddModBehavior<Stickers>();
     services.AddModBehavior<StickerListener>();
   }
 }
@@ -35,7 +36,7 @@ public class Stickers(IServiceProvider provider) : BaseItem(provider) {
 
   public override PurchaseResult CanPurchase(IOnlinePlayer player) {
     if (icons == null || !Roles.GetRoles(player).Any(r => r is DetectiveRole))
-      return PurchaseResult.ITEM_NOT_PURCHASABLE;
+      return PurchaseResult.WRONG_ROLE;
     if (Shop.HasItem(player, this)) return PurchaseResult.ALREADY_OWNED;
     return PurchaseResult.SUCCESS;
   }
@@ -43,5 +44,4 @@ public class Stickers(IServiceProvider provider) : BaseItem(provider) {
 
 public record StickerConfig : ShopItemConfig {
   public override int Price { get; init; } = 70;
-  public bool AnnounceReveals { get; init; } = false;
 }

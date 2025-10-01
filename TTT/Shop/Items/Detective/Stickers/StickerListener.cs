@@ -33,7 +33,6 @@ public class StickerListener(IServiceProvider provider)
 
     if (attacker == null) return;
 
-    if (!Roles.GetRoles(attacker).Any(r => r is DetectiveRole)) return;
     var player = converter.GetPlayer(victim);
     if (player == null || !player.IsValid) return;
     icons.RevealToAll(player.Slot);

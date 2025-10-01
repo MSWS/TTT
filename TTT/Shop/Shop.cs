@@ -27,7 +27,6 @@ public class Shop(IServiceProvider provider) : ITerrorModule, IShop {
   public ISet<IShopItem> Items { get; } = new HashSet<IShopItem>();
 
   public bool RegisterItem(IShopItem item) {
-    item.Start();
     return Items.Add(item);
   }
 
