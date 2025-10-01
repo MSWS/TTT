@@ -1,5 +1,6 @@
 ﻿using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
+using CounterStrikeSharp.API.Core.Attributes.Registration;
 using CounterStrikeSharp.API.Modules.Utils;
 using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
@@ -42,13 +43,19 @@ public class RoleIconsHandler(IServiceProvider provider)
   private readonly IEnumerable<CPointWorldText>?[] icons =
     new IEnumerable<CPointWorldText>[64];
 
-  public void Start(BasePlugin? plugin) {
+  public void Start(BasePlugin? plugin, bool hotReload) {
     plugin
     ?.RegisterListener<CounterStrikeSharp.API.Core.Listeners.CheckTransmit>(
         onTransmit);
+  }
+
+  [GameEventHandler]
+  public HookResult OnRoundEnd(EventRoundStart _, GameEventInfo _1) {
     foreach (var text in Utilities
      .FindAllEntitiesByDesignerName<CPointWorldText>("point_worldtext"))
       text.AcceptInput("Kill");
+
+    return HookResult.Continue;
   }
 
   [UsedImplicitly]
