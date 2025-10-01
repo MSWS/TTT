@@ -2,9 +2,13 @@
 using ShopAPI.Configs;
 using TTT.API.Player;
 using TTT.API.Storage;
+using TTT.CS2.API;
 using TTT.Game.Roles;
+using TTT.Shop;
+using TTT.Shop.Items;
+using TTT.Shop.Items.Detective.DNA;
 
-namespace TTT.Shop.Items.Detective.DNA;
+namespace TTT.CS2.Items.DNA;
 
 public class DnaScanner(IServiceProvider provider)
   : RoleRestrictedItem<DetectiveRole>(provider) {
