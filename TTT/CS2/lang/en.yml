@@ -1,2 +1,6 @@
 ﻿ROLE_SPECTATOR: "Spectator"
 TASER_SCANNED: "%PREFIX%You scanned {0}{grey}, they are %an% {1}{grey}!"
+SHOP_ITEM_DNA: "DNA Scanner"
+SHOP_ITEM_DNA_DESC: "Scan bodies to reveal the person who killed them."
+SHOP_ITEM_DNA_SCANNED: "You scanned {0}{1}'%s% body, their killer was {red}{2}%s%{grey}."
+SHOP_ITEM_DNA_SCANNED_SUICIDE: "You scanned {0}{1}'%s% body, they killed themselves."

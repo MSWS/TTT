@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using JetBrains.Annotations;
+using Microsoft.Extensions.DependencyInjection;
 using ShopAPI;
 using TTT.API.Events;
 using TTT.API.Player;
@@ -15,6 +16,7 @@ public class DnaListener(IServiceProvider provider) : BaseListener(provider) {
   private readonly IShop shop = provider.GetRequiredService<IShop>();
 
   // Low priority to allow body identification to happen first
+  [UsedImplicitly]
   [EventHandler(Priority = Priority.LOW)]
   public void OnPropPickup(PropPickupEvent ev) {
     if (ev.Player is not IOnlinePlayer player) return;
@@ -23,6 +25,16 @@ public class DnaListener(IServiceProvider provider) : BaseListener(provider) {
     if (!bodies.TryLookup(ev.Prop.Index.ToString(), out var body)) return;
     if (body == null) return;
 
-    Messenger.Message(player, $"Body: {body.Killer?.Name ?? "Unknown"}");
+    var victimRole = Roles.GetRoles(body.OfPlayer).FirstOrDefault();
+    if (victimRole == null) return;
+    if (body.Killer == null)
+      Messenger.Message(player,
+        Locale[
+          DnaMsgs.SHOP_ITEM_DNA_SCANNED_SUICIDE(victimRole, body.OfPlayer)]);
+    else
+      Messenger.Message(player,
+        Locale[
+          DnaMsgs.SHOP_ITEM_DNA_SCANNED(victimRole, body.OfPlayer,
+            body.Killer)]);
   }
 }

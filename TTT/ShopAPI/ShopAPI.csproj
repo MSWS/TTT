@@ -9,8 +9,6 @@
   <ItemGroup>
     <ProjectReference Include="..\API\API.csproj" />
     <ProjectReference Include="..\Game\Game.csproj" />
-    <ProjectReference Include="..\TTT\API\API.csproj" />
-    <ProjectReference Include="..\TTT\Game\Game.csproj" />
   </ItemGroup>
 
 </Project>

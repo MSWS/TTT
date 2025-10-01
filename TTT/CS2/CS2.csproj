@@ -9,7 +9,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\ShopAPI\ShopAPI.csproj" />
     <ProjectReference Include="..\API\API.csproj"/>
     <ProjectReference Include="..\Game\Game.csproj"/>
     <ProjectReference Include="..\Karma\Karma.csproj"/>
