@@ -9,4 +9,5 @@ public interface IBody {
   IWeapon? MurderWeapon { get; }
   IPlayer? Killer { get; }
   string Id { get; }
+  DateTime TimeOfDeath { get; }
 }

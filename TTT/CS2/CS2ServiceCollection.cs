@@ -1,5 +1,6 @@
 using CounterStrikeSharp.API.Core;
 using Microsoft.Extensions.DependencyInjection;
+using ShopAPI.Configs;
 using TTT.API.Command;
 using TTT.API.Extensions;
 using TTT.API.Game;
@@ -21,7 +22,6 @@ using TTT.CS2.Player;
 using TTT.Game;
 using TTT.Locale;
 using TTT.Shop;
-using TTT.Shop.Items;
 
 namespace TTT.CS2;
 

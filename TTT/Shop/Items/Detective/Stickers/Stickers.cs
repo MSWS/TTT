@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using ShopAPI.Configs;
 using TTT.API.Extensions;
 using TTT.API.Game;
 using TTT.API.Player;
@@ -16,7 +17,8 @@ public static class StickerExtensions {
   }
 }
 
-public class Stickers(IServiceProvider provider) : BaseItem(provider) {
+public class Stickers(IServiceProvider provider)
+  : RoleRestrictedItem<TraitorRole>(provider) {
   private readonly StickerConfig config = provider
    .GetService<IStorage<StickerConfig>>()
   ?.Load()
@@ -35,13 +37,7 @@ public class Stickers(IServiceProvider provider) : BaseItem(provider) {
   public override void OnPurchase(IOnlinePlayer player) { }
 
   public override PurchaseResult CanPurchase(IOnlinePlayer player) {
-    if (icons == null || !Roles.GetRoles(player).Any(r => r is DetectiveRole))
-      return PurchaseResult.WRONG_ROLE;
     if (Shop.HasItem(player, this)) return PurchaseResult.ALREADY_OWNED;
-    return PurchaseResult.SUCCESS;
+    return base.CanPurchase(player);
   }
-}
-
-public record StickerConfig : ShopItemConfig {
-  public override int Price { get; init; } = 70;
 }

@@ -1,6 +1,8 @@
 using CounterStrikeSharp.API;
 using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
+using ShopAPI;
+using ShopAPI.Configs;
 using TTT.API.Events;
 using TTT.API.Game;
 using TTT.API.Player;

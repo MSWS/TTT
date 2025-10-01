@@ -31,7 +31,7 @@ public abstract class BaseListener(IServiceProvider provider) : IListener {
 
   protected readonly IScheduler Scheduler =
     provider.GetRequiredService<IScheduler>();
-
+  
   public virtual void Dispose() { Bus.UnregisterListener(this); }
 
   public virtual void Start() { }

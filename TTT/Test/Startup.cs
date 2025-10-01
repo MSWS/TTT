@@ -2,6 +2,7 @@ using System.Reactive.Concurrency;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Localization;
 using Microsoft.Reactive.Testing;
+using ShopAPI;
 using TTT.API.Command;
 using TTT.API.Events;
 using TTT.API.Extensions;
