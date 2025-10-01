@@ -1,5 +1,5 @@
 SHOP_INACTIVE: "%PREFIX%The shop is currently closed."
-SHOP_ITEM_NOT_FOUND: "%PREFIX%Could not find an item named "{default}{0}{grey}"."
+SHOP_ITEM_NOT_FOUND: "%PREFIX%Could not find an item named \"{default}{0}{grey}\"."
 
 SHOP_ITEM_DEAGLE: "One-Hit Revolver"
 SHOP_ITEM_DEAGLE_DESC: "A one-hit kill revolver with a single bullet. Aim carefully!"
