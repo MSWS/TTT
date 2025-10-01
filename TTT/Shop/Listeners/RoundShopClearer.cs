@@ -1,5 +1,6 @@
 using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
+using ShopAPI;
 using TTT.API.Events;
 using TTT.API.Game;
 using TTT.Game.Events.Game;

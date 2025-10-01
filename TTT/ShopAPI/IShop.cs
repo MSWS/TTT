@@ -1,7 +1,8 @@
 using TTT.API.Player;
 using TTT.API.Storage;
+using TTT.Shop;
 
-namespace TTT.Shop;
+namespace ShopAPI;
 
 public interface IShop : IKeyedStorage<IPlayer, int>,
   IKeyWritable<IPlayer, int> {
@@ -24,7 +25,7 @@ public interface IShop : IKeyedStorage<IPlayer, int>,
   bool HasItem(IOnlinePlayer player, IShopItem item) {
     return GetOwnedItems(player).Any(i => i.Id == item.Id);
   }
-  
+
   bool HasItem<T>(IOnlinePlayer player) where T : IShopItem {
     return GetOwnedItems(player).Any(i => i is T);
   }

@@ -16,6 +16,8 @@
   <ItemGroup>
     <ProjectReference Include="..\API\API.csproj"/>
     <ProjectReference Include="..\Game\Game.csproj"/>
+    <ProjectReference Include="..\CS2\CS2.csproj"/>
+    <ProjectReference Include="..\ShopAPI\ShopAPI.csproj"/>
   </ItemGroup>
 
 </Project>

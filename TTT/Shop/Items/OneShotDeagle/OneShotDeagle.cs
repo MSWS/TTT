@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
+using ShopAPI.Configs;
 using TTT.API;
 using TTT.API.Extensions;
 using TTT.API.Player;
@@ -45,12 +46,4 @@ public class OneShotDeagle(IServiceProvider provider)
 
   public int? ReserveAmmo { get; init; } = 0;
   public int? CurrentAmmo { get; init; } = 1;
-}
-
-public record OneShotDeagleConfig : ShopItemConfig {
-  public override int Price { get; init; } = 100;
-  public bool DoesFriendlyFire { get; init; } = true;
-  public bool KillShooterOnFF { get; init; } = false;
-  public string Weapon { get; init; } = "revolver";
-  public int WeaponSlot { get; init; } = 1;
 }

@@ -9,10 +9,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\ShopAPI\ShopAPI.csproj" />
     <ProjectReference Include="..\API\API.csproj"/>
     <ProjectReference Include="..\Game\Game.csproj"/>
     <ProjectReference Include="..\Karma\Karma.csproj"/>
-    <ProjectReference Include="..\Shop\Shop.csproj"/>
+    <ProjectReference Include="..\ShopAPI\ShopAPI.csproj" />
   </ItemGroup>
 
   <ItemGroup>

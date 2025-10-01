@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
+using ShopAPI;
 using TTT.API.Extensions;
 using TTT.Shop.Commands;
 using TTT.Shop.Items;
