@@ -12,20 +12,17 @@ public static class ServiceCollectionExtensions {
   public static void AddModBehavior<TExtension>(
     this IServiceCollection collection)
     where TExtension : class, ITerrorModule {
-    if (typeof(TExtension).IsAssignableTo(typeof(IPluginModule))) {
+    if (typeof(TExtension).IsAssignableTo(typeof(IPluginModule)))
       collection.AddTransient<IPluginModule>(provider
         => (provider.GetRequiredService<TExtension>() as IPluginModule)!);
-    }
 
-    if (typeof(TExtension).IsAssignableTo(typeof(IListener))) {
+    if (typeof(TExtension).IsAssignableTo(typeof(IListener)))
       collection.AddTransient<IListener>(provider
         => (provider.GetRequiredService<TExtension>() as IListener)!);
-    }
 
-    if (typeof(TExtension).IsAssignableTo(typeof(ICommand))) {
+    if (typeof(TExtension).IsAssignableTo(typeof(ICommand)))
       collection.AddTransient<ICommand>(provider
         => (provider.GetRequiredService<TExtension>() as ICommand)!);
-    }
 
     collection.AddScoped<TExtension>();
 

@@ -4,19 +4,18 @@ using TTT.API.Events;
 using TTT.API.Game;
 using TTT.API.Player;
 using TTT.Game.Events.Player;
-using TTT.Shop;
 using TTT.Shop.Items;
 using Xunit;
 
 namespace TTT.Test.Shop.Items;
 
 public class DeagleTests {
-  private readonly IServiceProvider provider;
   private readonly IEventBus bus;
+  private readonly OneShotDeagle item;
+  private readonly IServiceProvider provider;
+  private readonly IShop shop;
   private readonly TestPlayer testPlayer;
   private readonly IOnlinePlayer victim, survivor;
-  private readonly IShop shop;
-  private readonly OneShotDeagle item;
 
   public DeagleTests(IServiceProvider provider) {
     this.provider = provider;

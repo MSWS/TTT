@@ -7,17 +7,18 @@ using TTT.Locale;
 namespace TTT.Shop.Items;
 
 public abstract class BaseItem(IServiceProvider provider) : IShopItem {
-  protected readonly IServiceProvider Provider = provider;
-  protected readonly IShop Shop = provider.GetRequiredService<IShop>();
-
-  protected readonly IRoleAssigner Roles =
-    provider.GetRequiredService<IRoleAssigner>();
+  protected readonly IInventoryManager Inventory =
+    provider.GetRequiredService<IInventoryManager>();
 
   protected readonly IMsgLocalizer Locale =
     provider.GetRequiredService<IMsgLocalizer>();
 
-  protected readonly IInventoryManager Inventory =
-    provider.GetRequiredService<IInventoryManager>();
+  protected readonly IServiceProvider Provider = provider;
+
+  protected readonly IRoleAssigner Roles =
+    provider.GetRequiredService<IRoleAssigner>();
+
+  protected readonly IShop Shop = provider.GetRequiredService<IShop>();
 
   public void Dispose() { }
   public abstract string Name { get; }

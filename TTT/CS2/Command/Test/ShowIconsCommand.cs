@@ -2,7 +2,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using TTT.API.Command;
 using TTT.API.Player;
-using TTT.CS2.API;
 
 namespace TTT.CS2.Command.Test;
 

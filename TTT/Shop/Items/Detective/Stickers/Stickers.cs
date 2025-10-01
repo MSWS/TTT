@@ -1,12 +1,9 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using ShopAPI.Configs;
 using TTT.API.Extensions;
-using TTT.API.Game;
 using TTT.API.Player;
-using TTT.API.Role;
 using TTT.API.Storage;
 using TTT.Game.Roles;
-using TTT.Locale;
 
 namespace TTT.Shop.Items.Detective.Stickers;
 

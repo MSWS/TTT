@@ -3,7 +3,6 @@ using ShopAPI;
 using TTT.API.Events;
 using TTT.API.Game;
 using TTT.API.Player;
-using TTT.Shop;
 using TTT.Shop.Listeners;
 using Xunit;
 

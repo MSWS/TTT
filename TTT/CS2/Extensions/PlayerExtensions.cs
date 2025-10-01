@@ -6,6 +6,10 @@ using CounterStrikeSharp.API.Modules.UserMessages;
 namespace TTT.CS2.Extensions;
 
 public static class PlayerExtensions {
+  public enum FadeFlags {
+    FADE_IN, FADE_OUT, FADE_STAYOUT
+  }
+
   public static CBasePlayerWeapon? GetWeaponBase(
     this CCSPlayerController player, string designerName) {
     if (!player.IsValid) return null;
@@ -35,10 +39,6 @@ public static class PlayerExtensions {
       color = Color.FromArgb(pawn.Render.A == 255 ? 255 : 254, color.R, color.G,
         color.B);
     pawn.SetColor(color);
-  }
-
-  public enum FadeFlags {
-    FADE_IN, FADE_OUT, FADE_STAYOUT
   }
 
   public static void ColorScreen(this CCSPlayerController player, Color color,

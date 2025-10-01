@@ -42,7 +42,7 @@ public class CS2OneShotDeagleConfig : IStorage<OneShotDeagleConfig>,
       Price            = CV_PRICE.Value,
       DoesFriendlyFire = CV_FRIENDLY_FIRE.Value,
       Weapon           = CV_WEAPON.Value,
-      KillShooterOnFF  = CV_KILL_SHOOTER_ON_FF.Value,
+      KillShooterOnFF  = CV_KILL_SHOOTER_ON_FF.Value
     };
 
     return Task.FromResult<OneShotDeagleConfig?>(cfg);

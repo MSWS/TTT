@@ -6,7 +6,6 @@ using TTT.API.Messages;
 using TTT.API.Player;
 using TTT.Locale;
 using TTT.Shop.Events;
-using TTT.Shop.Items;
 
 namespace TTT.Shop;
 
@@ -27,9 +26,7 @@ public class Shop(IServiceProvider provider) : ITerrorModule, IShop {
 
   public ISet<IShopItem> Items { get; } = new HashSet<IShopItem>();
 
-  public bool RegisterItem(IShopItem item) {
-    return Items.Add(item);
-  }
+  public bool RegisterItem(IShopItem item) { return Items.Add(item); }
 
   public PurchaseResult TryPurchase(IOnlinePlayer player, IShopItem item,
     bool printReason = true) {

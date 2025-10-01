@@ -4,7 +4,6 @@ using TTT.API;
 using TTT.API.Extensions;
 using TTT.API.Player;
 using TTT.API.Storage;
-using TTT.Locale;
 
 namespace TTT.Shop.Items;
 
@@ -30,6 +29,11 @@ public class OneShotDeagle(IServiceProvider provider)
 
   public override ShopItemConfig Config => deagleConfigStorage;
 
+  public string WeaponId => deagleConfigStorage.Weapon;
+
+  public int? ReserveAmmo { get; init; } = 0;
+  public int? CurrentAmmo { get; init; } = 1;
+
   public override void OnPurchase(IOnlinePlayer player) {
     Task.Run(async () => {
       await Inventory.RemoveWeaponInSlot(player,
@@ -41,9 +45,4 @@ public class OneShotDeagle(IServiceProvider provider)
   public override PurchaseResult CanPurchase(IOnlinePlayer player) {
     return PurchaseResult.SUCCESS;
   }
-
-  public string WeaponId => deagleConfigStorage.Weapon;
-
-  public int? ReserveAmmo { get; init; } = 0;
-  public int? CurrentAmmo { get; init; } = 1;
 }

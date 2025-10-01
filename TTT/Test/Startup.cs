@@ -16,7 +16,6 @@ using TTT.Game.Commands;
 using TTT.Game.Roles;
 using TTT.Karma;
 using TTT.Locale;
-using TTT.Shop;
 using TTT.Test.Abstract;
 using TTT.Test.Fakes;
 

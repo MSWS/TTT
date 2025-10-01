@@ -1,4 +1,3 @@
-using CounterStrikeSharp.API;
 using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using ShopAPI;
@@ -35,13 +34,12 @@ public class DeagleDamageListener(IServiceProvider provider)
      .FirstOrDefault(s => s is OneShotDeagle);
     if (deagleItem == null) return;
 
-    if (ev.Weapon != config.Weapon) {
+    if (ev.Weapon != config.Weapon)
       // CS2 specifically causes the weapon to be "weapon_deagle" even if
       // the player is holding a revolver, so we need to check for that as well
       if (ev.Weapon is not "weapon_deagle"
         || !config.Weapon.Equals("weapon_revolver"))
         return;
-    }
 
     var attackerRole = Roles.GetRoles(attacker);
     var victimRole   = Roles.GetRoles(victim);

@@ -23,7 +23,7 @@ public enum PurchaseResult {
   ITEM_NOT_PURCHASABLE,
 
   /// <summary>
-  /// The player does not have the required role to purchase this item.
+  ///   The player does not have the required role to purchase this item.
   /// </summary>
   WRONG_ROLE,
 

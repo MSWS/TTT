@@ -1,5 +1,6 @@
 ﻿using TTT.API.Player;
 using TTT.API.Role;
+using TTT.Game;
 using TTT.Locale;
 
 namespace TTT.CS2.Items.DNA;
@@ -11,11 +12,19 @@ public class DnaMsgs {
     => MsgFactory.Create(nameof(SHOP_ITEM_DNA_DESC));
 
   public static IMsg SHOP_ITEM_DNA_SCANNED(IRole victimRole, IPlayer player,
-    IPlayer killer)
-    => MsgFactory.Create(nameof(SHOP_ITEM_DNA_SCANNED), victimRole.Name,
-      player.Name, killer.Name);
+    IPlayer killer) {
+    return MsgFactory.Create(nameof(SHOP_ITEM_DNA_SCANNED),
+      GameMsgs.GetRolePrefix(victimRole), player.Name, killer.Name);
+  }
 
   public static IMsg
-    SHOP_ITEM_DNA_SCANNED_SUICIDE(IRole victimRole, IPlayer player)
-    => MsgFactory.Create(nameof(SHOP_ITEM_DNA_SCANNED_SUICIDE));
+    SHOP_ITEM_DNA_SCANNED_SUICIDE(IRole victimRole, IPlayer player) {
+    return MsgFactory.Create(nameof(SHOP_ITEM_DNA_SCANNED_SUICIDE),
+      GameMsgs.GetRolePrefix(victimRole), player.Name);
+  }
+
+  public static IMsg SHOP_ITEM_DNA_EXPIRED(IRole victimRole, IPlayer player) {
+    return MsgFactory.Create(nameof(SHOP_ITEM_DNA_EXPIRED),
+      GameMsgs.GetRolePrefix(victimRole), player.Name);
+  }
 }

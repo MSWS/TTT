@@ -21,8 +21,8 @@ public class TestPlayer(string id, string name) : IOnlinePlayer {
     get => Health > 0;
     set {
       if (!value)
-        Health = 0;
-      else if (Health <= 0) { Health = 1; }
+        Health                     = 0;
+      else if (Health <= 0) Health = 1;
     }
   }
 

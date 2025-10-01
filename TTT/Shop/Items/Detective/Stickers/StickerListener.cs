@@ -6,17 +6,16 @@ using TTT.API.Game;
 using TTT.API.Player;
 using TTT.Game.Events.Player;
 using TTT.Game.Listeners;
-using TTT.Game.Roles;
 
 namespace TTT.Shop.Items.Detective.Stickers;
 
 public class StickerListener(IServiceProvider provider)
   : BaseListener(provider) {
-  private readonly IIconManager? icons = provider.GetService<IIconManager>();
-  private readonly IShop shop = provider.GetRequiredService<IShop>();
-
   private readonly IPlayerConverter<CCSPlayerController> converter =
     provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
+
+  private readonly IIconManager? icons = provider.GetService<IIconManager>();
+  private readonly IShop shop = provider.GetRequiredService<IShop>();
 
   [EventHandler(Priority = Priority.MONITOR)]
   public void OnHurt(PlayerDamagedEvent ev) {

@@ -9,8 +9,7 @@ public class TTTTest(IServiceProvider provider)
   public void Command_ShouldPrint_Version() {
     var player = TestPlayer.Random();
 
-    Commands.ProcessCommand(new TestCommandInfo(Provider, player,
-      Command.Id));
+    Commands.ProcessCommand(new TestCommandInfo(Provider, player, Command.Id));
 
     Assert.Single(player.Messages);
     Assert.Contains(Command.Version, player.Messages.First());

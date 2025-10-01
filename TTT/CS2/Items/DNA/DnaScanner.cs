@@ -3,7 +3,6 @@ using ShopAPI.Configs;
 using TTT.API.Extensions;
 using TTT.API.Player;
 using TTT.API.Storage;
-using TTT.CS2.API;
 using TTT.Game.Roles;
 using TTT.Shop;
 using TTT.Shop.Items;
@@ -19,7 +18,7 @@ public static class DnaScannerServiceCollection {
 
 public class DnaScanner(IServiceProvider provider)
   : RoleRestrictedItem<DetectiveRole>(provider) {
-  private DnaScannerConfig config = provider
+  private readonly DnaScannerConfig config = provider
    .GetService<IStorage<DnaScannerConfig>>()
   ?.Load()
    .GetAwaiter()

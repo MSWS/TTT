@@ -11,7 +11,7 @@ public class CS2GameManager(IServiceProvider provider) : GameManager(provider) {
     provider.GetRequiredService<IMessenger>();
 
   public override IGame CreateGame() {
-    messenger.Debug($"Attempting to create a new CS2 game...");
+    messenger.Debug("Attempting to create a new CS2 game...");
     switch (ActiveGame) {
       case { State: State.IN_PROGRESS or State.COUNTDOWN }:
         throw new InvalidOperationException(

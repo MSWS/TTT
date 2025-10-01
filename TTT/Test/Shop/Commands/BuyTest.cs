@@ -12,9 +12,9 @@ using Xunit;
 namespace TTT.Test.Shop.Commands;
 
 public class BuyTest {
+  private readonly IMsgLocalizer locale;
   private readonly ICommandManager manager;
   private readonly IServiceProvider provider;
-  private readonly IMsgLocalizer locale;
   private readonly IShop shop;
 
   public BuyTest(IServiceProvider provider) {

@@ -3,22 +3,22 @@ using ShopAPI;
 using TTT.API.Events;
 using TTT.API.Game;
 using TTT.API.Player;
-using TTT.Shop;
 using TTT.Shop.Listeners;
 using Xunit;
 
 namespace TTT.Test.Shop;
 
 public class ShopTests(IServiceProvider provider) {
-  private readonly IShop shop = provider.GetRequiredService<IShop>();
-  private readonly IOnlinePlayer player = TestPlayer.Random();
   private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
+
+  private readonly IPlayerFinder finder =
+    provider.GetRequiredService<IPlayerFinder>();
 
   private readonly IGameManager games =
     provider.GetRequiredService<IGameManager>();
 
-  private readonly IPlayerFinder finder =
-    provider.GetRequiredService<IPlayerFinder>();
+  private readonly IOnlinePlayer player = TestPlayer.Random();
+  private readonly IShop shop = provider.GetRequiredService<IShop>();
 
   [Fact]
   public void GiveItem_ShowsInInventory() {

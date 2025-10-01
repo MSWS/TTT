@@ -5,7 +5,6 @@ using TTT.API.Messages;
 using TTT.API.Player;
 using TTT.API.Role;
 using TTT.Game;
-using TTT.Game.Roles;
 using TTT.Locale;
 
 namespace TTT.CS2;

@@ -22,7 +22,6 @@ public class ScreenColorApplier(IServiceProvider provider)
     var player     = converter.GetPlayer(ev.Player);
     var alphaColor = Color.FromArgb(64, ev.Role.Color);
     if (player != null)
-      player.ColorScreen(alphaColor, 3, 1,
-        flags: PlayerExtensions.FadeFlags.FADE_OUT);
+      player.ColorScreen(alphaColor, 3, 1, PlayerExtensions.FadeFlags.FADE_OUT);
   }
 }

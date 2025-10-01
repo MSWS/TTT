@@ -10,7 +10,7 @@ public class CS2AliveSpoofer : IAliveSpoofer, IPluginModule {
   public ISet<CCSPlayerController> FakeAlivePlayers => _fakeAlivePlayers;
 
   public void SpoofAlive(CCSPlayerController player) {
-    if (player.IsBot) {
+    if (player.IsBot)
       Server.NextWorldUpdate(() => {
         var pawn = player.Pawn.Value;
         if (pawn == null || !pawn.IsValid) return;
@@ -25,7 +25,6 @@ public class CS2AliveSpoofer : IAliveSpoofer, IPluginModule {
             "m_bPawnIsAlive");
         });
       });
-    }
 
     FakeAlivePlayers.Add(player);
   }

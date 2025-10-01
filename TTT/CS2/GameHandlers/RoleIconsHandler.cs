@@ -9,7 +9,6 @@ using TTT.API.Events;
 using TTT.API.Game;
 using TTT.API.Player;
 using TTT.API.Role;
-using TTT.CS2.API;
 using TTT.CS2.Extensions;
 using TTT.CS2.Hats;
 using TTT.CS2.Roles;
@@ -28,20 +27,53 @@ public class RoleIconsHandler(IServiceProvider provider)
   private static readonly string T_MODEL =
     "characters/models/tm_phoenix/tm_phoenix.vmdl";
 
+  // private readonly IDictionary<int, IEnumerable<CPointWorldText>> icons =
+  //   new Dictionary<int, IEnumerable<CPointWorldText>>();
+  private readonly IEnumerable<CPointWorldText>?[] icons =
+    new IEnumerable<CPointWorldText>[64];
+
   private readonly IPlayerConverter<CCSPlayerController> players =
     provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
 
   private readonly ITextSpawner? textSpawner =
     provider.GetService<ITextSpawner>();
 
+  private readonly HashSet<int> traitorsThisRound = new();
+
   private readonly ulong[] visibilities = new ulong[64];
 
-  private HashSet<int> traitorsThisRound = new();
+  public ulong GetVisiblePlayers(int client) {
+    if (client < 1 || client >= visibilities.Length)
+      throw new ArgumentOutOfRangeException(nameof(client));
+    return visibilities[client];
+  }
 
-  // private readonly IDictionary<int, IEnumerable<CPointWorldText>> icons =
-  //   new Dictionary<int, IEnumerable<CPointWorldText>>();
-  private readonly IEnumerable<CPointWorldText>?[] icons =
-    new IEnumerable<CPointWorldText>[64];
+  public void SetVisiblePlayers(int client, ulong playersBitmask) {
+    guardRange(client, nameof(client));
+    visibilities[client] = playersBitmask;
+  }
+
+  public void RevealToAll(int client) {
+    guardRange(client, nameof(client));
+    for (var i = 0; i < visibilities.Length; i++)
+      visibilities[i] |= 1UL << client;
+  }
+
+  public void AddVisiblePlayer(int client, int player) {
+    guardRange(client, nameof(client));
+    guardRange(player, nameof(player));
+    visibilities[client] |= 1UL << player;
+  }
+
+  public void RemoveVisiblePlayer(int client, int player) {
+    guardRange(client, nameof(client));
+    guardRange(player, nameof(player));
+    visibilities[client] &= ~(1UL << player);
+  }
+
+  public void ClearAllVisibility() {
+    Array.Clear(visibilities, 0, visibilities.Length);
+  }
 
   public void Start(BasePlugin? plugin, bool hotReload) {
     plugin
@@ -157,41 +189,8 @@ public class RoleIconsHandler(IServiceProvider provider)
     }
   }
 
-  public ulong GetVisiblePlayers(int client) {
-    if (client < 1 || client >= visibilities.Length)
-      throw new ArgumentOutOfRangeException(nameof(client));
-    return visibilities[client];
-  }
-
-  public void SetVisiblePlayers(int client, ulong playersBitmask) {
-    guardRange(client, nameof(client));
-    visibilities[client] = playersBitmask;
-  }
-
-  public void RevealToAll(int client) {
-    guardRange(client, nameof(client));
-    for (var i = 0; i < visibilities.Length; i++)
-      visibilities[i] |= 1UL << client;
-  }
-
-  public void AddVisiblePlayer(int client, int player) {
-    guardRange(client, nameof(client));
-    guardRange(player, nameof(player));
-    visibilities[client] |= 1UL << player;
-  }
-
-  public void RemoveVisiblePlayer(int client, int player) {
-    guardRange(client, nameof(client));
-    guardRange(player, nameof(player));
-    visibilities[client] &= ~(1UL << player);
-  }
-
   private void guardRange(int index, string name) {
     if (index < 0 || index >= visibilities.Length)
       throw new ArgumentOutOfRangeException(name);
-  }
-
-  public void ClearAllVisibility() {
-    Array.Clear(visibilities, 0, visibilities.Length);
   }
 }
