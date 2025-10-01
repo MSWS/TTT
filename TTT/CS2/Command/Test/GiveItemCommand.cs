@@ -2,12 +2,14 @@
 using ShopAPI;
 using TTT.API.Command;
 using TTT.API.Player;
+using TTT.Locale;
 using TTT.Shop;
 
 namespace TTT.CS2.Command.Test;
 
 public class GiveItemCommand(IServiceProvider provider) : ICommand {
   private readonly IShop shop = provider.GetRequiredService<IShop>();
+
   public void Dispose() { }
   public void Start() { }
 
@@ -20,8 +22,7 @@ public class GiveItemCommand(IServiceProvider provider) : ICommand {
     if (info.ArgCount == 1) return Task.FromResult(CommandResult.PRINT_USAGE);
 
     var query = string.Join(" ", info.Args.Skip(1));
-    info.ReplySync($"Searching for item: {query}");
-    var item = searchItem(query);
+    var item  = searchItem(query);
     if (item == null) {
       info.ReplySync($"Item '{query}' not found.");
       return Task.FromResult(CommandResult.ERROR);

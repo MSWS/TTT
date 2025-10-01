@@ -5,6 +5,9 @@ namespace TTT.Shop;
 public static class ShopMsgs {
   public static IMsg SHOP_INACTIVE => MsgFactory.Create(nameof(SHOP_INACTIVE));
 
+  public static IMsg SHOP_ITEM_NOT_FOUND(string query)
+    => MsgFactory.Create(nameof(SHOP_ITEM_NOT_FOUND), query);
+
   public static IMsg CREDITS_NAME => MsgFactory.Create(nameof(CREDITS_NAME));
 
   public static IMsg SHOP_CANNOT_PURCHASE

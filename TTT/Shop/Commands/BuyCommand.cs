@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.DependencyInjection;
 using ShopAPI;
 using TTT.API.Command;
@@ -36,12 +37,10 @@ public class BuyCommand(IServiceProvider provider) : ICommand {
     if (info.ArgCount == 1) return CommandResult.PRINT_USAGE;
 
     var query = string.Join(" ", info.Args.Skip(1));
-    info.ReplySync($"Searching for item: {query}");
-
-    var item = searchItem(query);
+    var item  = searchItem(query);
 
     if (item == null) {
-      info.ReplySync($"Item '{query}' not found.");
+      info.ReplySync(locale[ShopMsgs.SHOP_ITEM_NOT_FOUND(query)]);
       return CommandResult.ERROR;
     }
 
