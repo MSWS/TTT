@@ -12,3 +12,6 @@ SHOP_ITEM_STATION_HEALTH: "Health Station"
 SHOP_ITEM_STATION_HEALTH_DESC: "A health station that heals players around it."
 SHOP_ITEM_STATION_HURT: "Hurt Station"
 SHOP_ITEM_STATION_HURT_DESC: "A station that hurts non-Traitors around it."
+
+SHOP_ITEM_CAMO: "Camouflage"
+SHOP_ITEM_CAMO_DESC: "Disguise yourself and make yourself harder to see."
