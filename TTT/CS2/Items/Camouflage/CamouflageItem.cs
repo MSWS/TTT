@@ -1,4 +1,5 @@
 using System.Drawing;
+using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using Microsoft.Extensions.DependencyInjection;
 using ShopAPI;
@@ -29,9 +30,11 @@ public class CamouflageItem(IServiceProvider provider) : BaseItem(provider) {
   public override ShopItemConfig Config => config;
 
   public override void OnPurchase(IOnlinePlayer player) {
-    var gamePlayer = converter.GetPlayer(player);
-    var alpha      = (int)Math.Round(config.CamoVisibility * 255);
-    gamePlayer?.SetColor(Color.FromArgb(alpha, Color.White));
+    Server.NextWorldUpdate(() => {
+      var gamePlayer = converter.GetPlayer(player);
+      var alpha      = (int)Math.Round(config.CamoVisibility * 255);
+      gamePlayer?.SetColor(Color.FromArgb(alpha, Color.White));
+    });
   }
 
   public override PurchaseResult CanPurchase(IOnlinePlayer player) {
