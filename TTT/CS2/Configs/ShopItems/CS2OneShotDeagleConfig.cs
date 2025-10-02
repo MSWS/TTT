@@ -32,10 +32,7 @@ public class CS2OneShotDeagleConfig : IStorage<OneShotDeagleConfig>,
 
   public void Start() { }
 
-  public void Start(BasePlugin? plugin) {
-    ArgumentNullException.ThrowIfNull(plugin, nameof(plugin));
-    plugin.RegisterFakeConVars(this);
-  }
+  public void Start(BasePlugin? plugin) { plugin?.RegisterFakeConVars(this); }
 
   public Task<OneShotDeagleConfig?> Load() {
     var cfg = new OneShotDeagleConfig {
