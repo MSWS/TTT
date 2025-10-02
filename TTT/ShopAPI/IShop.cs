@@ -30,4 +30,9 @@ public interface IShop : IKeyedStorage<IPlayer, int>,
   }
 
   void RemoveItem(IOnlinePlayer player, IShopItem item);
+
+  void RemoveItem<T>(IOnlinePlayer player) where T : IShopItem {
+    var owned = GetOwnedItems(player).FirstOrDefault(i => i is T);
+    if (owned != null) RemoveItem(player, owned);
+  }
 }

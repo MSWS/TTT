@@ -2,6 +2,7 @@ using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using ShopAPI;
 using ShopAPI.Configs;
+using ShopAPI.Configs.Traitor;
 using TTT.API.Events;
 using TTT.API.Extensions;
 using TTT.API.Game;

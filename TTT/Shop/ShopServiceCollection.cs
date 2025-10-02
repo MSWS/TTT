@@ -9,6 +9,7 @@ using TTT.Shop.Items.Detective.Stickers;
 using TTT.Shop.Items.M4A1;
 using TTT.Shop.Items.Traitor;
 using TTT.Shop.Items.Traitor.C4;
+using TTT.Shop.Items.Traitor.Gloves;
 using TTT.Shop.Listeners;
 
 namespace TTT.Shop;
@@ -28,6 +29,7 @@ public static class ShopServiceCollection {
     collection.AddDamageStation();
     collection.AddDeagleServices();
     collection.AddDnaScannerServices();
+    collection.AddGlovesServices();
     collection.AddHealthStation();
     collection.AddM4A1Services();
     collection.AddStickerServices();

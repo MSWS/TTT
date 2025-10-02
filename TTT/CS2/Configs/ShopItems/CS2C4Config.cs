@@ -3,6 +3,7 @@ using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Cvars;
 using CounterStrikeSharp.API.Modules.Cvars.Validators;
 using ShopAPI.Configs;
+using ShopAPI.Configs.Traitor;
 using TTT.API;
 using TTT.API.Storage;
 using TTT.CS2.Validators;

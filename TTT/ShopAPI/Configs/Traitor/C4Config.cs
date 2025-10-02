@@ -1,8 +1,8 @@
-namespace ShopAPI.Configs;
+namespace ShopAPI.Configs.Traitor;
 
 // TODO: Support this config
 public record C4Config : ShopItemConfig {
-  public override int Price { get; init; }
+  public override int Price { get; init; } = 140;
   public string Weapon { get; init; } = "c4";
   public int MaxC4PerRound { get; init; } = 0;
   public int MaxC4AtOnce { get; init; } = 1;
