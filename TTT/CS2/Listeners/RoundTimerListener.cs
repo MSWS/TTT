@@ -91,8 +91,11 @@ public class RoundTimerListener(IServiceProvider provider)
 
       var timer = Observable.Timer(
         config.RoundCfg.TimeBetweenRounds, Scheduler);
-      timer.Subscribe(_
-        => Server.NextWorldUpdate(() => RoundUtil.EndRound(endReason)));
+      timer.Subscribe(_ => Server.NextWorldUpdate(() => {
+        Server.ExecuteCommand("mp_ignore_round_win_conditions 1");
+        RoundUtil.EndRound(endReason);
+        Server.ExecuteCommand("mp_ignore_round_win_conditions 0");
+      }));
     });
   }
 
@@ -124,5 +127,11 @@ public class RoundTimerListener(IServiceProvider provider)
     }
 
     new EventNextlevelChanged(true).FireEvent(false);
+  }
+
+  public override void Dispose() {
+    base.Dispose();
+
+    endTimer?.Dispose();
   }
 }

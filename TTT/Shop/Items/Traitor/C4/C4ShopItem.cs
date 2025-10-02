@@ -16,7 +16,6 @@ namespace TTT.Shop.Items.Traitor.C4;
 public static class C4ServiceCollection {
   public static void AddC4Services(this IServiceCollection collection) {
     collection.AddModBehavior<C4ShopItem>();
-    collection.AddModBehavior<C4Listener>();
   }
 }
 
