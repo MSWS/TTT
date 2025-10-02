@@ -112,7 +112,7 @@ jobs:
           curr="${{ steps.gitversion.outputs.fullSemVer }}"
 
           # Choose what you want in the raw feed: %s = subject only, %B = full message
-          GIT_LOG_FORMAT='%s'
+          GIT_LOG_FORMAT='%B'
 
           if [[ "$prev" == "0.0.0" ]]; then
             # First release: whole history to this tag, first-parent to reflect main’s narrative
@@ -158,7 +158,7 @@ jobs:
 
           # Build the JSON body. We feed system guidance and the raw changelog
           # See OpenAI Responses API docs for the schema and output_text helper. :contentReference[oaicite:0]{index=0}
-          jq -Rs --arg sys "You are an expert release-notes editor. Rewrite the text so it is grouped by Features, Fixes, Docs, and Chore. Use clear user-facing language. Remove internal ticket IDs and commit hashes unless essential. Merge duplicates. Use imperative voice. Output valid Markdown only. Include a short summary at the top." \
+          jq -Rs --arg sys "You are an expert release-notes editor. Rewrite the text so it is grouped by Features, Fixes, Docs, and Chore. Do not include groupings that are empty or redundant. Use clear user-facing language. Remove internal ticket IDs and commit hashes unless essential. Merge duplicates. Use imperative voice. Output valid Markdown only. Include a short summary at the top." \
                 --arg temp "${OPENAI_TEMPERATURE}" \
                 --arg model "${OPENAI_MODEL}" \
                 '{model:$model, temperature: ($temp|tonumber), input:[{role:"system", content:$sys},{role:"user", content:.}]}' CHANGELOG_RAW.md > request.json
