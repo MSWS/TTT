@@ -9,7 +9,7 @@ public class StateCommand(IServiceProvider provider) : ICommand {
   private readonly IGameManager games =
     provider.GetRequiredService<IGameManager>();
 
-  public string Name => "state";
+  public string Id => "state";
   public void Dispose() { }
   public void Start() { }
 

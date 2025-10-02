@@ -1,0 +1,57 @@
+﻿using CounterStrikeSharp.API;
+using Microsoft.Extensions.DependencyInjection;
+using ShopAPI.Configs;
+using TTT.API.Extensions;
+using TTT.API.Storage;
+using TTT.CS2.Extensions;
+
+namespace TTT.CS2.Items.Station;
+
+public static class HealthStationCollection {
+  public static void AddHealthStation(this IServiceCollection collection) {
+    collection.AddModBehavior<HealthStation>();
+  }
+}
+
+public class HealthStation(IServiceProvider provider) : StationItem(provider,
+  provider.GetService<IStorage<HealthStationConfig>>()
+  ?.Load()
+   .GetAwaiter()
+   .GetResult() ?? new HealthStationConfig()) {
+  public override string Name => "Health Station";
+
+  public override string Description
+    => "Deployable health station that heals nearby players over time.";
+
+  override protected void onInterval() {
+    var players = Utilities.GetPlayers();
+    foreach (var (prop, info) in props) {
+      if (Math.Abs(info.HealthGiven) > _Config.TotalHealthGiven) {
+        props.Remove(prop);
+        continue;
+      }
+
+      var propPos = prop.AbsOrigin;
+      if (propPos == null) continue;
+
+      var playerDists = players
+       .Select(p => (Player: p, Pos: p.Pawn.Value?.AbsOrigin))
+       .Where(t => t is { Pos: not null, Player.Pawn.Value.Health: > 0 })
+       .Select(t => (t.Player, Dist: t.Pos!.Distance(propPos)))
+       .Where(t => t.Dist <= _Config.MaxRange)
+       .ToList();
+
+      foreach (var (player, dist) in playerDists) {
+        var maxHp       = player.Pawn.Value?.MaxHealth ?? 100;
+        var healthScale = 1.0 - dist / _Config.MaxRange;
+        var healAmount =
+          (int)Math.Ceiling(_Config.HealthIncrements * healthScale);
+        var newHealth = Math.Min(player.GetHealth() + healAmount, maxHp);
+        player.SetHealth(newHealth);
+        info.HealthGiven += healAmount;
+
+        player.ExecuteClientCommand("play sounds/buttons/blip1");
+      }
+    }
+  }
+}

@@ -2,6 +2,7 @@ using System.Reactive.Concurrency;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Localization;
 using Microsoft.Reactive.Testing;
+using ShopAPI;
 using TTT.API.Command;
 using TTT.API.Events;
 using TTT.API.Extensions;
@@ -15,7 +16,6 @@ using TTT.Game.Commands;
 using TTT.Game.Roles;
 using TTT.Karma;
 using TTT.Locale;
-using TTT.Shop;
 using TTT.Test.Abstract;
 using TTT.Test.Fakes;
 

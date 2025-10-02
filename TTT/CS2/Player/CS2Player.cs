@@ -1,6 +1,7 @@
 using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using TTT.API.Player;
+using TTT.CS2.Extensions;
 
 namespace TTT.CS2.Player;
 
@@ -58,15 +59,18 @@ public class CS2Player : IOnlinePlayer {
     get => Player?.Pawn.Value != null ? Player.Pawn.Value.Health : 0;
 
     set {
-      if (Player?.Pawn.Value == null) return;
+      Server.NextWorldUpdate(() => {
+        if (Player?.Pawn.Value == null) return;
 
-      if (value <= 0) {
-        Player.CommitSuicide(false, true);
-        return;
-      }
+        if (value <= 0) {
+          Player.CommitSuicide(false, true);
+          return;
+        }
 
-      Player.Pawn.Value.Health = value;
-      Utilities.SetStateChanged(Player.Pawn.Value, "CBaseEntity", "m_iHealth");
+        Player.Pawn.Value.Health = value;
+        Utilities.SetStateChanged(Player.Pawn.Value, "CBaseEntity",
+          "m_iHealth");
+      });
     }
   }
 

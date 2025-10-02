@@ -1,4 +1,6 @@
-﻿using TTT.API.Player;
+﻿using ShopAPI;
+using ShopAPI.Configs;
+using TTT.API.Player;
 using TTT.Shop;
 
 namespace TTT.Test.Shop;
@@ -6,8 +8,8 @@ namespace TTT.Test.Shop;
 public class TestShopItem : IShopItem {
   public const string ID = "ttt.test.item.testitem";
   public void Dispose() { }
-  public string Name => "Test Item";
-  public string Id => ID;
+  public string Id => "Test Item";
+  public string Name => ID;
   public string Description => "A test item for unit tests.";
   public ShopItemConfig Config { get; } = new TestItemConfig();
 

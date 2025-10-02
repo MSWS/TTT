@@ -20,11 +20,8 @@ public class ScreenColorApplier(IServiceProvider provider)
     if (ev.Role is SpectatorRole) return;
 
     var player     = converter.GetPlayer(ev.Player);
-    var alphaColor = Color.FromArgb(16, ev.Role.Color);
+    var alphaColor = Color.FromArgb(64, ev.Role.Color);
     if (player != null)
-      player.ColorScreen(alphaColor, 5f, 5f,
-        flags: PlayerExtensions.FadeFlags.FADE_OUT);
-
-    player?.PrintToCenterHtml("You are a " + ev.Role.Name, 20);
+      player.ColorScreen(alphaColor, 3, 1, PlayerExtensions.FadeFlags.FADE_OUT);
   }
 }

@@ -10,7 +10,7 @@ public class MemoryKarmaStorage(IEventBus bus)
   : KeyedMemoryStorage<IPlayer, int>, IKarmaService {
   private readonly KarmaConfig config = new();
   public void Dispose() { }
-  public string Name => nameof(MemoryKarmaStorage);
+  public string Id => nameof(MemoryKarmaStorage);
   public string Version => GitVersionInformation.FullSemVer;
   public void Start() { }
 

@@ -4,8 +4,19 @@ using TTT.API.Player;
 namespace TTT.Test.Fakes;
 
 public class FakeInventoryManager : IInventoryManager {
-  public void GiveWeapon(IOnlinePlayer player, IWeapon weapon) { }
-  public void RemoveWeapon(IOnlinePlayer player, string weaponId) { }
-  public void RemoveWeaponInSlot(IOnlinePlayer player, int slot) { }
-  public void RemoveAllWeapons(IOnlinePlayer player) { }
+  public Task GiveWeapon(IOnlinePlayer player, IWeapon weapon) {
+    return Task.CompletedTask;
+  }
+
+  public Task RemoveWeapon(IOnlinePlayer player, string weaponId) {
+    return Task.CompletedTask;
+  }
+
+  public Task RemoveWeaponInSlot(IOnlinePlayer player, int slot) {
+    return Task.CompletedTask;
+  }
+
+  public Task RemoveAllWeapons(IOnlinePlayer player) {
+    return Task.CompletedTask;
+  }
 }

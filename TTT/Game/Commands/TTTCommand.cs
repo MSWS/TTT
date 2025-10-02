@@ -4,6 +4,7 @@ using TTT.API;
 using TTT.API.Command;
 using TTT.API.Events;
 using TTT.API.Player;
+using TTT.Game.lang;
 using TTT.Locale;
 
 namespace TTT.Game.Commands;
@@ -13,7 +14,7 @@ public class TTTCommand(IServiceProvider provider) : ICommand {
     provider.GetRequiredService<IMsgLocalizer>();
 
   public void Dispose() { }
-  public string Name => "ttt";
+  public string Id => "ttt";
   public string[] Usage => ["<modules/commands/listeners>"];
 
   public void Start() { }
@@ -70,7 +71,7 @@ public class TTTCommand(IServiceProvider provider) : ICommand {
     IEnumerable<ITerrorModule> listeners) {
     foreach (var listener in listeners)
       printVersionedEntry(info, listener.Version,
-        listener.Name + " - " + listener.GetType().Name);
+        listener.Id + " - " + listener.GetType().Name);
   }
 
   private void printVersionedEntry(ICommandInfo info, string version,

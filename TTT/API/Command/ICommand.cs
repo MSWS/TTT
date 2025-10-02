@@ -7,7 +7,7 @@ public interface ICommand : ITerrorModule {
   string[] Usage => [];
   string[] RequiredFlags => [];
   string[] RequiredGroups => [];
-  string[] Aliases => [Name];
+  string[] Aliases => [Id];
 
   Task<CommandResult> Execute(IOnlinePlayer? executor, ICommandInfo info);
 }

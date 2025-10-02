@@ -1,11 +1,11 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using ShopAPI;
 using TTT.API;
 using TTT.API.Events;
 using TTT.API.Messages;
 using TTT.API.Player;
 using TTT.Locale;
 using TTT.Shop.Events;
-using TTT.Shop.Items;
 
 namespace TTT.Shop;
 
@@ -26,14 +26,37 @@ public class Shop(IServiceProvider provider) : ITerrorModule, IShop {
 
   public ISet<IShopItem> Items { get; } = new HashSet<IShopItem>();
 
-  public bool RegisterItem(IShopItem item) {
-    item.Start();
-    return Items.Add(item);
-  }
+  public bool RegisterItem(IShopItem item) { return Items.Add(item); }
 
   public PurchaseResult TryPurchase(IOnlinePlayer player, IShopItem item,
     bool printReason = true) {
-    return PurchaseResult.UNKNOWN_ERROR;
+    var cost = item.Config.Price;
+    var bal  = balances.GetValueOrDefault(player.Id, 0);
+
+    if (cost > bal) {
+      if (printReason)
+        messenger?.Message(player,
+          localizer[ShopMsgs.SHOP_INSUFFICIENT_BALANCE(item, bal)]);
+      return PurchaseResult.INSUFFICIENT_FUNDS;
+    }
+
+    var canPurchase = item.CanPurchase(player);
+    if (canPurchase != PurchaseResult.SUCCESS) {
+      if (!printReason) return canPurchase;
+      if (canPurchase == PurchaseResult.UNKNOWN_ERROR)
+        messenger?.Message(player, localizer[ShopMsgs.SHOP_CANNOT_PURCHASE]);
+      else
+        messenger?.Message(player,
+          localizer[
+            ShopMsgs.SHOP_CANNOT_PURCHASE_WITH_REASON(
+              canPurchase.ToMessage())]);
+
+      return canPurchase;
+    }
+
+    balances[player.Id] = bal - cost;
+    GiveItem(player, item);
+    return PurchaseResult.SUCCESS;
   }
 
   public void AddBalance(IOnlinePlayer player, int amount, string reason = "",
@@ -66,6 +89,7 @@ public class Shop(IServiceProvider provider) : ITerrorModule, IShop {
   public void GiveItem(IOnlinePlayer player, IShopItem item) {
     if (!items.ContainsKey(player.Id)) items[player.Id] = [];
     items[player.Id].Add(item);
+    item.OnPurchase(player);
   }
 
   public IList<IShopItem> GetOwnedItems(IOnlinePlayer player) {
@@ -88,5 +112,5 @@ public class Shop(IServiceProvider provider) : ITerrorModule, IShop {
     Items.Clear();
   }
 
-  public void Start() { RegisterItem(new OneShotDeagle(provider)); }
+  public void Start() { }
 }

@@ -12,7 +12,7 @@ public class ForceAliveCommand(IServiceProvider provider) : ICommand {
 
   public void Dispose() { }
 
-  public string Name => "forcealive";
+  public string Id => "forcealive";
 
   public void Start() { }
 

@@ -42,7 +42,7 @@ public class KarmaStorage(IServiceProvider provider) : IKarmaService {
   }
 
   public void Dispose() { }
-  public string Name => nameof(KarmaStorage);
+  public string Id => nameof(KarmaStorage);
   public string Version => GitVersionInformation.FullSemVer;
 
   public async Task Write(IPlayer key, int newData) {

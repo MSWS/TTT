@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using CounterStrikeSharp.API.Modules.Utils;
+using Microsoft.Extensions.DependencyInjection;
+using ShopAPI;
 using TTT.API.Command;
 using TTT.API.Messages;
 using TTT.API.Player;
@@ -13,14 +15,15 @@ public class ListCommand(IServiceProvider provider) : ICommand {
 
   public void Dispose() { }
 
-  public string Name => "list";
+  public string Id => "list";
 
   public void Start() { }
 
   public Task<CommandResult>
     Execute(IOnlinePlayer? executor, ICommandInfo info) {
     foreach (var item in shop.Items)
-      messenger.Message(executor, $"{item.Name} - {item.Description}");
+      messenger.Message(executor,
+        $"{ChatColors.Grey}- {ChatColors.White}{item.Name} {ChatColors.Grey}- {item.Description}");
 
     return Task.FromResult(CommandResult.SUCCESS);
   }

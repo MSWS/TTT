@@ -12,7 +12,7 @@ public class ScreenColorCommand(IServiceProvider provider) : ICommand {
   private readonly IPlayerConverter<CCSPlayerController> converter =
     provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
 
-  public string Name => "screencolor";
+  public string Id => "screencolor";
 
   public void Dispose() { }
   public void Start() { }

@@ -5,7 +5,6 @@ using TTT.API.Messages;
 using TTT.API.Player;
 using TTT.API.Role;
 using TTT.Game;
-using TTT.Game.Roles;
 using TTT.Locale;
 
 namespace TTT.CS2;
@@ -31,6 +30,7 @@ public class CS2Body(IServiceProvider provider, CRagdollProp ragdoll,
 
   public IPlayer? Killer { get; private set; }
   public string Id { get; } = ragdoll.Index.ToString();
+  public DateTime TimeOfDeath { get; } = DateTime.Now;
 
   public CS2Body WithWeapon(IWeapon weapon) {
     MurderWeapon = weapon;

@@ -6,6 +6,10 @@ using CounterStrikeSharp.API.Modules.UserMessages;
 namespace TTT.CS2.Extensions;
 
 public static class PlayerExtensions {
+  public enum FadeFlags {
+    FADE_IN, FADE_OUT, FADE_STAYOUT
+  }
+
   public static CBasePlayerWeapon? GetWeaponBase(
     this CCSPlayerController player, string designerName) {
     if (!player.IsValid) return null;
@@ -26,6 +30,26 @@ public static class PlayerExtensions {
     ev.FireEvent(false);
   }
 
+  public static void SetHealth(this CCSPlayerController player, int health) {
+    if (player.Pawn.Value == null) return;
+    if (health <= 0) {
+      player.CommitSuicide(false, true);
+      return;
+    }
+
+    player.Pawn.Value.Health = health;
+    Utilities.SetStateChanged(player.Pawn.Value, "CBaseEntity", "m_iHealth");
+  }
+
+  public static int GetHealth(this CCSPlayerController player) {
+    return player.Pawn.Value?.Health ?? 0;
+  }
+
+  public static void AddHealth(this CCSPlayerController player, int health) {
+    if (player.Pawn.Value == null) return;
+    player.SetHealth(player.Pawn.Value.Health + health);
+  }
+
   public static void SetColor(this CCSPlayerController player, Color color) {
     if (!player.IsValid) return;
     var pawn = player.Pawn.Value;
@@ -35,10 +59,6 @@ public static class PlayerExtensions {
       color = Color.FromArgb(pawn.Render.A == 255 ? 255 : 254, color.R, color.G,
         color.B);
     pawn.SetColor(color);
-  }
-
-  public enum FadeFlags {
-    FADE_IN, FADE_OUT, FADE_STAYOUT
   }
 
   public static void ColorScreen(this CCSPlayerController player, Color color,

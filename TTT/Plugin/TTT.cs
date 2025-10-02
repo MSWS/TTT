@@ -25,7 +25,7 @@ public class TTT(IServiceProvider provider) : BasePlugin {
       module.Start();
       loadedModules.Add(module);
       Logger.LogInformation(
-        $"Loaded {module.Version} {module.Name} {module.GetType().Namespace}");
+        $"Loaded {module.Version} {module.Id} {module.GetType().Namespace}");
     }
 
     var pluginModules = modules.Where(m => m is IPluginModule)
@@ -40,7 +40,7 @@ public class TTT(IServiceProvider provider) : BasePlugin {
       RegisterAllAttributes(module);
       loadedModules.Add(module);
       Logger.LogInformation(
-        $"Registered {module.Version} {module.Name} {module.GetType().Namespace}");
+        $"Registered {module.Version} {module.Id} {module.GetType().Namespace}");
     }
 
     Logger.LogInformation("All modules loaded successfully.");
@@ -54,10 +54,10 @@ public class TTT(IServiceProvider provider) : BasePlugin {
 
     foreach (var module in loadedModules)
       try {
-        Logger.LogInformation($"Unloading {module.Name} ({module.Version})");
+        Logger.LogInformation($"Unloading {module.Id} ({module.Version})");
         module.Dispose();
       } catch (Exception e) {
-        Logger.LogError(e, $"Error unloading module {module.Name}");
+        Logger.LogError(e, $"Error unloading module {module.Id}");
       }
 
     base.Dispose(disposing);

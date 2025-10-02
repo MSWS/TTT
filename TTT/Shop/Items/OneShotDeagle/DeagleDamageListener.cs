@@ -1,5 +1,7 @@
 using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
+using ShopAPI;
+using ShopAPI.Configs;
 using TTT.API.Events;
 using TTT.API.Game;
 using TTT.API.Player;
@@ -22,38 +24,37 @@ public class DeagleDamageListener(IServiceProvider provider)
   [UsedImplicitly]
   [EventHandler]
   public void OnDamage(PlayerDamagedEvent ev) {
-    Messenger.Debug("DeagleDamageListener: OnDamage");
     if (Games.ActiveGame is not { State: State.IN_PROGRESS }) return;
     var attacker = ev.Attacker;
     var victim   = ev.Player;
 
     if (attacker == null) return;
 
-    Messenger.Debug("DeagleDamageListener: Attacker is not null");
-
     var deagleItem = shop.GetOwnedItems(attacker)
-     .FirstOrDefault(s => s.Id == OneShotDeagle.ID);
+     .FirstOrDefault(s => s is OneShotDeagle);
     if (deagleItem == null) return;
 
-    Messenger.DebugAnnounce(
-      $"DeagleDamageListener: Attacker has deagle item, weapon: {ev.Weapon}");
-
-    if (ev.Weapon != config.Weapon) return;
+    if (ev.Weapon != config.Weapon)
+      // CS2 specifically causes the weapon to be "weapon_deagle" even if
+      // the player is holding a revolver, so we need to check for that as well
+      if (ev.Weapon is not "weapon_deagle"
+        || !config.Weapon.Equals("weapon_revolver"))
+        return;
 
     var attackerRole = Roles.GetRoles(attacker);
     var victimRole   = Roles.GetRoles(victim);
 
     shop.RemoveItem(attacker, deagleItem);
-    if (!config.DoesFriendlyFire && attackerRole.Intersect(victimRole).Any()) {
-      Messenger.DebugAnnounce(
-        "DeagleDamageListener: Friendly fire is off, roles intersect");
-      return;
+    if (attackerRole.Intersect(victimRole).Any()) {
+      if (config.KillShooterOnFF) attacker.Health = 0;
+      Messenger.Message(attacker, Locale[DeagleMsgs.SHOP_ITEM_DEAGLE_HIT_FF]);
+      if (!config.DoesFriendlyFire) {
+        ev.IsCanceled = true;
+        return;
+      }
     }
 
-    Messenger.DebugAnnounce(
-      "DeagleDamageListener: One-shot kill conditions met");
     if (victim is not IOnlinePlayer onlineVictim) return;
-    Messenger.DebugAnnounce("DeagleDamageListener: One-shot kill applied");
     onlineVictim.Health = 0;
   }
 }

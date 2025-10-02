@@ -11,7 +11,7 @@ public class StopCommand(IServiceProvider provider) : ICommand {
     provider.GetRequiredService<IGameManager>();
 
   public void Dispose() { }
-  public string Name => "stop";
+  public string Id => "stop";
 
   public void Start() { }
 

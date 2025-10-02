@@ -21,6 +21,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shop", "TTT\Shop\Shop.cspro
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Karma", "TTT\Karma\Karma.csproj", "{AFC791EC-750C-423F-9F35-87636657E990}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShopAPI", "TTT\ShopAPI\ShopAPI.csproj", "{16F720B5-9D45-47BF-8C80-4F91005E36D1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -66,6 +68,10 @@ Global
 		{AFC791EC-750C-423F-9F35-87636657E990}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AFC791EC-750C-423F-9F35-87636657E990}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AFC791EC-750C-423F-9F35-87636657E990}.Release|Any CPU.Build.0 = Release|Any CPU
+		{16F720B5-9D45-47BF-8C80-4F91005E36D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{16F720B5-9D45-47BF-8C80-4F91005E36D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{16F720B5-9D45-47BF-8C80-4F91005E36D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{16F720B5-9D45-47BF-8C80-4F91005E36D1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 	EndGlobalSection

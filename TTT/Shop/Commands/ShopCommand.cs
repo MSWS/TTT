@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using TTT.API.Command;
 using TTT.API.Player;
 using TTT.Game;
+using TTT.Game.lang;
 using TTT.Locale;
 
 namespace TTT.Shop.Commands;
@@ -18,7 +19,7 @@ public class ShopCommand(IServiceProvider provider) : ICommand {
   };
 
   public void Dispose() { }
-  public string Name => "shop";
+  public string Id => "shop";
 
   public void Start() { }
 
@@ -27,17 +28,17 @@ public class ShopCommand(IServiceProvider provider) : ICommand {
     HashSet<string> sent = [];
     if (info.ArgCount == 1) {
       foreach (var (_, cmd) in subcommands) {
-        if (!sent.Add(cmd.Name)) continue;
+        if (!sent.Add(cmd.Id)) continue;
         var uses = cmd.Usage.Where(use => !string.IsNullOrWhiteSpace(use))
          .ToList();
         var useString =
           uses.Count > 0 ? "(" + string.Join(", ", uses) + ")" : "";
         if (cmd.Description != null)
           info.ReplySync(
-            $"{locale[GameMsgs.PREFIX]}{ChatColors.White}{cmd.Name} {ChatColors.Grey}- {ChatColors.BlueGrey}{cmd.Description}");
+            $"{locale[GameMsgs.PREFIX]}{ChatColors.White}{cmd.Id} {ChatColors.Grey}- {ChatColors.BlueGrey}{cmd.Description}");
         else
           info.ReplySync(
-            $"{locale[GameMsgs.PREFIX]}{ChatColors.White}{cmd.Name} {ChatColors.Grey}{useString}");
+            $"{locale[GameMsgs.PREFIX]}{ChatColors.White}{cmd.Id} {ChatColors.Grey}{useString}");
       }
 
       return Task.FromResult(CommandResult.SUCCESS);

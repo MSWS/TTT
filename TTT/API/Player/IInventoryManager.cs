@@ -6,24 +6,24 @@ public interface IInventoryManager {
   /// </summary>
   /// <param name="player">The player to give the weapon to.</param>
   /// <param name="weapon"></param>
-  void GiveWeapon(IOnlinePlayer player, IWeapon weapon);
+  Task GiveWeapon(IOnlinePlayer player, IWeapon weapon);
 
   /// <summary>
   ///   Removes a weapon from the player.
   /// </summary>
   /// <param name="player">The player to remove the weapon from.</param>
   /// <param name="weaponId">The ID of the weapon to remove.</param>
-  void RemoveWeapon(IOnlinePlayer player, string weaponId);
+  Task RemoveWeapon(IOnlinePlayer player, string weaponId);
 
-  void RemoveWeapon(IOnlinePlayer player, IWeapon weapon) {
-    RemoveWeapon(player, weapon.WeaponId);
+  Task RemoveWeapon(IOnlinePlayer player, IWeapon weapon) {
+    return RemoveWeapon(player, weapon.WeaponId);
   }
 
-  void RemoveWeaponInSlot(IOnlinePlayer player, int slot);
+  Task RemoveWeaponInSlot(IOnlinePlayer player, int slot);
 
   /// <summary>
   ///   Removes all weapons from the player.
   /// </summary>
   /// <param name="player">The player to remove all weapons from.</param>
-  void RemoveAllWeapons(IOnlinePlayer player);
+  Task RemoveAllWeapons(IOnlinePlayer player);
 }

@@ -3,8 +3,6 @@ using CounterStrikeSharp.API.Core;
 using Microsoft.Extensions.DependencyInjection;
 using TTT.API;
 using TTT.API.Events;
-using TTT.API.Game;
-using TTT.API.Messages;
 using TTT.API.Player;
 using TTT.Game.Events.Player;
 
@@ -17,12 +15,6 @@ public class PlayerConnectionsHandler(IServiceProvider provider)
   private readonly IPlayerConverter<CCSPlayerController> converter =
     provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
 
-  private readonly IGameManager games =
-    provider.GetRequiredService<IGameManager>();
-
-  private readonly IMessenger messenger =
-    provider.GetRequiredService<IMessenger>();
-
   public void Start() { }
 
   public void Start(BasePlugin? plugin, bool hotReload) {
@@ -34,12 +26,12 @@ public class PlayerConnectionsHandler(IServiceProvider provider)
         CounterStrikeSharp.API.Core.Listeners.OnClientDisconnect>(
         disconnectFromServer);
 
-    Server.NextWorldUpdate(() => {
-      foreach (var ev in Utilities.GetPlayers()
-       .Select(player => converter.GetPlayer(player))
-       .Select(gamePlayer => new PlayerJoinEvent(gamePlayer)))
-        bus.Dispatch(ev);
-    });
+    if (!hotReload) return;
+
+    foreach (var ev in Utilities.GetPlayers()
+     .Select(player => converter.GetPlayer(player))
+     .Select(gamePlayer => new PlayerJoinEvent(gamePlayer)))
+      bus.Dispatch(ev);
   }
 
   public void Dispose() { }
