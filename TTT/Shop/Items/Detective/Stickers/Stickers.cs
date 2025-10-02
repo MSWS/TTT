@@ -16,7 +16,7 @@ public static class StickerExtensions {
 }
 
 public class Stickers(IServiceProvider provider)
-  : RoleRestrictedItem<TraitorRole>(provider) {
+  : RoleRestrictedItem<DetectiveRole>(provider) {
   private readonly StickerConfig config = provider
    .GetService<IStorage<StickerConfig>>()
   ?.Load()
