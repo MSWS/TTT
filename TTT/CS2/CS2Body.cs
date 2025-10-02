@@ -28,7 +28,7 @@ public class CS2Body(IServiceProvider provider, CRagdollProp ragdoll,
   public bool IsIdentified { get; set; }
   public IWeapon? MurderWeapon { get; private set; }
 
-  public IPlayer? Killer { get; private set; }
+  public IPlayer? Killer { get; set; }
   public string Id { get; } = ragdoll.Index.ToString();
   public DateTime TimeOfDeath { get; } = DateTime.Now;
 
