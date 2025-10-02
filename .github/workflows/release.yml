@@ -158,7 +158,7 @@ jobs:
 
           # Build the JSON body. We feed system guidance and the raw changelog
           # See OpenAI Responses API docs for the schema and output_text helper. :contentReference[oaicite:0]{index=0}
-          jq -Rs --arg sys "You are an expert release-notes editor. Rewrite the text so it is grouped by Features, Fixes, Docs, and Chore. Do not include groupings that are empty or redundant. Use clear user-facing language. Remove internal ticket IDs and commit hashes unless essential. Merge duplicates. Use imperative voice. Output valid Markdown only. Include a short summary at the top." \
+          jq -Rs --arg sys "You are an expert release-notes writer. Given a list of changes in various formats (e.g: commits, merges, etc.), write Release notes, grouping by features, features, and other pertinent groups where appropriate. Do not include a group if it is not necessary / populated. Remove internal ticket IDs and commit hashes unless essential. Merge duplicates. Use imperative, past tense voice voice. Output valid Markdown only." \
                 --arg temp "${OPENAI_TEMPERATURE}" \
                 --arg model "${OPENAI_MODEL}" \
                 '{model:$model, temperature: ($temp|tonumber), input:[{role:"system", content:$sys},{role:"user", content:.}]}' CHANGELOG_RAW.md > request.json
