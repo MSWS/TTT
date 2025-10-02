@@ -35,7 +35,8 @@ public class PlayerKillListener(IServiceProvider provider)
     if (ev.Body.Killer is not IOnlinePlayer killer) return;
 
     if (!isGoodKill(ev.Body.Killer, ev.Body.OfPlayer)) {
-      shop.AddBalance(killer, -victimBal / 4,
+      var killerBal = await shop.Load(killer);
+      shop.AddBalance(killer, -killerBal / 4,
         ev.Body.OfPlayer.Name + " kill invalidated");
       return;
     }
