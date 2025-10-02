@@ -52,7 +52,7 @@ public static class CS2ServiceCollection {
     collection.AddModBehavior<DamageCanceler>();
     collection.AddModBehavior<PlayerConnectionsHandler>();
     collection.AddModBehavior<PropMover>();
-    collection.AddModBehavior<RoundEnd_GameEndHandler>();
+    // collection.AddModBehavior<RoundEnd_GameEndHandler>();
     collection.AddModBehavior<RoundStart_GameStartHandler>();
 
     // Damage Cancelers

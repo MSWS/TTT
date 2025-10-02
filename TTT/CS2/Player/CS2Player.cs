@@ -112,15 +112,28 @@ public class CS2Player : IOnlinePlayer {
   // Goal: Pad the name to a fixed width for better alignment in logs
   // Left-align ID, right-align name
   private string createPaddedName() {
-    var idPart           = $"({getSuffix(Id, 5)})";
-    var effectivePadding = namePadding - idPart.Length;
-    var namePart = Name.Length >= effectivePadding ?
-      getSuffix(Name, effectivePadding) :
-      Name.PadLeft(effectivePadding);
-    return $"{idPart} {namePart}";
+    return CreatePaddedName(Id, Name, namePadding + 8);
   }
 
-  private string getSuffix(string s, int len) {
-    return s.Length <= len ? s : s[^len..];
+  public static string CreatePaddedName(string id, string name, int len) {
+    var suffix = id.Length > 5 ? id[^5..] : id.PadLeft(5, '0');
+    var prefix = $"({suffix})";
+
+    var baseStr = $"{prefix} {name}";
+
+    if (baseStr.Length == len) { return baseStr; } else if (
+      baseStr.Length < len) {
+      // Pad spaces so the name ends up right-aligned
+      var padding = len - (prefix.Length + name.Length);
+      return prefix + new string(' ', padding + 1) + name;
+    } else {
+      // Too long, cut off from the end of the name
+      var availableForName                       = len - (prefix.Length + 1);
+      if (availableForName < 0) availableForName = 0;
+      var trimmedName = name.Length > availableForName ?
+        name[..availableForName] :
+        name;
+      return $"{prefix} {trimmedName}";
+    }
   }
 }

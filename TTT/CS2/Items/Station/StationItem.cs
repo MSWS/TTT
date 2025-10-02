@@ -8,7 +8,6 @@ using Microsoft.Extensions.DependencyInjection;
 using ShopAPI;
 using ShopAPI.Configs;
 using TTT.API;
-using TTT.API.Messages;
 using TTT.API.Player;
 using TTT.CS2.Extensions;
 using TTT.Game.Roles;
@@ -23,9 +22,6 @@ public abstract class StationItem(IServiceProvider provider,
 
   protected readonly IPlayerConverter<CCSPlayerController> Converter =
     provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
-
-  private readonly IMessenger messenger =
-    provider.GetRequiredService<IMessenger>();
 
   protected readonly Dictionary<CPhysicsPropMultiplayer, StationInfo> props =
     new();
@@ -45,7 +41,6 @@ public abstract class StationItem(IServiceProvider provider,
 
   public void Start(BasePlugin? plugin) {
     Start();
-    messenger.DebugAnnounce("Starting StationItem2 ");
     plugin
     ?.RegisterListener<
         CounterStrikeSharp.API.Core.Listeners.OnServerPrecacheResources>(m => {
