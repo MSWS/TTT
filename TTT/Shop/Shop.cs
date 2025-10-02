@@ -54,8 +54,11 @@ public class Shop(IServiceProvider provider) : ITerrorModule, IShop {
       return canPurchase;
     }
 
-    balances[player.Id] = bal - cost;
+    AddBalance(player, -cost, item.Name);
     GiveItem(player, item);
+
+    if (printReason)
+      messenger?.Message(player, localizer[ShopMsgs.SHOP_PURCHASED(item)]);
     return PurchaseResult.SUCCESS;
   }
 

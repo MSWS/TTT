@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using JetBrains.Annotations;
+using Microsoft.Extensions.DependencyInjection;
 using ShopAPI;
 using ShopAPI.Configs;
 using TTT.API.Events;
@@ -17,6 +18,7 @@ public class RoleAssignCreditor(IServiceProvider provider)
 
   private readonly IShop shop = provider.GetRequiredService<IShop>();
 
+  [UsedImplicitly]
   [EventHandler]
   public void OnRoleAssign(PlayerRoleAssignEvent ev) {
     var toGive = config.StartingCreditsForRole(ev.Role);
