@@ -6,6 +6,7 @@ using TTT.CS2.Items.Station;
 using TTT.Shop.Commands;
 using TTT.Shop.Items;
 using TTT.Shop.Items.Detective.Stickers;
+using TTT.Shop.Items.Traitor;
 using TTT.Shop.Listeners;
 
 namespace TTT.Shop;
@@ -26,5 +27,6 @@ public static class ShopServiceCollection {
     collection.AddDnaScannerServices();
     collection.AddHealthStation();
     collection.AddDamageStation();
+    collection.AddC4Services();
   }
 }

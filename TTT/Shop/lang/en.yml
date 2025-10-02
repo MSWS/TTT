@@ -9,9 +9,13 @@ SHOP_ITEM_STICKERS: "Stickers"
 SHOP_ITEM_STICKERS_DESC: "Reveal the roles of all players you taser to others."
 SHOP_ITEM_STICKERS_HIT: "%PREFIX%You got stickered, your role is now visible to everyone."
 
+SHOP_ITEM_C4: "C4 Explosive"
+SHOP_ITEM_C4_DESC: "A powerful explosive that blows up after a delay."
+
 SHOP_INSUFFICIENT_BALANCE: "%PREFIX%You cannot afford {white}{0}{grey}, it costs {yellow}{1}{grey} credit%s%, and you have {yellow}{2}{grey}."
 SHOP_CANNOT_PURCHASE: "%PREFIX%You cannot purchase this item."
 SHOP_CANNOT_PURCHASE_WITH_REASON: "%PREFIX%You cannot purchase this item: {red}{0}{grey}."
+
 CREDITS_NAME: "credit"
 CREDITS_GIVEN: "%PREFIX%{0}{1} %CREDITS_NAME%%s%"
 CREDITS_GIVEN_REASON: "%PREFIX%{0}{1} %CREDITS_NAME%%s% {grey}({white}{2}{grey})"
