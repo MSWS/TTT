@@ -1,7 +1,8 @@
+using ShopAPI.Configs;
 using TTT.API;
 using TTT.API.Player;
 
-namespace TTT.Shop;
+namespace ShopAPI;
 
 public interface IShopItem : ITerrorModule {
   string Name { get; }

@@ -1,6 +1,7 @@
 using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using TTT.API.Player;
+using TTT.CS2.Extensions;
 
 namespace TTT.CS2.Player;
 

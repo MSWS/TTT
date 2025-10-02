@@ -2,9 +2,9 @@
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Cvars;
 using CounterStrikeSharp.API.Modules.Cvars.Validators;
+using ShopAPI.Configs;
 using TTT.API;
 using TTT.API.Storage;
-using TTT.Shop;
 
 namespace TTT.CS2.Configs;
 

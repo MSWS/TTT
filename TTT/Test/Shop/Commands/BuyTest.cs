@@ -61,7 +61,8 @@ public class BuyTest {
     var info = new TestCommandInfo(provider, player, "buy", "NonExistentItem");
     var result = await manager.ProcessCommand(info);
     Assert.Equal(CommandResult.ERROR, result);
-    Assert.Contains("Item 'NonExistentItem' not found.", player.Messages);
+    Assert.Contains(locale[ShopMsgs.SHOP_ITEM_NOT_FOUND("NonExistentItem")],
+      player.Messages);
   }
 
   [Fact]
@@ -72,7 +73,8 @@ public class BuyTest {
     shop.RegisterItem(new TestShopItem());
     var result = await manager.ProcessCommand(info);
     Assert.Equal(CommandResult.ERROR, result);
-    Assert.Contains("Item 'Sword' not found.", player.Messages);
+    Assert.Contains(locale[ShopMsgs.SHOP_ITEM_NOT_FOUND("Sword")],
+      player.Messages);
   }
 
   [Fact]

@@ -3,7 +3,6 @@ using ShopAPI;
 using TTT.API.Command;
 using TTT.API.Player;
 using TTT.Locale;
-using TTT.Shop;
 
 namespace TTT.CS2.Command.Test;
 

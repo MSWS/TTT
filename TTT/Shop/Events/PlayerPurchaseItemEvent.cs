@@ -1,4 +1,5 @@
-﻿using TTT.API.Events;
+﻿using ShopAPI;
+using TTT.API.Events;
 using TTT.API.Player;
 
 namespace TTT.Shop.Events;

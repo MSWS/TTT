@@ -1,10 +1,10 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using ShopAPI;
+using ShopAPI.Configs;
 using TTT.API.Player;
 using TTT.API.Role;
 using TTT.Locale;
 
-namespace TTT.Shop.Items;
+namespace ShopAPI;
 
 public abstract class BaseItem(IServiceProvider provider) : IShopItem {
   protected readonly IInventoryManager Inventory =
@@ -20,12 +20,12 @@ public abstract class BaseItem(IServiceProvider provider) : IShopItem {
 
   protected readonly IShop Shop = provider.GetRequiredService<IShop>();
 
-  public void Dispose() { }
+  public virtual void Dispose() { }
   public abstract string Name { get; }
   public abstract string Description { get; }
   public abstract ShopItemConfig Config { get; }
   public abstract void OnPurchase(IOnlinePlayer player);
   public abstract PurchaseResult CanPurchase(IOnlinePlayer player);
 
-  public void Start() { Shop.RegisterItem(this); }
+  public virtual void Start() { Shop.RegisterItem(this); }
 }
