@@ -9,9 +9,8 @@ using TTT.API.Player;
 using TTT.API.Storage;
 using TTT.Game.Events.Game;
 using TTT.Game.Roles;
-using TTT.Shop.Items.Traitor.C4;
 
-namespace TTT.Shop.Items.Traitor;
+namespace TTT.Shop.Items.Traitor.C4;
 
 public static class C4ServiceCollection {
   public static void AddC4Services(this IServiceCollection collection) {

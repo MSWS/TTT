@@ -6,7 +6,9 @@ using TTT.CS2.Items.Station;
 using TTT.Shop.Commands;
 using TTT.Shop.Items;
 using TTT.Shop.Items.Detective.Stickers;
+using TTT.Shop.Items.M4A1;
 using TTT.Shop.Items.Traitor;
+using TTT.Shop.Items.Traitor.C4;
 using TTT.Shop.Listeners;
 
 namespace TTT.Shop;
@@ -22,11 +24,12 @@ public static class ShopServiceCollection {
     collection.AddModBehavior<BuyCommand>();
     collection.AddModBehavior<BalanceCommand>();
 
+    collection.AddC4Services();
+    collection.AddDamageStation();
     collection.AddDeagleServices();
-    collection.AddStickerServices();
     collection.AddDnaScannerServices();
     collection.AddHealthStation();
-    collection.AddDamageStation();
-    collection.AddC4Services();
+    collection.AddM4A1Services();
+    collection.AddStickerServices();
   }
 }
