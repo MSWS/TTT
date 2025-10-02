@@ -30,6 +30,26 @@ public static class PlayerExtensions {
     ev.FireEvent(false);
   }
 
+  public static void SetHealth(this CCSPlayerController player, int health) {
+    if (player.Pawn.Value == null) return;
+    if (health <= 0) {
+      player.CommitSuicide(false, true);
+      return;
+    }
+
+    player.Pawn.Value.Health = health;
+    Utilities.SetStateChanged(player.Pawn.Value, "CBaseEntity", "m_iHealth");
+  }
+
+  public static int GetHealth(this CCSPlayerController player) {
+    return player.Pawn.Value?.Health ?? 0;
+  }
+
+  public static void AddHealth(this CCSPlayerController player, int health) {
+    if (player.Pawn.Value == null) return;
+    player.SetHealth(player.Pawn.Value.Health + health);
+  }
+
   public static void SetColor(this CCSPlayerController player, Color color) {
     if (!player.IsValid) return;
     var pawn = player.Pawn.Value;

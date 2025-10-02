@@ -1,6 +1,5 @@
 using TTT.API.Player;
 using TTT.API.Storage;
-using TTT.Shop;
 
 namespace ShopAPI;
 

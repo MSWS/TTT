@@ -1,4 +1,6 @@
-﻿using TTT.API.Player;
+﻿using ShopAPI;
+using ShopAPI.Configs;
+using TTT.API.Player;
 using TTT.Shop;
 
 namespace TTT.Test.Shop;

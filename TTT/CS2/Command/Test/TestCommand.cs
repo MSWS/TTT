@@ -23,6 +23,7 @@ public class TestCommand(IServiceProvider provider) : ICommand, IPluginModule {
     subCommands.Add("giveitem", new GiveItemCommand(provider));
     subCommands.Add("index", new IndexCommand(provider));
     subCommands.Add("showicons", new ShowIconsCommand(provider));
+    subCommands.Add("sethealth", new SetHealthCommand());
   }
 
   public Task<CommandResult>

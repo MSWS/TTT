@@ -1,4 +1,4 @@
-namespace TTT.Shop;
+namespace ShopAPI;
 
 public enum PurchaseResult {
   /// <summary>

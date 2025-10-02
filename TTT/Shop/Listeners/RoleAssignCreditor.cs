@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using ShopAPI;
+using ShopAPI.Configs;
 using TTT.API.Events;
 using TTT.API.Player;
 using TTT.API.Storage;

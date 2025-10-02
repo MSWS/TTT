@@ -21,7 +21,6 @@ using TTT.CS2.Listeners;
 using TTT.CS2.Player;
 using TTT.Game;
 using TTT.Locale;
-using TTT.Shop;
 
 namespace TTT.CS2;
 

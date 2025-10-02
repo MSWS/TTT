@@ -1,11 +1,10 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using ShopAPI;
 using ShopAPI.Configs;
 using TTT.API.Extensions;
 using TTT.API.Player;
 using TTT.API.Storage;
 using TTT.Game.Roles;
-using TTT.Shop;
-using TTT.Shop.Items;
 
 namespace TTT.CS2.Items.DNA;
 

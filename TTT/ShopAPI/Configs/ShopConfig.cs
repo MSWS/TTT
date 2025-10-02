@@ -4,7 +4,7 @@ using TTT.API.Role;
 using TTT.Game.Events.Player;
 using TTT.Game.Roles;
 
-namespace TTT.Shop;
+namespace ShopAPI.Configs;
 
 public record ShopConfig(IRoleAssigner assigner) {
   private static readonly Type[] roleConcerns = [

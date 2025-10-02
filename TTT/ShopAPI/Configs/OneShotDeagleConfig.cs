@@ -1,6 +1,4 @@
-﻿using TTT.Shop;
-
-namespace ShopAPI.Configs;
+﻿namespace ShopAPI.Configs;
 
 public record OneShotDeagleConfig : ShopItemConfig {
   public override int Price { get; init; } = 100;

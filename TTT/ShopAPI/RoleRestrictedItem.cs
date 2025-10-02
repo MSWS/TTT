@@ -1,7 +1,7 @@
 ﻿using TTT.API.Player;
 using TTT.API.Role;
 
-namespace TTT.Shop.Items;
+namespace ShopAPI;
 
 public abstract class RoleRestrictedItem<T>(IServiceProvider provider)
   : BaseItem(provider) where T : IRole {

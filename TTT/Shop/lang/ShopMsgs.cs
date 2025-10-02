@@ -1,3 +1,4 @@
+using ShopAPI;
 using TTT.Locale;
 
 namespace TTT.Shop;
