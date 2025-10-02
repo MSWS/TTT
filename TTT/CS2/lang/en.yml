@@ -1,8 +1,14 @@
 ﻿ROLE_SPECTATOR: "Spectator"
 TASER_SCANNED: "%PREFIX%You scanned {0}{grey}, they are %an% {1}{grey}!"
 DNA_PREFIX: " {darkblue}D{blue}N{lightblue}A{grey} | {grey}"
+
 SHOP_ITEM_DNA: "DNA Scanner"
 SHOP_ITEM_DNA_DESC: "Scan bodies to reveal the person who killed them."
 SHOP_ITEM_DNA_SCANNED: "%DNA_PREFIX%You scanned {0}{1}'%s% {grey}body, their killer was {red}{2}{grey}."
 SHOP_ITEM_DNA_SCANNED_OTHER: "%DNA_PREFIX%You scanned {0}{1}'%s% {grey}body, {2}."
 SHOP_ITEM_DNA_EXPIRED: "%DNA_PREFIX%You scanned {0}{1}'%s% {grey}body, but the DNA has expired."
+
+SHOP_ITEM_STATION_HEALTH: "Health Station"
+SHOP_ITEM_STATION_HEALTH_DESC: "A health station that heals players around it."
+SHOP_ITEM_STATION_HURT: "Hurt Station"
+SHOP_ITEM_STATION_HURT_DESC: "A station that hurts non-Traitors around it."

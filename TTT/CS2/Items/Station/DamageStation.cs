@@ -22,10 +22,10 @@ public class DamageStation(IServiceProvider provider) : StationItem(provider,
   ?.Load()
    .GetAwaiter()
    .GetResult() ?? new DamageStationConfig()) {
-  public override string Name => "Damage Station";
+  public override string Name => Locale[StationMsgs.SHOP_ITEM_STATION_HURT];
 
   public override string Description
-    => "Deployable damage station that harms nearby traitors over time.";
+    => Locale[StationMsgs.SHOP_ITEM_STATION_HURT_DESC];
 
   private readonly IRoleAssigner roles =
     provider.GetRequiredService<IRoleAssigner>();
@@ -68,7 +68,7 @@ public class DamageStation(IServiceProvider provider) : StationItem(provider,
         player.Health    += damageAmount;
         info.HealthGiven += damageAmount;
 
-        gamePlayer.ExecuteClientCommand("play sounds/buttons/blip2");
+        gamePlayer.ExecuteClientCommand("play " + _Config.UseSound);
       }
     }
   }

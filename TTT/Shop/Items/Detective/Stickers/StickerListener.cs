@@ -1,4 +1,5 @@
 ﻿using CounterStrikeSharp.API.Core;
+using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using ShopAPI;
 using TTT.API.Events;
@@ -17,6 +18,7 @@ public class StickerListener(IServiceProvider provider)
   private readonly IIconManager? icons = provider.GetService<IIconManager>();
   private readonly IShop shop = provider.GetRequiredService<IShop>();
 
+  [UsedImplicitly]
   [EventHandler(Priority = Priority.MONITOR)]
   public void OnHurt(PlayerDamagedEvent ev) {
     if (icons == null || ev.Attacker == null

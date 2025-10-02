@@ -60,7 +60,7 @@ public abstract class StationItem(IServiceProvider provider,
       new CounterStrikeSharp.API.Modules.Utils.Vector(ev.X, ev.Y, ev.Z);
 
     var nearest = props
-     .Select(kv => (Key: kv.Key, Value: kv.Value,
+     .Select(kv => (kv.Key, kv.Value,
         Distance: kv.Key.AbsOrigin!.DistanceSquared(hitVec)))
      .Where(t => t.Key is { IsValid: true, AbsOrigin: not null })
      .OrderBy(t => t.Distance)
@@ -129,9 +129,10 @@ public abstract class StationItem(IServiceProvider provider,
         || gamePlayer.Pawn.Value == null)
         return;
       var spawnPos = gamePlayer.Pawn.Value.AbsOrigin.Clone();
-      if (spawnPos != null) {
-        if (gamePlayer.PlayerPawn.Value != null)
-          spawnPos += gamePlayer.PlayerPawn.Value?.EyeAngles.ToForward()! * 8;
+      if (spawnPos != null && gamePlayer.PlayerPawn.Value != null) {
+        var forward = gamePlayer.PlayerPawn.Value.EyeAngles.ToForward();
+        forward.Z =  0;
+        spawnPos  += forward.Normalized() * 8;
       }
 
       prop.Teleport(spawnPos);

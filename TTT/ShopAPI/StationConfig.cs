@@ -13,5 +13,6 @@ public abstract record StationConfig : ShopItemConfig {
   public virtual TimeSpan HealthInterval { get; init; } =
     TimeSpan.FromSeconds(1);
 
+  public abstract string UseSound { get; init; }
   public abstract Color GetColor(float health);
 }

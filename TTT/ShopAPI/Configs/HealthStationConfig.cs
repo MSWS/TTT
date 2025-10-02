@@ -3,6 +3,8 @@
 namespace ShopAPI.Configs;
 
 public record HealthStationConfig : StationConfig {
+  public override string UseSound { get; init; } = "sounds/buttons/blip1";
+
   public override Color GetColor(float health) {
     // 100% health = white
     // 10% health = green

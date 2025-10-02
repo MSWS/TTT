@@ -4,6 +4,7 @@ using ShopAPI.Configs;
 using TTT.API.Extensions;
 using TTT.API.Storage;
 using TTT.CS2.Extensions;
+using TTT.CS2.lang;
 
 namespace TTT.CS2.Items.Station;
 
@@ -18,10 +19,10 @@ public class HealthStation(IServiceProvider provider) : StationItem(provider,
   ?.Load()
    .GetAwaiter()
    .GetResult() ?? new HealthStationConfig()) {
-  public override string Name => "Health Station";
+  public override string Name => Locale[StationMsgs.SHOP_ITEM_STATION_HEALTH];
 
   public override string Description
-    => "Deployable health station that heals nearby players over time.";
+    => Locale[StationMsgs.SHOP_ITEM_STATION_HEALTH_DESC];
 
   override protected void onInterval() {
     var players = Utilities.GetPlayers();
@@ -50,7 +51,7 @@ public class HealthStation(IServiceProvider provider) : StationItem(provider,
         player.SetHealth(newHealth);
         info.HealthGiven += healAmount;
 
-        player.ExecuteClientCommand("play sounds/buttons/blip1");
+        player.ExecuteClientCommand("play " + _Config.UseSound);
       }
     }
   }
