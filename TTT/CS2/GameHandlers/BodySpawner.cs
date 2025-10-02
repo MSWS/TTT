@@ -4,6 +4,7 @@ using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Core.Attributes.Registration;
 using CounterStrikeSharp.API.Modules.Entities.Constants;
 using CounterStrikeSharp.API.Modules.Utils;
+using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using TTT.API;
 using TTT.API.Events;
@@ -27,6 +28,7 @@ public class BodySpawner(IServiceProvider provider) : IPluginModule {
   public void Dispose() { }
   public void Start() { }
 
+  [UsedImplicitly]
   [GameEventHandler]
   public HookResult OnDeath(EventPlayerDeath ev, GameEventInfo _) {
     if (games.ActiveGame is not { State: State.IN_PROGRESS })
@@ -36,7 +38,7 @@ public class BodySpawner(IServiceProvider provider) : IPluginModule {
     player.SetColor(Color.FromArgb(0, 255, 255, 255));
 
     var ragdollBody = makeGameRagdoll(player);
-    var body = new CS2Body(provider, ragdollBody, converter.GetPlayer(player));
+    var body        = new CS2Body(ragdollBody, converter.GetPlayer(player));
 
     if (ev.Attacker != null && ev.Attacker.IsValid)
       body.WithKiller(converter.GetPlayer(ev.Attacker));
@@ -50,6 +52,7 @@ public class BodySpawner(IServiceProvider provider) : IPluginModule {
     return HookResult.Continue;
   }
 
+  [UsedImplicitly]
   [GameEventHandler]
   public HookResult OnStart(EventRoundStart ev, GameEventInfo _) {
     Server.NextWorldUpdate(() => {
