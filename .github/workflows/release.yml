@@ -116,10 +116,10 @@ jobs:
 
           if [[ "$prev" == "0.0.0" ]]; then
             # First release: whole history to this tag, first-parent to reflect main’s narrative
-            git log --first-parent --no-merges --format="${GIT_LOG_FORMAT}" --reverse "$curr" > CHANGELOG.md
+            git log --no-merges --format="${GIT_LOG_FORMAT}" --reverse "$curr" > CHANGELOG.md
           else
             # Strict range between the previous reachable tag and the new tag on this lineage
-            git log --first-parent --no-merges --format="${GIT_LOG_FORMAT}" --reverse "$prev..$curr" > CHANGELOG.md
+            git log --no-merges --format="${GIT_LOG_FORMAT}" --reverse "$prev..$curr" > CHANGELOG.md
           fi
 
           # Fallback in case nothing was captured
