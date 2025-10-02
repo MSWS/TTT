@@ -18,16 +18,16 @@ public static class GlovesServiceCollection {
 
 public class GlovesItem(IServiceProvider provider)
   : RoleRestrictedItem<TraitorRole>(provider) {
-  public override string Name => Locale[GlovesMsgs.SHOP_ITEM_GLOVES];
-
-  public override string Description
-    => Locale[GlovesMsgs.SHOP_ITEM_GLOVES_DESC];
-
   private readonly GlovesConfig config =
     provider.GetService<IStorage<GlovesConfig>>()
     ?.Load()
      .GetAwaiter()
      .GetResult() ?? new GlovesConfig();
+
+  public override string Name => Locale[GlovesMsgs.SHOP_ITEM_GLOVES];
+
+  public override string Description
+    => Locale[GlovesMsgs.SHOP_ITEM_GLOVES_DESC];
 
   public override ShopItemConfig Config => config;
 

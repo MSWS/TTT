@@ -1,5 +1,4 @@
-﻿using CounterStrikeSharp.API;
-using CounterStrikeSharp.API.Core;
+﻿using CounterStrikeSharp.API.Core;
 using Microsoft.Extensions.DependencyInjection;
 using ShopAPI.Configs;
 using TTT.API.Extensions;
@@ -22,19 +21,19 @@ public class DamageStation(IServiceProvider provider) : StationItem(provider,
   ?.Load()
    .GetAwaiter()
    .GetResult() ?? new DamageStationConfig()) {
-  public override string Name => Locale[StationMsgs.SHOP_ITEM_STATION_HURT];
-
-  public override string Description
-    => Locale[StationMsgs.SHOP_ITEM_STATION_HURT_DESC];
-
-  private readonly IRoleAssigner roles =
-    provider.GetRequiredService<IRoleAssigner>();
-
   private readonly IPlayerConverter<CCSPlayerController> converter =
     provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
 
   private readonly IPlayerFinder finder =
     provider.GetRequiredService<IPlayerFinder>();
+
+  private readonly IRoleAssigner roles =
+    provider.GetRequiredService<IRoleAssigner>();
+
+  public override string Name => Locale[StationMsgs.SHOP_ITEM_STATION_HURT];
+
+  public override string Description
+    => Locale[StationMsgs.SHOP_ITEM_STATION_HURT_DESC];
 
   override protected void onInterval() {
     var players = finder.GetOnline();

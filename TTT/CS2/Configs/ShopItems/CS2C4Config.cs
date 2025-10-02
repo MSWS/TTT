@@ -2,7 +2,6 @@ using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Cvars;
 using CounterStrikeSharp.API.Modules.Cvars.Validators;
-using ShopAPI.Configs;
 using ShopAPI.Configs.Traitor;
 using TTT.API;
 using TTT.API.Storage;
@@ -44,9 +43,7 @@ public class CS2C4Config : IStorage<C4Config>, IPluginModule {
 
   public void Start() { }
 
-  public void Start(BasePlugin? plugin) {
-    plugin?.RegisterFakeConVars(this);
-  }
+  public void Start(BasePlugin? plugin) { plugin?.RegisterFakeConVars(this); }
 
   public Task<C4Config?> Load() {
     var cfg = new C4Config {

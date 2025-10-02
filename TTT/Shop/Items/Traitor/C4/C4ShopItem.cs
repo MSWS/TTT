@@ -21,10 +21,6 @@ public static class C4ServiceCollection {
 
 public class C4ShopItem(IServiceProvider provider)
   : RoleRestrictedItem<TraitorRole>(provider), IListener {
-  public override string Name => Locale[C4Msgs.SHOP_ITEM_C4];
-  public override string Description => Locale[C4Msgs.SHOP_ITEM_C4_DESC];
-  private int c4sBought;
-
   private readonly C4Config config = provider.GetService<IStorage<C4Config>>()
   ?.Load()
    .GetAwaiter()
@@ -33,6 +29,10 @@ public class C4ShopItem(IServiceProvider provider)
   private readonly IPlayerFinder finder =
     provider.GetRequiredService<IPlayerFinder>();
 
+  private int c4sBought;
+  public override string Name => Locale[C4Msgs.SHOP_ITEM_C4];
+  public override string Description => Locale[C4Msgs.SHOP_ITEM_C4_DESC];
+
   public override ShopItemConfig Config => config;
 
   public override void OnPurchase(IOnlinePlayer player) {
@@ -40,18 +40,16 @@ public class C4ShopItem(IServiceProvider provider)
   }
 
   public override PurchaseResult CanPurchase(IOnlinePlayer player) {
-    if (config.MaxC4PerRound > 0) {
+    if (config.MaxC4PerRound > 0)
       if (c4sBought > config.MaxC4PerRound)
         return PurchaseResult.ITEM_NOT_PURCHASABLE;
-    }
 
     if (config.MaxC4AtOnce > 0) {
       var count = 0;
       if (finder.GetOnline()
        .Where(p => Shop.HasItem<C4ShopItem>(p))
-       .Any(_ => count++ >= config.MaxC4AtOnce)) {
+       .Any(_ => count++ >= config.MaxC4AtOnce))
         return PurchaseResult.ITEM_NOT_PURCHASABLE;
-      }
     }
 
     return base.CanPurchase(player);

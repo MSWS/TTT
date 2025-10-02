@@ -4,7 +4,6 @@ using ShopAPI.Configs;
 using TTT.API.Extensions;
 using TTT.API.Storage;
 using TTT.CS2.Extensions;
-using TTT.CS2.lang;
 
 namespace TTT.CS2.Items.Station;
 

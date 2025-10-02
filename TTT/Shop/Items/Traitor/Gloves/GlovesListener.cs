@@ -15,13 +15,13 @@ namespace TTT.Shop.Items.Traitor.Gloves;
 
 public class GlovesListener(IServiceProvider provider)
   : BaseListener(provider) {
-  private readonly IShop shop = provider.GetRequiredService<IShop>();
-
   private readonly GlovesConfig item =
     provider.GetService<IStorage<GlovesConfig>>()
     ?.Load()
      .GetAwaiter()
      .GetResult() ?? new GlovesConfig();
+
+  private readonly IShop shop = provider.GetRequiredService<IShop>();
 
   private readonly Dictionary<IPlayer, int> uses = new();
 

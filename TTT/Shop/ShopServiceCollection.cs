@@ -7,7 +7,6 @@ using TTT.Shop.Commands;
 using TTT.Shop.Items;
 using TTT.Shop.Items.Detective.Stickers;
 using TTT.Shop.Items.M4A1;
-using TTT.Shop.Items.Traitor;
 using TTT.Shop.Items.Traitor.C4;
 using TTT.Shop.Items.Traitor.Gloves;
 using TTT.Shop.Listeners;

@@ -1,11 +1,7 @@
 using CounterStrikeSharp.API.Core;
-using Microsoft.Extensions.DependencyInjection;
 using TTT.API;
-using TTT.API.Messages;
 using TTT.API.Player;
-using TTT.API.Role;
 using TTT.Game;
-using TTT.Locale;
 
 namespace TTT.CS2;
 
