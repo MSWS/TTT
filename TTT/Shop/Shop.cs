@@ -54,6 +54,10 @@ public class Shop(IServiceProvider provider) : ITerrorModule, IShop {
       return canPurchase;
     }
 
+    var purchaseEvent = new PlayerPurchaseItemEvent(player, item);
+    bus.Dispatch(purchaseEvent);
+    if (purchaseEvent.IsCanceled) return PurchaseResult.PURCHASE_CANCELED;
+
     AddBalance(player, -cost, item.Name);
     GiveItem(player, item);
 
