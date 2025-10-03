@@ -178,7 +178,7 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
     StartedAt = DateTime.Now;
     RoleAssigner.AssignRoles(online, Roles);
     players.AddRange(online);
-    
+
     State = State.IN_PROGRESS;
 
     var traitors    = ((IGame)this).GetAlive(typeof(TraitorRole)).Count;

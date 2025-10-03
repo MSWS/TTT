@@ -11,8 +11,9 @@ public static class ShopMsgs {
   public static IMsg SHOP_CANNOT_PURCHASE
     => MsgFactory.Create(nameof(SHOP_CANNOT_PURCHASE));
 
-  public static IMsg SHOP_PURCHASED(IShopItem item)
-    => MsgFactory.Create(nameof(SHOP_PURCHASED), item.Name);
+  public static IMsg SHOP_PURCHASED(IShopItem item) {
+    return MsgFactory.Create(nameof(SHOP_PURCHASED), item.Name);
+  }
 
   public static IMsg SHOP_ITEM_NOT_FOUND(string query) {
     return MsgFactory.Create(nameof(SHOP_ITEM_NOT_FOUND), query);

@@ -121,19 +121,20 @@ public class CS2Player : IOnlinePlayer {
 
     var baseStr = $"{prefix} {name}";
 
-    if (baseStr.Length == len) { return baseStr; } else if (
-      baseStr.Length < len) {
+    if (baseStr.Length == len) return baseStr;
+
+    if (baseStr.Length < len) {
       // Pad spaces so the name ends up right-aligned
       var padding = len - (prefix.Length + name.Length);
       return prefix + new string(' ', padding + 1) + name;
-    } else {
-      // Too long, cut off from the end of the name
-      var availableForName                       = len - (prefix.Length + 1);
-      if (availableForName < 0) availableForName = 0;
-      var trimmedName = name.Length > availableForName ?
-        name[..availableForName] :
-        name;
-      return $"{prefix} {trimmedName}";
     }
+
+    // Too long, cut off from the end of the name
+    var availableForName                       = len - (prefix.Length + 1);
+    if (availableForName < 0) availableForName = 0;
+    var trimmedName = name.Length > availableForName ?
+      name[..availableForName] :
+      name;
+    return $"{prefix} {trimmedName}";
   }
 }
