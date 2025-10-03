@@ -33,6 +33,7 @@ public class BodyPaintListener(IServiceProvider provider)
   public void OnPurchase(PlayerPurchaseItemEvent ev) {
     if (ev.Item is not BodyPaintItem) return;
     if (ev.Player is not IOnlinePlayer online) return;
+    uses.TryAdd(online, 0);
     uses[online] += config.MaxUses;
   }
 
