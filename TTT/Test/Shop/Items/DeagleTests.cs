@@ -11,7 +11,7 @@ namespace TTT.Test.Shop.Items;
 
 public class DeagleTests {
   private readonly IEventBus bus;
-  private readonly OneShotDeagle item;
+  private readonly OneShotDeagleItem item;
   private readonly IServiceProvider provider;
   private readonly IShop shop;
   private readonly TestPlayer testPlayer;
@@ -23,7 +23,7 @@ public class DeagleTests {
     var finder = provider.GetRequiredService<IPlayerFinder>();
     shop = provider.GetRequiredService<IShop>();
     bus  = provider.GetRequiredService<IEventBus>();
-    item = new OneShotDeagle(provider);
+    item = new OneShotDeagleItem(provider);
 
     testPlayer = (finder.AddPlayer(TestPlayer.Random()) as TestPlayer)!;
     victim     = finder.AddPlayer(TestPlayer.Random());
