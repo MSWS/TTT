@@ -9,20 +9,18 @@ using TTT.API.Storage;
 using TTT.Game.Events.Body;
 using TTT.Game.Events.Game;
 using TTT.Game.Listeners;
-using TTT.Shop.Events;
 
 namespace TTT.Shop.Items.Traitor.Gloves;
 
 public class GlovesListener(IServiceProvider provider)
   : BaseListener(provider) {
-  private readonly GlovesConfig item =
+  private readonly GlovesConfig config =
     provider.GetService<IStorage<GlovesConfig>>()
     ?.Load()
      .GetAwaiter()
      .GetResult() ?? new GlovesConfig();
 
   private readonly IShop shop = provider.GetRequiredService<IShop>();
-
   private readonly Dictionary<IPlayer, int> uses = new();
 
   [UsedImplicitly]
@@ -33,7 +31,7 @@ public class GlovesListener(IServiceProvider provider)
     ev.Body.Killer = null;
     Messenger.Message(online,
       Locale[
-        GlovesMsgs.SHOP_ITEM_GLOVES_USED_KILL(uses[online], item.MaxUses)]);
+        GlovesMsgs.SHOP_ITEM_GLOVES_USED_KILL(uses[online], config.MaxUses)]);
   }
 
   [UsedImplicitly]
@@ -46,7 +44,7 @@ public class GlovesListener(IServiceProvider provider)
     Messenger.Message(ev.Identifier,
       Locale[
         GlovesMsgs.SHOP_ITEM_GLOVES_USED_BODY(uses[ev.Identifier],
-          item.MaxUses)]);
+          config.MaxUses)]);
   }
 
   [UsedImplicitly]
@@ -60,7 +58,7 @@ public class GlovesListener(IServiceProvider provider)
     if (player is not IOnlinePlayer online) return false;
     if (!uses.TryGetValue(player, out var useCount)) {
       if (!shop.HasItem<GlovesItem>(online)) return false;
-      uses[player] = item.MaxUses - 1;
+      uses[player] = config.MaxUses - 1;
       return true;
     }
 

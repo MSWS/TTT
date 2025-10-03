@@ -1,6 +1,6 @@
 ﻿using System.Drawing;
 
-namespace ShopAPI.Configs;
+namespace ShopAPI.Configs.Detective;
 
 public record HealthStationConfig : StationConfig {
   public override string UseSound { get; init; } = "sounds/buttons/blip1";

@@ -1,4 +1,4 @@
-﻿namespace ShopAPI.Configs;
+﻿namespace ShopAPI.Configs.Detective;
 
 public record DnaScannerConfig : ShopItemConfig {
   public override int Price { get; init; } = 100;

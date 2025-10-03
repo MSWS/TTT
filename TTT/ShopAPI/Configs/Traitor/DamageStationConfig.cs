@@ -1,6 +1,6 @@
 ﻿using System.Drawing;
 
-namespace ShopAPI.Configs;
+namespace ShopAPI.Configs.Traitor;
 
 public record DamageStationConfig : StationConfig {
   public override int HealthIncrements { get; init; } = -15;

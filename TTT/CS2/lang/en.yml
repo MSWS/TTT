@@ -15,3 +15,7 @@ SHOP_ITEM_STATION_HURT_DESC: "A station that hurts non-Traitors around it."
 
 SHOP_ITEM_CAMO: "Camouflage"
 SHOP_ITEM_CAMO_DESC: "Disguise yourself and make yourself harder to see."
+
+SHOP_ITEM_BODY_PAINT: "Body Paint"
+SHOP_ITEM_BODY_PAINT_DESC: "Paint bodies to make them appear identified."
+SHOP_ITEM_BODY_PAINT_OUT: "%PREFIX% You ran out of body paint."

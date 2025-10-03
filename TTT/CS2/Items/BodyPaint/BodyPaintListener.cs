@@ -1,0 +1,59 @@
+using JetBrains.Annotations;
+using Microsoft.Extensions.DependencyInjection;
+using ShopAPI;
+using ShopAPI.Configs;
+using ShopAPI.Events;
+using TTT.API.Events;
+using TTT.API.Player;
+using TTT.API.Storage;
+using TTT.CS2.API;
+using TTT.CS2.Extensions;
+using TTT.Game.Events.Body;
+using TTT.Game.Listeners;
+using TTT.Shop.Items.Traitor.BodyPaint;
+
+namespace TTT.CS2.Items.BodyPaint;
+
+public class BodyPaintListener(IServiceProvider provider)
+  : BaseListener(provider) {
+  private readonly BodyPaintConfig config =
+    provider.GetService<IStorage<BodyPaintConfig>>()
+    ?.Load()
+     .GetAwaiter()
+     .GetResult() ?? new BodyPaintConfig();
+
+  private readonly Dictionary<IPlayer, int> uses = new();
+  private readonly IShop shop = provider.GetRequiredService<IShop>();
+
+  private readonly IBodyTracker bodies =
+    provider.GetRequiredService<IBodyTracker>();
+
+  [UsedImplicitly]
+  [EventHandler]
+  public void OnPurchase(PlayerPurchaseItemEvent ev) {
+    if (ev.Item is not BodyPaintItem) return;
+    if (ev.Player is not IOnlinePlayer online) return;
+    uses[online] += config.MaxUses;
+  }
+
+  [UsedImplicitly]
+  [EventHandler]
+  public void BodyIdentify(BodyIdentifyEvent ev) {
+    if (!bodies.Bodies.TryGetValue(ev.Body, out var body)) return;
+    if (ev.Identifier == null || !usePaint(ev.Identifier)) return;
+    ev.IsCanceled = true;
+    body.SetColor(config.ColorToApply);
+  }
+
+  private bool usePaint(IPlayer player) {
+    if (player is not IOnlinePlayer online) return false;
+    if (!uses.TryGetValue(player, out var useCount)) return false;
+
+    if (useCount <= 0) return false;
+    uses[player] = useCount - 1;
+    if (uses[player] > 0) return true;
+    shop.RemoveItem<BodyPaintItem>(online);
+    Messenger.Message(online, Locale[BodyPaintMsgs.SHOP_ITEM_BODY_PAINT_OUT]);
+    return true;
+  }
+}

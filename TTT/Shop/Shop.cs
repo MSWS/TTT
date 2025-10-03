@@ -1,11 +1,11 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using ShopAPI;
+using ShopAPI.Events;
 using TTT.API;
 using TTT.API.Events;
 using TTT.API.Messages;
 using TTT.API.Player;
 using TTT.Locale;
-using TTT.Shop.Events;
 
 namespace TTT.Shop;
 
