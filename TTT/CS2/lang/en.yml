@@ -19,3 +19,6 @@ SHOP_ITEM_CAMO_DESC: "Disguise yourself and make yourself harder to see."
 SHOP_ITEM_BODY_PAINT: "Body Paint"
 SHOP_ITEM_BODY_PAINT_DESC: "Paint bodies to make them appear identified."
 SHOP_ITEM_BODY_PAINT_OUT: "%PREFIX% You ran out of body paint."
+
+SHOP_ITEM_POISON_SHOTS: "Poison Shots"
+SHOP_ITEM_POISON_SHOTS_DESC: "Your bullets are coated in a mildly poisonous substance."
