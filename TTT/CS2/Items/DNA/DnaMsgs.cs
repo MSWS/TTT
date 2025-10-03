@@ -20,7 +20,7 @@ public class DnaMsgs {
   public static IMsg SHOP_ITEM_DNA_SCANNED_OTHER(IRole victimRole,
     IPlayer player, string explanation) {
     return MsgFactory.Create(nameof(SHOP_ITEM_DNA_SCANNED_OTHER),
-      GameMsgs.GetRolePrefix(victimRole), player.Name);
+      GameMsgs.GetRolePrefix(victimRole), player.Name, explanation);
   }
 
   public static IMsg
