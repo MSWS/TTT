@@ -72,6 +72,7 @@ public static class CS2ServiceCollection {
     collection.AddModBehavior<PlayerStatsTracker>();
     collection.AddModBehavior<RoundTimerListener>();
     collection.AddModBehavior<ScreenColorApplier>();
+    collection.AddModBehavior<KarmaBanner>();
 
     // Commands
 #if DEBUG

@@ -26,6 +26,11 @@ public class CS2KarmaConfig : IStorage<KarmaConfig>, IPluginModule {
     "Maximum possible karma value for any player", 100, ConVarFlags.FCVAR_NONE,
     new RangeValidator<int>(0, 10000));
 
+  public static readonly FakeConVar<string> CV_COMMAND_UPON_LOW_KARMA = new(
+    "css_ttt_karma_command_upon_low",
+    "Command to execute when a player's karma goes below the minimum. {0} is replaced with the player's SteamID.",
+    "css_ban #{0} 4320 Your karma is too low!", ConVarFlags.FCVAR_NONE);
+
   public void Dispose() { }
 
   public void Start() { }
@@ -37,10 +42,11 @@ public class CS2KarmaConfig : IStorage<KarmaConfig>, IPluginModule {
 
   public Task<KarmaConfig?> Load() {
     var cfg = new KarmaConfigInternal {
-      DbString      = CV_DB_STRING.Value,
-      MinKarmaValue = CV_MIN_KARMA.Value,
-      DefaultValue  = CV_DEFAULT_KARMA.Value,
-      MaxValue      = CV_MAX_KARMA.Value
+      DbString                 = CV_DB_STRING.Value,
+      MinKarmaValue            = CV_MIN_KARMA.Value,
+      DefaultValue             = CV_DEFAULT_KARMA.Value,
+      MaxValue                 = CV_MAX_KARMA.Value,
+      CommandUponLowKarmaValue = CV_COMMAND_UPON_LOW_KARMA.Value
     };
 
     return Task.FromResult<KarmaConfig?>(cfg);
@@ -51,9 +57,11 @@ public class CS2KarmaConfig : IStorage<KarmaConfig>, IPluginModule {
     public int MinKarmaValue { get; init; }
     public int DefaultValue { get; init; }
     public int MaxValue { get; init; }
+    public string CommandUponLowKarmaValue { get; init; } = string.Empty;
 
     public override int MinKarma => MinKarmaValue;
     public override int DefaultKarma => DefaultValue;
     public override int MaxKarma(IPlayer player) => MaxValue;
+    public override string CommandUponLowKarma => CommandUponLowKarmaValue;
   }
 }

@@ -22,35 +22,53 @@ public class KarmaStorage(IServiceProvider provider) : IKarmaService {
   private readonly IDictionary<IPlayer, int> karmaCache =
     new Dictionary<IPlayer, int>();
 
+  private static bool enableCache = false;
+
   private IDbConnection? connection;
 
   public void Start() {
     connection = new SqliteConnection(config.DbString);
-    // config = new 
+    connection.Open();
+
+    Task.Run(async () => {
+      if (connection is not { State: ConnectionState.Open })
+        throw new InvalidOperationException(
+          "Storage connection is not initialized.");
+
+      await connection.ExecuteAsync("CREATE TABLE IF NOT EXISTS PlayerKarma ("
+        + "PlayerId TEXT PRIMARY KEY, " + "Karma INTEGER NOT NULL)");
+    });
+
     var scheduler = provider.GetRequiredService<IScheduler>();
 
     Observable.Interval(TimeSpan.FromMinutes(5), scheduler)
      .Subscribe(_ => updateKarmas());
   }
 
-  public Task<int> Load(IPlayer key) {
+  public async Task<int> Load(IPlayer key) {
+    if (enableCache) {
+      karmaCache.TryGetValue(key, out var cachedKarma);
+      if (cachedKarma != 0) return cachedKarma;
+    }
+
     if (connection is not { State: ConnectionState.Open })
       throw new InvalidOperationException(
         "Storage connection is not initialized.");
 
-    return connection.QuerySingleOrDefaultAsync<int>(
-      $"SELECT IFNULL(Karma, {config.DefaultKarma}) FROM PlayerKarma WHERE PlayerId = @PlayerId",
+    return await connection.QuerySingleAsync<int>(
+      $"SELECT COALESCE((SELECT Karma FROM PlayerKarma WHERE PlayerId = @PlayerId), {config.DefaultKarma})",
       new { PlayerId = key.Id });
   }
 
-  public void Dispose() { }
+  public void Dispose() { connection?.Dispose(); }
+
   public string Id => nameof(KarmaStorage);
   public string Version => GitVersionInformation.FullSemVer;
 
   public async Task Write(IPlayer key, int newData) {
-    if (newData < config.MinKarma || newData > config.MaxKarma(key))
+    if (newData > config.MaxKarma(key))
       throw new ArgumentOutOfRangeException(nameof(newData),
-        $"Karma must be between {config.MinKarma} and {config.MaxKarma(key)} for player {key.Id}.");
+        $"Karma must be less than {config.MaxKarma(key)} for player {key.Id}.");
 
     if (!karmaCache.TryGetValue(key, out var oldKarma)) {
       oldKarma        = await Load(key);
@@ -64,6 +82,8 @@ public class KarmaStorage(IServiceProvider provider) : IKarmaService {
     if (karmaUpdateEvent.IsCanceled) return;
 
     karmaCache[key] = newData;
+
+    if (!enableCache) await updateKarmas();
   }
 
   private async Task updateKarmas() {
@@ -75,7 +95,7 @@ public class KarmaStorage(IServiceProvider provider) : IKarmaService {
     foreach (var (player, karma) in karmaCache)
       tasks.Add(connection.ExecuteAsync(
         "INSERT INTO PlayerKarma (PlayerId, Karma) VALUES (@PlayerId, @Karma) "
-        + "ON DUPLICATE KEY UPDATE Karma = @Karma",
+        + "ON CONFLICT(PlayerId) DO UPDATE SET Karma = @Karma",
         new { PlayerId = player.Id, Karma = karma }));
 
     await Task.WhenAll(tasks);
