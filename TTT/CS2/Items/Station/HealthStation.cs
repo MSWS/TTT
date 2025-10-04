@@ -5,6 +5,7 @@ using ShopAPI.Configs.Detective;
 using TTT.API.Extensions;
 using TTT.API.Storage;
 using TTT.CS2.Extensions;
+using TTT.Game.Roles;
 
 namespace TTT.CS2.Items.Station;
 
@@ -14,11 +15,12 @@ public static class HealthStationCollection {
   }
 }
 
-public class HealthStation(IServiceProvider provider) : StationItem(provider,
-  provider.GetService<IStorage<HealthStationConfig>>()
-  ?.Load()
-   .GetAwaiter()
-   .GetResult() ?? new HealthStationConfig()) {
+public class HealthStation(IServiceProvider provider)
+  : StationItem<DetectiveRole>(provider,
+    provider.GetService<IStorage<HealthStationConfig>>()
+    ?.Load()
+     .GetAwaiter()
+     .GetResult() ?? new HealthStationConfig()) {
   public override string Name => Locale[StationMsgs.SHOP_ITEM_STATION_HEALTH];
 
   public override string Description

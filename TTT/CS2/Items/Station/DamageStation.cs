@@ -17,11 +17,12 @@ public static class DamageStationCollection {
   }
 }
 
-public class DamageStation(IServiceProvider provider) : StationItem(provider,
-  provider.GetService<IStorage<DamageStationConfig>>()
-  ?.Load()
-   .GetAwaiter()
-   .GetResult() ?? new DamageStationConfig()) {
+public class DamageStation(IServiceProvider provider)
+  : StationItem<TraitorRole>(provider,
+    provider.GetService<IStorage<DamageStationConfig>>()
+    ?.Load()
+     .GetAwaiter()
+     .GetResult() ?? new DamageStationConfig()) {
   private readonly IPlayerConverter<CCSPlayerController> converter =
     provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
 

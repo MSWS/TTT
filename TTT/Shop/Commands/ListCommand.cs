@@ -47,13 +47,11 @@ public class ListCommand(IServiceProvider provider) : ICommand {
       int.MaxValue :
       await shop.Load(info.CallingPlayer);
 
-    var longestShopName = items.Select(item => formatPrefix(item).Length).Max();
-
     foreach (var item in items) {
       info.ReplySync(formatItem(item,
         item.Config.Price <= balance
         && item.CanPurchase(info.CallingPlayer ?? executor!)
-        == PurchaseResult.SUCCESS, longestShopName));
+        == PurchaseResult.SUCCESS));
     }
 
     return CommandResult.SUCCESS;
@@ -64,11 +62,11 @@ public class ListCommand(IServiceProvider provider) : ICommand {
       return
         $" {ChatColors.Grey}- [{ChatColors.DarkRed}{item.Config.Price}{ChatColors.Grey}] {ChatColors.Red}{item.Name}";
     return
-      $" {ChatColors.Default}- [{ChatColors.Yellow}{item.Config.Price}{ChatColors.Grey}] {ChatColors.Green}{item.Name}";
+      $" {ChatColors.Default}- [{ChatColors.Yellow}{item.Config.Price}{ChatColors.Default}] {ChatColors.Green}{item.Name}";
   }
 
-  private string formatItem(IShopItem item, bool canBuy, int longestShopName) {
-    var paddedPrefix = formatPrefix(item, canBuy).PadRight(longestShopName);
-    return $" {paddedPrefix} {ChatColors.Grey} | {item.Description}";
+  private string formatItem(IShopItem item, bool canBuy) {
+    return
+      $" {formatPrefix(item, canBuy)} {ChatColors.Grey} | {item.Description}";
   }
 }

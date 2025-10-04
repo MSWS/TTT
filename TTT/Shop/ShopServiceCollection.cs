@@ -6,6 +6,7 @@ using TTT.CS2.Items.BodyPaint;
 using TTT.CS2.Items.Camouflage;
 using TTT.CS2.Items.DNA;
 using TTT.CS2.Items.PoisonShots;
+using TTT.CS2.Items.PoisonSmoke;
 using TTT.CS2.Items.Station;
 using TTT.Shop.Commands;
 using TTT.Shop.Items;
@@ -41,6 +42,7 @@ public static class ShopServiceCollection {
     collection.AddHealthStation();
     collection.AddM4A1Services();
     collection.AddPoisonShots();
+    collection.AddPoisonSmoke();
     collection.AddStickerServices();
     collection.AddTaserItem();
   }

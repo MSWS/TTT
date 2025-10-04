@@ -43,6 +43,8 @@ public static class CS2ServiceCollection {
     collection.AddModBehavior<IStorage<C4Config>, CS2C4Config>();
     collection.AddModBehavior<IStorage<M4A1Config>, CS2M4A1Config>();
     collection.AddModBehavior<IStorage<TaserConfig>, CS2TaserConfig>();
+    collection
+     .AddModBehavior<IStorage<PoisonSmokeConfig>, CS2PoisonSmokeConfig>();
 
     // TTT - CS2 Specific optionals
     collection.AddScoped<ITextSpawner, TextSpawner>();

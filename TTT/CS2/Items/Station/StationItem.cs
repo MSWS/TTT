@@ -9,14 +9,15 @@ using ShopAPI;
 using ShopAPI.Configs;
 using TTT.API;
 using TTT.API.Player;
+using TTT.API.Role;
 using TTT.CS2.Extensions;
 using TTT.Game.Roles;
 
 namespace TTT.CS2.Items.Station;
 
-public abstract class StationItem(IServiceProvider provider,
+public abstract class StationItem<T>(IServiceProvider provider,
   StationConfig config)
-  : RoleRestrictedItem<DetectiveRole>(provider), IPluginModule {
+  : RoleRestrictedItem<T>(provider), IPluginModule where T : IRole {
   private static readonly long PROP_SIZE_SQUARED = 500;
   protected readonly StationConfig _Config = config;
 

@@ -25,5 +25,8 @@ SHOP_ITEM_POISON_SHOTS_DESC: "Your bullets are coated in a mildly poisonous subs
 SHOP_ITEM_POISON_HIT: "%PREFIX% You hit {green}{0}{grey} with a {lightpurple}poison shot{grey}."
 SHOP_ITEM_POISON_OUT: "%PREFIX% You are out of poison shots."
 
+SHOP_ITEM_POISON_SMOKE: "Poison Smoke"
+SHOP_ITEM_POISON_SMOKE_DESC: "Throw a grenade that releases poisonous gas."
+
 SHOP_ITEM_ARMOR: "Armor with Helmet"
 SHOP_ITEM_ARMOR_DESC: "Wear armor that reduces incoming damage."

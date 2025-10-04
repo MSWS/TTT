@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Reactive.Concurrency;
 using CounterStrikeSharp.API;
@@ -75,14 +76,17 @@ public class PoisonShotsListener(IServiceProvider provider)
     poisonTimers.Clear();
   }
 
+  [SuppressMessage("ReSharper", "AccessToModifiedClosure")]
   private void addPoisonEffect(IPlayer player) {
     IDisposable? timer = null;
 
     var effect = new PoisonEffect(player);
-    timer = scheduler.SchedulePeriodic(config.TimeBetweenDamage, () => {
-      // ReSharper disable once AccessToModifiedClosure
+    timer = scheduler.SchedulePeriodic(config.PoisonConfig.TimeBetweenDamage, ()
+      => {
       Server.NextWorldUpdate(() => {
-        if (!tickPoison(effect)) timer?.Dispose();
+        if (tickPoison(effect) || timer == null) return;
+        timer.Dispose();
+        poisonTimers.Remove(timer);
       });
     });
 
@@ -92,15 +96,15 @@ public class PoisonShotsListener(IServiceProvider provider)
   private bool tickPoison(PoisonEffect effect) {
     if (effect.Player is not IOnlinePlayer online) return false;
     if (!online.IsAlive) return false;
-    online.Health -= config.DamagePerTick;
+    online.Health -= config.PoisonConfig.DamagePerTick;
     effect.Ticks++;
-    effect.DamageGiven += config.DamagePerTick;
+    effect.DamageGiven += config.PoisonConfig.DamagePerTick;
 
     var gamePlayer = converter.GetPlayer(online);
     gamePlayer?.ColorScreen(config.PoisonColor, 0.2f, 0.3f);
-    gamePlayer?.ExecuteClientCommand("play " + config.PoisonSound);
+    gamePlayer?.ExecuteClientCommand("play " + config.PoisonConfig.PoisonSound);
 
-    return effect.DamageGiven < config.TotalDamage;
+    return effect.DamageGiven < config.PoisonConfig.TotalDamage;
   }
 
   public override void Dispose() {
