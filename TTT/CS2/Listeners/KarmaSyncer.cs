@@ -38,13 +38,14 @@ public class KarmaSyncer(IServiceProvider provider)
   public HookResult OnJoin(EventPlayerConnectFull ev, GameEventInfo _) {
     if (ev.Userid == null || karma == null) return HookResult.Continue;
     var player = converter.GetPlayer(ev.Userid);
+    var user   = ev.Userid;
 
     Task.Run(async () => {
       var karmaValue = await karma.Load(player);
       await Server.NextWorldUpdateAsync(() => {
-        if (!ev.Userid.IsValid) return;
-        ev.Userid.Score = karmaValue;
-        Utilities.SetStateChanged(ev.Userid, "CCSPlayerController", "m_iScore");
+        if (!user.IsValid) return;
+        user.Score = karmaValue;
+        Utilities.SetStateChanged(user, "CCSPlayerController", "m_iScore");
       });
     });
 

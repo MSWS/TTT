@@ -1,15 +1,10 @@
 ﻿using CounterStrikeSharp.API;
-using CounterStrikeSharp.API.Core;
-using Microsoft.Extensions.DependencyInjection;
 using TTT.API.Command;
 using TTT.API.Player;
 
 namespace TTT.CS2.Command.Test;
 
-public class IndexCommand(IServiceProvider provider) : ICommand {
-  private readonly IPlayerConverter<CCSPlayerController> converter =
-    provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
-
+public class IndexCommand : ICommand {
   public string Id => "index";
 
   public void Dispose() { }

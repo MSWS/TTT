@@ -17,7 +17,7 @@ namespace TTT.CS2.Items.Station;
 public abstract class StationItem<T>(IServiceProvider provider,
   StationConfig config)
   : RoleRestrictedItem<T>(provider), IPluginModule where T : IRole {
-  private static readonly long PROP_SIZE_SQUARED = 500;
+  private readonly long PROP_SIZE_SQUARED = 500;
   protected readonly StationConfig _Config = config;
 
   protected readonly IPlayerConverter<CCSPlayerController> Converter =

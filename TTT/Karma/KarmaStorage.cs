@@ -12,7 +12,7 @@ using TTT.Karma.Events;
 namespace TTT.Karma;
 
 public class KarmaStorage(IServiceProvider provider) : IKarmaService {
-  private static readonly bool enableCache = false;
+  private static readonly bool enableCache = true;
   private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
 
   private readonly KarmaConfig config =
@@ -40,7 +40,7 @@ public class KarmaStorage(IServiceProvider provider) : IKarmaService {
     var scheduler = provider.GetRequiredService<IScheduler>();
 
     Observable.Interval(TimeSpan.FromMinutes(5), scheduler)
-     .Subscribe(_ => updateKarmas());
+     .Subscribe(_ => Task.Run(async () => await updateKarmas()));
   }
 
   public async Task<int> Load(IPlayer key) {

@@ -24,8 +24,6 @@ public class Stickers(IServiceProvider provider)
    .GetAwaiter()
    .GetResult() ?? new StickersConfig();
 
-  private readonly IIconManager? icons = provider.GetService<IIconManager>();
-
   public override string Name => Locale[StickerMsgs.SHOP_ITEM_STICKERS];
 
   public override string Description

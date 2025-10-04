@@ -3,7 +3,6 @@ using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Cvars;
 using CounterStrikeSharp.API.Modules.Cvars.Validators;
 using TTT.API;
-using TTT.API.Player;
 using TTT.API.Storage;
 using TTT.Karma;
 
@@ -12,7 +11,7 @@ namespace TTT.CS2.Configs;
 public class CS2KarmaConfig : IStorage<KarmaConfig>, IPluginModule {
   public static readonly FakeConVar<string> CV_DB_STRING = new(
     "css_ttt_karma_dbstring", "Database connection string for Karma storage",
-    "Data Source=karma.db", ConVarFlags.FCVAR_NONE);
+    "Data Source=karma.db");
 
   public static readonly FakeConVar<int> CV_MIN_KARMA = new("css_ttt_karma_min",
     "Minimum possible Karma value", 0, ConVarFlags.FCVAR_NONE,

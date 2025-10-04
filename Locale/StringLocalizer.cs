@@ -43,7 +43,7 @@ public partial class StringLocalizer : IMsgLocalizer {
   private LocalizedString getString(string name, params object[] arguments) {
     // Get the localized value
     string value;
-    try { value = localizer[name].Value; } catch (NullReferenceException e) {
+    try { value = localizer[name].Value; } catch (NullReferenceException) {
       return new LocalizedString(name, name, true);
     }
 

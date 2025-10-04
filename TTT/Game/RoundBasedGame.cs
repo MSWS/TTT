@@ -22,9 +22,6 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
    .GetAwaiter()
    .GetResult() ?? new TTTConfig();
 
-  private readonly IInventoryManager inventory =
-    provider.GetRequiredService<IInventoryManager>();
-
   protected readonly IMsgLocalizer Locale =
     provider.GetRequiredService<IMsgLocalizer>();
 

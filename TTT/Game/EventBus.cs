@@ -9,7 +9,6 @@ public class EventBus(IServiceProvider provider) : IEventBus, ITerrorModule {
   private readonly Dictionary<Type, List<(object listener, MethodInfo method)>>
     handlers = new();
 
-  [Obsolete("Registering listeners is deprecated, use DI instead.")]
   public void RegisterListener(IListener listener) {
     var dirtyTypes = new HashSet<Type>();
     appendListener(listener, dirtyTypes);

@@ -30,9 +30,7 @@ public class KarmaListener(IServiceProvider provider) : BaseListener(provider) {
   private readonly IRoleAssigner roles =
     provider.GetRequiredService<IRoleAssigner>();
 
-  private Dictionary<IPlayer, int> queuedKarmaUpdates = new();
-
-  public void Dispose() { }
+  private readonly Dictionary<IPlayer, int> queuedKarmaUpdates = new();
 
   [EventHandler]
   [UsedImplicitly]
@@ -41,20 +39,15 @@ public class KarmaListener(IServiceProvider provider) : BaseListener(provider) {
   [EventHandler]
   [UsedImplicitly]
   public void OnKill(PlayerDeathEvent ev) {
-    Messenger.DebugAnnounce("KarmaListener: OnKill");
     if (games.ActiveGame is not { State: State.IN_PROGRESS }) return;
 
     var victim = ev.Victim;
     var killer = ev.Killer;
 
     if (killer == null) return;
-    Messenger.DebugAnnounce("KarmaListener: Killer is not null");
 
     var victimRole = roles.GetRoles(victim).First();
     var killerRole = roles.GetRoles(killer).First();
-
-    Messenger.DebugAnnounce(
-      $"KarmaListener: Victim role {victimRole.Id}, Killer role {killerRole.Id}");
 
     var victimKarmaDelta = 0;
     var killerKarmaDelta = 0;

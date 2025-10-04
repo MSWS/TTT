@@ -9,7 +9,6 @@ using TTT.CS2.API;
 using TTT.CS2.Extensions;
 using TTT.Game.Events.Body;
 using TTT.Game.Listeners;
-using TTT.Shop.Items.Traitor.BodyPaint;
 
 namespace TTT.CS2.Items.BodyPaint;
 

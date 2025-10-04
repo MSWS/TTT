@@ -15,7 +15,9 @@ public class IdentifyBodyAction(IRoleAssigner roles, BodyIdentifyEvent ev)
 
   #endregion
 
-  public IPlayer Player { get; } = ev.Identifier;
+  public IPlayer Player { get; } =
+    ev.Identifier ?? throw new InvalidOperationException();
+
   public IPlayer? Other { get; } = ev.Body.OfPlayer;
 
   public IRole? PlayerRole { get; } =

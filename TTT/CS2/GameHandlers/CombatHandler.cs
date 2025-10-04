@@ -62,15 +62,16 @@ public class CombatHandler(IServiceProvider provider) : IPluginModule {
     }
 
     var killerStats = ev.Attacker?.ActionTrackingServices?.MatchStats;
-    ev.Attacker.ActionTrackingServices.NumRoundKills--;
-    Utilities.SetStateChanged(ev.Attacker,
-      "CCSPlayerController_ActionTrackingServices",
-      "m_pActionTrackingServices");
-    if (killerStats == null) return;
-    killerStats.Kills  -= 1;
-    killerStats.Damage -= ev.DmgHealth;
 
     if (ev.Attacker != null) {
+      Utilities.SetStateChanged(ev.Attacker,
+        "CCSPlayerController_ActionTrackingServices",
+        "m_pActionTrackingServices");
+      if (killerStats == null) return;
+      killerStats.Kills  -= 1;
+      killerStats.Damage -= ev.DmgHealth;
+      if (ev.Attacker.ActionTrackingServices != null)
+        ev.Attacker.ActionTrackingServices.NumRoundKills--;
       Utilities.SetStateChanged(ev.Attacker, "CCSPlayerController",
         "m_pActionTrackingServices");
       ev.FireEventToClient(ev.Attacker);
