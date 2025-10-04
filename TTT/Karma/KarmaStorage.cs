@@ -2,6 +2,7 @@
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using Dapper;
+using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.DependencyInjection;
 using MySqlConnector;
 using TTT.API.Events;
@@ -24,7 +25,8 @@ public class KarmaStorage(IServiceProvider provider) : IKarmaService {
   private IDbConnection? connection;
 
   public void Start() {
-    connection = new MySqlConnection(config.DbString);
+    connection = new SqliteConnection(config.DbString);
+    // config = new 
     var scheduler = provider.GetRequiredService<IScheduler>();
 
     Observable.Interval(TimeSpan.FromMinutes(5), scheduler)
