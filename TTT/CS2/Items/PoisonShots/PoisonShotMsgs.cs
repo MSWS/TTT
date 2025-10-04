@@ -8,4 +8,7 @@ public class PoisonShotMsgs {
 
   public static IMsg SHOP_ITEM_POISON_SHOTS_DESC
     => MsgFactory.Create(nameof(SHOP_ITEM_POISON_SHOTS_DESC));
+
+  public static IMsg SHOP_ITEM_POISON_OUT
+    => MsgFactory.Create(nameof(SHOP_ITEM_POISON_OUT));
 }

@@ -22,3 +22,4 @@ SHOP_ITEM_BODY_PAINT_OUT: "%PREFIX% You ran out of body paint."
 
 SHOP_ITEM_POISON_SHOTS: "Poison Shots"
 SHOP_ITEM_POISON_SHOTS_DESC: "Your bullets are coated in a mildly poisonous substance."
+SHOP_ITEM_POISON_OUT: "%PREFIX% You are out of poison shots."

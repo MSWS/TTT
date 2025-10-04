@@ -44,8 +44,12 @@ public class PoisonShotsListener(IServiceProvider provider)
   [GameEventHandler]
   public HookResult OnFire(EventWeaponFire ev, GameEventInfo _) {
     if (ev.Userid == null) return HookResult.Continue;
-    if (converter.GetPlayer(ev.Userid) is IOnlinePlayer player)
-      usePoisonShot(player);
+    if (converter.GetPlayer(ev.Userid) is not IOnlinePlayer player)
+      return HookResult.Continue;
+    var remainingShots = usePoisonShot(player);
+    if (remainingShots == 0)
+      Messenger.Message(player, Locale[PoisonShotMsgs.SHOP_ITEM_POISON_OUT]);
+
     return HookResult.Continue;
   }
 
@@ -105,17 +109,23 @@ public class PoisonShotsListener(IServiceProvider provider)
     public int DamageGiven { get; set; }
   }
 
-  private bool usePoisonShot(IOnlinePlayer player) {
+  /// <summary>
+  /// Uses a poison shot for the player. Returns the remaining shots, -1 if none
+  /// are available.
+  /// </summary>
+  /// <param name="player"></param>
+  /// <returns></returns>
+  private int usePoisonShot(IOnlinePlayer player) {
     if (!poisonShots.TryGetValue(player, out var shot) || shot <= 0) {
-      if (!shop.HasItem<PoisonShotsItem>(player)) return false;
+      if (!shop.HasItem<PoisonShotsItem>(player)) return -1;
       poisonShots[player] = config.TotalShots;
     }
 
     poisonShots[player]--;
-    if (poisonShots[player] > 0) return true;
+    if (poisonShots[player] > 0) return poisonShots[player];
 
     poisonShots.Remove(player);
     shop.RemoveItem<PoisonShotsItem>(player);
-    return true;
+    return 0;
   }
 }
