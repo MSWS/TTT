@@ -19,9 +19,9 @@ public class TraitorBuddyInformer(IServiceProvider provider)
 
     foreach (var traitor in traitors) {
       var buddies = traitors.Where(x => x != traitor).ToList();
-      if (buddies.Count == 0)
+      if (buddies.Count == 0) {
         Messenger.Message(traitor, Locale[GameMsgs.ROLE_REVEAL_TRAITORS_NONE]);
-      else {
+      } else {
         Messenger.Message(traitor,
           Locale[GameMsgs.ROLE_REVEAL_TRAITORS_HEADER]);
         foreach (var buddy in buddies)

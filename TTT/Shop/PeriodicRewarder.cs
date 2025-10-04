@@ -10,21 +10,21 @@ using TTT.API.Storage;
 namespace TTT.Shop;
 
 public class PeriodicRewarder(IServiceProvider provider) : ITerrorModule {
-  private readonly IScheduler scheduler =
-    provider.GetRequiredService<IScheduler>();
-
-  private IDisposable? timer;
-
   private readonly ShopConfig config = provider
    .GetService<IStorage<ShopConfig>>()
   ?.Load()
    .GetAwaiter()
    .GetResult() ?? new ShopConfig(provider);
 
-  private readonly IShop shop = provider.GetRequiredService<IShop>();
-
   private readonly IPlayerFinder finder =
     provider.GetRequiredService<IPlayerFinder>();
+
+  private readonly IScheduler scheduler =
+    provider.GetRequiredService<IScheduler>();
+
+  private readonly IShop shop = provider.GetRequiredService<IShop>();
+
+  private IDisposable? timer;
 
   public void Dispose() { timer?.Dispose(); }
 
@@ -34,8 +34,9 @@ public class PeriodicRewarder(IServiceProvider provider) : ITerrorModule {
   }
 
   private void issueRewards() {
-    Server.NextWorldUpdate(() => { });
-    foreach (var player in finder.GetOnline().Where(p => p.IsAlive))
-      shop.AddBalance(player, config.IntervalRewardAmount, "Time Reward");
+    Server.NextWorldUpdate(() => {
+      foreach (var player in finder.GetOnline().Where(p => p.IsAlive))
+        shop.AddBalance(player, config.IntervalRewardAmount, "Time Reward");
+    });
   }
 }

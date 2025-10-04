@@ -1,4 +1,4 @@
-SHOP_PREFIX: "{blue}SHOP {grey}| "
+SHOP_PREFIX: "{green}SHOP {grey}| "
 SHOP_INACTIVE: "%SHOP_PREFIX%The shop is currently closed."
 SHOP_ITEM_NOT_FOUND: "%SHOP_PREFIX%Could not find an item named \"{default}{0}{grey}\"."
 
