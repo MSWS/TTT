@@ -30,3 +30,6 @@ SHOP_ITEM_POISON_SMOKE_DESC: "Throw a grenade that releases poisonous gas."
 
 SHOP_ITEM_ARMOR: "Armor with Helmet"
 SHOP_ITEM_ARMOR_DESC: "Wear armor that reduces incoming damage."
+
+SHOP_ITEM_ONE_HIT_KNIFE: "One-Hit Knife"
+SHOP_ITEM_ONE_HIT_KNIFE_DESC: "Your next knife hit will be a guaranteed kill."
