@@ -32,9 +32,9 @@ public record ShopConfig(IRoleAssigner assigner) {
   public float CreditsMultiplierForNotAssisted { get; init; } = 1.5f;
 
   public TimeSpan CreditRewardInterval { get; init; } =
-    TimeSpan.FromSeconds(20);
+    TimeSpan.FromSeconds(30);
 
-  public int IntervalRewardAmount { get; init; } = 5;
+  public int IntervalRewardAmount { get; init; } = 8;
 
   public virtual int CreditsForKill(IOnlinePlayer attacker,
     IOnlinePlayer victim) {

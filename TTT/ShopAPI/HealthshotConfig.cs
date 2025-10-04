@@ -3,6 +3,6 @@
 namespace ShopAPI;
 
 public record HealthshotConfig : ShopItemConfig {
-  public override int Price { get; init; } = 20;
+  public override int Price { get; init; } = 25;
   public string Weapon { get; init; } = "weapon_healthshot";
 }

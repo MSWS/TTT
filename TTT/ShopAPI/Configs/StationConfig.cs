@@ -1,7 +1,6 @@
 ﻿using System.Drawing;
-using ShopAPI.Configs;
 
-namespace ShopAPI;
+namespace ShopAPI.Configs;
 
 public abstract record StationConfig : ShopItemConfig {
   public virtual int HealthIncrements { get; init; } = 5;

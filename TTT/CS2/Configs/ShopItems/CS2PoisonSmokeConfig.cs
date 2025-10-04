@@ -11,7 +11,7 @@ namespace TTT.CS2.Configs.ShopItems;
 
 public class CS2PoisonSmokeConfig : IStorage<PoisonSmokeConfig>, IPluginModule {
   public static readonly FakeConVar<int> CV_PRICE = new(
-    "css_ttt_shop_poisonsmoke_price", "Price of the Poison Smoke item", 30,
+    "css_ttt_shop_poisonsmoke_price", "Price of the Poison Smoke item", 45,
     ConVarFlags.FCVAR_NONE, new RangeValidator<int>(0, 10000));
 
   public static readonly FakeConVar<string> CV_WEAPON = new(

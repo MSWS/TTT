@@ -3,12 +3,12 @@
 namespace ShopAPI.Configs.Traitor;
 
 public record DamageStationConfig : StationConfig {
-  public override int HealthIncrements { get; init; } = -15;
+  public override int HealthIncrements { get; init; } = -20;
   public override int TotalHealthGiven { get; init; } = -3000;
 
   public override string UseSound { get; init; } = "sounds/buttons/blip2";
 
-  public override int Price { get; init; } = 60;
+  public override int Price { get; init; } = 65;
 
   public override Color GetColor(float health) {
     // 100% health = white

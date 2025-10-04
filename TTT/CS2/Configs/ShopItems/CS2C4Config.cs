@@ -11,7 +11,7 @@ namespace TTT.CS2.Configs.ShopItems;
 
 public class CS2C4Config : IStorage<C4Config>, IPluginModule {
   public static readonly FakeConVar<int> CV_PRICE = new("css_ttt_shop_c4_price",
-    "Price of the C4 item", 140, ConVarFlags.FCVAR_NONE,
+    "Price of the C4 item", 130, ConVarFlags.FCVAR_NONE,
     new RangeValidator<int>(0, 10000));
 
   public static readonly FakeConVar<string> CV_WEAPON = new(
