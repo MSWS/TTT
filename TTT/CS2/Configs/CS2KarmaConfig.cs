@@ -29,7 +29,7 @@ public class CS2KarmaConfig : IStorage<KarmaConfig>, IPluginModule {
   public static readonly FakeConVar<string> CV_COMMAND_UPON_LOW_KARMA = new(
     "css_ttt_karma_command_upon_low",
     "Command to execute when a player's karma goes below the minimum. {0} is replaced with the player's SteamID.",
-    "css_ban #{0} 4320 Your karma is too low!", ConVarFlags.FCVAR_NONE);
+    "css_ban #{0} 4320 Your karma is too low!");
 
   public void Dispose() { }
 
@@ -61,7 +61,8 @@ public class CS2KarmaConfig : IStorage<KarmaConfig>, IPluginModule {
 
     public override int MinKarma => MinKarmaValue;
     public override int DefaultKarma => DefaultValue;
-    public override int MaxKarma(IPlayer player) => MaxValue;
+
     public override string CommandUponLowKarma => CommandUponLowKarmaValue;
+    public override int MaxKarma(IPlayer player) { return MaxValue; }
   }
 }

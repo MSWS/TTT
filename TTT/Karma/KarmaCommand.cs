@@ -1,5 +1,4 @@
-﻿using CounterStrikeSharp.API.Core;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using TTT.API.Command;
 using TTT.API.Player;
 using TTT.Karma.lang;

@@ -4,7 +4,6 @@ using System.Reactive.Linq;
 using Dapper;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.DependencyInjection;
-using MySqlConnector;
 using TTT.API.Events;
 using TTT.API.Player;
 using TTT.API.Storage;
@@ -13,6 +12,7 @@ using TTT.Karma.Events;
 namespace TTT.Karma;
 
 public class KarmaStorage(IServiceProvider provider) : IKarmaService {
+  private static readonly bool enableCache = false;
   private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
 
   private readonly KarmaConfig config =
@@ -21,8 +21,6 @@ public class KarmaStorage(IServiceProvider provider) : IKarmaService {
 
   private readonly IDictionary<IPlayer, int> karmaCache =
     new Dictionary<IPlayer, int>();
-
-  private static bool enableCache = false;
 
   private IDbConnection? connection;
 
