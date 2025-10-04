@@ -5,8 +5,15 @@ namespace TTT.Karma;
 public record KarmaConfig {
   public string DbString { get; init; } = "Data Source=karma.db";
 
-  public virtual int MinKarma => 0;
-  public virtual int DefaultKarma => 50;
-  public virtual string CommandUponLowKarma => "karmaban {0} Bad Player!";
-  public virtual int MaxKarma(IPlayer player) { return 100; }
+  public int MinKarma { get; init; } = 0;
+  public int DefaultKarma { get; init; } = 50;
+
+  public string CommandUponLowKarma { get; init; } = "karmaban {0} Bad Player!";
+
+  public int MaxKarma(IPlayer player) { return 100; }
+
+  public int KarmaTimeoutThreshold { get; init; } = 20;
+  public int KarmaRoundTimeout { get; init; } = 4;
+
+  public TimeSpan KarmaWarningWindow { get; init; } = TimeSpan.FromDays(1);
 }

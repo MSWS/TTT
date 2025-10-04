@@ -1,1 +1,2 @@
 ﻿KARMA_COMMAND: "%PREFIX%You have {yellow}{0}{grey} karma."
+KARMA_WARNING: "%PREFIX%You have {red}very low{grey} karma, and have been forced to sit out for {yellow}{0} {grey}round%s%. Please make sure you read our rules!"

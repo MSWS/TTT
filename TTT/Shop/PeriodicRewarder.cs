@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using ShopAPI;
 using ShopAPI.Configs;
 using TTT.API;
+using TTT.API.Game;
 using TTT.API.Player;
 using TTT.API.Storage;
 
@@ -24,6 +25,9 @@ public class PeriodicRewarder(IServiceProvider provider) : ITerrorModule {
 
   private readonly IShop shop = provider.GetRequiredService<IShop>();
 
+  private readonly IGameManager games =
+    provider.GetRequiredService<IGameManager>();
+
   private IDisposable? timer;
 
   public void Dispose() { timer?.Dispose(); }
@@ -34,9 +38,10 @@ public class PeriodicRewarder(IServiceProvider provider) : ITerrorModule {
   }
 
   private void issueRewards() {
+    if (games.ActiveGame is not { State: State.IN_PROGRESS }) return;
     Server.NextWorldUpdate(() => {
       foreach (var player in finder.GetOnline().Where(p => p.IsAlive))
-        shop.AddBalance(player, config.IntervalRewardAmount, "Time Reward");
+        shop.AddBalance(player, config.IntervalRewardAmount, "Alive");
     });
   }
 }

@@ -11,25 +11,30 @@ namespace TTT.CS2.Configs;
 
 public class CS2KarmaConfig : IStorage<KarmaConfig>, IPluginModule {
   public static readonly FakeConVar<string> CV_DB_STRING = new(
-    "css_ttt_karma_dbstring", "Connection string for the karma database",
-    "Data Source=karma.db");
+    "css_ttt_karma_dbstring", "Database connection string for Karma storage",
+    "Data Source=karma.db", ConVarFlags.FCVAR_NONE);
 
   public static readonly FakeConVar<int> CV_MIN_KARMA = new("css_ttt_karma_min",
-    "Minimum allowed karma value", 0, ConVarFlags.FCVAR_NONE,
-    new RangeValidator<int>(0, 10000));
+    "Minimum possible Karma value", 0, ConVarFlags.FCVAR_NONE,
+    new RangeValidator<int>(0, 1000));
 
   public static readonly FakeConVar<int> CV_DEFAULT_KARMA = new(
-    "css_ttt_karma_default", "Default karma assigned to new players", 50,
-    ConVarFlags.FCVAR_NONE, new RangeValidator<int>(0, 10000));
+    "css_ttt_karma_default", "Default Karma value for new players", 50,
+    ConVarFlags.FCVAR_NONE, new RangeValidator<int>(0, 1000));
 
-  public static readonly FakeConVar<int> CV_MAX_KARMA = new("css_ttt_karma_max",
-    "Maximum possible karma value for any player", 100, ConVarFlags.FCVAR_NONE,
-    new RangeValidator<int>(0, 10000));
-
-  public static readonly FakeConVar<string> CV_COMMAND_UPON_LOW_KARMA = new(
-    "css_ttt_karma_command_upon_low",
-    "Command to execute when a player's karma goes below the minimum. {0} is replaced with the player's SteamID.",
+  public static readonly FakeConVar<string> CV_LOW_KARMA_COMMAND = new(
+    "css_ttt_karma_low_command",
+    "Command executed when a player falls below the Karma threshold (use {0} for player name)",
     "css_ban #{0} 4320 Your karma is too low!");
+
+  public static readonly FakeConVar<int> CV_KARMA_TIMEOUT_THRESHOLD = new(
+    "css_ttt_karma_timeout_threshold",
+    "Minimum Karma to avoid punishment or timeout effects", 20,
+    ConVarFlags.FCVAR_NONE, new RangeValidator<int>(0, 1000));
+
+  public static readonly FakeConVar<int> CV_KARMA_ROUND_TIMEOUT = new(
+    "css_ttt_karma_round_timeout", "Number of rounds a Karma penalty persists",
+    4, ConVarFlags.FCVAR_NONE, new RangeValidator<int>(0, 100));
 
   public void Dispose() { }
 
@@ -41,28 +46,15 @@ public class CS2KarmaConfig : IStorage<KarmaConfig>, IPluginModule {
   }
 
   public Task<KarmaConfig?> Load() {
-    var cfg = new KarmaConfigInternal {
-      DbString                 = CV_DB_STRING.Value,
-      MinKarmaValue            = CV_MIN_KARMA.Value,
-      DefaultValue             = CV_DEFAULT_KARMA.Value,
-      MaxValue                 = CV_MAX_KARMA.Value,
-      CommandUponLowKarmaValue = CV_COMMAND_UPON_LOW_KARMA.Value
+    var cfg = new KarmaConfig {
+      DbString              = CV_DB_STRING.Value,
+      MinKarma              = CV_MIN_KARMA.Value,
+      DefaultKarma          = CV_DEFAULT_KARMA.Value,
+      CommandUponLowKarma   = CV_LOW_KARMA_COMMAND.Value,
+      KarmaTimeoutThreshold = CV_KARMA_TIMEOUT_THRESHOLD.Value,
+      KarmaRoundTimeout     = CV_KARMA_ROUND_TIMEOUT.Value
     };
 
     return Task.FromResult<KarmaConfig?>(cfg);
-  }
-
-  // Wraps KarmaConfig with injected runtime values from ConVars
-  private record KarmaConfigInternal : KarmaConfig {
-    public int MinKarmaValue { get; init; }
-    public int DefaultValue { get; init; }
-    public int MaxValue { get; init; }
-    public string CommandUponLowKarmaValue { get; init; } = string.Empty;
-
-    public override int MinKarma => MinKarmaValue;
-    public override int DefaultKarma => DefaultValue;
-
-    public override string CommandUponLowKarma => CommandUponLowKarmaValue;
-    public override int MaxKarma(IPlayer player) { return MaxValue; }
   }
 }
