@@ -24,6 +24,7 @@ public static class ShopServiceCollection {
 
     collection.AddModBehavior<RoundShopClearer>();
     collection.AddModBehavior<RoleAssignCreditor>();
+    collection.AddModBehavior<PlayerKillListener>();
 
     collection.AddModBehavior<ShopCommand>();
     collection.AddModBehavior<BuyCommand>();
