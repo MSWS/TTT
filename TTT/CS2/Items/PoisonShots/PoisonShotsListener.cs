@@ -5,11 +5,14 @@ using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Core.Attributes.Registration;
 using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
+using ShopAPI;
 using ShopAPI.Configs.Traitor;
 using ShopAPI.Events;
+using TTT.API;
 using TTT.API.Events;
 using TTT.API.Game;
 using TTT.API.Player;
+using TTT.API.Storage;
 using TTT.CS2.Extensions;
 using TTT.Game.Events.Game;
 using TTT.Game.Events.Player;
@@ -18,11 +21,14 @@ using TTT.Game.Listeners;
 namespace TTT.CS2.Items.PoisonShots;
 
 public class PoisonShotsListener(IServiceProvider provider)
-  : BaseListener(provider) {
+  : BaseListener(provider), IPluginModule {
   private readonly Dictionary<IPlayer, int> poisonShots = new();
 
   private readonly PoisonShotsConfig config =
-    provider.GetRequiredService<PoisonShotsConfig>();
+    provider.GetService<IStorage<PoisonShotsConfig>>()
+    ?.Load()
+     .GetAwaiter()
+     .GetResult() ?? new PoisonShotsConfig();
 
   private readonly IPlayerConverter<CCSPlayerController> converter =
     provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
@@ -32,22 +38,14 @@ public class PoisonShotsListener(IServiceProvider provider)
 
   private readonly List<IDisposable> poisonTimers = [];
 
-  [UsedImplicitly]
-  [EventHandler]
-  public void OnPurchase(PlayerPurchaseItemEvent ev) {
-    if (ev.Item is not PoisonShotsItem) return;
-    poisonShots.TryAdd(ev.Player, 0);
-    poisonShots[ev.Player] += config.TotalShots;
-  }
+  private readonly IShop shop = provider.GetRequiredService<IShop>();
 
   [UsedImplicitly]
   [GameEventHandler]
   public HookResult OnFire(EventWeaponFire ev, GameEventInfo _) {
     if (ev.Userid == null) return HookResult.Continue;
-    var player = converter.GetPlayer(ev.Userid);
-    if (!poisonShots.TryGetValue(player, out var shot) || shot <= 0)
-      return HookResult.Continue;
-    Server.NextWorldUpdate(() => poisonShots[player]--);
+    if (converter.GetPlayer(ev.Userid) is IOnlinePlayer player)
+      usePoisonShot(player);
     return HookResult.Continue;
   }
 
@@ -57,7 +55,6 @@ public class PoisonShotsListener(IServiceProvider provider)
     if (ev.Attacker == null) return;
     if (!poisonShots.TryGetValue(ev.Attacker, out var shot) || shot <= 0)
       return;
-    poisonShots[ev.Attacker]--;
     addPoisonEffect(ev.Player);
   }
 
@@ -76,7 +73,9 @@ public class PoisonShotsListener(IServiceProvider provider)
     var effect = new PoisonEffect(player);
     timer = scheduler.SchedulePeriodic(config.TimeBetweenDamage, () => {
       // ReSharper disable once AccessToModifiedClosure
-      if (!tickPoison(effect)) timer?.Dispose();
+      Server.NextWorldUpdate(() => {
+        if (!tickPoison(effect)) timer?.Dispose();
+      });
     });
 
     poisonTimers.Add(timer);
@@ -104,5 +103,19 @@ public class PoisonShotsListener(IServiceProvider provider)
     public IPlayer Player { get; init; } = player;
     public int Ticks { get; set; }
     public int DamageGiven { get; set; }
+  }
+
+  private bool usePoisonShot(IOnlinePlayer player) {
+    if (!poisonShots.TryGetValue(player, out var shot) || shot <= 0) {
+      if (!shop.HasItem<PoisonShotsItem>(player)) return false;
+      poisonShots[player] = config.TotalShots;
+    }
+
+    poisonShots[player]--;
+    if (poisonShots[player] > 0) return true;
+
+    poisonShots.Remove(player);
+    shop.RemoveItem<PoisonShotsItem>(player);
+    return true;
   }
 }

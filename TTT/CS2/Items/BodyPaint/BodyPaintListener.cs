@@ -29,16 +29,7 @@ public class BodyPaintListener(IServiceProvider provider)
     provider.GetRequiredService<IBodyTracker>();
 
   [UsedImplicitly]
-  [EventHandler]
-  public void OnPurchase(PlayerPurchaseItemEvent ev) {
-    if (ev.Item is not BodyPaintItem) return;
-    if (ev.Player is not IOnlinePlayer online) return;
-    uses.TryAdd(online, 0);
-    uses[online] += config.MaxUses;
-  }
-
-  [UsedImplicitly]
-  [EventHandler]
+  [EventHandler(Priority = Priority.HIGH)]
   public void BodyIdentify(BodyIdentifyEvent ev) {
     if (!bodies.Bodies.TryGetValue(ev.Body, out var body)) return;
     if (ev.Identifier == null || !usePaint(ev.Identifier)) return;
@@ -48,13 +39,17 @@ public class BodyPaintListener(IServiceProvider provider)
 
   private bool usePaint(IPlayer player) {
     if (player is not IOnlinePlayer online) return false;
-    if (!uses.TryGetValue(player, out var useCount)) return false;
+    if (!uses.ContainsKey(player)) {
+      if (!shop.HasItem<BodyPaintItem>(online)) return false;
+      uses[player] = config.MaxUses;
+    }
 
-    if (useCount <= 0) return false;
-    uses[player] = useCount - 1;
+    if (uses[player] <= 0) return false;
+    uses[player]--;
     if (uses[player] > 0) return true;
     shop.RemoveItem<BodyPaintItem>(online);
     Messenger.Message(online, Locale[BodyPaintMsgs.SHOP_ITEM_BODY_PAINT_OUT]);
+    uses.Remove(player);
     return true;
   }
 }
