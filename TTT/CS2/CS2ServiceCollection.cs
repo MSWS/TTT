@@ -42,6 +42,7 @@ public static class CS2ServiceCollection {
      .AddModBehavior<IStorage<OneShotDeagleConfig>, CS2OneShotDeagleConfig>();
     collection.AddModBehavior<IStorage<C4Config>, CS2C4Config>();
     collection.AddModBehavior<IStorage<M4A1Config>, CS2M4A1Config>();
+    collection.AddModBehavior<IStorage<TaserConfig>, CS2TaserConfig>();
 
     // TTT - CS2 Specific optionals
     collection.AddScoped<ITextSpawner, TextSpawner>();

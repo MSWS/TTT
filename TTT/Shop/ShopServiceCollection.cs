@@ -11,6 +11,7 @@ using TTT.Shop.Commands;
 using TTT.Shop.Items;
 using TTT.Shop.Items.Detective.Stickers;
 using TTT.Shop.Items.M4A1;
+using TTT.Shop.Items.Taser;
 using TTT.Shop.Items.Traitor.C4;
 using TTT.Shop.Items.Traitor.Gloves;
 using TTT.Shop.Listeners;
@@ -40,5 +41,6 @@ public static class ShopServiceCollection {
     collection.AddM4A1Services();
     collection.AddPoisonShots();
     collection.AddStickerServices();
+    collection.AddTaserItem();
   }
 }

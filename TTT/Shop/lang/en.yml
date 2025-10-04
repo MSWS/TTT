@@ -21,6 +21,9 @@ SHOP_ITEM_GLOVES_USED_BODY: "%PREFIX%You used your gloves to move a body without
 SHOP_ITEM_GLOVES_USED_KILL: "%PREFIX%You used your gloves to kill without leaving DNA evidence. ({yellow}{0}{grey}/{yellow}{1}{grey} use%s% left)."
 SHOP_ITEM_GLOVES_WORN_OUT: "%PREFIX%Your gloves worn out."
 
+SHOP_ITEM_TASER: "Taser"
+SHOP_ITEM_TASER_DESC: "A taser that allows you to identify the roles of players you hit."
+
 SHOP_INSUFFICIENT_BALANCE: "%PREFIX%You cannot afford {white}{0}{grey}, it costs {yellow}{1}{grey} credit%s%, and you have {yellow}{2}{grey}."
 SHOP_CANNOT_PURCHASE: "%PREFIX%You cannot purchase this item."
 SHOP_CANNOT_PURCHASE_WITH_REASON: "%PREFIX%You cannot purchase this item: {red}{0}{grey}."
