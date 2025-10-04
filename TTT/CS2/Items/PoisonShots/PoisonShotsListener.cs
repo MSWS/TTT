@@ -3,6 +3,7 @@ using System.Reactive.Concurrency;
 using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Core.Attributes.Registration;
+using CounterStrikeSharp.API.Modules.Utils;
 using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using ShopAPI;
@@ -44,6 +45,7 @@ public class PoisonShotsListener(IServiceProvider provider)
   [GameEventHandler]
   public HookResult OnFire(EventWeaponFire ev, GameEventInfo _) {
     if (ev.Userid == null) return HookResult.Continue;
+    if (!Tag.GUNS.Contains(ev.Weapon)) return HookResult.Continue;
     if (converter.GetPlayer(ev.Userid) is not IOnlinePlayer player)
       return HookResult.Continue;
     var remainingShots = usePoisonShot(player);
@@ -59,6 +61,8 @@ public class PoisonShotsListener(IServiceProvider provider)
     if (ev.Attacker == null) return;
     if (!poisonShots.TryGetValue(ev.Attacker, out var shot) || shot <= 0)
       return;
+    Messenger.Message(ev.Attacker,
+      Locale[PoisonShotMsgs.SHOP_ITEM_POISON_HIT(ev.Player)]);
     addPoisonEffect(ev.Player);
   }
 
@@ -93,7 +97,8 @@ public class PoisonShotsListener(IServiceProvider provider)
     effect.DamageGiven += config.DamagePerTick;
 
     var gamePlayer = converter.GetPlayer(online);
-    gamePlayer?.ColorScreen(Color.Purple, 0.2f, 0.3f);
+    gamePlayer?.ColorScreen(config.PoisonColor, 0.2f, 0.3f);
+    gamePlayer?.ExecuteClientCommand("play " + config.PoisonSound);
 
     return effect.DamageGiven < config.TotalDamage;
   }
