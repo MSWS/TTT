@@ -57,6 +57,7 @@ public static class CS2ServiceCollection {
     collection.AddModBehavior<PlayerConnectionsHandler>();
     collection.AddModBehavior<PropMover>();
     collection.AddModBehavior<RoundStart_GameStartHandler>();
+    collection.AddModBehavior<BombPlantSuppressor>();
 
     // Damage Cancelers
     collection.AddModBehavior<OutOfRoundCanceler>();
