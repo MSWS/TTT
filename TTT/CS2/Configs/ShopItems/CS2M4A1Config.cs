@@ -21,7 +21,7 @@ public class CS2M4A1Config : IStorage<M4A1Config>, IPluginModule {
   public static readonly FakeConVar<string> CV_WEAPONS = new(
     "css_ttt_shop_m4a1_weapons",
     "Weapons granted with this item (comma-separated names)",
-    "weapon_m4a1,weapon_usp_silencer", ConVarFlags.FCVAR_NONE,
+    "weapon_m4a1_silencer,weapon_usp_silencer", ConVarFlags.FCVAR_NONE,
     new ItemValidator(allowMultiple: true));
 
   public void Dispose() { }
