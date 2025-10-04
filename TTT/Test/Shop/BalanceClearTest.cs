@@ -19,10 +19,10 @@ public class BalanceClearTest(IServiceProvider provider) {
   private readonly IGameManager games =
     provider.GetRequiredService<IGameManager>();
 
-  private readonly IShop shop = provider.GetRequiredService<IShop>();
-
   private readonly IRoleAssigner roles =
     provider.GetRequiredService<IRoleAssigner>();
+
+  private readonly IShop shop = provider.GetRequiredService<IShop>();
 
   [Fact]
   public async Task Balances_ShouldBeCleared_OnGameStart() {

@@ -1,6 +1,5 @@
 ﻿using CounterStrikeSharp.API;
 using Microsoft.Extensions.DependencyInjection;
-using ShopAPI.Configs;
 using ShopAPI.Configs.Detective;
 using TTT.API.Extensions;
 using TTT.API.Storage;

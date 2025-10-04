@@ -8,6 +8,8 @@ public record DamageStationConfig : StationConfig {
 
   public override string UseSound { get; init; } = "sounds/buttons/blip2";
 
+  public override int Price { get; init; } = 60;
+
   public override Color GetColor(float health) {
     // 100% health = white
     // 10% health = red
@@ -16,6 +18,4 @@ public record DamageStationConfig : StationConfig {
     var b = (int)(255 * health);
     return Color.FromArgb(r, g, b);
   }
-
-  public override int Price { get; init; } = 60;
 }

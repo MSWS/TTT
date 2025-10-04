@@ -1,15 +1,12 @@
 using System.Diagnostics.CodeAnalysis;
-using System.Drawing;
 using System.Reactive.Concurrency;
 using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Core.Attributes.Registration;
-using CounterStrikeSharp.API.Modules.Utils;
 using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using ShopAPI;
 using ShopAPI.Configs.Traitor;
-using ShopAPI.Events;
 using TTT.API;
 using TTT.API.Events;
 using TTT.API.Game;
@@ -24,8 +21,6 @@ namespace TTT.CS2.Items.PoisonShots;
 
 public class PoisonShotsListener(IServiceProvider provider)
   : BaseListener(provider), IPluginModule {
-  private readonly Dictionary<IPlayer, int> poisonShots = new();
-
   private readonly PoisonShotsConfig config =
     provider.GetService<IStorage<PoisonShotsConfig>>()
     ?.Load()
@@ -35,12 +30,19 @@ public class PoisonShotsListener(IServiceProvider provider)
   private readonly IPlayerConverter<CCSPlayerController> converter =
     provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
 
-  private readonly IScheduler scheduler =
-    provider.GetRequiredService<IScheduler>();
+  private readonly Dictionary<IPlayer, int> poisonShots = new();
 
   private readonly List<IDisposable> poisonTimers = [];
 
+  private readonly IScheduler scheduler =
+    provider.GetRequiredService<IScheduler>();
+
   private readonly IShop shop = provider.GetRequiredService<IShop>();
+
+  public override void Dispose() {
+    base.Dispose();
+    foreach (var timer in poisonTimers) timer.Dispose();
+  }
 
   [UsedImplicitly]
   [GameEventHandler]
@@ -107,20 +109,9 @@ public class PoisonShotsListener(IServiceProvider provider)
     return effect.DamageGiven < config.PoisonConfig.TotalDamage;
   }
 
-  public override void Dispose() {
-    base.Dispose();
-    foreach (var timer in poisonTimers) timer.Dispose();
-  }
-
-  private class PoisonEffect(IPlayer player) {
-    public IPlayer Player { get; init; } = player;
-    public int Ticks { get; set; }
-    public int DamageGiven { get; set; }
-  }
-
   /// <summary>
-  /// Uses a poison shot for the player. Returns the remaining shots, -1 if none
-  /// are available.
+  ///   Uses a poison shot for the player. Returns the remaining shots, -1 if none
+  ///   are available.
   /// </summary>
   /// <param name="player"></param>
   /// <returns></returns>
@@ -136,5 +127,11 @@ public class PoisonShotsListener(IServiceProvider provider)
     poisonShots.Remove(player);
     shop.RemoveItem<PoisonShotsItem>(player);
     return 0;
+  }
+
+  private class PoisonEffect(IPlayer player) {
+    public IPlayer Player { get; } = player;
+    public int Ticks { get; set; }
+    public int DamageGiven { get; set; }
   }
 }

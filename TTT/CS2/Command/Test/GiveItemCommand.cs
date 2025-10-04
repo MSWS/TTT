@@ -7,10 +7,10 @@ using TTT.API.Player;
 namespace TTT.CS2.Command.Test;
 
 public class GiveItemCommand(IServiceProvider provider) : ICommand {
-  private readonly IShop shop = provider.GetRequiredService<IShop>();
-
   private readonly IPlayerFinder finder =
     provider.GetRequiredService<IPlayerFinder>();
+
+  private readonly IShop shop = provider.GetRequiredService<IShop>();
 
   public void Dispose() { }
   public void Start() { }

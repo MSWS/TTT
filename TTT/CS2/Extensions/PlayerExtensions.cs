@@ -67,10 +67,9 @@ public static class PlayerExtensions {
     var pawn = player.PlayerPawn.Value;
     if (pawn == null || !pawn.IsValid) return;
     pawn.ArmorValue = armor;
-    if (withHelmet) {
+    if (withHelmet)
       if (pawn.ItemServices != null)
         new CCSPlayer_ItemServices(pawn.ItemServices.Handle).HasHelmet = true;
-    }
 
     Utilities.SetStateChanged(pawn, "CCSPlayerPawn", "m_ArmorValue");
   }

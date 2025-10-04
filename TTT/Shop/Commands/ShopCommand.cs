@@ -15,7 +15,7 @@ public class ShopCommand(IServiceProvider provider) : ICommand {
     ["list"]    = new ListCommand(provider),
     ["buy"]     = new BuyCommand(provider),
     ["balance"] = new BalanceCommand(provider),
-    ["bal"]     = new BalanceCommand(provider),
+    ["bal"]     = new BalanceCommand(provider)
   };
 
   public void Dispose() { }

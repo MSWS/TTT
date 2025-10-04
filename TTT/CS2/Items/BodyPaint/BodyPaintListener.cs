@@ -2,7 +2,6 @@ using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using ShopAPI;
 using ShopAPI.Configs;
-using ShopAPI.Events;
 using TTT.API.Events;
 using TTT.API.Player;
 using TTT.API.Storage;
@@ -16,17 +15,18 @@ namespace TTT.CS2.Items.BodyPaint;
 
 public class BodyPaintListener(IServiceProvider provider)
   : BaseListener(provider) {
+  private readonly IBodyTracker bodies =
+    provider.GetRequiredService<IBodyTracker>();
+
   private readonly BodyPaintConfig config =
     provider.GetService<IStorage<BodyPaintConfig>>()
     ?.Load()
      .GetAwaiter()
      .GetResult() ?? new BodyPaintConfig();
 
-  private readonly Dictionary<IPlayer, int> uses = new();
   private readonly IShop shop = provider.GetRequiredService<IShop>();
 
-  private readonly IBodyTracker bodies =
-    provider.GetRequiredService<IBodyTracker>();
+  private readonly Dictionary<IPlayer, int> uses = new();
 
   [UsedImplicitly]
   [EventHandler(Priority = Priority.HIGH)]

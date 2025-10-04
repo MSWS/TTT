@@ -51,6 +51,11 @@ public class CS2Player : IOnlinePlayer, IEquatable<CS2Player> {
     => Math.Min(Utilities.GetPlayers().Select(p => p.PlayerName.Length).Max(),
       24);
 
+  public bool Equals(CS2Player? other) {
+    if (other is null) return false;
+    return Id == other.Id;
+  }
+
   public string Id { get; }
   public string Name { get; }
 
@@ -105,11 +110,6 @@ public class CS2Player : IOnlinePlayer, IEquatable<CS2Player> {
   public static string GetKey(CCSPlayerController player) {
     if (player.IsBot || player.IsHLTV) return player.Index.ToString();
     return player.SteamID.ToString();
-  }
-
-  public bool Equals(CS2Player? other) {
-    if (other is null) return false;
-    return Id == other.Id;
   }
 
   public override int GetHashCode() { return Id.GetHashCode(); }

@@ -1,4 +1,3 @@
-using CounterStrikeSharp.API;
 using Microsoft.Extensions.DependencyInjection;
 using ShopAPI;
 using TTT.API.Command;

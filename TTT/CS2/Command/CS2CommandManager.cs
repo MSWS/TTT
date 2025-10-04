@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Commands;
@@ -42,12 +41,11 @@ public class CS2CommandManager(IServiceProvider provider)
       null :
       converter.GetPlayer(executor) as IOnlinePlayer;
 
-    if (cmdMap.TryGetValue(info.GetArg(0), out var command)) {
+    if (cmdMap.TryGetValue(info.GetArg(0), out var command))
       if (command.MustBeOnMainThread) {
         processCommandSync(cs2Info, wrapper);
         return;
       }
-    }
 
     Task.Run(async () => await processCommandAsync(cs2Info, wrapper));
   }

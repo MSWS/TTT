@@ -22,12 +22,12 @@ public class ArmorItem(IServiceProvider provider) : BaseItem(provider) {
    .GetAwaiter()
    .GetResult() ?? new ArmorConfig();
 
+  private readonly IPlayerConverter<CCSPlayerController> converter =
+    provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
+
   public override string Name => Locale[ArmorMsgs.SHOP_ITEM_ARMOR];
   public override string Description => Locale[ArmorMsgs.SHOP_ITEM_ARMOR_DESC];
   public override ShopItemConfig Config => config;
-
-  private readonly IPlayerConverter<CCSPlayerController> converter =
-    provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
 
   public override void OnPurchase(IOnlinePlayer player) {
     var gamePlayer = converter.GetPlayer(player);

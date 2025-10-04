@@ -5,6 +5,8 @@ namespace ShopAPI.Configs.Detective;
 public record HealthStationConfig : StationConfig {
   public override string UseSound { get; init; } = "sounds/buttons/blip1";
 
+  public override int Price { get; init; } = 80;
+
   public override Color GetColor(float health) {
     // 100% health = white
     // 10% health = blue
@@ -13,6 +15,4 @@ public record HealthStationConfig : StationConfig {
     var b = 255;
     return Color.FromArgb(r, g, b);
   }
-
-  public override int Price { get; init; } = 80;
 }

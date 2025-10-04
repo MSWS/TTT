@@ -3,17 +3,15 @@ using Microsoft.Extensions.DependencyInjection;
 using ShopAPI;
 using TTT.API.Command;
 using TTT.API.Game;
-using TTT.API.Messages;
 using TTT.API.Player;
-using TTT.Game.Roles;
 
 namespace TTT.Shop.Commands;
 
 public class ListCommand(IServiceProvider provider) : ICommand {
-  private readonly IShop shop = provider.GetRequiredService<IShop>();
-
   private readonly IGameManager games = provider
    .GetRequiredService<IGameManager>();
+
+  private readonly IShop shop = provider.GetRequiredService<IShop>();
 
   public void Dispose() { }
 
@@ -47,12 +45,11 @@ public class ListCommand(IServiceProvider provider) : ICommand {
       int.MaxValue :
       await shop.Load(info.CallingPlayer);
 
-    foreach (var item in items) {
+    foreach (var item in items)
       info.ReplySync(formatItem(item,
         item.Config.Price <= balance
         && item.CanPurchase(info.CallingPlayer ?? executor!)
         == PurchaseResult.SUCCESS));
-    }
 
     return CommandResult.SUCCESS;
   }

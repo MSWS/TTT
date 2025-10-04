@@ -13,36 +13,38 @@ using TTT.API.Player;
 using TTT.API.Role;
 using TTT.API.Storage;
 using TTT.CS2.Extensions;
-using TTT.Game.Listeners;
 using TTT.Game.Roles;
 
 namespace TTT.CS2.Items.PoisonSmoke;
 
 public class PoisonSmokeListener(IServiceProvider provider) : IPluginModule {
-  private readonly IMessenger messenger =
-    provider.GetRequiredService<IMessenger>();
-
-  private readonly IShop shop = provider.GetRequiredService<IShop>();
-
-  private readonly IPlayerConverter<CCSPlayerController> converter =
-    provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
-
-  private readonly IScheduler scheduler =
-    provider.GetRequiredService<IScheduler>();
-
-  private readonly IPlayerFinder finder =
-    provider.GetRequiredService<IPlayerFinder>();
-
-  private readonly IRoleAssigner roleAssigner =
-    provider.GetRequiredService<IRoleAssigner>();
-
   private readonly PoisonSmokeConfig config =
     provider.GetService<IStorage<PoisonSmokeConfig>>()
     ?.Load()
      .GetAwaiter()
      .GetResult() ?? new PoisonSmokeConfig();
 
-  private List<IDisposable> poisonSmokes = [];
+  private readonly IPlayerConverter<CCSPlayerController> converter =
+    provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
+
+  private readonly IPlayerFinder finder =
+    provider.GetRequiredService<IPlayerFinder>();
+
+  private readonly IMessenger messenger =
+    provider.GetRequiredService<IMessenger>();
+
+  private readonly List<IDisposable> poisonSmokes = [];
+
+  private readonly IRoleAssigner roleAssigner =
+    provider.GetRequiredService<IRoleAssigner>();
+
+  private readonly IScheduler scheduler =
+    provider.GetRequiredService<IScheduler>();
+
+  private readonly IShop shop = provider.GetRequiredService<IShop>();
+
+  public void Dispose() { }
+  public void Start() { }
 
   [GameEventHandler]
   public HookResult OnSmokeGrenade(EventSmokegrenadeDetonate ev,
@@ -111,7 +113,4 @@ public class PoisonSmokeListener(IServiceProvider provider) : IPluginModule {
     public Vector Origin { get; } = projectile.AbsOrigin.Clone()!;
     public CSmokeGrenadeProjectile Projectile { get; } = projectile;
   }
-
-  public void Dispose() { }
-  public void Start() { }
 }

@@ -1,5 +1,4 @@
-﻿using CounterStrikeSharp.API.Modules.Utils;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using ShopAPI;
 using TTT.API.Command;
 using TTT.API.Player;
@@ -8,10 +7,10 @@ using TTT.Locale;
 namespace TTT.Shop.Commands;
 
 public class BalanceCommand(IServiceProvider provider) : ICommand {
-  private readonly IShop shop = provider.GetRequiredService<IShop>();
-
   private readonly IMsgLocalizer locale =
     provider.GetRequiredService<IMsgLocalizer>();
+
+  private readonly IShop shop = provider.GetRequiredService<IShop>();
 
   public string Id => "balance";
   public string[] Aliases => [Id, "bal", "credits", "money"];

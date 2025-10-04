@@ -11,7 +11,6 @@ using TTT.API;
 using TTT.API.Player;
 using TTT.API.Role;
 using TTT.CS2.Extensions;
-using TTT.Game.Roles;
 
 namespace TTT.CS2.Items.Station;
 
