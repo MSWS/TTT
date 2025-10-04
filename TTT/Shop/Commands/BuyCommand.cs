@@ -22,6 +22,8 @@ public class BuyCommand(IServiceProvider provider) : ICommand {
   public string[] Aliases => [Id, "purchase", "b"];
   public string[] Usage => ["[item]"];
 
+  public bool MustBeOnMainThread => true;
+
   public Task<CommandResult> Execute(IOnlinePlayer? executor,
     ICommandInfo info) {
     if (executor == null) return Task.FromResult(CommandResult.PLAYER_ONLY);
@@ -59,7 +61,7 @@ public class BuyCommand(IServiceProvider provider) : ICommand {
     if (item != null) return item;
 
     item = shop.Items.FirstOrDefault(it
-      => it.Name.Equals(query, StringComparison.OrdinalIgnoreCase));
+      => it.Name.Contains(query, StringComparison.OrdinalIgnoreCase));
 
     if (item != null) return item;
 

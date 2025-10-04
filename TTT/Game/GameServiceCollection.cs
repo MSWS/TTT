@@ -20,6 +20,8 @@ public static class GameServiceCollection {
     collection.AddModBehavior<PlayerJoinStarting>();
     collection.AddModBehavior<PlayerActionsLogger>();
     collection.AddModBehavior<BodyIdentifyLogger>();
+    collection.AddModBehavior<PlayerDeathInformer>();
+    collection.AddModBehavior<TraitorBuddyInformer>();
 
     // Commands
     collection.AddModBehavior<TTTCommand>();

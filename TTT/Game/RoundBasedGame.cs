@@ -172,9 +172,6 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
       return;
     }
 
-
-    foreach (var player in online) inventory.RemoveAllWeapons(player);
-
     StartedAt = DateTime.Now;
     RoleAssigner.AssignRoles(online, Roles);
     players.AddRange(online);

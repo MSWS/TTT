@@ -11,6 +11,7 @@ using TTT.CS2.Items.Station;
 using TTT.Shop.Commands;
 using TTT.Shop.Items;
 using TTT.Shop.Items.Detective.Stickers;
+using TTT.Shop.Items.Healthshot;
 using TTT.Shop.Items.M4A1;
 using TTT.Shop.Items.Taser;
 using TTT.Shop.Items.Traitor.C4;
@@ -40,6 +41,7 @@ public static class ShopServiceCollection {
     collection.AddDnaScannerServices();
     collection.AddGlovesServices();
     collection.AddHealthStation();
+    collection.AddHealthshot();
     collection.AddM4A1Services();
     collection.AddPoisonShots();
     collection.AddPoisonSmoke();

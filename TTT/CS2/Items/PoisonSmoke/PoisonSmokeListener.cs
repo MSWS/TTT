@@ -84,8 +84,6 @@ public class PoisonSmokeListener(IServiceProvider provider) : IPluginModule {
     if (!effect.Projectile.IsValid) return false;
     effect.Ticks++;
 
-    messenger.DebugAnnounce($"Poison tick {effect.Ticks} at {effect.Origin}");
-
     var players = finder.GetOnline()
      .Where(player => player.IsAlive && roleAssigner.GetRoles(player)
        .Any(role => role is InnocentRole or DetectiveRole));
