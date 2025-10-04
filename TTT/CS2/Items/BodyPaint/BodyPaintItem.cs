@@ -5,7 +5,6 @@ using TTT.API.Extensions;
 using TTT.API.Player;
 using TTT.API.Storage;
 using TTT.Game.Roles;
-using TTT.Shop.Items.Traitor.BodyPaint;
 
 namespace TTT.CS2.Items.BodyPaint;
 

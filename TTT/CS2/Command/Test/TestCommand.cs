@@ -21,7 +21,7 @@ public class TestCommand(IServiceProvider provider) : ICommand, IPluginModule {
     subCommands.Add("state", new StateCommand(provider));
     subCommands.Add("screencolor", new ScreenColorCommand(provider));
     subCommands.Add("giveitem", new GiveItemCommand(provider));
-    subCommands.Add("index", new IndexCommand(provider));
+    subCommands.Add("index", new IndexCommand());
     subCommands.Add("showicons", new ShowIconsCommand(provider));
     subCommands.Add("sethealth", new SetHealthCommand());
   }

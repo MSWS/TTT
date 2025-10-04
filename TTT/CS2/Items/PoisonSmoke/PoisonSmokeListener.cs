@@ -4,11 +4,11 @@ using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Core.Attributes.Registration;
 using CounterStrikeSharp.API.Modules.Utils;
+using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using ShopAPI;
 using ShopAPI.Configs.Traitor;
 using TTT.API;
-using TTT.API.Messages;
 using TTT.API.Player;
 using TTT.API.Role;
 using TTT.API.Storage;
@@ -30,9 +30,6 @@ public class PoisonSmokeListener(IServiceProvider provider) : IPluginModule {
   private readonly IPlayerFinder finder =
     provider.GetRequiredService<IPlayerFinder>();
 
-  private readonly IMessenger messenger =
-    provider.GetRequiredService<IMessenger>();
-
   private readonly List<IDisposable> poisonSmokes = [];
 
   private readonly IRoleAssigner roleAssigner =
@@ -51,6 +48,7 @@ public class PoisonSmokeListener(IServiceProvider provider) : IPluginModule {
 
   public void Start() { }
 
+  [UsedImplicitly]
   [GameEventHandler]
   public HookResult OnSmokeGrenade(EventSmokegrenadeDetonate ev,
     GameEventInfo _) {

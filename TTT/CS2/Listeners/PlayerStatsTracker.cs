@@ -3,7 +3,6 @@ using CounterStrikeSharp.API.Core;
 using Microsoft.Extensions.DependencyInjection;
 using TTT.API.Events;
 using TTT.API.Game;
-using TTT.API.Messages;
 using TTT.API.Player;
 using TTT.Game.Events.Body;
 using TTT.Game.Events.Game;
@@ -17,9 +16,6 @@ public class PlayerStatsTracker(IServiceProvider provider) : IListener {
 
   private readonly IPlayerFinder finder =
     provider.GetRequiredService<IPlayerFinder>();
-
-  private readonly IMessenger messenger =
-    provider.GetRequiredService<IMessenger>();
 
   private readonly ISet<int> revealedDeaths = new HashSet<int>();
 

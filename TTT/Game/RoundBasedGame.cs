@@ -22,9 +22,6 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
    .GetAwaiter()
    .GetResult() ?? new TTTConfig();
 
-  private readonly IInventoryManager inventory =
-    provider.GetRequiredService<IInventoryManager>();
-
   protected readonly IMsgLocalizer Locale =
     provider.GetRequiredService<IMsgLocalizer>();
 
@@ -52,7 +49,7 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
   public State State {
     set {
       var ev = new GameStateUpdateEvent(this, value);
-      bus.Dispatch(ev);
+      bus.Dispatch(ev).GetAwaiter().GetResult();
       if (ev.IsCanceled) return;
       state = value;
     }
@@ -174,12 +171,14 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
 
     StartedAt = DateTime.Now;
     RoleAssigner.AssignRoles(online, Roles);
-    players.AddRange(online);
+    players.AddRange(online.Where(p
+      => RoleAssigner.GetRoles(p)
+       .Any(r => r is TraitorRole or DetectiveRole or InnocentRole)));
 
     State = State.IN_PROGRESS;
 
     var traitors    = ((IGame)this).GetAlive(typeof(TraitorRole)).Count;
-    var nonTraitors = online.Count - traitors;
+    var nonTraitors = players.Count - traitors;
     Messenger?.MessageAll(Locale[
       GameMsgs.GAME_STATE_STARTED(traitors, nonTraitors)]);
   }

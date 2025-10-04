@@ -2,14 +2,16 @@ using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using TTT.API.Events;
 using TTT.API.Game;
+using TTT.API.Player;
 using TTT.API.Role;
 using TTT.Game.Events.Game;
 using TTT.Game.Events.Player;
+using TTT.Game.Listeners;
 using TTT.Game.Roles;
 
 namespace TTT.Karma;
 
-public class KarmaListener(IServiceProvider provider) : IListener {
+public class KarmaListener(IServiceProvider provider) : BaseListener(provider) {
   private static readonly int INNO_ON_TRAITOR = 2;
   private static readonly int TRAITOR_ON_DETECTIVE = 1;
   private static readonly int INNO_ON_INNO_VICTIM = -1;
@@ -28,7 +30,7 @@ public class KarmaListener(IServiceProvider provider) : IListener {
   private readonly IRoleAssigner roles =
     provider.GetRequiredService<IRoleAssigner>();
 
-  public void Dispose() { }
+  private readonly Dictionary<IPlayer, int> queuedKarmaUpdates = new();
 
   [EventHandler]
   [UsedImplicitly]
@@ -36,14 +38,13 @@ public class KarmaListener(IServiceProvider provider) : IListener {
 
   [EventHandler]
   [UsedImplicitly]
-  public Task OnKill(PlayerDeathEvent ev) {
-    if (games.ActiveGame is not { State: State.IN_PROGRESS })
-      return Task.CompletedTask;
+  public void OnKill(PlayerDeathEvent ev) {
+    if (games.ActiveGame is not { State: State.IN_PROGRESS }) return;
 
     var victim = ev.Victim;
     var killer = ev.Killer;
 
-    if (killer == null) return Task.CompletedTask;
+    if (killer == null) return;
 
     var victimRole = roles.GetRoles(victim).First();
     var killerRole = roles.GetRoles(killer).First();
@@ -58,30 +59,47 @@ public class KarmaListener(IServiceProvider provider) : IListener {
       attackerKarmaMultiplier = badKills[killer.Id];
     }
 
-    if (victimRole is InnocentRole) {
-      if (killerRole is TraitorRole) return Task.CompletedTask;
-      victimKarmaDelta = INNO_ON_INNO_VICTIM;
-      killerKarmaDelta = INNO_ON_INNO;
+    switch (victimRole) {
+      case InnocentRole when killerRole is TraitorRole:
+        return;
+      case InnocentRole:
+        victimKarmaDelta = INNO_ON_INNO_VICTIM;
+        killerKarmaDelta = INNO_ON_INNO;
+        break;
+      case TraitorRole:
+        killerKarmaDelta = killerRole is TraitorRole ?
+          TRAITOR_ON_TRAITOR :
+          INNO_ON_TRAITOR;
+        break;
+      case DetectiveRole:
+        killerKarmaDelta = killerRole is TraitorRole ?
+          TRAITOR_ON_DETECTIVE :
+          INNO_ON_DETECTIVE;
+        break;
     }
-
-    if (victimRole is TraitorRole)
-      killerKarmaDelta = killerRole is TraitorRole ?
-        TRAITOR_ON_TRAITOR :
-        INNO_ON_TRAITOR;
-
-    if (victimRole is DetectiveRole)
-      killerKarmaDelta = killerRole is TraitorRole ?
-        TRAITOR_ON_DETECTIVE :
-        INNO_ON_DETECTIVE;
 
     killerKarmaDelta *= attackerKarmaMultiplier;
 
-    return Task.Run(async () => {
-      var newKillerKarma = await karma.Load(killer) + killerKarmaDelta;
-      var newVictimKarma = await karma.Load(victim) + victimKarmaDelta;
+    queuedKarmaUpdates[killer] = queuedKarmaUpdates.GetValueOrDefault(killer, 0)
+      + killerKarmaDelta;
+    queuedKarmaUpdates[victim] = queuedKarmaUpdates.GetValueOrDefault(victim, 0)
+      + victimKarmaDelta;
+  }
 
-      await karma.Write(killer, newKillerKarma);
-      await karma.Write(victim, newVictimKarma);
-    });
+  [UsedImplicitly]
+  [EventHandler]
+  public Task OnRoundEnd(GameStateUpdateEvent ev) {
+    if (ev.NewState != State.FINISHED) return Task.CompletedTask;
+
+    var tasks = new List<Task>();
+    foreach (var (player, karmaDelta) in queuedKarmaUpdates) {
+      tasks.Add(Task.Run(async () => {
+        var newKarma = await karma.Load(player) + karmaDelta;
+        await karma.Write(player, newKarma);
+      }));
+    }
+
+    queuedKarmaUpdates.Clear();
+    return Task.WhenAll(tasks);
   }
 }

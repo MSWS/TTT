@@ -86,6 +86,7 @@ public class KarmaListenerTests {
     deathEvent.WithKiller(attacker);
 
     await bus.Dispatch(deathEvent);
+    game.EndGame();
 
     var victimKarma   = await karma.Load(victim);
     var attackerKarma = await karma.Load(attacker);
@@ -120,16 +121,12 @@ public class KarmaListenerTests {
     deathEvent3.WithKiller(attacker);
 
     await bus.Dispatch(deathEvent1); // First kill => 50 - (4*1) = 46
-    var killerKarma = await karma.Load(attacker);
-    Assert.Equal(46, killerKarma);
-
     await bus.Dispatch(deathEvent2); // Second kill => 46 - (4*2) = 38
-    killerKarma = await karma.Load(attacker);
-    Assert.Equal(38, killerKarma);
-
     await bus.Dispatch(
       deathEvent3); // Third kill (detective) => 38 - (6*3) = 20
-    killerKarma = await karma.Load(attacker);
+
+    game.EndGame();
+    var killerKarma = await karma.Load(attacker);
     Assert.Equal(20, killerKarma);
   }
 
@@ -159,15 +156,9 @@ public class KarmaListenerTests {
     deathEvent3.WithKiller(attacker);
 
     await bus.Dispatch(deathEvent1); // First kill => 50 + 2 = 52
-    var killerKarma = await karma.Load(attacker);
-    Assert.Equal(52, killerKarma);
-
     await bus.Dispatch(deathEvent2); // Second kill => 52 + 2 = 54
-    killerKarma = await karma.Load(attacker);
-    Assert.Equal(54, killerKarma);
-
     await bus.Dispatch(deathEvent3); // Third kill (inno) => 54 - 4 = 50
-    killerKarma = await karma.Load(attacker);
+    var killerKarma = await karma.Load(attacker);
     Assert.Equal(50, killerKarma);
   }
 }

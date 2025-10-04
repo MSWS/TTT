@@ -1,6 +1,6 @@
 using TTT.Locale;
 
-namespace TTT.Shop.Items.Traitor.BodyPaint;
+namespace TTT.CS2.Items.BodyPaint;
 
 public class BodyPaintMsgs {
   public static IMsg SHOP_ITEM_BODY_PAINT

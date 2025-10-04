@@ -24,4 +24,11 @@ public class SpectatorRole(IServiceProvider provider) : IRole {
     return players.FirstOrDefault(p
       => playerConverter.GetPlayer(p) is { Team: CsTeam.Spectator });
   }
+
+  public void OnAssign(IOnlinePlayer player) {
+    var csPlayer = playerConverter.GetPlayer(player);
+    if (csPlayer is null) return;
+    csPlayer.CommitSuicide(false, true);
+    csPlayer.ChangeTeam(CsTeam.Spectator);
+  }
 }
