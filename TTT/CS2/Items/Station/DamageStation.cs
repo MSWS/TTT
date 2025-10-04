@@ -37,11 +37,12 @@ public class DamageStation(IServiceProvider provider)
     => Locale[StationMsgs.SHOP_ITEM_STATION_HURT_DESC];
 
   override protected void onInterval() {
-    var players = finder.GetOnline();
+    var players  = finder.GetOnline();
+    var toRemove = new List<CPhysicsPropMultiplayer>();
     foreach (var (prop, info) in props) {
       if (_Config.TotalHealthGiven != 0 && Math.Abs(info.HealthGiven)
         > Math.Abs(_Config.TotalHealthGiven)) {
-        props.Remove(prop);
+        toRemove.Add(prop);
         continue;
       }
 
@@ -72,5 +73,7 @@ public class DamageStation(IServiceProvider provider)
         gamePlayer.ExecuteClientCommand("play " + _Config.UseSound);
       }
     }
+
+    foreach (var prop in toRemove) props.Remove(prop);
   }
 }

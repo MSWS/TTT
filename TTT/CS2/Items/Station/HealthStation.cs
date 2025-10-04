@@ -1,4 +1,5 @@
 ﻿using CounterStrikeSharp.API;
+using CounterStrikeSharp.API.Core;
 using Microsoft.Extensions.DependencyInjection;
 using ShopAPI.Configs.Detective;
 using TTT.API.Extensions;
@@ -26,11 +27,12 @@ public class HealthStation(IServiceProvider provider)
     => Locale[StationMsgs.SHOP_ITEM_STATION_HEALTH_DESC];
 
   override protected void onInterval() {
-    var players = Utilities.GetPlayers();
+    var players  = Utilities.GetPlayers();
+    var toRemove = new List<CPhysicsPropMultiplayer>();
     foreach (var (prop, info) in props) {
       if (_Config.TotalHealthGiven != 0
         && Math.Abs(info.HealthGiven) > _Config.TotalHealthGiven) {
-        props.Remove(prop);
+        toRemove.Add(prop);
         continue;
       }
 
@@ -56,5 +58,7 @@ public class HealthStation(IServiceProvider provider)
         player.ExecuteClientCommand("play " + _Config.UseSound);
       }
     }
+
+    foreach (var prop in toRemove) props.Remove(prop);
   }
 }
