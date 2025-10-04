@@ -49,7 +49,7 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
   public State State {
     set {
       var ev = new GameStateUpdateEvent(this, value);
-      bus.Dispatch(ev);
+      bus.Dispatch(ev).GetAwaiter().GetResult();
       if (ev.IsCanceled) return;
       state = value;
     }
