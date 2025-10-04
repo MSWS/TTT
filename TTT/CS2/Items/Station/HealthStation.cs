@@ -28,7 +28,8 @@ public class HealthStation(IServiceProvider provider)
   override protected void onInterval() {
     var players = Utilities.GetPlayers();
     foreach (var (prop, info) in props) {
-      if (Math.Abs(info.HealthGiven) > _Config.TotalHealthGiven) {
+      if (_Config.TotalHealthGiven != 0
+        && Math.Abs(info.HealthGiven) > _Config.TotalHealthGiven) {
         props.Remove(prop);
         continue;
       }

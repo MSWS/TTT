@@ -39,7 +39,8 @@ public class DamageStation(IServiceProvider provider)
   override protected void onInterval() {
     var players = finder.GetOnline();
     foreach (var (prop, info) in props) {
-      if (Math.Abs(info.HealthGiven) > Math.Abs(_Config.TotalHealthGiven)) {
+      if (_Config.TotalHealthGiven != 0 && Math.Abs(info.HealthGiven)
+        > Math.Abs(_Config.TotalHealthGiven)) {
         props.Remove(prop);
         continue;
       }
