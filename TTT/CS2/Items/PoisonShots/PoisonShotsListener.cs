@@ -76,6 +76,7 @@ public class PoisonShotsListener(IServiceProvider provider)
 
     foreach (var timer in poisonTimers) timer.Dispose();
     poisonTimers.Clear();
+    poisonShots.Clear();
   }
 
   [SuppressMessage("ReSharper", "AccessToModifiedClosure")]

@@ -43,7 +43,12 @@ public class PoisonSmokeListener(IServiceProvider provider) : IPluginModule {
 
   private readonly IShop shop = provider.GetRequiredService<IShop>();
 
-  public void Dispose() { }
+  public void Dispose() {
+    foreach (var timer in poisonSmokes) timer.Dispose();
+
+    poisonSmokes.Clear();
+  }
+
   public void Start() { }
 
   [GameEventHandler]
@@ -58,7 +63,6 @@ public class PoisonSmokeListener(IServiceProvider provider) : IPluginModule {
 
     var projectile =
       Utilities.GetEntityFromIndex<CSmokeGrenadeProjectile>(ev.Entityid);
-    messenger.DebugAnnounce(projectile?.AbsOrigin?.ToString() ?? "null");
     if (projectile == null || !projectile.IsValid) return HookResult.Continue;
     startPoisonEffect(projectile);
     return HookResult.Continue;
@@ -78,6 +82,8 @@ public class PoisonSmokeListener(IServiceProvider provider) : IPluginModule {
         poisonSmokes.Remove(timer);
       });
     });
+
+    poisonSmokes.Add(timer);
   }
 
   private bool tickPoisonEffect(PoisonEffect effect) {
