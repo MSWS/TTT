@@ -2,11 +2,16 @@
 using ShopAPI;
 using TTT.API.Command;
 using TTT.API.Player;
+using TTT.Locale;
 
 namespace TTT.Shop.Commands;
 
 public class BalanceCommand(IServiceProvider provider) : ICommand {
+  private readonly IMsgLocalizer locale =
+    provider.GetRequiredService<IMsgLocalizer>();
+
   private readonly IShop shop = provider.GetRequiredService<IShop>();
+
   public string Id => "balance";
   public string[] Aliases => [Id, "bal", "credits", "money"];
 
@@ -21,7 +26,7 @@ public class BalanceCommand(IServiceProvider provider) : ICommand {
     }
 
     var bal = await shop.Load(executor);
-    info.ReplySync($"You have {bal} credits.");
+    info.ReplySync(locale[ShopMsgs.COMMAND_BALANCE(bal)]);
     return CommandResult.SUCCESS;
   }
 }

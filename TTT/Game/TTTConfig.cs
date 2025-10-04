@@ -32,7 +32,7 @@ public record TTTConfig {
 
     public string[]? InnocentWeapons { get; init; } = ["knife", "pistol"];
 
-    public bool StripWeaponsPriorToEquipping { get; init; } = true;
+    public bool StripWeaponsPriorToEquipping { get; init; } = false;
   }
 
   public record RoundConfig {

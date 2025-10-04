@@ -61,6 +61,19 @@ public static class PlayerExtensions {
     pawn.SetColor(color);
   }
 
+  public static void SetArmor(this CCSPlayerController player, int armor,
+    bool withHelmet = false) {
+    if (!player.IsValid) return;
+    var pawn = player.PlayerPawn.Value;
+    if (pawn == null || !pawn.IsValid) return;
+    pawn.ArmorValue = armor;
+    if (withHelmet)
+      if (pawn.ItemServices != null)
+        new CCSPlayer_ItemServices(pawn.ItemServices.Handle).HasHelmet = true;
+
+    Utilities.SetStateChanged(pawn, "CCSPlayerPawn", "m_ArmorValue");
+  }
+
   public static void ColorScreen(this CCSPlayerController player, Color color,
     float hold = 0.1f, float fade = 0.2f, FadeFlags flags = FadeFlags.FADE_IN,
     bool withPurge = true) {

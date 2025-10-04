@@ -1,7 +1,6 @@
-﻿using CounterStrikeSharp.API;
-using CounterStrikeSharp.API.Core;
+﻿using CounterStrikeSharp.API.Core;
 using Microsoft.Extensions.DependencyInjection;
-using ShopAPI.Configs;
+using ShopAPI.Configs.Traitor;
 using TTT.API.Extensions;
 using TTT.API.Player;
 using TTT.API.Role;
@@ -17,30 +16,33 @@ public static class DamageStationCollection {
   }
 }
 
-public class DamageStation(IServiceProvider provider) : StationItem(provider,
-  provider.GetService<IStorage<DamageStationConfig>>()
-  ?.Load()
-   .GetAwaiter()
-   .GetResult() ?? new DamageStationConfig()) {
-  public override string Name => "Damage Station";
-
-  public override string Description
-    => "Deployable damage station that harms nearby traitors over time.";
-
-  private readonly IRoleAssigner roles =
-    provider.GetRequiredService<IRoleAssigner>();
-
+public class DamageStation(IServiceProvider provider)
+  : StationItem<TraitorRole>(provider,
+    provider.GetService<IStorage<DamageStationConfig>>()
+    ?.Load()
+     .GetAwaiter()
+     .GetResult() ?? new DamageStationConfig()) {
   private readonly IPlayerConverter<CCSPlayerController> converter =
     provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
 
   private readonly IPlayerFinder finder =
     provider.GetRequiredService<IPlayerFinder>();
 
+  private readonly IRoleAssigner roles =
+    provider.GetRequiredService<IRoleAssigner>();
+
+  public override string Name => Locale[StationMsgs.SHOP_ITEM_STATION_HURT];
+
+  public override string Description
+    => Locale[StationMsgs.SHOP_ITEM_STATION_HURT_DESC];
+
   override protected void onInterval() {
-    var players = finder.GetOnline();
+    var players  = finder.GetOnline();
+    var toRemove = new List<CPhysicsPropMultiplayer>();
     foreach (var (prop, info) in props) {
-      if (Math.Abs(info.HealthGiven) > Math.Abs(_Config.TotalHealthGiven)) {
-        props.Remove(prop);
+      if (_Config.TotalHealthGiven != 0 && Math.Abs(info.HealthGiven)
+        > Math.Abs(_Config.TotalHealthGiven)) {
+        toRemove.Add(prop);
         continue;
       }
 
@@ -68,8 +70,10 @@ public class DamageStation(IServiceProvider provider) : StationItem(provider,
         player.Health    += damageAmount;
         info.HealthGiven += damageAmount;
 
-        gamePlayer.ExecuteClientCommand("play sounds/buttons/blip2");
+        gamePlayer.ExecuteClientCommand("play " + _Config.UseSound);
       }
     }
+
+    foreach (var prop in toRemove) props.Remove(prop);
   }
 }

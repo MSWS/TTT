@@ -10,12 +10,12 @@ namespace TTT.Shop.Items;
 
 public static class DeagleServiceCollection {
   public static void AddDeagleServices(this IServiceCollection collection) {
-    collection.AddModBehavior<OneShotDeagle>();
+    collection.AddModBehavior<OneShotDeagleItem>();
     collection.AddModBehavior<DeagleDamageListener>();
   }
 }
 
-public class OneShotDeagle(IServiceProvider provider)
+public class OneShotDeagleItem(IServiceProvider provider)
   : BaseItem(provider), IWeapon {
   private readonly OneShotDeagleConfig deagleConfigStorage = provider
    .GetService<IStorage<OneShotDeagleConfig>>()

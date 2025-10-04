@@ -172,13 +172,11 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
       return;
     }
 
-    State = State.IN_PROGRESS;
-
-    foreach (var player in online) inventory.RemoveAllWeapons(player);
-
     StartedAt = DateTime.Now;
     RoleAssigner.AssignRoles(online, Roles);
     players.AddRange(online);
+
+    State = State.IN_PROGRESS;
 
     var traitors    = ((IGame)this).GetAlive(typeof(TraitorRole)).Count;
     var nonTraitors = online.Count - traitors;

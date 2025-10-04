@@ -15,11 +15,22 @@ public static class GameMsgs {
   public static IMsg ROLE_DETECTIVE
     => MsgFactory.Create(nameof(ROLE_DETECTIVE));
 
+  public static IMsg ROLE_REVEAL_TRAITORS_HEADER
+    => MsgFactory.Create(nameof(ROLE_REVEAL_TRAITORS_HEADER));
+
+  public static IMsg ROLE_REVEAL_TRAITORS_NONE
+    => MsgFactory.Create(nameof(ROLE_REVEAL_TRAITORS_NONE));
+
   public static IMsg GAME_LOGS_HEADER
     => MsgFactory.Create(nameof(GAME_LOGS_HEADER));
 
   public static IMsg GAME_LOGS_FOOTER
     => MsgFactory.Create(nameof(GAME_LOGS_FOOTER));
+
+  public static IMsg ROLE_REVEAL_DEATH(IRole killerRole) {
+    return MsgFactory.Create(nameof(ROLE_REVEAL_DEATH),
+      GetRolePrefix(killerRole) + killerRole.Name);
+  }
 
   public static IMsg ROLE_ASSIGNED(IRole role) {
     return MsgFactory.Create(nameof(ROLE_ASSIGNED), role.Name);

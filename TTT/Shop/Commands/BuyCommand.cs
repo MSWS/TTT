@@ -1,4 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.DependencyInjection;
 using ShopAPI;
 using TTT.API.Command;
@@ -21,33 +20,38 @@ public class BuyCommand(IServiceProvider provider) : ICommand {
   public string Id => "buy";
   public void Start() { }
   public string[] Aliases => [Id, "purchase", "b"];
+  public string[] Usage => ["[item]"];
 
-  public async Task<CommandResult> Execute(IOnlinePlayer? executor,
+  public bool MustBeOnMainThread => true;
+
+  public Task<CommandResult> Execute(IOnlinePlayer? executor,
     ICommandInfo info) {
-    if (executor == null) {
-      info.ReplySync("You must be a player to buy items.");
-      return CommandResult.PLAYER_ONLY;
-    }
+    if (executor == null) return Task.FromResult(CommandResult.PLAYER_ONLY);
 
     if (games.ActiveGame is not { State: State.IN_PROGRESS }) {
       info.ReplySync(locale[ShopMsgs.SHOP_INACTIVE]);
-      return CommandResult.SUCCESS;
+      return Task.FromResult(CommandResult.SUCCESS);
     }
 
-    if (info.ArgCount == 1) return CommandResult.PRINT_USAGE;
+    if (info.ArgCount == 1) return Task.FromResult(CommandResult.PRINT_USAGE);
+
+    if (executor.Health <= 0) {
+      info.ReplySync(locale[ShopMsgs.SHOP_INACTIVE]);
+      return Task.FromResult(CommandResult.SUCCESS);
+    }
 
     var query = string.Join(" ", info.Args.Skip(1));
     var item  = searchItem(query);
 
     if (item == null) {
       info.ReplySync(locale[ShopMsgs.SHOP_ITEM_NOT_FOUND(query)]);
-      return CommandResult.ERROR;
+      return Task.FromResult(CommandResult.ERROR);
     }
 
     var result = shop.TryPurchase(executor, item);
-    return result == PurchaseResult.SUCCESS ?
+    return Task.FromResult(result == PurchaseResult.SUCCESS ?
       CommandResult.SUCCESS :
-      CommandResult.ERROR;
+      CommandResult.ERROR);
   }
 
   private IShopItem? searchItem(string query) {
@@ -57,12 +61,12 @@ public class BuyCommand(IServiceProvider provider) : ICommand {
     if (item != null) return item;
 
     item = shop.Items.FirstOrDefault(it
-      => it.Name.Equals(query, StringComparison.OrdinalIgnoreCase));
+      => it.Name.Contains(query, StringComparison.OrdinalIgnoreCase));
 
     if (item != null) return item;
 
     item = shop.Items.FirstOrDefault(it
-      => it.Name.Contains(query, StringComparison.OrdinalIgnoreCase));
+      => it.Description.Contains(query, StringComparison.OrdinalIgnoreCase));
 
     return item;
   }

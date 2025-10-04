@@ -13,12 +13,12 @@ public class RoundShopClearer(IServiceProvider provider) : IListener {
 
   public void Dispose() { bus.UnregisterListener(this); }
 
-  [EventHandler(IgnoreCanceled = true, Priority = Priority.LOW)]
+  [EventHandler(IgnoreCanceled = true)]
   [UsedImplicitly]
   public void OnRoundStart(GameStateUpdateEvent ev) {
     // Only clear balances if the round is in progress
     // This is called only once, which means the round went from COUNTDOWN / WAITING -> IN_PROGRESS
-    if (ev.NewState != State.IN_PROGRESS) return;
+    if (ev.NewState != State.FINISHED) return;
     shop.ClearBalances();
     shop.ClearItems();
   }

@@ -27,8 +27,14 @@ public record ShopConfig(IRoleAssigner assigner) {
   public int CreditsForDetectiveVInnoKill { get; init; } = -6;
   public int CreditsForDetectiveVTraitorKill { get; init; } = 8;
   public int CreditsForAnyKill { get; init; } = 2;
+
   public float CreditMultiplierForAssisting { get; init; } = 0.5f;
   public float CreditsMultiplierForNotAssisted { get; init; } = 1.5f;
+
+  public TimeSpan CreditRewardInterval { get; init; } =
+    TimeSpan.FromSeconds(30);
+
+  public int IntervalRewardAmount { get; init; } = 8;
 
   public virtual int CreditsForKill(IOnlinePlayer attacker,
     IOnlinePlayer victim) {

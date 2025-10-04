@@ -2,7 +2,7 @@
 using TTT.API.Player;
 using TTT.Game.Events.Player;
 
-namespace TTT.Shop.Events;
+namespace ShopAPI.Events;
 
 public class PlayerBalanceEvent(IPlayer player, int oldBalance, int newBalance,
   string? reason) : PlayerEvent(player), ICancelableEvent {

@@ -1,16 +1,16 @@
 ﻿using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Entities.Constants;
-using CounterStrikeSharp.API.Modules.Memory.DynamicFunctions;
+using CounterStrikeSharp.API.Modules.Memory;
 using CounterStrikeSharp.API.Modules.Utils;
 
 namespace TTT.CS2.Utils;
 
 public static class RoundUtil {
-  private static readonly
-    MemoryFunctionVoid<nint, float, RoundEndReason, nint, nint>
-    TerminateRoundFunc =
-      new(GameData.GetSignature("CCSGameRules_TerminateRound"));
+  // private static readonly
+  //   MemoryFunctionVoid<nint, float, RoundEndReason, nint, nint>
+  //   TerminateRoundFunc =
+  //     new(GameData.GetSignature("CCSGameRules_TerminateRound"));
 
   private static IEnumerable<CCSTeam>? _teamManager;
 
@@ -52,7 +52,9 @@ public static class RoundUtil {
     var gameRules = ServerUtil.GameRulesProxy;
     if (gameRules == null || gameRules.GameRules == null) return;
     // TODO: Figure out what these params do
-    TerminateRoundFunc.Invoke(gameRules.GameRules.Handle, 5f, reason, 0, 0);
+    // TerminateRoundFunc.Invoke(gameRules.GameRules.Handle, 5f, reason, 0, 0);
+    VirtualFunctions.TerminateRoundFunc.Invoke(gameRules.GameRules.Handle,
+      reason, 5f, 0, 0);
   }
 
   public static void SetTeamScore(CsTeam team, int score) {

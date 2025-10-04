@@ -187,12 +187,11 @@ public class PropMover(IServiceProvider provider) : IPluginModule {
     targetVector.Z = Math.Max(targetVector.Z, playerOrigin.Z - 48);
 
     if (ent.AbsOrigin == null) return;
-    var lerpedVector = ent.AbsOrigin.Lerp(targetVector, 0.3f);
 
     if (info.Beam != null && info.Beam.IsValid) {
       info.Beam.AcceptInput("Kill");
       info.Beam = createBeam(playerOrigin.With(z: playerOrigin.Z - 16),
-        lerpedVector);
+        ent.AbsOrigin);
     }
 
     playersPressingE[player] = info;
@@ -201,9 +200,9 @@ public class PropMover(IServiceProvider provider) : IPluginModule {
   private CEnvBeam? createBeam(Vector start, Vector end) {
     var beam = Utilities.CreateEntityByName<CEnvBeam>("env_beam");
     if (beam == null) return null;
-    beam.RenderMode = RenderMode_t.kRenderTransColor;
-    beam.Width      = 0.5f;
-    beam.Render     = Color.White;
+    beam.RenderMode = RenderMode_t.kRenderTransAlpha;
+    beam.Width      = 2.0f;
+    beam.Render     = Color.FromArgb(32, Color.White);
     beam.EndPos.X   = end.X;
     beam.EndPos.Y   = end.Y;
     beam.EndPos.Z   = end.Z;

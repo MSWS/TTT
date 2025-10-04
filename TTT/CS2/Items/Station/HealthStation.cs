@@ -1,9 +1,11 @@
 ﻿using CounterStrikeSharp.API;
+using CounterStrikeSharp.API.Core;
 using Microsoft.Extensions.DependencyInjection;
-using ShopAPI.Configs;
+using ShopAPI.Configs.Detective;
 using TTT.API.Extensions;
 using TTT.API.Storage;
 using TTT.CS2.Extensions;
+using TTT.Game.Roles;
 
 namespace TTT.CS2.Items.Station;
 
@@ -13,21 +15,24 @@ public static class HealthStationCollection {
   }
 }
 
-public class HealthStation(IServiceProvider provider) : StationItem(provider,
-  provider.GetService<IStorage<HealthStationConfig>>()
-  ?.Load()
-   .GetAwaiter()
-   .GetResult() ?? new HealthStationConfig()) {
-  public override string Name => "Health Station";
+public class HealthStation(IServiceProvider provider)
+  : StationItem<DetectiveRole>(provider,
+    provider.GetService<IStorage<HealthStationConfig>>()
+    ?.Load()
+     .GetAwaiter()
+     .GetResult() ?? new HealthStationConfig()) {
+  public override string Name => Locale[StationMsgs.SHOP_ITEM_STATION_HEALTH];
 
   public override string Description
-    => "Deployable health station that heals nearby players over time.";
+    => Locale[StationMsgs.SHOP_ITEM_STATION_HEALTH_DESC];
 
   override protected void onInterval() {
-    var players = Utilities.GetPlayers();
+    var players  = Utilities.GetPlayers();
+    var toRemove = new List<CPhysicsPropMultiplayer>();
     foreach (var (prop, info) in props) {
-      if (Math.Abs(info.HealthGiven) > _Config.TotalHealthGiven) {
-        props.Remove(prop);
+      if (_Config.TotalHealthGiven != 0
+        && Math.Abs(info.HealthGiven) > _Config.TotalHealthGiven) {
+        toRemove.Add(prop);
         continue;
       }
 
@@ -50,8 +55,10 @@ public class HealthStation(IServiceProvider provider) : StationItem(provider,
         player.SetHealth(newHealth);
         info.HealthGiven += healAmount;
 
-        player.ExecuteClientCommand("play sounds/buttons/blip1");
+        player.ExecuteClientCommand("play " + _Config.UseSound);
       }
     }
+
+    foreach (var prop in toRemove) props.Remove(prop);
   }
 }

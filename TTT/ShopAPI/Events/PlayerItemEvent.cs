@@ -1,8 +1,7 @@
-﻿using ShopAPI;
-using TTT.API.Player;
+﻿using TTT.API.Player;
 using TTT.Game.Events.Player;
 
-namespace TTT.Shop.Events;
+namespace ShopAPI.Events;
 
 public abstract class PlayerItemEvent(IPlayer player, IShopItem item)
   : PlayerEvent(player) {

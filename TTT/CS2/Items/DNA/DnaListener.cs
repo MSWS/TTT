@@ -1,7 +1,7 @@
 ﻿using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using ShopAPI;
-using ShopAPI.Configs;
+using ShopAPI.Configs.Detective;
 using TTT.API.Events;
 using TTT.API.Game;
 using TTT.API.Player;
@@ -16,6 +16,15 @@ namespace TTT.CS2.Items.DNA;
 public class DnaListener(IServiceProvider provider) : BaseListener(provider) {
   private static readonly TimeSpan cooldown = TimeSpan.FromSeconds(15);
 
+  private static readonly string[] missingDnaExplanations = {
+    "the killer used gloves... for their bullets",
+    "the killer was very careful", "the killer wiped the weapon clean",
+    "the killer retrieved the bullets", "the bullets disintegrated on impact",
+    "the killer was GOATed", "but no DNA was found",
+    "but legal litigation caused the DNA to be lost",
+    "and confirmed they were dead", "and they will remember that", "good job"
+  };
+
   private readonly IBodyTracker bodies =
     provider.GetRequiredService<IBodyTracker>();
 
@@ -27,15 +36,6 @@ public class DnaListener(IServiceProvider provider) : BaseListener(provider) {
 
   private readonly Dictionary<string, DateTime> lastMessages = new();
   private readonly IShop shop = provider.GetRequiredService<IShop>();
-
-  private static readonly string[] missingDnaExplanations = {
-    "the killer used gloves... for their bullets",
-    "the killer was very careful", "the killer wiped the weapon clean",
-    "the killer retrieved the bullets", "the bullets disintegrated on impact",
-    "the killer was GOATed", "but no DNA was found",
-    "but legal litigation caused the DNA to be lost",
-    "and confirmed they were dead", "and they will remember that", "good job"
-  };
 
   // Low priority to allow body identification to happen first
   [UsedImplicitly]

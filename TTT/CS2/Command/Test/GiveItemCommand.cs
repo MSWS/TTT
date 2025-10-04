@@ -1,18 +1,22 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using CounterStrikeSharp.API;
+using Microsoft.Extensions.DependencyInjection;
 using ShopAPI;
 using TTT.API.Command;
 using TTT.API.Player;
-using TTT.Locale;
 
 namespace TTT.CS2.Command.Test;
 
 public class GiveItemCommand(IServiceProvider provider) : ICommand {
+  private readonly IPlayerFinder finder =
+    provider.GetRequiredService<IPlayerFinder>();
+
   private readonly IShop shop = provider.GetRequiredService<IShop>();
 
   public void Dispose() { }
   public void Start() { }
 
   public string Id => "giveitem";
+  public string[] Usage => ["[item] <player>"];
 
   public Task<CommandResult>
     Execute(IOnlinePlayer? executor, ICommandInfo info) {
@@ -20,15 +24,29 @@ public class GiveItemCommand(IServiceProvider provider) : ICommand {
 
     if (info.ArgCount == 1) return Task.FromResult(CommandResult.PRINT_USAGE);
 
-    var query = string.Join(" ", info.Args.Skip(1));
+    var query = info.Args[1];
     var item  = searchItem(query);
     if (item == null) {
       info.ReplySync($"Item '{query}' not found.");
       return Task.FromResult(CommandResult.ERROR);
     }
 
-    shop.GiveItem(executor, item);
-    info.ReplySync($"Gave item '{item.Name}' to {executor.Name}.");
+    var target = executor;
+
+    Server.NextWorldUpdateAsync(() => {
+      if (info.ArgCount == 3) {
+        var result = finder.GetPlayerByName(info.Args[2]);
+        if (result == null) {
+          info.ReplySync($"Player '{info.Args[2]}' not found.");
+          return;
+        }
+
+        target = result;
+      }
+
+      shop.GiveItem(target, item);
+      info.ReplySync($"Gave item '{item.Name}' to {target.Name}.");
+    });
     return Task.FromResult(CommandResult.SUCCESS);
   }
 

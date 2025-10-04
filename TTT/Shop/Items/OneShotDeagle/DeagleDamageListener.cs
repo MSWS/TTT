@@ -31,7 +31,7 @@ public class DeagleDamageListener(IServiceProvider provider)
     if (attacker == null) return;
 
     var deagleItem = shop.GetOwnedItems(attacker)
-     .FirstOrDefault(s => s is OneShotDeagle);
+     .FirstOrDefault(s => s is OneShotDeagleItem);
     if (deagleItem == null) return;
 
     if (ev.Weapon != config.Weapon)

@@ -1,8 +1,7 @@
-﻿using ShopAPI;
-using TTT.API.Events;
+﻿using TTT.API.Events;
 using TTT.API.Player;
 
-namespace TTT.Shop.Events;
+namespace ShopAPI.Events;
 
 public class PlayerPurchaseItemEvent(IPlayer player, IShopItem item)
   : PlayerItemEvent(player, item), ICancelableEvent {

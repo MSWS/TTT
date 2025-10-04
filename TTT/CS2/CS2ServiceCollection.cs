@@ -1,6 +1,7 @@
 using CounterStrikeSharp.API.Core;
 using Microsoft.Extensions.DependencyInjection;
 using ShopAPI.Configs;
+using ShopAPI.Configs.Traitor;
 using TTT.API.Command;
 using TTT.API.Extensions;
 using TTT.API.Game;
@@ -33,12 +34,18 @@ public static class CS2ServiceCollection {
     collection.AddModBehavior<ICommandManager, CS2CommandManager>();
     collection.AddModBehavior<IAliveSpoofer, CS2AliveSpoofer>();
     collection.AddModBehavior<IIconManager, RoleIconsHandler>();
+    collection.AddModBehavior<NameDisplayer>();
 
     // Configs
     collection.AddModBehavior<IStorage<TTTConfig>, CS2GameConfig>();
     collection.AddModBehavior<IStorage<ShopConfig>, CS2ShopConfig>();
     collection
      .AddModBehavior<IStorage<OneShotDeagleConfig>, CS2OneShotDeagleConfig>();
+    collection.AddModBehavior<IStorage<C4Config>, CS2C4Config>();
+    collection.AddModBehavior<IStorage<M4A1Config>, CS2M4A1Config>();
+    collection.AddModBehavior<IStorage<TaserConfig>, CS2TaserConfig>();
+    collection
+     .AddModBehavior<IStorage<PoisonSmokeConfig>, CS2PoisonSmokeConfig>();
 
     // TTT - CS2 Specific optionals
     collection.AddScoped<ITextSpawner, TextSpawner>();
@@ -49,8 +56,8 @@ public static class CS2ServiceCollection {
     collection.AddModBehavior<DamageCanceler>();
     collection.AddModBehavior<PlayerConnectionsHandler>();
     collection.AddModBehavior<PropMover>();
-    collection.AddModBehavior<RoundEnd_GameEndHandler>();
     collection.AddModBehavior<RoundStart_GameStartHandler>();
+    collection.AddModBehavior<BombPlantSuppressor>();
 
     // Damage Cancelers
     collection.AddModBehavior<OutOfRoundCanceler>();

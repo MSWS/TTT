@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
@@ -30,6 +31,11 @@ public class RoundTimerListener(IServiceProvider provider)
   private readonly IPlayerConverter<CCSPlayerController> converter =
     provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
 
+  private readonly IScheduler scheduler = provider
+   .GetRequiredService<IScheduler>();
+
+  private IDisposable? endTimer;
+
   [UsedImplicitly]
   [EventHandler(IgnoreCanceled = true)]
   public void OnRoundStart(GameStateUpdateEvent ev) {
@@ -49,13 +55,18 @@ public class RoundTimerListener(IServiceProvider provider)
       return;
     }
 
+    if (ev.NewState == State.FINISHED) endTimer?.Dispose();
     if (ev.NewState != State.IN_PROGRESS) return;
-    Server.NextWorldUpdate(() => {
-      RoundUtil.SetTimeRemaining((int)config.RoundCfg
-       .RoundDuration(ev.Game.Players.Count)
-       .TotalSeconds);
-      Server.ExecuteCommand("mp_ignore_round_win_conditions 0");
-    });
+    var duration = config.RoundCfg.RoundDuration(ev.Game.Players.Count);
+    Server.NextWorldUpdate(()
+      => RoundUtil.SetTimeRemaining((int)duration.TotalSeconds));
+
+    endTimer?.Dispose();
+    endTimer = scheduler.Schedule(duration,
+      () => {
+        Server.NextWorldUpdate(()
+          => ev.Game.EndGame(EndReason.TIMEOUT(new InnocentRole(Provider))));
+      });
   }
 
   [UsedImplicitly]
@@ -64,11 +75,6 @@ public class RoundTimerListener(IServiceProvider provider)
     if (ev.NewState != State.FINISHED) return;
 
     revealRoles(ev.Game);
-
-    // If CS caused the round to end, we will have 0 time left
-    // in this case, CS automatically handles the end of round stuff
-    // so we don't need to do anything
-    if (RoundUtil.GetTimeRemaining() <= 1) return;
 
     Server.NextWorldUpdate(() => {
       var endReason = endRound(ev);
@@ -81,8 +87,11 @@ public class RoundTimerListener(IServiceProvider provider)
 
       var timer = Observable.Timer(
         config.RoundCfg.TimeBetweenRounds, Scheduler);
-      timer.Subscribe(_
-        => Server.NextWorldUpdate(() => RoundUtil.EndRound(endReason)));
+      timer.Subscribe(_ => Server.NextWorldUpdate(() => {
+        Server.ExecuteCommand("mp_ignore_round_win_conditions 1");
+        RoundUtil.EndRound(endReason);
+        Server.ExecuteCommand("mp_ignore_round_win_conditions 0");
+      }));
     });
   }
 
@@ -114,5 +123,11 @@ public class RoundTimerListener(IServiceProvider provider)
     }
 
     new EventNextlevelChanged(true).FireEvent(false);
+  }
+
+  public override void Dispose() {
+    base.Dispose();
+
+    endTimer?.Dispose();
   }
 }

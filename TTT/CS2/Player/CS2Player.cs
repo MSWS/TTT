@@ -1,7 +1,6 @@
 using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using TTT.API.Player;
-using TTT.CS2.Extensions;
 
 namespace TTT.CS2.Player;
 
@@ -11,7 +10,7 @@ namespace TTT.CS2.Player;
 ///   Non-human Players (bots) will be tracked by their entity index.
 ///   Note that slot numbers are not guaranteed to be stable across server restarts.
 /// </summary>
-public class CS2Player : IOnlinePlayer {
+public class CS2Player : IOnlinePlayer, IEquatable<CS2Player> {
   private CCSPlayerController? cachePlayer;
 
   protected CS2Player(string id, string name) {
@@ -51,6 +50,11 @@ public class CS2Player : IOnlinePlayer {
   private int namePadding
     => Math.Min(Utilities.GetPlayers().Select(p => p.PlayerName.Length).Max(),
       24);
+
+  public bool Equals(CS2Player? other) {
+    if (other is null) return false;
+    return Id == other.Id;
+  }
 
   public string Id { get; }
   public string Name { get; }
@@ -108,20 +112,36 @@ public class CS2Player : IOnlinePlayer {
     return player.SteamID.ToString();
   }
 
+  public override int GetHashCode() { return Id.GetHashCode(); }
+
   public override string ToString() { return createPaddedName(); }
 
   // Goal: Pad the name to a fixed width for better alignment in logs
   // Left-align ID, right-align name
   private string createPaddedName() {
-    var idPart           = $"({getSuffix(Id, 5)})";
-    var effectivePadding = namePadding - idPart.Length;
-    var namePart = Name.Length >= effectivePadding ?
-      getSuffix(Name, effectivePadding) :
-      Name.PadLeft(effectivePadding);
-    return $"{idPart} {namePart}";
+    return CreatePaddedName(Id, Name, namePadding + 8);
   }
 
-  private string getSuffix(string s, int len) {
-    return s.Length <= len ? s : s[^len..];
+  public static string CreatePaddedName(string id, string name, int len) {
+    var suffix = id.Length > 5 ? id[^5..] : id.PadLeft(5, '0');
+    var prefix = $"({suffix})";
+
+    var baseStr = $"{prefix} {name}";
+
+    if (baseStr.Length == len) return baseStr;
+
+    if (baseStr.Length < len) {
+      // Pad spaces so the name ends up right-aligned
+      var padding = len - (prefix.Length + name.Length);
+      return prefix + new string(' ', padding + 1) + name;
+    }
+
+    // Too long, cut off from the end of the name
+    var availableForName                       = len - (prefix.Length + 1);
+    if (availableForName < 0) availableForName = 0;
+    var trimmedName = name.Length > availableForName ?
+      name[..availableForName] :
+      name;
+    return $"{prefix} {trimmedName}";
   }
 }

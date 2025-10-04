@@ -27,8 +27,6 @@ public class RoleIconsHandler(IServiceProvider provider)
   private static readonly string T_MODEL =
     "characters/models/tm_phoenix/tm_phoenix.vmdl";
 
-  // private readonly IDictionary<int, IEnumerable<CPointWorldText>> icons =
-  //   new Dictionary<int, IEnumerable<CPointWorldText>>();
   private readonly IEnumerable<CPointWorldText>?[] icons =
     new IEnumerable<CPointWorldText>[64];
 
@@ -79,8 +77,10 @@ public class RoleIconsHandler(IServiceProvider provider)
     plugin
     ?.RegisterListener<CounterStrikeSharp.API.Core.Listeners.CheckTransmit>(
         onTransmit);
+    if (hotReload) OnRoundEnd(null!, null!);
   }
 
+  [UsedImplicitly]
   [GameEventHandler]
   public HookResult OnRoundEnd(EventRoundStart _, GameEventInfo _1) {
     foreach (var text in Utilities
@@ -93,7 +93,7 @@ public class RoleIconsHandler(IServiceProvider provider)
   [UsedImplicitly]
   [EventHandler(IgnoreCanceled = true)]
   public void OnRoundStart(GameStateUpdateEvent ev) {
-    if (ev.NewState != State.IN_PROGRESS) return;
+    if (ev.NewState != State.FINISHED) return;
     for (var i = 0; i < icons.Length; i++) removeIcon(i);
     ClearAllVisibility();
     traitorsThisRound.Clear();
@@ -163,6 +163,7 @@ public class RoleIconsHandler(IServiceProvider provider)
     icons[player.Slot] = roleIcon;
   }
 
+  [UsedImplicitly]
   [EventHandler(Priority = Priority.MONITOR)]
   public void OnDeath(PlayerDeathEvent ev) {
     var gamePlayer = players.GetPlayer(ev.Victim);

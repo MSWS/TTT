@@ -1,11 +1,11 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using ShopAPI;
+using ShopAPI.Events;
 using TTT.API;
 using TTT.API.Events;
 using TTT.API.Messages;
 using TTT.API.Player;
 using TTT.Locale;
-using TTT.Shop.Events;
 
 namespace TTT.Shop;
 
@@ -54,13 +54,22 @@ public class Shop(IServiceProvider provider) : ITerrorModule, IShop {
       return canPurchase;
     }
 
-    balances[player.Id] = bal - cost;
+    var purchaseEvent = new PlayerPurchaseItemEvent(player, item);
+    bus.Dispatch(purchaseEvent);
+    if (purchaseEvent.IsCanceled) return PurchaseResult.PURCHASE_CANCELED;
+
+    AddBalance(player, -cost, item.Name);
     GiveItem(player, item);
+
+    if (printReason)
+      messenger?.Message(player, localizer[ShopMsgs.SHOP_PURCHASED(item)]);
     return PurchaseResult.SUCCESS;
   }
 
   public void AddBalance(IOnlinePlayer player, int amount, string reason = "",
     bool print = true) {
+    messenger?.Debug(
+      $"Adding {amount} to {player.Name} ({player.Id}) balance. Reason: {reason}");
     if (amount == 0) return;
     balances.TryAdd(player.Id, 0);
 

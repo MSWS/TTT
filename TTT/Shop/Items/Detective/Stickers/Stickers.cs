@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using ShopAPI;
 using ShopAPI.Configs;
+using ShopAPI.Configs.Detective;
 using TTT.API.Extensions;
 using TTT.API.Player;
 using TTT.API.Storage;
@@ -17,11 +18,11 @@ public static class StickerExtensions {
 
 public class Stickers(IServiceProvider provider)
   : RoleRestrictedItem<DetectiveRole>(provider) {
-  private readonly StickerConfig config = provider
-   .GetService<IStorage<StickerConfig>>()
+  private readonly StickersConfig config = provider
+   .GetService<IStorage<StickersConfig>>()
   ?.Load()
    .GetAwaiter()
-   .GetResult() ?? new StickerConfig();
+   .GetResult() ?? new StickersConfig();
 
   private readonly IIconManager? icons = provider.GetService<IIconManager>();
 

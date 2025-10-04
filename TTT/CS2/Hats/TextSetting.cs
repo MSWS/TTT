@@ -8,7 +8,7 @@ public class TextSetting {
   public float depthOffset = 0.0f;
   public bool enabled = true;
   public string fontName = "Arial";
-  public float fontSize = 50;
+  public float fontSize = 64;
   public bool fullbright = true;
 
   public PointWorldTextJustifyHorizontal_t horizontal =
@@ -23,5 +23,5 @@ public class TextSetting {
   public PointWorldTextJustifyVertical_t vertical =
     PointWorldTextJustifyVertical_t.POINT_WORLD_TEXT_JUSTIFY_VERTICAL_CENTER;
 
-  public float worldUnitsPerPx = 0.4f;
+  public float worldUnitsPerPx = 0.5f;
 }

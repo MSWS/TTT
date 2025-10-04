@@ -1,8 +1,32 @@
 ﻿ROLE_SPECTATOR: "Spectator"
 TASER_SCANNED: "%PREFIX%You scanned {0}{grey}, they are %an% {1}{grey}!"
-DNA_PREFIX: " {darkblue}D{blue}N{lightblue}A{grey} | {grey}"
+DNA_PREFIX: "{darkblue}D{blue}N{lightblue}A{grey} | {grey}"
+
 SHOP_ITEM_DNA: "DNA Scanner"
 SHOP_ITEM_DNA_DESC: "Scan bodies to reveal the person who killed them."
 SHOP_ITEM_DNA_SCANNED: "%DNA_PREFIX%You scanned {0}{1}'%s% {grey}body, their killer was {red}{2}{grey}."
 SHOP_ITEM_DNA_SCANNED_OTHER: "%DNA_PREFIX%You scanned {0}{1}'%s% {grey}body, {2}."
 SHOP_ITEM_DNA_EXPIRED: "%DNA_PREFIX%You scanned {0}{1}'%s% {grey}body, but the DNA has expired."
+
+SHOP_ITEM_STATION_HEALTH: "Health Station"
+SHOP_ITEM_STATION_HEALTH_DESC: "A health station that heals players around it."
+SHOP_ITEM_STATION_HURT: "Hurt Station"
+SHOP_ITEM_STATION_HURT_DESC: "A station that hurts non-Traitors around it."
+
+SHOP_ITEM_CAMO: "Camouflage"
+SHOP_ITEM_CAMO_DESC: "Disguise yourself and make yourself harder to see."
+
+SHOP_ITEM_BODY_PAINT: "Body Paint"
+SHOP_ITEM_BODY_PAINT_DESC: "Paint bodies to make them appear identified."
+SHOP_ITEM_BODY_PAINT_OUT: "%PREFIX% You ran out of body paint."
+
+SHOP_ITEM_POISON_SHOTS: "Poison Shots"
+SHOP_ITEM_POISON_SHOTS_DESC: "Your bullets are coated in a mildly poisonous substance."
+SHOP_ITEM_POISON_HIT: "%PREFIX% You hit {green}{0}{grey} with a {lightpurple}poison shot{grey}."
+SHOP_ITEM_POISON_OUT: "%PREFIX% You are out of poison shots."
+
+SHOP_ITEM_POISON_SMOKE: "Poison Smoke"
+SHOP_ITEM_POISON_SMOKE_DESC: "Throw a grenade that releases poisonous gas."
+
+SHOP_ITEM_ARMOR: "Armor with Helmet"
+SHOP_ITEM_ARMOR_DESC: "Wear armor that reduces incoming damage."

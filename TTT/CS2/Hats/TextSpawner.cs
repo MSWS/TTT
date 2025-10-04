@@ -72,7 +72,7 @@ public class TextSpawner : ITextSpawner {
     position.Add(new Vector(0, 0, 72));
     rotation = new QAngle(rotation.X, rotation.Y + yRot, rotation.Z + 90);
 
-    position.Add(rotation.ToRight() * -10);
+    position.Add(rotation.ToRight() * 5);
 
     var ent = CreateText(setting, position, rotation);
     ent.AcceptInput("SetParent", player.Pawn.Value, null, "!activator");

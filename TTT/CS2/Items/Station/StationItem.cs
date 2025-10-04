@@ -2,25 +2,23 @@
 using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Core.Attributes.Registration;
+using CounterStrikeSharp.API.Modules.Utils;
 using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using ShopAPI;
 using ShopAPI.Configs;
 using TTT.API;
-using TTT.API.Messages;
 using TTT.API.Player;
+using TTT.API.Role;
 using TTT.CS2.Extensions;
-using TTT.Game.Roles;
 
 namespace TTT.CS2.Items.Station;
 
-public abstract class StationItem(IServiceProvider provider,
+public abstract class StationItem<T>(IServiceProvider provider,
   StationConfig config)
-  : RoleRestrictedItem<DetectiveRole>(provider), IPluginModule {
+  : RoleRestrictedItem<T>(provider), IPluginModule where T : IRole {
+  private static readonly long PROP_SIZE_SQUARED = 500;
   protected readonly StationConfig _Config = config;
-
-  private readonly IScheduler scheduler =
-    provider.GetRequiredService<IScheduler>();
 
   protected readonly IPlayerConverter<CCSPlayerController> Converter =
     provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
@@ -28,12 +26,12 @@ public abstract class StationItem(IServiceProvider provider,
   protected readonly Dictionary<CPhysicsPropMultiplayer, StationInfo> props =
     new();
 
-  private readonly IMessenger messenger =
-    provider.GetRequiredService<IMessenger>();
-
-  private static readonly long PROP_SIZE_SQUARED = 500;
+  private readonly IScheduler scheduler =
+    provider.GetRequiredService<IScheduler>();
 
   private IDisposable? intervalHandle;
+
+  public override ShopItemConfig Config => _Config;
 
   public override void Start() {
     base.Start();
@@ -43,7 +41,6 @@ public abstract class StationItem(IServiceProvider provider,
 
   public void Start(BasePlugin? plugin) {
     Start();
-    messenger.DebugAnnounce("Starting StationItem2 ");
     plugin
     ?.RegisterListener<
         CounterStrikeSharp.API.Core.Listeners.OnServerPrecacheResources>(m => {
@@ -51,16 +48,18 @@ public abstract class StationItem(IServiceProvider provider,
       });
   }
 
-  public override ShopItemConfig Config => _Config;
+  public override void Dispose() {
+    base.Dispose();
+    intervalHandle?.Dispose();
+  }
 
   [UsedImplicitly]
   [GameEventHandler]
   public HookResult OnBulletImpact(EventBulletImpact ev, GameEventInfo info) {
-    var hitVec =
-      new CounterStrikeSharp.API.Modules.Utils.Vector(ev.X, ev.Y, ev.Z);
+    var hitVec = new Vector(ev.X, ev.Y, ev.Z);
 
     var nearest = props
-     .Select(kv => (Key: kv.Key, Value: kv.Value,
+     .Select(kv => (kv.Key, kv.Value,
         Distance: kv.Key.AbsOrigin!.DistanceSquared(hitVec)))
      .Where(t => t.Key is { IsValid: true, AbsOrigin: not null })
      .OrderBy(t => t.Distance)
@@ -88,8 +87,7 @@ public abstract class StationItem(IServiceProvider provider,
     var user   = ev.Userid;
     var weapon = user?.Pawn.Value?.WeaponServices?.ActiveWeapon.Value;
     var dist =
-      (user?.Pawn.Value?.AbsOrigin?.Distance(
-          new CounterStrikeSharp.API.Modules.Utils.Vector(ev.X, ev.Y, ev.Z))
+      (user?.Pawn.Value?.AbsOrigin?.Distance(new Vector(ev.X, ev.Y, ev.Z))
         ?? null) ?? 1;
     var distScale  = Math.Clamp(256 / dist, 0.1, 1);
     var baseDamage = getBaseDamage(weapon?.DesignerName ?? "");
@@ -129,9 +127,10 @@ public abstract class StationItem(IServiceProvider provider,
         || gamePlayer.Pawn.Value == null)
         return;
       var spawnPos = gamePlayer.Pawn.Value.AbsOrigin.Clone();
-      if (spawnPos != null) {
-        if (gamePlayer.PlayerPawn.Value != null)
-          spawnPos += gamePlayer.PlayerPawn.Value?.EyeAngles.ToForward()! * 8;
+      if (spawnPos != null && gamePlayer.PlayerPawn.Value != null) {
+        var forward = gamePlayer.PlayerPawn.Value.EyeAngles.ToForward();
+        forward.Z =  0;
+        spawnPos  += forward.Normalized() * 8;
       }
 
       prop.Teleport(spawnPos);
@@ -139,9 +138,4 @@ public abstract class StationItem(IServiceProvider provider,
   }
 
   abstract protected void onInterval();
-
-  public override void Dispose() {
-    base.Dispose();
-    intervalHandle?.Dispose();
-  }
 }

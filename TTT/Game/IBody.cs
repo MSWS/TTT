@@ -7,7 +7,7 @@ public interface IBody {
   IPlayer OfPlayer { get; }
   bool IsIdentified { get; set; }
   IWeapon? MurderWeapon { get; }
-  IPlayer? Killer { get; }
+  IPlayer? Killer { get; set; }
   string Id { get; }
   DateTime TimeOfDeath { get; }
 }

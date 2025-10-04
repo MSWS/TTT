@@ -1,13 +1,13 @@
 ﻿using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Utils;
+using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using TTT.API.Events;
 using TTT.API.Player;
 using TTT.CS2.API;
 using TTT.CS2.Events;
 using TTT.CS2.Extensions;
-using TTT.Game;
 using TTT.Game.Events.Body;
 using TTT.Game.lang;
 using TTT.Game.Listeners;
@@ -26,6 +26,7 @@ public class BodyPickupListener(IServiceProvider provider)
   private readonly IAliveSpoofer? spoofer =
     provider.GetService<IAliveSpoofer>();
 
+  [UsedImplicitly]
   [EventHandler]
   public void OnPropPickup(PropPickupEvent ev) {
     if (!bodies.TryLookup(ev.Prop.Index.ToString(), out var body)) return;
@@ -36,10 +37,10 @@ public class BodyPickupListener(IServiceProvider provider)
     var identifyEvent = new BodyIdentifyEvent(body, online);
 
     Bus.Dispatch(identifyEvent);
-    if (identifyEvent.IsCanceled) return;
   }
 
-  [EventHandler]
+  [UsedImplicitly]
+  [EventHandler(IgnoreCanceled = true)]
   public void OnIdentify(BodyIdentifyEvent ev) {
     ev.Body.IsIdentified = true;
 

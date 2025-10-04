@@ -2,7 +2,6 @@ using CounterStrikeSharp.API.Modules.Utils;
 using Microsoft.Extensions.DependencyInjection;
 using TTT.API.Command;
 using TTT.API.Player;
-using TTT.Game;
 using TTT.Game.lang;
 using TTT.Locale;
 
@@ -15,13 +14,17 @@ public class ShopCommand(IServiceProvider provider) : ICommand {
   private readonly Dictionary<string, ICommand> subcommands = new() {
     ["list"]    = new ListCommand(provider),
     ["buy"]     = new BuyCommand(provider),
-    ["balance"] = new BalanceCommand(provider)
+    ["balance"] = new BalanceCommand(provider),
+    ["bal"]     = new BalanceCommand(provider)
   };
 
   public void Dispose() { }
   public string Id => "shop";
+  public string[] Usage => ["list", "buy [item]", "balance"];
 
   public void Start() { }
+
+  public bool MustBeOnMainThread => true;
 
   public Task<CommandResult>
     Execute(IOnlinePlayer? executor, ICommandInfo info) {

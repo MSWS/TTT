@@ -3,6 +3,8 @@ using ShopAPI;
 using TTT.API.Events;
 using TTT.API.Game;
 using TTT.API.Player;
+using TTT.API.Role;
+using TTT.Game.Roles;
 using TTT.Shop.Listeners;
 using Xunit;
 
@@ -17,6 +19,9 @@ public class BalanceClearTest(IServiceProvider provider) {
   private readonly IGameManager games =
     provider.GetRequiredService<IGameManager>();
 
+  private readonly IRoleAssigner roles =
+    provider.GetRequiredService<IRoleAssigner>();
+
   private readonly IShop shop = provider.GetRequiredService<IShop>();
 
   [Fact]
@@ -30,9 +35,29 @@ public class BalanceClearTest(IServiceProvider provider) {
 
     var game = games.CreateGame();
     game?.Start();
+    game?.EndGame();
 
     var newBalance = await shop.Load(player);
 
     Assert.Equal(0, newBalance);
+  }
+
+  [Fact]
+  public async Task RoleAssignCreditor_ShouldNotBeOverriden_OnGameStart() {
+    bus.RegisterListener(new RoleAssignCreditor(provider));
+    bus.RegisterListener(new RoundShopClearer(provider));
+    var player = TestPlayer.Random();
+    finder.AddPlayer(player);
+    finder.AddPlayer(TestPlayer.Random());
+
+    var game = games.CreateGame();
+    game?.Start();
+
+    var newBalance = await shop.Load(player);
+
+    var expected                                                    = 100;
+    if (roles.GetRoles(player).Any(r => r is TraitorRole)) expected = 120;
+
+    Assert.Equal(expected, newBalance);
   }
 }
