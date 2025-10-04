@@ -17,13 +17,9 @@ public class PlayerKillListener(IServiceProvider provider)
   [UsedImplicitly]
   [EventHandler]
   public async Task OnKill(PlayerDeathEvent ev) {
-    Messenger.DebugAnnounce("Kill event for shop");
     if (Games.ActiveGame is not { State: State.IN_PROGRESS }) return;
-    Messenger.DebugAnnounce("Game in progress");
     if (ev.Killer == null) return;
-    Messenger.DebugAnnounce("Killer not null");
     var victimBal = await shop.Load(ev.Victim);
-    Messenger.DebugAnnounce("Victim balance loaded: " + victimBal);
 
     shop.AddBalance(ev.Killer, victimBal / 6, "Killed " + ev.Victim.Name);
   }
@@ -41,12 +37,12 @@ public class PlayerKillListener(IServiceProvider provider)
     if (!isGoodKill(ev.Body.Killer, ev.Body.OfPlayer)) {
       var killerBal = await shop.Load(killer);
       shop.AddBalance(killer, -killerBal / 4,
-        ev.Body.OfPlayer.Name + " kill invalidated");
+        ev.Body.OfPlayer.Name + " Bad Kill");
       return;
     }
 
     shop.AddBalance(killer, victimBal / 4,
-      ev.Body.OfPlayer.Name + " kill validated");
+      ev.Body.OfPlayer.Name + " Good Kill");
   }
 
   private bool isGoodKill(IPlayer attacker, IPlayer victim) {

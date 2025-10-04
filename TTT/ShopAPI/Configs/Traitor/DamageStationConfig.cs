@@ -9,11 +9,11 @@ public record DamageStationConfig : StationConfig {
   public override string UseSound { get; init; } = "sounds/buttons/blip2";
 
   public override Color GetColor(float health) {
-    // 101% health = white
+    // 100% health = white
     // 10% health = red
-    var r = 255;                       // stays at 255
-    var g = (int)(255 * (1 - health)); // goes from 255 → 0
-    var b = (int)(255 * (1 - health)); // goes from 255 → 0
+    var r = 255;
+    var g = (int)(255 * health);
+    var b = (int)(255 * health);
     return Color.FromArgb(r, g, b);
   }
 }

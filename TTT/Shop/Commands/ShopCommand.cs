@@ -22,6 +22,8 @@ public class ShopCommand(IServiceProvider provider) : ICommand {
 
   public void Start() { }
 
+  public bool MustBeOnMainThread => true;
+
   public Task<CommandResult>
     Execute(IOnlinePlayer? executor, ICommandInfo info) {
     HashSet<string> sent = [];

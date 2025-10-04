@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Commands;
@@ -40,20 +41,45 @@ public class CS2CommandManager(IServiceProvider provider)
     var wrapper = executor == null ?
       null :
       converter.GetPlayer(executor) as IOnlinePlayer;
-    Task.Run(async () => {
-      try {
-        Console.WriteLine($"Processing command: {cs2Info.CommandString}");
-        return await ProcessCommand(cs2Info);
-      } catch (Exception e) {
-        var msg = e.Message;
-        cs2Info.ReplySync(Localizer[GameMsgs.GENERIC_ERROR(msg)]);
-        await Server.NextWorldUpdateAsync(() => {
+
+    if (cmdMap.TryGetValue(info.GetArg(0), out var command)) {
+      if (command.MustBeOnMainThread) {
+        processCommandSync(cs2Info, wrapper);
+        return;
+      }
+    }
+
+    Task.Run(async () => await processCommandAsync(cs2Info, wrapper));
+  }
+
+  private async Task<CommandResult> processCommandAsync(CS2CommandInfo cs2Info,
+    IOnlinePlayer? wrapper) {
+    try {
+      Console.WriteLine($"Processing command: {cs2Info.CommandString}");
+      return await ProcessCommand(cs2Info);
+    } catch (Exception e) {
+      var msg = e.Message;
+      cs2Info.ReplySync(Localizer[GameMsgs.GENERIC_ERROR(msg)]);
+      await Server.NextWorldUpdateAsync(() => {
+        Console.WriteLine(
+          $"Encountered an error when processing command: \"{cs2Info.CommandString}\" by {wrapper?.Id}");
+        Console.WriteLine(e);
+      });
+      return CommandResult.ERROR;
+    }
+  }
+
+  private void processCommandSync(CS2CommandInfo cs2Info,
+    IOnlinePlayer? wrapper) {
+    try { _ = ProcessCommand(cs2Info); } catch (Exception e) {
+      var msg = e.Message;
+      cs2Info.ReplySync(Localizer[GameMsgs.GENERIC_ERROR(msg)]);
+      Server.NextWorldUpdateAsync(() => {
           Console.WriteLine(
             $"Encountered an error when processing command: \"{cs2Info.CommandString}\" by {wrapper?.Id}");
           Console.WriteLine(e);
-        });
-        return CommandResult.ERROR;
-      }
-    });
+        })
+       .Wait();
+    }
   }
 }

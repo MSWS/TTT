@@ -8,6 +8,7 @@ public interface ICommand : ITerrorModule {
   string[] RequiredFlags => [];
   string[] RequiredGroups => [];
   string[] Aliases => [Id];
+  bool MustBeOnMainThread => false;
 
   Task<CommandResult> Execute(IOnlinePlayer? executor, ICommandInfo info);
 }
