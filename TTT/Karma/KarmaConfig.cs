@@ -5,7 +5,7 @@ namespace TTT.Karma;
 public record KarmaConfig {
   public string DbString { get; init; } = "Data Source=karma.db";
 
-  public int MinKarma => 0;
-  public int DefaultKarma => 50;
-  public int MaxKarma(IPlayer player) { return 100; }
+  public virtual int MinKarma => 0;
+  public virtual int DefaultKarma => 50;
+  public virtual int MaxKarma(IPlayer player) { return 100; }
 }
