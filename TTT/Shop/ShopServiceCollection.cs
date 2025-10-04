@@ -1,6 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using ShopAPI;
 using TTT.API.Extensions;
+using TTT.CS2.Items.Armor;
 using TTT.CS2.Items.BodyPaint;
 using TTT.CS2.Items.Camouflage;
 using TTT.CS2.Items.DNA;
@@ -27,6 +28,7 @@ public static class ShopServiceCollection {
     collection.AddModBehavior<BuyCommand>();
     collection.AddModBehavior<BalanceCommand>();
 
+    collection.AddArmorServices();
     collection.AddBodyPaintServices();
     collection.AddC4Services();
     collection.AddCamoServices();

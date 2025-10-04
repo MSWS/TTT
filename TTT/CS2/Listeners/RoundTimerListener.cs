@@ -58,19 +58,15 @@ public class RoundTimerListener(IServiceProvider provider)
     if (ev.NewState == State.FINISHED) endTimer?.Dispose();
     if (ev.NewState != State.IN_PROGRESS) return;
     var duration = config.RoundCfg.RoundDuration(ev.Game.Players.Count);
-    Messenger.DebugAnnounce("Total duration: {0} for {1} player", duration,
-      ev.Game.Players.Count);
-    Server.NextWorldUpdate(() => {
-      RoundUtil.SetTimeRemaining((int)duration.TotalSeconds);
-    });
+    Server.NextWorldUpdate(()
+      => RoundUtil.SetTimeRemaining((int)duration.TotalSeconds));
 
     endTimer?.Dispose();
-    endTimer = scheduler.Schedule(duration, () => {
-      Server.NextWorldUpdate(() => {
-        Messenger.DebugAnnounce("Time is up!");
-        ev.Game.EndGame(EndReason.TIMEOUT(new InnocentRole(provider)));
+    endTimer = scheduler.Schedule(duration,
+      () => {
+        Server.NextWorldUpdate(()
+          => ev.Game.EndGame(EndReason.TIMEOUT(new InnocentRole(Provider))));
       });
-    });
   }
 
   [UsedImplicitly]
