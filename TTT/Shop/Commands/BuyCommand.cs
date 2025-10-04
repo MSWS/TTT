@@ -21,6 +21,7 @@ public class BuyCommand(IServiceProvider provider) : ICommand {
   public string Id => "buy";
   public void Start() { }
   public string[] Aliases => [Id, "purchase", "b"];
+  public string[] Usage => ["[item]"];
 
   public Task<CommandResult> Execute(IOnlinePlayer? executor,
     ICommandInfo info) {

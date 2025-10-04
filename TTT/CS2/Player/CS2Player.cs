@@ -10,7 +10,7 @@ namespace TTT.CS2.Player;
 ///   Non-human Players (bots) will be tracked by their entity index.
 ///   Note that slot numbers are not guaranteed to be stable across server restarts.
 /// </summary>
-public class CS2Player : IOnlinePlayer {
+public class CS2Player : IOnlinePlayer, IEquatable<CS2Player> {
   private CCSPlayerController? cachePlayer;
 
   protected CS2Player(string id, string name) {
@@ -106,6 +106,13 @@ public class CS2Player : IOnlinePlayer {
     if (player.IsBot || player.IsHLTV) return player.Index.ToString();
     return player.SteamID.ToString();
   }
+
+  public bool Equals(CS2Player? other) {
+    if (other is null) return false;
+    return Id == other.Id;
+  }
+
+  public override int GetHashCode() { return Id.GetHashCode(); }
 
   public override string ToString() { return createPaddedName(); }
 

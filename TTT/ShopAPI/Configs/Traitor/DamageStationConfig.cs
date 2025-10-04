@@ -16,4 +16,6 @@ public record DamageStationConfig : StationConfig {
     var b = (int)(255 * health);
     return Color.FromArgb(r, g, b);
   }
+
+  public override int Price { get; init; } = 60;
 }

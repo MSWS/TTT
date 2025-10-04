@@ -7,10 +7,12 @@ public record HealthStationConfig : StationConfig {
 
   public override Color GetColor(float health) {
     // 100% health = white
-    // 10% health = green
+    // 10% health = blue
     var r = (int)(255 * health);
-    var g = 255;
-    var b = (int)(255 * health);
+    var g = (int)(255 * health);
+    var b = 255;
     return Color.FromArgb(r, g, b);
   }
+
+  public override int Price { get; init; } = 80;
 }

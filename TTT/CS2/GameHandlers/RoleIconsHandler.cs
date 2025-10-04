@@ -77,6 +77,7 @@ public class RoleIconsHandler(IServiceProvider provider)
     plugin
     ?.RegisterListener<CounterStrikeSharp.API.Core.Listeners.CheckTransmit>(
         onTransmit);
+    if (hotReload) OnRoundEnd(null!, null!);
   }
 
   [UsedImplicitly]

@@ -4,7 +4,6 @@ using ShopAPI.Configs;
 namespace ShopAPI;
 
 public abstract record StationConfig : ShopItemConfig {
-  public override int Price { get; init; }
   public virtual int HealthIncrements { get; init; } = 5;
   public virtual int TotalHealthGiven { get; init; } = 200;
   public virtual int StationHealth { get; init; } = 100;
