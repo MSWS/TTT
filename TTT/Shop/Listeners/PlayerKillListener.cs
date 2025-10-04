@@ -17,15 +17,19 @@ public class PlayerKillListener(IServiceProvider provider)
   [UsedImplicitly]
   [EventHandler]
   public async Task OnKill(PlayerDeathEvent ev) {
-    if (Games.ActiveGame is { State: State.IN_PROGRESS }) return;
+    Messenger.DebugAnnounce("Kill event for shop");
+    if (Games.ActiveGame is not { State: State.IN_PROGRESS }) return;
+    Messenger.DebugAnnounce("Game in progress");
     if (ev.Killer == null) return;
+    Messenger.DebugAnnounce("Killer not null");
     var victimBal = await shop.Load(ev.Victim);
+    Messenger.DebugAnnounce("Victim balance loaded: " + victimBal);
 
     shop.AddBalance(ev.Killer, victimBal / 6, "Killed " + ev.Victim.Name);
   }
 
   [UsedImplicitly]
-  [EventHandler]
+  [EventHandler(IgnoreCanceled = true)]
   public async Task OnIdentify(BodyIdentifyEvent ev) {
     if (ev.Identifier == null) return;
     var victimBal = await shop.Load(ev.Body.OfPlayer);

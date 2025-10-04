@@ -68,7 +68,10 @@ public class Shop(IServiceProvider provider) : ITerrorModule, IShop {
 
   public void AddBalance(IOnlinePlayer player, int amount, string reason = "",
     bool print = true) {
+    messenger?.DebugAnnounce(
+      $"Adding {amount} to {player.Name} ({player.Id}) balance. Reason: {reason}");
     if (amount == 0) return;
+    messenger?.DebugAnnounce("Amount not zero");
     balances.TryAdd(player.Id, 0);
 
     var balEvent = new PlayerBalanceEvent(player, balances[player.Id],
@@ -77,6 +80,7 @@ public class Shop(IServiceProvider provider) : ITerrorModule, IShop {
     bus.Dispatch(balEvent);
 
     if (balEvent.IsCanceled) return;
+    messenger?.DebugAnnounce("Event not canceled");
     messenger?.Debug(
       $"[Shop] {player.Name} ({player.Id}) balance changed from {balEvent.OldBalance} to {balEvent.NewBalance} "
       + $"({balEvent.NewBalance - balEvent.OldBalance})");
