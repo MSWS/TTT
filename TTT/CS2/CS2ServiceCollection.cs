@@ -21,6 +21,7 @@ using TTT.CS2.lang;
 using TTT.CS2.Listeners;
 using TTT.CS2.Player;
 using TTT.Game;
+using TTT.Karma;
 using TTT.Locale;
 
 namespace TTT.CS2;
@@ -46,6 +47,7 @@ public static class CS2ServiceCollection {
     collection.AddModBehavior<IStorage<TaserConfig>, CS2TaserConfig>();
     collection
      .AddModBehavior<IStorage<PoisonSmokeConfig>, CS2PoisonSmokeConfig>();
+    collection.AddModBehavior<IStorage<KarmaConfig>, CS2KarmaConfig>();
 
     // TTT - CS2 Specific optionals
     collection.AddScoped<ITextSpawner, TextSpawner>();
@@ -70,6 +72,7 @@ public static class CS2ServiceCollection {
     collection.AddModBehavior<PlayerStatsTracker>();
     collection.AddModBehavior<RoundTimerListener>();
     collection.AddModBehavior<ScreenColorApplier>();
+    collection.AddModBehavior<KarmaBanner>();
 
     // Commands
 #if DEBUG

@@ -13,6 +13,7 @@ public class NameDisplayer : IPluginModule {
   public void Start() { }
 
   public void Start(BasePlugin? plugin) {
+    if (OperatingSystem.IsWindows()) return;
     plugin?.AddTimer(0.25f, showNames, TimerFlags.REPEAT);
   }
 

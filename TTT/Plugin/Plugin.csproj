@@ -14,6 +14,16 @@
     <ProjectReference Include="..\Shop\Shop.csproj"/>
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="9.0.9"/>
+  </ItemGroup>
+
+  <PropertyGroup>
+    <!-- Ensure all NuGet deps are copied to the publish folder -->
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <PublishTrimmed>false</PublishTrimmed>
+  </PropertyGroup>
+
   <PropertyGroup>
     <PublishBaseDirectory>$(MSBuildThisFileDirectory)/../../build</PublishBaseDirectory>
     <PublishDir>$(PublishBaseDirectory)/TTT</PublishDir>
