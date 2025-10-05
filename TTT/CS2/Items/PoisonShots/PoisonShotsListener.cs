@@ -103,9 +103,9 @@ public class PoisonShotsListener(IServiceProvider provider)
     if (!online.IsAlive) return false;
 
     var dmgEvent = new PlayerDamagedEvent(online,
-      effect.Shooter as IOnlinePlayer, config.PoisonConfig.DamagePerTick,
+      effect.Shooter as IOnlinePlayer,
       online.Health - config.PoisonConfig.DamagePerTick) {
-      Weapon = "[Poison]"
+      Weapon = $"[{Locale[PoisonShotMsgs.SHOP_ITEM_POISON_SHOTS]}]"
     };
 
     bus.Dispatch(dmgEvent);
@@ -115,9 +115,8 @@ public class PoisonShotsListener(IServiceProvider provider)
     if (online.Health - config.PoisonConfig.DamagePerTick <= 0) {
       var deathEvent = new PlayerDeathEvent(online)
        .WithKiller(effect.Shooter as IOnlinePlayer)
-       .WithWeapon("[Poison]");
+       .WithWeapon($"[{Locale[PoisonShotMsgs.SHOP_ITEM_POISON_SHOTS]}]");
       bus.Dispatch(deathEvent);
-      return false;
     }
 
     online.Health -= config.PoisonConfig.DamagePerTick;

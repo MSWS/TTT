@@ -74,20 +74,21 @@ public class DamageStation(IServiceProvider provider)
           (int)Math.Floor(_Config.HealthIncrements * healthScale);
 
         var dmgEvent = new PlayerDamagedEvent(player,
-          info.Owner as IOnlinePlayer, -damageAmount,
-          player.Health + damageAmount);
+          info.Owner as IOnlinePlayer, player.Health + damageAmount) {
+          Weapon = $"[{Name}]"
+        };
 
         bus.Dispatch(dmgEvent);
-        if (dmgEvent.IsCanceled) continue;
+
         damageAmount = -dmgEvent.DmgDealt;
 
         player.Health    += damageAmount;
         info.HealthGiven += damageAmount;
 
         if (player.Health + damageAmount <= 0) {
-          var playerDeath =
-            new PlayerDeathEvent(player).WithKiller(
-              info.Owner as IOnlinePlayer);
+          var playerDeath = new PlayerDeathEvent(player)
+           .WithKiller(info.Owner as IOnlinePlayer)
+           .WithWeapon($"[{Name}]");
           bus.Dispatch(playerDeath);
         }
 

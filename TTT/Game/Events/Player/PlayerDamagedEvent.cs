@@ -6,17 +6,15 @@ using TTT.API.Player;
 namespace TTT.Game.Events.Player;
 
 public class PlayerDamagedEvent(IOnlinePlayer player, IOnlinePlayer? attacker,
-  int dmgDealt, int hpLeft) : PlayerEvent(player), ICancelableEvent {
-  private int _hpLeft = hpLeft;
-
+  int hpLeft) : PlayerEvent(player), ICancelableEvent {
   public PlayerDamagedEvent(IPlayerConverter<CCSPlayerController> converter,
     EventPlayerHurt ev) : this(
     converter.GetPlayer(ev.Userid!) as IOnlinePlayer
     ?? throw new InvalidOperationException(),
     ev.Attacker == null ?
       null :
-      converter.GetPlayer(ev.Attacker) as IOnlinePlayer, ev.DmgHealth,
-    ev.Health) {
+      converter.GetPlayer(ev.Attacker) as IOnlinePlayer,
+    ev.Health + ev.DmgHealth) {
     ArmorDamage    = ev.DmgArmor;
     ArmorRemaining = ev.Armor;
     Weapon         = ev.Weapon;
@@ -25,13 +23,13 @@ public class PlayerDamagedEvent(IOnlinePlayer player, IOnlinePlayer? attacker,
   public PlayerDamagedEvent(IPlayerConverter<CCSPlayerController> converter,
     EventPlayerFalldamage ev) : this(
     converter.GetPlayer(ev.Userid!) as IOnlinePlayer
-    ?? throw new InvalidOperationException(), null, (int)ev.Damage,
-    ev.Userid!.Health) {
+    ?? throw new InvalidOperationException(), null,
+    ev.Userid!.Health + (int)ev.Damage) {
     ArmorRemaining = ev.Userid.PawnArmor;
   }
 
   public PlayerDamagedEvent(IPlayerConverter<CCSPlayerController> converter,
-    DynamicHook hook) : this(null!, null, 0, 0) {
+    DynamicHook hook) : this(null!, null, 0) {
     var playerPawn = hook.GetParam<CCSPlayerPawn>(0);
     var info       = hook.GetParam<CTakeDamageInfo>(1);
 
@@ -58,7 +56,7 @@ public class PlayerDamagedEvent(IOnlinePlayer player, IOnlinePlayer? attacker,
   public int ArmorRemaining { get; set; }
   public int DmgDealt => player.Health - HpLeft;
 
-  public int HpLeft { get; set; }
+  public int HpLeft { get; set; } = hpLeft;
 
   public string? Weapon { get; init; }
   public bool IsCanceled { get; set; }
