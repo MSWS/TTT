@@ -10,7 +10,7 @@ public record KarmaConfig {
 
   public string CommandUponLowKarma { get; init; } = "karmaban {0} Bad Player!";
 
-  public int MaxKarma(IPlayer player) { return 100; }
+  public int MaxKarma(IPlayer? player) { return 100; }
 
   public int KarmaTimeoutThreshold { get; init; } = 20;
   public int KarmaRoundTimeout { get; init; } = 4;

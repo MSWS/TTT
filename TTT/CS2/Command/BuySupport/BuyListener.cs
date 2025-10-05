@@ -37,12 +37,11 @@ public class BuyListener(IServiceProvider provider) : IPluginModule {
   [GameEventHandler(HookMode.Pre)]
   public HookResult OnPurchase(EventItemPurchase ev, GameEventInfo info) {
     if (ev.Userid == null) return HookResult.Continue;
-    Server.PrintToChatAll($"Purchase: {ev.Weapon} (loadout: {ev.Loadout})");
     if (converter.GetPlayer(ev.Userid) is not IOnlinePlayer player)
       return HookResult.Continue;
     if (ev.Weapon is "item_assaultsuit" or "item_kevlar") {
       var user = ev.Userid;
-      Server.NextWorldUpdate(() => user.SetArmor(0));
+      user.SetArmor(0);
     }
 
     inventory.RemoveWeapon(player, new BaseWeapon(ev.Weapon));

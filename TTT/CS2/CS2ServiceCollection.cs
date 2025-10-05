@@ -63,6 +63,7 @@ public static class CS2ServiceCollection {
     collection.AddModBehavior<BombPlantSuppressor>();
     collection.AddModBehavior<MapZoneRemover>();
     collection.AddModBehavior<BuyListener>();
+    collection.AddModBehavior<TeamChangeHandler>();
 
     // Damage Cancelers
     collection.AddModBehavior<OutOfRoundCanceler>();

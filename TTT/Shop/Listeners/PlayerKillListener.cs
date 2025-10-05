@@ -36,13 +36,11 @@ public class PlayerKillListener(IServiceProvider provider)
 
     if (!isGoodKill(ev.Body.Killer, ev.Body.OfPlayer)) {
       var killerBal = await shop.Load(killer);
-      shop.AddBalance(killer, -killerBal / 4,
-        ev.Body.OfPlayer.Name + " Bad Kill");
+      shop.AddBalance(killer, -killerBal / 4 - victimBal / 2, "Bad Kill");
       return;
     }
 
-    shop.AddBalance(killer, victimBal / 4,
-      ev.Body.OfPlayer.Name + " Good Kill");
+    shop.AddBalance(killer, victimBal / 4, "Good Kill");
   }
 
   private bool isGoodKill(IPlayer attacker, IPlayer victim) {
