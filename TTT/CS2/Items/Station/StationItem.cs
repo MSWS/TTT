@@ -117,7 +117,7 @@ public abstract class StationItem<T>(IServiceProvider provider,
 
       if (prop == null) return;
 
-      props[prop] = new StationInfo(prop, _Config.StationHealth);
+      props[prop] = new StationInfo(prop, _Config.StationHealth, player);
 
       prop.SetModel("models/props/cs_office/microwave.vmdl");
       prop.DispatchSpawn();

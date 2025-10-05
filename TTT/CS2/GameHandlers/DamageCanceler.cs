@@ -1,4 +1,5 @@
-﻿using CounterStrikeSharp.API.Core;
+﻿using CounterStrikeSharp.API;
+using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Memory;
 using CounterStrikeSharp.API.Modules.Memory.DynamicFunctions;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,7 +16,11 @@ public class DamageCanceler(IServiceProvider provider) : IPluginModule {
   private readonly IPlayerConverter<CCSPlayerController> converter =
     provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
 
-  public void Dispose() { }
+  public void Dispose() {
+    if (OperatingSystem.IsWindows()) return;
+    VirtualFunctions.CBaseEntity_TakeDamageOldFunc.Unhook(onTakeDamage,
+      HookMode.Pre);
+  }
 
   public void Start() { }
 
@@ -32,11 +37,8 @@ public class DamageCanceler(IServiceProvider provider) : IPluginModule {
 
     if (damagedEvent.IsCanceled) return HookResult.Handled;
 
-    if (!damagedEvent.HpModified
-      || damagedEvent.Player is not IOnlinePlayer onlinePlayer)
-      return HookResult.Continue;
-
-    onlinePlayer.Health = damagedEvent.HpLeft;
-    return HookResult.Handled;
+    var info = hook.GetParam<CTakeDamageInfo>(1);
+    info.Damage = damagedEvent.DmgDealt;
+    return HookResult.Continue;
   }
 }

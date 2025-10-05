@@ -6,12 +6,24 @@ using TTT.API.Role;
 using TTT.CS2.Roles;
 using TTT.CS2.Utils;
 using TTT.Game;
+using TTT.Game.Events.Game;
 using TTT.Game.lang;
 using TTT.Game.Roles;
 
 namespace TTT.CS2.Game;
 
 public class CS2Game(IServiceProvider provider) : RoundBasedGame(provider) {
+  public override State State {
+    set {
+      var ev = new GameStateUpdateEvent(this, value);
+      Bus.Dispatch(ev);
+      if (ev.IsCanceled) return;
+      state = value;
+    }
+
+    get => state;
+  }
+
   public override IActionLogger Logger { get; } = new CS2Logger(provider);
 
   public override IList<IRole> Roles { get; } = [

@@ -18,7 +18,7 @@ public class PlayerActionsLogger(IServiceProvider provider)
 
 
   [UsedImplicitly]
-  [EventHandler]
+  [EventHandler(Priority = Priority.MONITOR, IgnoreCanceled = true)]
   public void OnPlayerDamage(PlayerDamagedEvent ev) {
     if (Games.ActiveGame is not { State: State.IN_PROGRESS }) return;
     Games.ActiveGame.Logger.LogAction(new DamagedAction(Provider, ev));

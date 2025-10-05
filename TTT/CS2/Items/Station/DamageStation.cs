@@ -1,11 +1,14 @@
-﻿using CounterStrikeSharp.API.Core;
+﻿using CounterStrikeSharp.API;
+using CounterStrikeSharp.API.Core;
 using Microsoft.Extensions.DependencyInjection;
 using ShopAPI.Configs.Traitor;
+using TTT.API.Events;
 using TTT.API.Extensions;
 using TTT.API.Player;
 using TTT.API.Role;
 using TTT.API.Storage;
 using TTT.CS2.Extensions;
+using TTT.Game.Events.Player;
 using TTT.Game.Roles;
 
 namespace TTT.CS2.Items.Station;
@@ -30,6 +33,8 @@ public class DamageStation(IServiceProvider provider)
 
   private readonly IRoleAssigner roles =
     provider.GetRequiredService<IRoleAssigner>();
+
+  private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
 
   public override string Name => Locale[StationMsgs.SHOP_ITEM_STATION_HURT];
 
@@ -69,6 +74,13 @@ public class DamageStation(IServiceProvider provider)
           (int)Math.Floor(_Config.HealthIncrements * healthScale);
         player.Health    += damageAmount;
         info.HealthGiven += damageAmount;
+
+        if (player.Health + damageAmount <= 0) {
+          var playerDeath =
+            new PlayerDeathEvent(player).WithKiller(
+              info.Owner as IOnlinePlayer);
+          bus.Dispatch(playerDeath);
+        }
 
         gamePlayer.ExecuteClientCommand("play " + _Config.UseSound);
       }

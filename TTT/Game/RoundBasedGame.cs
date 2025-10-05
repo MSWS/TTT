@@ -27,7 +27,7 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
 
   private readonly List<IPlayer> players = [];
 
-  private State state = State.WAITING;
+  protected State state = State.WAITING;
 
   public virtual IList<IRole> Roles { get; } = [
     new InnocentRole(provider), new TraitorRole(provider),
@@ -46,10 +46,10 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
   public IRoleAssigner RoleAssigner { get; init; } = provider
    .GetRequiredService<IRoleAssigner>();
 
-  public State State {
+  public virtual State State {
     set {
       var ev = new GameStateUpdateEvent(this, value);
-      bus.Dispatch(ev).GetAwaiter().GetResult();
+      Bus.Dispatch(ev).GetAwaiter().GetResult();
       if (ev.IsCanceled) return;
       state = value;
     }
@@ -185,7 +185,7 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
 
   #region classDeps
 
-  private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
+  protected readonly IEventBus Bus = provider.GetRequiredService<IEventBus>();
 
   protected readonly IScheduler Scheduler =
     provider.GetRequiredService<IScheduler>();

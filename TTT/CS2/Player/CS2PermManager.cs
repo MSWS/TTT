@@ -20,8 +20,6 @@ public class CS2PermManager(IPlayerConverter<CCSPlayerController> converter)
 
   public bool InGroups(IPlayer player, params string[] groups) {
     if (groups.Length == 0) return true;
-    Server.PrintToChatAll("Checking groups for player: " + player.Id);
-    Console.WriteLine("Checking groups for player: " + player.Id);
     var gamePlayer = converter.GetPlayer(player);
 
     var adminData = AdminManager.GetPlayerAdminData(gamePlayer);

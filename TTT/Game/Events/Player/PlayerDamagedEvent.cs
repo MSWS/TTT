@@ -59,7 +59,7 @@ public class PlayerDamagedEvent(IOnlinePlayer player, IOnlinePlayer? attacker,
 
   public int ArmorDamage { get; private set; }
   public int ArmorRemaining { get; set; }
-  public int DmgDealt { get; } = dmgDealt;
+  public int DmgDealt { get; set; } = dmgDealt;
 
   public int HpLeft {
     get => _hpLeft;
