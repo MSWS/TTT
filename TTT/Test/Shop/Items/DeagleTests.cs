@@ -38,7 +38,7 @@ public class DeagleTests {
     shop.GiveItem(testPlayer, item);
 
     var playerDmgEvent =
-      new PlayerDamagedEvent(victim, testPlayer, 1, 99) {
+      new PlayerDamagedEvent(victim, testPlayer, 99) {
         Weapon = item.WeaponId
       };
     bus.Dispatch(playerDmgEvent);
@@ -53,13 +53,13 @@ public class DeagleTests {
     shop.GiveItem(testPlayer, item);
 
     var playerDmgEvent =
-      new PlayerDamagedEvent(victim, testPlayer, 1, 99) {
+      new PlayerDamagedEvent(victim, testPlayer, 99) {
         Weapon = item.WeaponId
       };
     bus.Dispatch(playerDmgEvent);
 
     var secondDmgEvent =
-      new PlayerDamagedEvent(survivor, testPlayer, 1, 99) {
+      new PlayerDamagedEvent(survivor, testPlayer, 99) {
         Weapon = item.WeaponId
       };
     bus.Dispatch(secondDmgEvent);

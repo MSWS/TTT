@@ -46,7 +46,8 @@ public class PlayerDamagedEvent(IOnlinePlayer player, IOnlinePlayer? attacker,
     Attacker = attacker == null || !attacker.IsValid ?
       null :
       converter.GetPlayer(attacker) as IOnlinePlayer;
-    HpLeft = player.Health - DmgDealt;
+    // HpLeft = player.Health - DmgDealt;
+    HpLeft = (int)(player.Pawn.Value!.Health - info.Damage);
   }
 
   public override string Id => "basegame.event.player.damaged";
