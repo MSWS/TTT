@@ -63,9 +63,7 @@ public class PoisonShotsListener(IServiceProvider provider)
   [UsedImplicitly]
   [EventHandler]
   public void OnDamage(PlayerDamagedEvent ev) {
-    Messenger.DebugAnnounce("OnDamage called");
     if (ev.Attacker == null) return;
-    Messenger.DebugAnnounce("Attacker is not null");
     if (!poisonShots.TryGetValue(ev.Attacker, out var shot) || shot <= 0)
       return;
     Messenger.DebugAnnounce("weapon: " + ev.Weapon);
