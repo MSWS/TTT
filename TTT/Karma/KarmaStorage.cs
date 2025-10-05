@@ -1,6 +1,7 @@
 ﻿using System.Data;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
+using CounterStrikeSharp.API;
 using Dapper;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.DependencyInjection;
@@ -39,7 +40,7 @@ public class KarmaStorage(IServiceProvider provider) : IKarmaService {
 
     var scheduler = provider.GetRequiredService<IScheduler>();
 
-    Observable.Interval(TimeSpan.FromMinutes(5), scheduler)
+    Observable.Interval(TimeSpan.FromSeconds(30), scheduler)
      .Subscribe(_ => Task.Run(async () => await updateKarmas()));
   }
 

@@ -10,6 +10,7 @@ using TTT.API.Player;
 using TTT.API.Storage;
 using TTT.CS2.API;
 using TTT.CS2.Command;
+using TTT.CS2.Command.BuySupport;
 using TTT.CS2.Command.Test;
 using TTT.CS2.Configs;
 using TTT.CS2.Configs.ShopItems;
@@ -61,6 +62,7 @@ public static class CS2ServiceCollection {
     collection.AddModBehavior<RoundStart_GameStartHandler>();
     collection.AddModBehavior<BombPlantSuppressor>();
     collection.AddModBehavior<MapZoneRemover>();
+    collection.AddModBehavior<BuyListener>();
 
     // Damage Cancelers
     collection.AddModBehavior<OutOfRoundCanceler>();
