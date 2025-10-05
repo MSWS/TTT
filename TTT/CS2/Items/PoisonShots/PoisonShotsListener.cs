@@ -32,6 +32,8 @@ public class PoisonShotsListener(IServiceProvider provider)
 
   private readonly Dictionary<IPlayer, int> poisonShots = new();
 
+  private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
+
   private readonly List<IDisposable> poisonTimers = [];
 
   private readonly IScheduler scheduler =
@@ -66,7 +68,7 @@ public class PoisonShotsListener(IServiceProvider provider)
       return;
     Messenger.Message(ev.Attacker,
       Locale[PoisonShotMsgs.SHOP_ITEM_POISON_HIT(ev.Player)]);
-    addPoisonEffect(ev.Player);
+    addPoisonEffect(ev.Player, ev.Attacker);
   }
 
   [UsedImplicitly]
@@ -80,10 +82,10 @@ public class PoisonShotsListener(IServiceProvider provider)
   }
 
   [SuppressMessage("ReSharper", "AccessToModifiedClosure")]
-  private void addPoisonEffect(IPlayer player) {
+  private void addPoisonEffect(IPlayer player, IPlayer shooter) {
     IDisposable? timer = null;
 
-    var effect = new PoisonEffect(player);
+    var effect = new PoisonEffect(player, shooter);
     timer = scheduler.SchedulePeriodic(config.PoisonConfig.TimeBetweenDamage, ()
       => {
       Server.NextWorldUpdate(() => {
@@ -99,6 +101,25 @@ public class PoisonShotsListener(IServiceProvider provider)
   private bool tickPoison(PoisonEffect effect) {
     if (effect.Player is not IOnlinePlayer online) return false;
     if (!online.IsAlive) return false;
+
+    var dmgEvent = new PlayerDamagedEvent(online,
+      effect.Shooter as IOnlinePlayer, config.PoisonConfig.DamagePerTick,
+      online.Health - config.PoisonConfig.DamagePerTick) {
+      Weapon = "[Poison]"
+    };
+
+    bus.Dispatch(dmgEvent);
+
+    if (dmgEvent.IsCanceled) return true;
+
+    if (online.Health - config.PoisonConfig.DamagePerTick <= 0) {
+      var deathEvent = new PlayerDeathEvent(online)
+       .WithKiller(effect.Shooter as IOnlinePlayer)
+       .WithWeapon("[Poison]");
+      bus.Dispatch(deathEvent);
+      return false;
+    }
+
     online.Health -= config.PoisonConfig.DamagePerTick;
     effect.Ticks++;
     effect.DamageGiven += config.PoisonConfig.DamagePerTick;
@@ -130,8 +151,9 @@ public class PoisonShotsListener(IServiceProvider provider)
     return 0;
   }
 
-  private class PoisonEffect(IPlayer player) {
+  private class PoisonEffect(IPlayer player, IPlayer shooter) {
     public IPlayer Player { get; } = player;
+    public IPlayer Shooter { get; } = shooter;
     public int Ticks { get; set; }
     public int DamageGiven { get; set; }
   }

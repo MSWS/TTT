@@ -72,6 +72,15 @@ public class DamageStation(IServiceProvider provider)
         var healthScale = 1.0 - dist / _Config.MaxRange;
         var damageAmount =
           (int)Math.Floor(_Config.HealthIncrements * healthScale);
+
+        var dmgEvent = new PlayerDamagedEvent(player,
+          info.Owner as IOnlinePlayer, -damageAmount,
+          player.Health + damageAmount);
+
+        bus.Dispatch(dmgEvent);
+        if (dmgEvent.IsCanceled) continue;
+        damageAmount = -dmgEvent.DmgDealt;
+
         player.Health    += damageAmount;
         info.HealthGiven += damageAmount;
 

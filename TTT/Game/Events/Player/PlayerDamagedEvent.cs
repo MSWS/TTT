@@ -48,37 +48,17 @@ public class PlayerDamagedEvent(IOnlinePlayer player, IOnlinePlayer? attacker,
     Attacker = attacker == null || !attacker.IsValid ?
       null :
       converter.GetPlayer(attacker) as IOnlinePlayer;
-    DmgDealt = (int)info.Damage;
-    _hpLeft  = player.Health - DmgDealt;
+    HpLeft = player.Health - DmgDealt;
   }
-
-  public bool HpModified { get; private set; }
 
   public override string Id => "basegame.event.player.damaged";
   public IOnlinePlayer? Attacker { get; private set; } = attacker;
 
   public int ArmorDamage { get; private set; }
   public int ArmorRemaining { get; set; }
-  public int DmgDealt { get; set; } = dmgDealt;
+  public int DmgDealt => player.Health - HpLeft;
 
-  public int HpLeft {
-    get => _hpLeft;
-    set {
-      if (value == _hpLeft) return;
-      switch (value) {
-        case < 0:
-          throw new ArgumentOutOfRangeException(nameof(value),
-            "HpLeft must be greater than 0.");
-        case 0:
-          throw new ArgumentException(
-            "Cannot override HP if player is already dead; cancel the event instead.");
-        default:
-          HpModified = _hpLeft != value;
-          _hpLeft    = value;
-          break;
-      }
-    }
-  }
+  public int HpLeft { get; set; }
 
   public string? Weapon { get; init; }
   public bool IsCanceled { get; set; }

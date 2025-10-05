@@ -39,6 +39,6 @@ public class OneHitKnifeListener(IServiceProvider provider)
     if (friendly && !config.FriendlyFire) return;
 
     shop.RemoveItem<OneHitKnife>(attacker);
-    ev.DmgDealt = onlineVictim.Health;
+    ev.HpLeft = 0;
   }
 }
