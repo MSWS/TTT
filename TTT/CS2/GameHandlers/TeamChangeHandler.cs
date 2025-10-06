@@ -35,17 +35,16 @@ public class TeamChangeHandler(IServiceProvider provider) : IPluginModule {
       };
     }
 
-    if (requestedTeam is CsTeam.CounterTerrorist or CsTeam.Terrorist) {
-      if (player != null && player.Team is CsTeam.Spectator or CsTeam.None) {
+    if (games.ActiveGame is not { State: State.IN_PROGRESS }) {
+      if (player != null && player.LifeState != (int)LifeState_t.LIFE_ALIVE)
         Server.NextWorldUpdate(player.Respawn);
-        return HookResult.Continue;
-      }
-
-      return HookResult.Handled;
+      return HookResult.Continue;
     }
 
-    if (games.ActiveGame is not { State: State.IN_PROGRESS })
-      return HookResult.Continue;
+    if (requestedTeam is CsTeam.CounterTerrorist or CsTeam.Terrorist) {
+      if (player != null && player.Team is CsTeam.Spectator or CsTeam.None)
+        return HookResult.Continue;
+    }
 
     return HookResult.Handled;
   }
