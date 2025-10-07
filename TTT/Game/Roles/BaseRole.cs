@@ -4,7 +4,6 @@ using TTT.API.Messages;
 using TTT.API.Player;
 using TTT.API.Role;
 using TTT.API.Storage;
-using TTT.Game.lang;
 using TTT.Locale;
 
 namespace TTT.Game.Roles;

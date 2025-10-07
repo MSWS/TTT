@@ -2,7 +2,7 @@ using CounterStrikeSharp.API.Modules.Utils;
 using Microsoft.Extensions.DependencyInjection;
 using TTT.API.Command;
 using TTT.API.Player;
-using TTT.Game.lang;
+using TTT.Game;
 using TTT.Locale;
 
 namespace TTT.Shop.Commands;

@@ -8,7 +8,6 @@ using TTT.API.Player;
 using TTT.API.Role;
 using TTT.API.Storage;
 using TTT.Game.Events.Game;
-using TTT.Game.lang;
 using TTT.Game.Loggers;
 using TTT.Game.Roles;
 using TTT.Locale;

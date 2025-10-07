@@ -3,7 +3,6 @@ using Microsoft.Extensions.DependencyInjection;
 using TTT.API.Game;
 using TTT.API.Messages;
 using TTT.API.Player;
-using TTT.Game.lang;
 using TTT.Locale;
 
 namespace TTT.Game.Loggers;

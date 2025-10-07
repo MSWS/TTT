@@ -7,7 +7,6 @@ using TTT.CS2.Roles;
 using TTT.CS2.Utils;
 using TTT.Game;
 using TTT.Game.Events.Game;
-using TTT.Game.lang;
 using TTT.Game.Roles;
 
 namespace TTT.CS2.Game;

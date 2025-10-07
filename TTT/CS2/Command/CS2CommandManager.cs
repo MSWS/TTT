@@ -5,8 +5,8 @@ using Microsoft.Extensions.DependencyInjection;
 using TTT.API;
 using TTT.API.Command;
 using TTT.API.Player;
+using TTT.Game;
 using TTT.Game.Commands;
-using TTT.Game.lang;
 
 namespace TTT.CS2.Command;
 

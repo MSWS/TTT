@@ -4,7 +4,6 @@ using TTT.API;
 using TTT.API.Command;
 using TTT.API.Events;
 using TTT.API.Player;
-using TTT.Game.lang;
 using TTT.Locale;
 
 namespace TTT.Game.Commands;

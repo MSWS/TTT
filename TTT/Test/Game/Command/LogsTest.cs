@@ -2,8 +2,8 @@ using Microsoft.Extensions.DependencyInjection;
 using TTT.API.Command;
 using TTT.API.Game;
 using TTT.API.Player;
+using TTT.Game;
 using TTT.Game.Commands;
-using TTT.Game.lang;
 using TTT.Locale;
 using Xunit;
 

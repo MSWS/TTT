@@ -8,8 +8,8 @@ using TTT.API.Player;
 using TTT.CS2.API;
 using TTT.CS2.Events;
 using TTT.CS2.Extensions;
+using TTT.Game;
 using TTT.Game.Events.Body;
-using TTT.Game.lang;
 using TTT.Game.Listeners;
 using TTT.Game.Roles;
 
