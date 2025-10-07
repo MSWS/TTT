@@ -1,17 +1,15 @@
-﻿using CounterStrikeSharp.API;
-using CounterStrikeSharp.API.Core;
+﻿using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Core.Attributes.Registration;
 using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using TTT.API;
 using TTT.API.Player;
 using TTT.CS2.Extensions;
-using TTT.CS2.Utils;
 using TTT.Game.Roles;
 
-namespace TTT.CS2.Command.BuySupport;
+namespace TTT.CS2.GameHandlers;
 
-public class BuyListener(IServiceProvider provider) : IPluginModule {
+public class BuyMenuHandler(IServiceProvider provider) : IPluginModule {
   private readonly IPlayerConverter<CCSPlayerController> converter =
     provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
 
