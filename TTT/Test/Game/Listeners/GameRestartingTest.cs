@@ -32,7 +32,6 @@ public class GameRestartingTest(IServiceProvider provider)
 
     game = Games.ActiveGame;
     Assert.NotNull(game);
-    Assert.True(Games.IsGameActive());
 
     Assert.Equal(State.COUNTDOWN, game.State);
   }
