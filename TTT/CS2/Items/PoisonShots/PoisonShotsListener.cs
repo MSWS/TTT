@@ -21,6 +21,8 @@ namespace TTT.CS2.Items.PoisonShots;
 
 public class PoisonShotsListener(IServiceProvider provider)
   : BaseListener(provider), IPluginModule {
+  private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
+
   private readonly PoisonShotsConfig config =
     provider.GetService<IStorage<PoisonShotsConfig>>()
     ?.Load()
@@ -31,8 +33,6 @@ public class PoisonShotsListener(IServiceProvider provider)
     provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
 
   private readonly Dictionary<IPlayer, int> poisonShots = new();
-
-  private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
 
   private readonly List<IDisposable> poisonTimers = [];
 

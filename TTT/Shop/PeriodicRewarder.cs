@@ -20,13 +20,13 @@ public class PeriodicRewarder(IServiceProvider provider) : ITerrorModule {
   private readonly IPlayerFinder finder =
     provider.GetRequiredService<IPlayerFinder>();
 
+  private readonly IGameManager games =
+    provider.GetRequiredService<IGameManager>();
+
   private readonly IScheduler scheduler =
     provider.GetRequiredService<IScheduler>();
 
   private readonly IShop shop = provider.GetRequiredService<IShop>();
-
-  private readonly IGameManager games =
-    provider.GetRequiredService<IGameManager>();
 
   private IDisposable? timer;
 

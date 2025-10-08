@@ -1,4 +1,3 @@
-using System.Xml.Xsl;
 using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Timers;
@@ -99,7 +98,7 @@ public class CompassItem(IServiceProvider provider)
     if (src == null) return null;
 
     foreach (var player in others) {
-      if (player.Pawn.Value == null) { continue; }
+      if (player.Pawn.Value == null) continue;
 
       var dist = player.Pawn.Value.AbsOrigin.Clone().DistanceSquared(src);
       if (dist >= minDist) continue;

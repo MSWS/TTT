@@ -1,7 +1,6 @@
 ﻿using System.Data;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
-using CounterStrikeSharp.API;
 using Dapper;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.DependencyInjection;

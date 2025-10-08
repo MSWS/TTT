@@ -13,13 +13,13 @@ namespace TTT.CS2.Items.OneHitKnife;
 
 public class OneHitKnifeListener(IServiceProvider provider)
   : BaseListener(provider) {
-  private readonly IShop shop = provider.GetRequiredService<IShop>();
-
   private readonly OneHitKnifeConfig config =
     provider.GetService<IStorage<OneHitKnifeConfig>>()
     ?.Load()
      .GetAwaiter()
      .GetResult() ?? new OneHitKnifeConfig();
+
+  private readonly IShop shop = provider.GetRequiredService<IShop>();
 
   [UsedImplicitly]
   [EventHandler]

@@ -7,10 +7,10 @@ using TTT.API.Player;
 namespace TTT.CS2.Command.Test;
 
 public class EmitSoundCommand(IServiceProvider provider) : ICommand {
-  public string Id => "emitsound";
-
   private readonly IPlayerConverter<CCSPlayerController> converter =
     provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
+
+  public string Id => "emitsound";
 
   public void Dispose() { }
   public void Start() { }

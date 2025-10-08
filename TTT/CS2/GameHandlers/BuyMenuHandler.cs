@@ -16,9 +16,6 @@ public class BuyMenuHandler(IServiceProvider provider) : IPluginModule {
   private readonly IInventoryManager inventory =
     provider.GetRequiredService<IInventoryManager>();
 
-  public void Dispose() { }
-  public void Start() { }
-
   private readonly Dictionary<string, string> shopAliases = new() {
     { "item_assaultsuit", "Armor" },
     { "item_kevlar", "Armor" },
@@ -30,6 +27,9 @@ public class BuyMenuHandler(IServiceProvider provider) : IPluginModule {
     { "weapon_mp5sd", "M4A1" },
     { "weapon_decoy", "healthshot" }
   };
+
+  public void Dispose() { }
+  public void Start() { }
 
   [UsedImplicitly]
   [GameEventHandler(HookMode.Pre)]

@@ -9,6 +9,8 @@ namespace TTT.CS2.GameHandlers;
 public class MapZoneRemover : IPluginModule {
   private BasePlugin? plugin;
 
+  private bool zonesRemoved;
+
   public void Dispose() {
     plugin?.RemoveListener<CounterStrikeSharp.API.Core.Listeners.OnMapStart>(
       onMapStart);
@@ -16,10 +18,8 @@ public class MapZoneRemover : IPluginModule {
 
   public void Start() { }
 
-  private bool zonesRemoved = false;
-
   public void Start(BasePlugin? pluginParent) {
-    if (pluginParent != null) this.plugin = pluginParent;
+    if (pluginParent != null) plugin = pluginParent;
     plugin?.RegisterListener<CounterStrikeSharp.API.Core.Listeners.OnMapStart>(
       onMapStart);
   }

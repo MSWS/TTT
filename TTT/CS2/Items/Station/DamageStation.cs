@@ -24,6 +24,8 @@ public class DamageStation(IServiceProvider provider)
     ?.Load()
      .GetAwaiter()
      .GetResult() ?? new DamageStationConfig()) {
+  private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
+
   private readonly IPlayerConverter<CCSPlayerController> converter =
     provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
 
@@ -32,8 +34,6 @@ public class DamageStation(IServiceProvider provider)
 
   private readonly IRoleAssigner roles =
     provider.GetRequiredService<IRoleAssigner>();
-
-  private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
 
   public override string Name => Locale[StationMsgs.SHOP_ITEM_STATION_HURT];
 
