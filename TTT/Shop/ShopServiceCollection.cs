@@ -4,6 +4,7 @@ using TTT.API.Extensions;
 using TTT.CS2.Items.Armor;
 using TTT.CS2.Items.BodyPaint;
 using TTT.CS2.Items.Camouflage;
+using TTT.CS2.Items.Compass;
 using TTT.CS2.Items.DNA;
 using TTT.CS2.Items.OneHitKnife;
 using TTT.CS2.Items.PoisonShots;
@@ -39,6 +40,7 @@ public static class ShopServiceCollection {
     collection.AddBodyPaintServices();
     collection.AddC4Services();
     collection.AddCamoServices();
+    collection.AddCompassServices();
     collection.AddDamageStation();
     collection.AddDeagleServices();
     collection.AddDnaScannerServices();

@@ -33,3 +33,6 @@ SHOP_ITEM_ARMOR_DESC: "Wear armor that reduces incoming damage."
 
 SHOP_ITEM_ONE_HIT_KNIFE: "One-Hit Knife"
 SHOP_ITEM_ONE_HIT_KNIFE_DESC: "Your next knife hit will be a guaranteed kill."
+
+SHOP_ITEM_COMPASS: "Player Compass"
+SHOP_ITEM_COMPASS_DESC: "Reveals the direction that the nearest non-Traitor is in."

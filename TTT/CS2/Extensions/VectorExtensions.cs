@@ -9,7 +9,7 @@ public static class VectorExtensions {
     return MathF.Sqrt(vec.DistanceSquared(other));
   }
 
-  public static float DistanceSquared(this Vector vec, Vector other) {
+  public static float DistanceSquared(this Vector? vec, Vector other) {
     return (vec.X - other.X) * (vec.X - other.X)
       + (vec.Y - other.Y) * (vec.Y - other.Y)
       + (vec.Z - other.Z) * (vec.Z - other.Z);
