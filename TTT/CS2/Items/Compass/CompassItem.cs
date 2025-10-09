@@ -101,14 +101,15 @@ public class CompassItem(IServiceProvider provider)
     targetYaw = (360 - (targetYaw + 360) % 360 + 90);
 
     var compass = generateCompass(normalizedYaw, targetYaw);
-    compass = ChatColors.Grey + compass;
+    compass = "<font color=\"#777777\">" + compass;
     foreach (var c in "NESW".ToCharArray())
       compass = compass.Replace(c.ToString(),
-        ChatColors.Default.ToString() + c + ChatColors.Grey);
-    compass = compass.Replace("X", ChatColors.Red + "X" + ChatColors.Grey);
+        $"</font><font color=\"#FFFF00\">{c}</font><font color=\"#777777\">");
+    compass = compass.Replace("X",
+      "</font><font color=\"#FF0000\">X</font><font color=\"#777777\">");
+    compass += "</font>";
 
-    Messenger.ScreenMsg(online,
-      compass + " " + getDistanceDescription(distance));
+    player.PrintToCenterHtml($"{compass} {getDistanceDescription(distance)}");
   }
 
   private string
