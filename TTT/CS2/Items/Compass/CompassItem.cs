@@ -80,6 +80,7 @@ public class CompassItem(IServiceProvider provider)
     IList<IOnlinePlayer> traitors, List<IOnlinePlayer> allies) {
     if (Games.ActiveGame?.Players == null) return;
     if (player.PlayerPawn.Value == null) return;
+
     var enemies = getEnemies(online, traitors, allies);
     if (enemies.Count == 0) return;
     var gameEnemies = enemies.Select(e => converter.GetPlayer(e))
@@ -87,18 +88,18 @@ public class CompassItem(IServiceProvider provider)
      .Select(e => e!)
      .ToList();
     if (gameEnemies.Count == 0) return;
+
     var (nearestPlayer, distance) =
       getNearest(player, gameEnemies) ?? (null, 0);
-    if (nearestPlayer == null) return;
+    if (nearestPlayer == null || distance > config.MaxRange) return;
     var src = player.Pawn.Value?.AbsOrigin.Clone();
     var dst = nearestPlayer.Pawn.Value?.AbsOrigin.Clone();
     if (src == null || dst == null) return;
-    var normalizedYaw =
-      360 - (player.PlayerPawn.Value.EyeAngles.Y + 360) % 360 + 90;
+    var normalizedYaw = adjustGameAngle(player.PlayerPawn.Value.EyeAngles.Y);
 
     var diff      = (dst - src).Normalized();
     var targetYaw = MathF.Atan2(diff.Y, diff.X) * 180f / MathF.PI;
-    targetYaw = (360 - (targetYaw + 360) % 360 + 90);
+    targetYaw = adjustGameAngle(targetYaw);
 
     var compass = generateCompass(normalizedYaw, targetYaw);
     compass = "<font color=\"#777777\">" + compass;
@@ -112,19 +113,24 @@ public class CompassItem(IServiceProvider provider)
     player.PrintToCenterHtml($"{compass} {getDistanceDescription(distance)}");
   }
 
-  private string
-    generateCompass(float pointing, float target, int length = 64) {
-    return TextCompass.GenerateCompass(120, length, pointing,
-      targetDir: target);
+  private float adjustGameAngle(float angle) {
+    return 360 - (angle + 360) % 360 + 90;
+  }
+
+  private string generateCompass(float pointing, float target) {
+    return TextCompass.GenerateCompass(config.CompassFOV, config.CompassLength,
+      pointing, targetDir: target);
   }
 
   private string getDistanceDescription(float distance) {
-    if (distance > 2000) return "Fairly Far";
-    if (distance > 1500) return "Far";
-    if (distance > 1000) return "Near";
-    if (distance > 500) return "Fairly Near";
-    if (distance > 250) return "Very Near";
-    return "Very Close";
+    return distance switch {
+      > 2000 => "AWP Distance",
+      > 1500 => "Scout Distance",
+      > 1000 => "Rifle Distance",
+      > 500  => "Pistol",
+      > 250  => "Nearby",
+      _      => "Knife Range"
+    };
   }
 
 
