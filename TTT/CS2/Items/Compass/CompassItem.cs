@@ -1,6 +1,7 @@
 using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Timers;
+using CounterStrikeSharp.API.Modules.Utils;
 using Microsoft.Extensions.DependencyInjection;
 using ShopAPI;
 using ShopAPI.Configs;
@@ -11,6 +12,7 @@ using TTT.API.Game;
 using TTT.API.Player;
 using TTT.API.Storage;
 using TTT.CS2.Extensions;
+using TTT.CS2.Utils;
 using TTT.Game.Roles;
 
 namespace TTT.CS2.Items.Compass;
@@ -40,7 +42,8 @@ public class CompassItem(IServiceProvider provider)
   public override ShopItemConfig Config => config;
 
   public void Start(BasePlugin? plugin) {
-    plugin?.AddTimer(1.0f, tick, TimerFlags.REPEAT);
+    base.Start();
+    plugin?.AddTimer(0.5f, tick, TimerFlags.REPEAT);
   }
 
   public override void OnPurchase(IOnlinePlayer player) { }
@@ -76,21 +79,53 @@ public class CompassItem(IServiceProvider provider)
   private void showRadarTo(CCSPlayerController player, IOnlinePlayer online,
     IList<IOnlinePlayer> traitors, List<IOnlinePlayer> allies) {
     if (Games.ActiveGame?.Players == null) return;
-    foreach (var gamePlayer in
-      Games.ActiveGame.Players.OfType<IOnlinePlayer>()) {
-      var enemies = getEnemies(gamePlayer, traitors, allies);
-      if (enemies.Count == 0) continue;
-      var gameEnemies = enemies.Select(e => converter.GetPlayer(e))
-       .Where(e => e != null)
-       .Select(e => e!)
-       .ToList();
-      if (gameEnemies.Count == 0) continue;
-      var nearest = getNearest(player, gameEnemies);
-      if (nearest == null) continue;
+    if (player.PlayerPawn.Value == null) return;
+    var enemies = getEnemies(online, traitors, allies);
+    if (enemies.Count == 0) return;
+    var gameEnemies = enemies.Select(e => converter.GetPlayer(e))
+     .Where(e => e != null)
+     .Select(e => e!)
+     .ToList();
+    if (gameEnemies.Count == 0) return;
+    var (nearestPlayer, distance) =
+      getNearest(player, gameEnemies) ?? (null, 0);
+    if (nearestPlayer == null) return;
+    var src = player.Pawn.Value?.AbsOrigin.Clone();
+    var dst = nearestPlayer.Pawn.Value?.AbsOrigin.Clone();
+    if (src == null || dst == null) return;
+    var normalizedYaw =
+      360 - (player.PlayerPawn.Value.EyeAngles.Y + 360) % 360 + 90;
 
-      Messenger.Message(online, $"Nearest player is {nearest.PlayerName}");
-    }
+    var diff      = (dst - src).Normalized();
+    var targetYaw = MathF.Atan2(diff.Y, diff.X) * 180f / MathF.PI;
+    targetYaw = (360 - (targetYaw + 360) % 360 + 90);
+
+    var compass = generateCompass(normalizedYaw, targetYaw);
+    compass = ChatColors.Grey + compass;
+    foreach (var c in "NESW".ToCharArray())
+      compass = compass.Replace(c.ToString(),
+        ChatColors.Default.ToString() + c + ChatColors.Grey);
+    compass = compass.Replace("X", ChatColors.Red + "X" + ChatColors.Grey);
+
+    Messenger.ScreenMsg(online,
+      compass + " " + getDistanceDescription(distance));
   }
+
+  private string
+    generateCompass(float pointing, float target, int length = 64) {
+    return TextCompass.GenerateCompass(120, length, pointing,
+      targetDir: target);
+  }
+
+  private string getDistanceDescription(float distance) {
+    if (distance > 2000) return "Fairly Far";
+    if (distance > 1500) return "Far";
+    if (distance > 1000) return "Near";
+    if (distance > 500) return "Fairly Near";
+    if (distance > 250) return "Very Near";
+    return "Very Close";
+  }
+
 
   private IList<IOnlinePlayer> getEnemies(IOnlinePlayer online,
     IList<IOnlinePlayer> traitors, IList<IOnlinePlayer> allies) {
@@ -99,7 +134,7 @@ public class CompassItem(IServiceProvider provider)
       traitors;
   }
 
-  private CCSPlayerController? getNearest(CCSPlayerController source,
+  private (CCSPlayerController?, float)? getNearest(CCSPlayerController source,
     List<CCSPlayerController> others) {
     if (others.Count == 0) return null;
     var minDist   = float.MaxValue;
@@ -116,6 +151,6 @@ public class CompassItem(IServiceProvider provider)
       minPlayer = player;
     }
 
-    return minPlayer;
+    return (minPlayer, MathF.Sqrt(minDist));
   }
 }
