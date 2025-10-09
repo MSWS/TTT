@@ -54,19 +54,31 @@ public class CompassItem(IServiceProvider provider)
   private void tick() {
     if (Games.ActiveGame is not { State: State.IN_PROGRESS or State.FINISHED })
       return;
+
+    var traitors = Games.ActiveGame.Players.OfType<IOnlinePlayer>()
+     .Where(p => p.IsAlive)
+     .Where(p => Roles.GetRoles(p).Any(r => r is TraitorRole))
+     .ToList();
+
+    var allies = Games.ActiveGame.Players.OfType<IOnlinePlayer>()
+     .Where(p => p.IsAlive)
+     .Where(p => !Roles.GetRoles(p).Any(r => r is TraitorRole))
+     .ToList();
+
     foreach (var gamePlayer in Utilities.GetPlayers()) {
       var player = converter.GetPlayer(gamePlayer);
       if (player is not IOnlinePlayer online) continue;
       if (!Shop.HasItem<CompassItem>(online)) continue;
-      showRadarTo(gamePlayer, online);
+      showRadarTo(gamePlayer, online, traitors, allies);
     }
   }
 
-  private void showRadarTo(CCSPlayerController player, IOnlinePlayer online) {
+  private void showRadarTo(CCSPlayerController player, IOnlinePlayer online,
+    IList<IOnlinePlayer> traitors, List<IOnlinePlayer> allies) {
     if (Games.ActiveGame?.Players == null) return;
     foreach (var gamePlayer in
       Games.ActiveGame.Players.OfType<IOnlinePlayer>()) {
-      var enemies = getEnemies(gamePlayer);
+      var enemies = getEnemies(gamePlayer, traitors, allies);
       if (enemies.Count == 0) continue;
       var gameEnemies = enemies.Select(e => converter.GetPlayer(e))
        .Where(e => e != null)
@@ -80,13 +92,11 @@ public class CompassItem(IServiceProvider provider)
     }
   }
 
-  private List<IOnlinePlayer> getEnemies(IOnlinePlayer online) {
-    if (Games.ActiveGame?.Players == null) return [];
-    var isTraitor = Roles.GetRoles(online).Any(r => r is TraitorRole);
-    return Games.ActiveGame.Players.OfType<IOnlinePlayer>()
-     .Where(p => p.IsAlive)
-     .Where(p => Roles.GetRoles(p).Any(r => r is TraitorRole) != isTraitor)
-     .ToList();
+  private IList<IOnlinePlayer> getEnemies(IOnlinePlayer online,
+    IList<IOnlinePlayer> traitors, IList<IOnlinePlayer> allies) {
+    return Roles.GetRoles(online).Any(r => r is TraitorRole) ?
+      allies :
+      traitors;
   }
 
   private CCSPlayerController? getNearest(CCSPlayerController source,
