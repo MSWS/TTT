@@ -53,7 +53,7 @@ public class CS2AliveSpoofer : IAliveSpoofer, IPluginModule {
   }
 
   private void onTick() {
-    _fakeAlivePlayers.RemoveWhere(p => !p.IsValid);
+    _fakeAlivePlayers.RemoveWhere(p => !p.IsValid || p.Handle == IntPtr.Zero);
     foreach (var player in _fakeAlivePlayers) {
       player.PawnIsAlive = true;
       Utilities.SetStateChanged(player, "CCSPlayerController",

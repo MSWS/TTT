@@ -8,6 +8,7 @@ using TTT.CS2.Items.DNA;
 using TTT.CS2.Items.OneHitKnife;
 using TTT.CS2.Items.PoisonShots;
 using TTT.CS2.Items.PoisonSmoke;
+using TTT.CS2.Items.SilentAWP;
 using TTT.CS2.Items.Station;
 using TTT.Shop.Commands;
 using TTT.Shop.Items;
@@ -49,6 +50,7 @@ public static class ShopServiceCollection {
     collection.AddOneHitKnifeService();
     collection.AddPoisonShots();
     collection.AddPoisonSmoke();
+    collection.AddSilentAWPServices();
     collection.AddStickerServices();
     collection.AddTaserItem();
   }
