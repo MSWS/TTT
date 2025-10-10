@@ -17,16 +17,16 @@ public class RoleAssignCreditor(IServiceProvider provider)
     provider.GetService<IStorage<ShopConfig>>()?.Load().GetAwaiter().GetResult()
     ?? new ShopConfig(provider);
 
-  private readonly IShop shop = provider.GetRequiredService<IShop>();
-
-  private readonly IKarmaService? karmaService =
-    provider.GetService<IKarmaService>();
-
   private readonly KarmaConfig karmaConfig =
     provider.GetService<IStorage<KarmaConfig>>()
     ?.Load()
      .GetAwaiter()
      .GetResult() ?? new KarmaConfig();
+
+  private readonly IKarmaService? karmaService =
+    provider.GetService<IKarmaService>();
+
+  private readonly IShop shop = provider.GetRequiredService<IShop>();
 
   [UsedImplicitly]
   [EventHandler]

@@ -21,14 +21,15 @@ public class KarmaBanner(IServiceProvider provider) : BaseListener(provider) {
      .GetAwaiter()
      .GetResult() ?? new KarmaConfig();
 
-  private readonly IKarmaService karma =
-    provider.GetRequiredService<IKarmaService>();
-
   private readonly IPlayerConverter<CCSPlayerController> converter =
     provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
 
-  private readonly Dictionary<IPlayer, DateTime> lastWarned = new();
   private readonly Dictionary<IPlayer, int> cooldownRounds = new();
+
+  private readonly IKarmaService karma =
+    provider.GetRequiredService<IKarmaService>();
+
+  private readonly Dictionary<IPlayer, DateTime> lastWarned = new();
 
   [UsedImplicitly]
   [EventHandler(Priority = Priority.MONITOR, IgnoreCanceled = true)]

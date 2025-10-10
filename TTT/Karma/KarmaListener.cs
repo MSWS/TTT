@@ -27,10 +27,10 @@ public class KarmaListener(IServiceProvider provider) : BaseListener(provider) {
   private readonly IKarmaService karma =
     provider.GetRequiredService<IKarmaService>();
 
+  private readonly Dictionary<IPlayer, int> queuedKarmaUpdates = new();
+
   private readonly IRoleAssigner roles =
     provider.GetRequiredService<IRoleAssigner>();
-
-  private readonly Dictionary<IPlayer, int> queuedKarmaUpdates = new();
 
   [EventHandler]
   [UsedImplicitly]
@@ -92,12 +92,11 @@ public class KarmaListener(IServiceProvider provider) : BaseListener(provider) {
     if (ev.NewState != State.FINISHED) return Task.CompletedTask;
 
     var tasks = new List<Task>();
-    foreach (var (player, karmaDelta) in queuedKarmaUpdates) {
+    foreach (var (player, karmaDelta) in queuedKarmaUpdates)
       tasks.Add(Task.Run(async () => {
         var newKarma = await karma.Load(player) + karmaDelta;
         await karma.Write(player, newKarma);
       }));
-    }
 
     queuedKarmaUpdates.Clear();
     return Task.WhenAll(tasks);

@@ -4,6 +4,7 @@ using CounterStrikeSharp.API.Modules.Commands;
 using Microsoft.Extensions.DependencyInjection;
 using TTT.API;
 using TTT.API.Command;
+using TTT.API.Messages;
 using TTT.API.Player;
 using TTT.Game;
 using TTT.Game.Commands;
@@ -18,6 +19,9 @@ public class CS2CommandManager(IServiceProvider provider)
     provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
 
   private BasePlugin? plugin;
+
+  private readonly IMessenger messenger = provider
+   .GetRequiredService<IMessenger>();
 
   public void Start(BasePlugin? basePlugin, bool hotReload) {
     plugin = basePlugin;
@@ -41,7 +45,9 @@ public class CS2CommandManager(IServiceProvider provider)
       null :
       converter.GetPlayer(executor) as IOnlinePlayer;
 
-    if (cmdMap.TryGetValue(info.GetArg(0), out var command))
+    messenger.Debug($"Received command: {cs2Info.Args[0]} from {wrapper?.Id}");
+
+    if (cmdMap.TryGetValue(cs2Info.Args[0], out var command))
       if (command.MustBeOnMainThread) {
         processCommandSync(cs2Info, wrapper);
         return;
