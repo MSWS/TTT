@@ -29,9 +29,6 @@ public abstract class BaseItem(IServiceProvider provider) : IShopItem {
   protected readonly IRoleAssigner Roles =
     provider.GetRequiredService<IRoleAssigner>();
   
-  protected readonly IMessenger Messenger =
-    provider.GetRequiredService<IMessenger>();
-
   protected readonly IShop Shop = provider.GetRequiredService<IShop>();
 
   public virtual void Dispose() { }
