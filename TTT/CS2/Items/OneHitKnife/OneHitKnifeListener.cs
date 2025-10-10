@@ -24,7 +24,11 @@ public class OneHitKnifeListener(IServiceProvider provider)
   [UsedImplicitly]
   [EventHandler]
   public void OnDamage(PlayerDamagedEvent ev) {
+    Messenger.DebugAnnounce("OneHitKnifeListener: OnDamage called, state: "
+      + Games.ActiveGame?.State);
     if (Games.ActiveGame is not { State: State.IN_PROGRESS }) return;
+    Messenger.Debug(
+      "OneHitKnifeListener: OnDamage called, weapon: " + ev.Weapon);
     if (ev.Weapon == null || !Tag.KNIVES.Contains(ev.Weapon)) return;
 
     var attacker = ev.Attacker;
@@ -39,6 +43,7 @@ public class OneHitKnifeListener(IServiceProvider provider)
     if (friendly && !config.FriendlyFire) return;
 
     shop.RemoveItem<OneHitKnife>(attacker);
+    Messenger.DebugAnnounce("Applied OneHitKnife damage");
     ev.HpLeft = 0;
   }
 }

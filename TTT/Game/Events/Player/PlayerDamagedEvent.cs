@@ -18,14 +18,7 @@ public class PlayerDamagedEvent(IOnlinePlayer player, IOnlinePlayer? attacker,
     ArmorDamage    = ev.DmgArmor;
     ArmorRemaining = ev.Armor;
     Weapon         = ev.Weapon;
-  }
-
-  public PlayerDamagedEvent(IPlayerConverter<CCSPlayerController> converter,
-    EventPlayerFalldamage ev) : this(
-    converter.GetPlayer(ev.Userid!) as IOnlinePlayer
-    ?? throw new InvalidOperationException(), null,
-    ev.Userid!.Health + (int)ev.Damage) {
-    ArmorRemaining = ev.Userid.PawnArmor;
+    HpLeft         = ev.Health;
   }
 
   public PlayerDamagedEvent(IPlayerConverter<CCSPlayerController> converter,
@@ -46,8 +39,8 @@ public class PlayerDamagedEvent(IOnlinePlayer player, IOnlinePlayer? attacker,
     Attacker = attacker == null || !attacker.IsValid ?
       null :
       converter.GetPlayer(attacker) as IOnlinePlayer;
-    // HpLeft = player.Health - DmgDealt;
-    HpLeft = (int)(player.Pawn.Value!.Health - info.Damage);
+    OriginalHp = player.Pawn.Value!.Health;
+    HpLeft     = (int)(OriginalHp - info.Damage);
   }
 
   public override string Id => "basegame.event.player.damaged";
@@ -55,9 +48,10 @@ public class PlayerDamagedEvent(IOnlinePlayer player, IOnlinePlayer? attacker,
 
   public int ArmorDamage { get; private set; }
   public int ArmorRemaining { get; set; }
-  public int DmgDealt => player.Health - HpLeft;
+  public int OriginalHp { get; }
+  public int DmgDealt => OriginalHp - HpLeft;
 
-  public int HpLeft { get; set; } = hpLeft;
+  public int HpLeft { get; set; }
 
   public string? Weapon { get; init; }
   public bool IsCanceled { get; set; }

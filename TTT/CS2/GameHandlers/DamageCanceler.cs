@@ -1,4 +1,5 @@
-﻿using CounterStrikeSharp.API.Core;
+﻿using CounterStrikeSharp.API;
+using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Memory;
 using CounterStrikeSharp.API.Modules.Memory.DynamicFunctions;
 using Microsoft.Extensions.DependencyInjection;
@@ -30,11 +31,30 @@ public class DamageCanceler(IServiceProvider provider) : IPluginModule {
   }
 
   private HookResult onTakeDamage(DynamicHook hook) {
+    Server.PrintToChatAll("DamageCanceler: onTakeDamage called");
     var damagedEvent = new PlayerDamagedEvent(converter, hook);
 
-    bus.Dispatch(damagedEvent);
+    Server.PrintToChatAll("DamageCanceler: Dispatching PlayerDamagedEvent");
+    _ = bus.Dispatch(damagedEvent);
+    Server.PrintToChatAll("DamageCanceler: Setting damage to "
+      + damagedEvent.DmgDealt);
+    Server.PrintToChatAll(
+      "DamageCanceler: Dispatched PlayerDamagedEvent, is canceled="
+      + damagedEvent.IsCanceled);
+
 
     if (damagedEvent.IsCanceled) return HookResult.Handled;
+
+    if (damagedEvent.HpLeft == 0) {
+      var playerPawn = hook.GetParam<CCSPlayerPawn>(0);
+      var player     = playerPawn.Controller.Value?.As<CCSPlayerController>();
+      if (player == null || !player.IsValid) {
+        Server.PrintToChatAll("DamageCanceler: Player is null or invalid");
+        return HookResult.Continue;
+      }
+
+      player.CommitSuicide(false, true);
+    }
 
     var info = hook.GetParam<CTakeDamageInfo>(1);
     info.Damage = damagedEvent.DmgDealt;

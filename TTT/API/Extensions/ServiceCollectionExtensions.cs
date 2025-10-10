@@ -24,7 +24,7 @@ public static class ServiceCollectionExtensions {
       collection.AddTransient<ICommand>(provider
         => (provider.GetRequiredService<TExtension>() as ICommand)!);
 
-    collection.AddScoped<TExtension>();
+    collection.AddSingleton<TExtension>();
 
     collection.AddTransient<ITerrorModule, TExtension>(provider
       => provider.GetRequiredService<TExtension>());
