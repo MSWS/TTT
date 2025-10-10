@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using ShopAPI.Configs;
+using TTT.API.Messages;
 using TTT.API.Player;
 using TTT.API.Role;
 using TTT.Locale;
@@ -17,6 +18,9 @@ public abstract class BaseItem(IServiceProvider provider) : IShopItem {
 
   protected readonly IRoleAssigner Roles =
     provider.GetRequiredService<IRoleAssigner>();
+  
+  protected readonly IMessenger Messenger =
+    provider.GetRequiredService<IMessenger>();
 
   protected readonly IShop Shop = provider.GetRequiredService<IShop>();
 

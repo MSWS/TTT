@@ -16,7 +16,8 @@ public class IndexCommand : ICommand {
 
     Server.NextWorldUpdate(() => {
       foreach (var player in Utilities.GetPlayers())
-        info.ReplySync($"{player.PlayerName} - {player.Slot}");
+        info.ReplySync(
+          $"{player.PlayerName} - {player.Slot} {player.Index} {player.DraftIndex} {player.PawnCharacterDefIndex}");
     });
 
     return Task.FromResult(CommandResult.SUCCESS);
