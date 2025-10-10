@@ -44,6 +44,7 @@ public class GiveItemCommand(IServiceProvider provider) : ICommand {
         target = result;
       }
 
+      item.OnPurchase(target);
       shop.GiveItem(target, item);
       info.ReplySync($"Gave item '{item.Name}' to {target.Name}.");
     });

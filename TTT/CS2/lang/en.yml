@@ -1,4 +1,4 @@
-﻿ROLE_SPECTATOR: "Spectator"
+ROLE_SPECTATOR: "Spectator"
 TASER_SCANNED: "%PREFIX%You scanned {0}{grey}, they are %an% {1}{grey}!"
 DNA_PREFIX: "{darkblue}D{blue}N{lightblue}A{grey} | {grey}"
 
@@ -36,3 +36,6 @@ SHOP_ITEM_ONE_HIT_KNIFE_DESC: "Your next knife hit will be a guaranteed kill."
 
 SHOP_ITEM_COMPASS: "Player Compass"
 SHOP_ITEM_COMPASS_DESC: "Reveals the direction that the nearest non-Traitor is in."
+
+SHOP_ITEM_SILENT_AWP: "Silent AWP"
+SHOP_ITEM_SILENT_AWP_DESC: "Receive a silenced AWP with limited ammo."
