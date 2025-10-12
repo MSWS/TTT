@@ -1,4 +1,3 @@
-using System.Reactive.Concurrency;
 using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using TTT.API.Events;

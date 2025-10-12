@@ -1,9 +1,6 @@
-﻿using System.Numerics;
-using CounterStrikeSharp.API;
+﻿using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
-using CounterStrikeSharp.API.Core.Attributes.Registration;
 using CounterStrikeSharp.API.Modules.UserMessages;
-using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using ShopAPI;
 using ShopAPI.Configs;
@@ -27,6 +24,18 @@ public static class SilentAWPServiceCollection {
 
 public class SilentAWPItem(IServiceProvider provider)
   : RoleRestrictedItem<TraitorRole>(provider), IPluginModule {
+  private readonly SilentAWPConfig config =
+    provider.GetService<IStorage<SilentAWPConfig>>()
+    ?.Load()
+     .GetAwaiter()
+     .GetResult() ?? new SilentAWPConfig();
+
+  private readonly IPlayerConverter<CCSPlayerController> playerConverter =
+    provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
+
+  private readonly IDictionary<IOnlinePlayer, int> silentShots =
+    new Dictionary<IOnlinePlayer, int>();
+
   public override string Name => Locale[SilentAWPMsgs.SHOP_ITEM_SILENT_AWP];
 
   public override string Description
@@ -34,26 +43,14 @@ public class SilentAWPItem(IServiceProvider provider)
 
   public override ShopItemConfig Config => config;
 
-  private readonly SilentAWPConfig config =
-    provider.GetService<IStorage<SilentAWPConfig>>()
-    ?.Load()
-     .GetAwaiter()
-     .GetResult() ?? new SilentAWPConfig();
+  public void Start(BasePlugin? plugin) {
+    base.Start();
+    plugin?.HookUserMessage(452, onWeaponSound);
+  }
 
   public override void OnPurchase(IOnlinePlayer player) {
     silentShots[player] = config.CurrentAmmo ?? 0 + config.ReserveAmmo ?? 0;
     Inventory.GiveWeapon(player, config);
-  }
-
-  private readonly IDictionary<IOnlinePlayer, int> silentShots =
-    new Dictionary<IOnlinePlayer, int>();
-
-  private readonly IPlayerConverter<CCSPlayerController> playerConverter =
-    provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
-
-  public void Start(BasePlugin? plugin) {
-    base.Start();
-    plugin?.HookUserMessage(452, onWeaponSound);
   }
 
   private HookResult onWeaponSound(UserMessage msg) {

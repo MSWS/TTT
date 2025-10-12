@@ -1,4 +1,3 @@
-using System.Reactive.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using TTT.API.Events;
 using TTT.API.Game;

@@ -2,8 +2,8 @@
 
 public static class TextCompass {
   /// <summary>
-  /// Builds a compass line with at most one character for each of N, E, S, W.
-  /// 0° = North, 90° = East, angles increase clockwise.
+  ///   Builds a compass line with at most one character for each of N, E, S, W.
+  ///   0° = North, 90° = East, angles increase clockwise.
   /// </summary>
   /// <param name="fov">Field of view in degrees [0..360].</param>
   /// <param name="width">Output width in characters.</param>
@@ -18,10 +18,10 @@ public static class TextCompass {
     direction = Normalize(direction);
 
     var buf                                = new char[width];
-    for (int i = 0; i < width; i++) buf[i] = filler;
+    for (var i = 0; i < width; i++) buf[i] = filler;
 
-    float start      = direction - fov / 2f; // left edge of view
-    float degPerChar = fov / width;
+    var start      = direction - fov / 2f; // left edge of view
+    var degPerChar = fov / width;
 
     PlaceIfVisible('N', 0f);
     PlaceIfVisible('E', 90f);
@@ -32,11 +32,11 @@ public static class TextCompass {
     return new string(buf);
 
     void PlaceIfVisible(char c, float cardinalAngle) {
-      float delta = ForwardDelta(start, cardinalAngle); // [0..360)
-      if (delta < 0f || delta >= fov) return;           // outside view
+      var delta = ForwardDelta(start, cardinalAngle); // [0..360)
+      if (delta < 0f || delta >= fov) return;         // outside view
 
       // Map degrees to nearest character cell
-      int idx               = (int)MathF.Round(delta / degPerChar);
+      var idx               = (int)MathF.Round(delta / degPerChar);
       if (idx < 0) idx      = 0;
       if (idx >= width) idx = width - 1;
 
@@ -46,15 +46,15 @@ public static class TextCompass {
         return;
       }
 
-      int maxRadius = Math.Max(idx, width - 1 - idx);
-      for (int r = 1; r <= maxRadius; r++) {
-        int left = idx - r;
+      var maxRadius = Math.Max(idx, width - 1 - idx);
+      for (var r = 1; r <= maxRadius; r++) {
+        var left = idx - r;
         if (left >= 0 && buf[left] == filler) {
           buf[left] = c;
           return;
         }
 
-        int right = idx + r;
+        var right = idx + r;
         if (right < width && buf[right] == filler) {
           buf[right] = c;
           return;
@@ -73,9 +73,9 @@ public static class TextCompass {
 
   // Delta moving forward from start to target, wrapped to [0..360)
   private static float ForwardDelta(float start, float target) {
-    float s = Normalize(start);
-    float t = Normalize(target);
-    float d = t - s;
+    var s = Normalize(start);
+    var t = Normalize(target);
+    var d = t - s;
     return d < 0 ? d + 360f : d;
   }
 }

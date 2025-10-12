@@ -18,10 +18,10 @@ public class CS2CommandManager(IServiceProvider provider)
   private readonly IPlayerConverter<CCSPlayerController> converter =
     provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
 
-  private BasePlugin? plugin;
-
   private readonly IMessenger messenger = provider
    .GetRequiredService<IMessenger>();
+
+  private BasePlugin? plugin;
 
   public void Start(BasePlugin? basePlugin, bool hotReload) {
     plugin = basePlugin;
