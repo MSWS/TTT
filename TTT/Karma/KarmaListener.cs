@@ -1,3 +1,4 @@
+using System.Reactive.Concurrency;
 using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using TTT.API.Events;
@@ -75,6 +76,7 @@ public class KarmaListener(IServiceProvider provider) : BaseListener(provider) {
         killerKarmaDelta = killerRole is TraitorRole ?
           TRAITOR_ON_DETECTIVE :
           INNO_ON_DETECTIVE;
+        if (killerRole is DetectiveRole) victimKarmaDelta = INNO_ON_INNO_VICTIM;
         break;
     }
 
@@ -88,17 +90,15 @@ public class KarmaListener(IServiceProvider provider) : BaseListener(provider) {
 
   [UsedImplicitly]
   [EventHandler]
-  public Task OnRoundEnd(GameStateUpdateEvent ev) {
-    if (ev.NewState != State.FINISHED) return Task.CompletedTask;
+  public void OnRoundEnd(GameStateUpdateEvent ev) {
+    if (ev.NewState != State.FINISHED) return;
 
-    var tasks = new List<Task>();
     foreach (var (player, karmaDelta) in queuedKarmaUpdates)
-      tasks.Add(Task.Run(async () => {
+      Task.Run(async () => {
         var newKarma = await karma.Load(player) + karmaDelta;
         await karma.Write(player, newKarma);
-      }));
+      });
 
     queuedKarmaUpdates.Clear();
-    return Task.WhenAll(tasks);
   }
 }

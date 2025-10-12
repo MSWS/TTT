@@ -48,7 +48,7 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
   public virtual State State {
     set {
       var ev = new GameStateUpdateEvent(this, value);
-      Bus.Dispatch(ev).GetAwaiter().GetResult();
+      Bus.Dispatch(ev);
       if (ev.IsCanceled) return;
       state = value;
     }

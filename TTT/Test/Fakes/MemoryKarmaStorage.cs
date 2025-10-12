@@ -17,7 +17,7 @@ public class MemoryKarmaStorage(IEventBus bus)
   public override async Task Write(IPlayer key, int value) {
     var old        = await Load(key);
     var karmaEvent = new KarmaUpdateEvent(key, old, value);
-    await bus.Dispatch(karmaEvent);
+    bus.Dispatch(karmaEvent);
 
     if (karmaEvent.IsCanceled) return;
 

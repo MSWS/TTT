@@ -76,7 +76,7 @@ public class KarmaStorage(IServiceProvider provider) : IKarmaService {
     if (oldKarma == newData) return;
 
     var karmaUpdateEvent = new KarmaUpdateEvent(key, oldKarma, newData);
-    await bus.Dispatch(karmaUpdateEvent);
+    bus.Dispatch(karmaUpdateEvent);
     if (karmaUpdateEvent.IsCanceled) return;
 
     karmaCache[key] = newData;
