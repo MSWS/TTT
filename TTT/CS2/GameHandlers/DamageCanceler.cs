@@ -1,4 +1,5 @@
-﻿using CounterStrikeSharp.API.Core;
+﻿using CounterStrikeSharp.API;
+using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Memory;
 using CounterStrikeSharp.API.Modules.Memory.DynamicFunctions;
 using Microsoft.Extensions.DependencyInjection;
@@ -33,7 +34,6 @@ public class DamageCanceler(IServiceProvider provider) : IPluginModule {
     var damagedEvent = new PlayerDamagedEvent(converter, hook);
 
     bus.Dispatch(damagedEvent);
-
     if (damagedEvent.IsCanceled) return HookResult.Handled;
 
     var info = hook.GetParam<CTakeDamageInfo>(1);

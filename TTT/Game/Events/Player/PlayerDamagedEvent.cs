@@ -6,7 +6,11 @@ using TTT.API.Player;
 namespace TTT.Game.Events.Player;
 
 public class PlayerDamagedEvent(IOnlinePlayer player, IOnlinePlayer? attacker,
-  int hpLeft) : PlayerEvent(player), ICancelableEvent {
+  int originalHp, int hpLeft) : PlayerEvent(player), ICancelableEvent {
+  public PlayerDamagedEvent(IOnlinePlayer player, IOnlinePlayer? attacker,
+    int damageDealt) : this(player, attacker, player.Health - damageDealt,
+    player.Health) { }
+
   public PlayerDamagedEvent(IPlayerConverter<CCSPlayerController> converter,
     EventPlayerHurt ev) : this(
     converter.GetPlayer(ev.Userid!) as IOnlinePlayer
@@ -14,22 +18,14 @@ public class PlayerDamagedEvent(IOnlinePlayer player, IOnlinePlayer? attacker,
     ev.Attacker == null ?
       null :
       converter.GetPlayer(ev.Attacker) as IOnlinePlayer,
-    ev.Health + ev.DmgHealth) {
+    ev.Health + ev.DmgHealth, ev.Health) {
     ArmorDamage    = ev.DmgArmor;
     ArmorRemaining = ev.Armor;
     Weapon         = ev.Weapon;
   }
 
   public PlayerDamagedEvent(IPlayerConverter<CCSPlayerController> converter,
-    EventPlayerFalldamage ev) : this(
-    converter.GetPlayer(ev.Userid!) as IOnlinePlayer
-    ?? throw new InvalidOperationException(), null,
-    ev.Userid!.Health + (int)ev.Damage) {
-    ArmorRemaining = ev.Userid.PawnArmor;
-  }
-
-  public PlayerDamagedEvent(IPlayerConverter<CCSPlayerController> converter,
-    DynamicHook hook) : this(null!, null, 0) {
+    DynamicHook hook) : this(null!, null, 0, 0) {
     var playerPawn = hook.GetParam<CCSPlayerPawn>(0);
     var info       = hook.GetParam<CTakeDamageInfo>(1);
 
@@ -46,8 +42,8 @@ public class PlayerDamagedEvent(IOnlinePlayer player, IOnlinePlayer? attacker,
     Attacker = attacker == null || !attacker.IsValid ?
       null :
       converter.GetPlayer(attacker) as IOnlinePlayer;
-    // HpLeft = player.Health - DmgDealt;
-    HpLeft = (int)(player.Pawn.Value!.Health - info.Damage);
+    OriginalHp = player.Pawn.Value!.Health;
+    HpLeft     = (int)(OriginalHp - info.Damage);
   }
 
   public override string Id => "basegame.event.player.damaged";
@@ -55,9 +51,10 @@ public class PlayerDamagedEvent(IOnlinePlayer player, IOnlinePlayer? attacker,
 
   public int ArmorDamage { get; private set; }
   public int ArmorRemaining { get; set; }
-  public int DmgDealt => player.Health - HpLeft;
+  public int DmgDealt => OriginalHp - HpLeft;
 
   public int HpLeft { get; set; } = hpLeft;
+  public int OriginalHp { get; } = originalHp;
 
   public string? Weapon { get; init; }
   public bool IsCanceled { get; set; }

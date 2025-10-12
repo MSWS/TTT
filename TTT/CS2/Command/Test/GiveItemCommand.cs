@@ -1,7 +1,9 @@
 ﻿using CounterStrikeSharp.API;
 using Microsoft.Extensions.DependencyInjection;
 using ShopAPI;
+using ShopAPI.Events;
 using TTT.API.Command;
+using TTT.API.Events;
 using TTT.API.Player;
 
 namespace TTT.CS2.Command.Test;
@@ -44,7 +46,10 @@ public class GiveItemCommand(IServiceProvider provider) : ICommand {
         target = result;
       }
 
-      item.OnPurchase(target);
+      var purchaseEv = new PlayerPurchaseItemEvent(target, item);
+      provider.GetRequiredService<IEventBus>().Dispatch(purchaseEv);
+      if (purchaseEv.IsCanceled) return;
+
       shop.GiveItem(target, item);
       info.ReplySync($"Gave item '{item.Name}' to {target.Name}.");
     });

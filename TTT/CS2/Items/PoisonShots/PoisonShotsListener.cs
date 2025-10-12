@@ -105,7 +105,7 @@ public class PoisonShotsListener(IServiceProvider provider)
     if (!online.IsAlive) return false;
 
     var dmgEvent = new PlayerDamagedEvent(online,
-      effect.Shooter as IOnlinePlayer,
+      effect.Shooter as IOnlinePlayer, online.Health,
       online.Health - config.PoisonConfig.DamagePerTick) {
       Weapon = $"[{Locale[PoisonShotMsgs.SHOP_ITEM_POISON_SHOTS]}]"
     };

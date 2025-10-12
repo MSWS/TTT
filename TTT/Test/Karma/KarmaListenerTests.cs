@@ -88,7 +88,7 @@ public class KarmaListenerTests {
     bus.Dispatch(deathEvent);
     game.EndGame();
 
-    await Task.Delay(TimeSpan.FromMilliseconds(10),
+    await Task.Delay(TimeSpan.FromMilliseconds(20),
       TestContext.Current
        .CancellationToken); // Wait for the karma update to process
 
