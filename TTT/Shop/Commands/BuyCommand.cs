@@ -16,6 +16,8 @@ public class BuyCommand(IServiceProvider provider) : ICommand {
 
   private readonly IShop shop = provider.GetRequiredService<IShop>();
 
+  private readonly IItemSorter? sorter = provider.GetService<IItemSorter>();
+
   public void Dispose() { }
   public string Id => "buy";
   public void Start() { }
@@ -41,7 +43,7 @@ public class BuyCommand(IServiceProvider provider) : ICommand {
     }
 
     var query = string.Join(" ", info.Args.Skip(1));
-    var item  = searchItem(query);
+    var item  = searchItem(executor, query);
 
     if (item == null) {
       info.ReplySync(locale[ShopMsgs.SHOP_ITEM_NOT_FOUND(query)]);
@@ -54,7 +56,13 @@ public class BuyCommand(IServiceProvider provider) : ICommand {
       CommandResult.ERROR);
   }
 
-  private IShopItem? searchItem(string query) {
+  private IShopItem? searchItem(IOnlinePlayer? player, string query) {
+    if (sorter != null && int.TryParse(query, out var id)) {
+      var items = sorter.GetSortedItems(player);
+      if (id >= 0 && id < items.Count) return items[id];
+      return null;
+    }
+
     var item = shop.Items.FirstOrDefault(it
       => it.Name.Equals(query, StringComparison.OrdinalIgnoreCase));
 

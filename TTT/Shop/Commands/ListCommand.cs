@@ -1,4 +1,5 @@
-﻿using CounterStrikeSharp.API.Modules.Utils;
+﻿using System.Runtime.CompilerServices;
+using CounterStrikeSharp.API.Modules.Utils;
 using Microsoft.Extensions.DependencyInjection;
 using ShopAPI;
 using TTT.API.Command;
@@ -7,9 +8,15 @@ using TTT.API.Player;
 
 namespace TTT.Shop.Commands;
 
-public class ListCommand(IServiceProvider provider) : ICommand {
+public class ListCommand(IServiceProvider provider) : ICommand, IItemSorter {
   private readonly IGameManager games = provider
    .GetRequiredService<IGameManager>();
+
+  private readonly IDictionary<IOnlinePlayer, List<IShopItem>> cache =
+    new Dictionary<IOnlinePlayer, List<IShopItem>>();
+
+  private readonly IDictionary<IOnlinePlayer, DateTime> lastUpdate =
+    new Dictionary<IOnlinePlayer, DateTime>();
 
   private readonly IShop shop = provider.GetRequiredService<IShop>();
 
@@ -21,19 +28,37 @@ public class ListCommand(IServiceProvider provider) : ICommand {
 
   public async Task<CommandResult> Execute(IOnlinePlayer? executor,
     ICommandInfo info) {
-    var items = new List<IShopItem>(shop.Items).Where(item
-        => executor == null
-        || games.ActiveGame is not { State: State.IN_PROGRESS }
-        || item.CanPurchase(executor) != PurchaseResult.WRONG_ROLE)
-     .ToList();
+    var items = calculateSortedItems(executor);
 
+    if (executor != null) cache[executor] = items;
+    items = new List<IShopItem>(items);
+    items.Reverse();
+
+    var balance = executor == null ? int.MaxValue : await shop.Load(executor);
+
+    foreach (var (index, item) in items.Select((value, i) => (i, value))) {
+      var canPurchase = executor == null
+        || item.CanPurchase(executor) == PurchaseResult.SUCCESS;
+      canPurchase = canPurchase && item.Config.Price <= balance;
+      info.ReplySync(formatItem(item, items.Count - index, canPurchase));
+    }
+
+    return CommandResult.SUCCESS;
+  }
+
+  private List<IShopItem> calculateSortedItems(IOnlinePlayer? player) {
+    var items = new List<IShopItem>(shop.Items).Where(item
+        => player == null
+        || games.ActiveGame is not { State: State.IN_PROGRESS }
+        || item.CanPurchase(player) != PurchaseResult.WRONG_ROLE)
+     .ToList();
     items.Sort((a, b) => {
       var aPrice = a.Config.Price;
       var bPrice = b.Config.Price;
-      var aCanBuy = executor != null
-        && a.CanPurchase(executor) == PurchaseResult.SUCCESS;
-      var bCanBuy = executor != null
-        && b.CanPurchase(executor) == PurchaseResult.SUCCESS;
+      var aCanBuy = player != null
+        && a.CanPurchase(player) == PurchaseResult.SUCCESS;
+      var bCanBuy = player != null
+        && b.CanPurchase(player) == PurchaseResult.SUCCESS;
 
       if (aCanBuy && !bCanBuy) return -1;
       if (!aCanBuy && bCanBuy) return 1;
@@ -41,29 +66,40 @@ public class ListCommand(IServiceProvider provider) : ICommand {
       return string.Compare(a.Name, b.Name, StringComparison.Ordinal);
     });
 
-    var balance = info.CallingPlayer == null ?
-      int.MaxValue :
-      await shop.Load(info.CallingPlayer);
-
-    foreach (var item in items)
-      info.ReplySync(formatItem(item,
-        item.Config.Price <= balance
-        && item.CanPurchase(info.CallingPlayer ?? executor!)
-        == PurchaseResult.SUCCESS));
-
-    return CommandResult.SUCCESS;
+    if (player != null) lastUpdate[player] = DateTime.Now;
+    return items;
   }
 
-  private string formatPrefix(IShopItem item, bool canBuy = true) {
+  private string formatPrefix(IShopItem item, int index, bool canBuy) {
     if (!canBuy)
       return
         $" {ChatColors.Grey}- [{ChatColors.DarkRed}{item.Config.Price}{ChatColors.Grey}] {ChatColors.Red}{item.Name}";
+
+    if (index > 9) {
+      return
+        $" {ChatColors.Default}- [{ChatColors.Yellow}{item.Config.Price}{ChatColors.Default}] {ChatColors.Green}{item.Name}";
+    }
+
     return
-      $" {ChatColors.Default}- [{ChatColors.Yellow}{item.Config.Price}{ChatColors.Default}] {ChatColors.Green}{item.Name}";
+      $" {ChatColors.Blue}/{index} {ChatColors.Default}| [{ChatColors.Yellow}{item.Config.Price}{ChatColors.Default}] {ChatColors.Green}{item.Name}";
   }
 
-  private string formatItem(IShopItem item, bool canBuy) {
+  private string formatItem(IShopItem item, int index, bool canBuy) {
     return
-      $" {formatPrefix(item, canBuy)} {ChatColors.Grey} | {item.Description}";
+      $" {formatPrefix(item, index, canBuy)} {ChatColors.Grey} | {item.Description}";
+  }
+
+  public List<IShopItem> GetSortedItems(IOnlinePlayer? player,
+    bool refresh = false) {
+    if (player == null) return calculateSortedItems(null);
+    if (refresh || !cache.ContainsKey(player))
+      cache[player] = calculateSortedItems(player);
+    return cache[player];
+  }
+
+  public DateTime? GetLastUpdate(IOnlinePlayer? player) {
+    if (player == null) return null;
+    lastUpdate.TryGetValue(player, out var time);
+    return time;
   }
 }
