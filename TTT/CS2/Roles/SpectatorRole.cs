@@ -13,6 +13,9 @@ public class SpectatorRole(IServiceProvider provider) : IRole {
   private readonly IPlayerConverter<CCSPlayerController> playerConverter =
     provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
 
+  private readonly IRoleAssigner roles =
+    provider.GetRequiredService<IRoleAssigner>();
+
   public string Id => "basegame.role.spectator";
 
   public string Name
@@ -22,7 +25,8 @@ public class SpectatorRole(IServiceProvider provider) : IRole {
 
   public IOnlinePlayer? FindPlayerToAssign(ISet<IOnlinePlayer> players) {
     return players.FirstOrDefault(p
-      => playerConverter.GetPlayer(p) is { Team: CsTeam.Spectator });
+      => roles.GetRoles(p).Count == 0
+      && playerConverter.GetPlayer(p) is { Team: CsTeam.Spectator });
   }
 
   public void OnAssign(IOnlinePlayer player) {

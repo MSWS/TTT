@@ -5,6 +5,7 @@ using TTT.API.Game;
 using TTT.API.Player;
 using TTT.API.Role;
 using TTT.Game.Roles;
+using TTT.Karma;
 using TTT.Shop.Listeners;
 using Xunit;
 
@@ -50,8 +51,14 @@ public class BalanceClearTest(IServiceProvider provider) {
     finder.AddPlayer(player);
     finder.AddPlayer(TestPlayer.Random());
 
+    var karmaService = provider.GetService<IKarmaService>();
+    if (karmaService != null) await karmaService.Write(player, 80);
+
     var game = games.CreateGame();
     game?.Start();
+
+    await Task.Delay(TimeSpan.FromMilliseconds(10),
+      TestContext.Current.CancellationToken);
 
     var newBalance = await shop.Load(player);
 

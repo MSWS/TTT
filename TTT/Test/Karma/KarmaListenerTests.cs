@@ -48,7 +48,7 @@ public class KarmaListenerTests {
     var deathEvent = new PlayerDeathEvent(victim);
     deathEvent.WithKiller(attacker);
 
-    await bus.Dispatch(deathEvent);
+    bus.Dispatch(deathEvent);
 
     var victimKarma   = await karma.Load(victim);
     var attackerKarma = await karma.Load(attacker);
@@ -66,7 +66,7 @@ public class KarmaListenerTests {
   [InlineData(RoleEnum.Traitor, RoleEnum.Detective, 51, 50)]
   [InlineData(RoleEnum.Detective, RoleEnum.Innocent, 46, 49)]
   [InlineData(RoleEnum.Detective, RoleEnum.Traitor, 52, 50)]
-  [InlineData(RoleEnum.Detective, RoleEnum.Detective, 44, 50)]
+  [InlineData(RoleEnum.Detective, RoleEnum.Detective, 44, 49)]
   public async Task OnKill_AffectsKarma(RoleEnum attackerRole,
     RoleEnum victimRole, int expAttackerKarma, int expVictimKarma) {
     var victim   = TestPlayer.Random();
@@ -85,8 +85,12 @@ public class KarmaListenerTests {
     var deathEvent = new PlayerDeathEvent(victim);
     deathEvent.WithKiller(attacker);
 
-    await bus.Dispatch(deathEvent);
+    bus.Dispatch(deathEvent);
     game.EndGame();
+
+    await Task.Delay(TimeSpan.FromMilliseconds(20),
+      TestContext.Current
+       .CancellationToken); // Wait for the karma update to process
 
     var victimKarma   = await karma.Load(victim);
     var attackerKarma = await karma.Load(attacker);
@@ -120,12 +124,16 @@ public class KarmaListenerTests {
     var deathEvent3 = new PlayerDeathEvent(victim3);
     deathEvent3.WithKiller(attacker);
 
-    await bus.Dispatch(deathEvent1); // First kill => 50 - (4*1) = 46
-    await bus.Dispatch(deathEvent2); // Second kill => 46 - (4*2) = 38
-    await bus.Dispatch(
-      deathEvent3); // Third kill (detective) => 38 - (6*3) = 20
+    bus.Dispatch(deathEvent1); // First kill => 50 - (4*1) = 46
+    bus.Dispatch(deathEvent2); // Second kill => 46 - (4*2) = 38
+    bus.Dispatch(deathEvent3); // Third kill (detective) => 38 - (6*3) = 20
 
     game.EndGame();
+
+    await Task.Delay(TimeSpan.FromMilliseconds(20),
+      TestContext.Current
+       .CancellationToken); // Wait for the karma update to process
+
     var killerKarma = await karma.Load(attacker);
     Assert.Equal(20, killerKarma);
   }
@@ -155,9 +163,10 @@ public class KarmaListenerTests {
     var deathEvent3 = new PlayerDeathEvent(victim3);
     deathEvent3.WithKiller(attacker);
 
-    await bus.Dispatch(deathEvent1); // First kill => 50 + 2 = 52
-    await bus.Dispatch(deathEvent2); // Second kill => 52 + 2 = 54
-    await bus.Dispatch(deathEvent3); // Third kill (inno) => 54 - 4 = 50
+    bus.Dispatch(deathEvent1); // First kill => 50 + 2 = 52
+    bus.Dispatch(deathEvent2); // Second kill => 52 + 2 = 54
+    bus.Dispatch(deathEvent3); // Third kill (inno) => 54 - 4 = 50
+
     var killerKarma = await karma.Load(attacker);
     Assert.Equal(50, killerKarma);
   }

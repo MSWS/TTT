@@ -17,11 +17,12 @@ namespace TTT.CS2.Items.Station;
 public abstract class StationItem<T>(IServiceProvider provider,
   StationConfig config)
   : RoleRestrictedItem<T>(provider), IPluginModule where T : IRole {
-  private readonly long PROP_SIZE_SQUARED = 500;
   protected readonly StationConfig _Config = config;
 
   protected readonly IPlayerConverter<CCSPlayerController> Converter =
     provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
+
+  private readonly long PROP_SIZE_SQUARED = 500;
 
   protected readonly Dictionary<CPhysicsPropMultiplayer, StationInfo> props =
     new();
@@ -117,7 +118,7 @@ public abstract class StationItem<T>(IServiceProvider provider,
 
       if (prop == null) return;
 
-      props[prop] = new StationInfo(prop, _Config.StationHealth);
+      props[prop] = new StationInfo(prop, _Config.StationHealth, player);
 
       prop.SetModel("models/props/cs_office/microwave.vmdl");
       prop.DispatchSpawn();

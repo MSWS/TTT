@@ -6,8 +6,10 @@ using TTT.API.Player;
 namespace TTT.Game.Events.Player;
 
 public class PlayerDamagedEvent(IOnlinePlayer player, IOnlinePlayer? attacker,
-  int dmgDealt, int hpLeft) : PlayerEvent(player), ICancelableEvent {
-  private int _hpLeft = hpLeft;
+  int originalHp, int hpLeft) : PlayerEvent(player), ICancelableEvent {
+  public PlayerDamagedEvent(IOnlinePlayer player, IOnlinePlayer? attacker,
+    int damageDealt) : this(player, attacker, player.Health - damageDealt,
+    player.Health) { }
 
   public PlayerDamagedEvent(IPlayerConverter<CCSPlayerController> converter,
     EventPlayerHurt ev) : this(
@@ -15,19 +17,11 @@ public class PlayerDamagedEvent(IOnlinePlayer player, IOnlinePlayer? attacker,
     ?? throw new InvalidOperationException(),
     ev.Attacker == null ?
       null :
-      converter.GetPlayer(ev.Attacker) as IOnlinePlayer, ev.DmgHealth,
-    ev.Health) {
+      converter.GetPlayer(ev.Attacker) as IOnlinePlayer,
+    ev.Health + ev.DmgHealth, ev.Health) {
     ArmorDamage    = ev.DmgArmor;
     ArmorRemaining = ev.Armor;
     Weapon         = ev.Weapon;
-  }
-
-  public PlayerDamagedEvent(IPlayerConverter<CCSPlayerController> converter,
-    EventPlayerFalldamage ev) : this(
-    converter.GetPlayer(ev.Userid!) as IOnlinePlayer
-    ?? throw new InvalidOperationException(), null, (int)ev.Damage,
-    ev.Userid!.Health) {
-    ArmorRemaining = ev.Userid.PawnArmor;
   }
 
   public PlayerDamagedEvent(IPlayerConverter<CCSPlayerController> converter,
@@ -48,37 +42,19 @@ public class PlayerDamagedEvent(IOnlinePlayer player, IOnlinePlayer? attacker,
     Attacker = attacker == null || !attacker.IsValid ?
       null :
       converter.GetPlayer(attacker) as IOnlinePlayer;
-    DmgDealt = (int)info.Damage;
-    _hpLeft  = player.Health - DmgDealt;
+    OriginalHp = player.Pawn.Value!.Health;
+    HpLeft     = (int)(OriginalHp - info.Damage);
   }
-
-  public bool HpModified { get; private set; }
 
   public override string Id => "basegame.event.player.damaged";
   public IOnlinePlayer? Attacker { get; private set; } = attacker;
 
   public int ArmorDamage { get; private set; }
   public int ArmorRemaining { get; set; }
-  public int DmgDealt { get; } = dmgDealt;
+  public int DmgDealt => OriginalHp - HpLeft;
 
-  public int HpLeft {
-    get => _hpLeft;
-    set {
-      if (value == _hpLeft) return;
-      switch (value) {
-        case < 0:
-          throw new ArgumentOutOfRangeException(nameof(value),
-            "HpLeft must be greater than 0.");
-        case 0:
-          throw new ArgumentException(
-            "Cannot override HP if player is already dead; cancel the event instead.");
-        default:
-          HpModified = _hpLeft != value;
-          _hpLeft    = value;
-          break;
-      }
-    }
-  }
+  public int HpLeft { get; set; } = hpLeft;
+  public int OriginalHp { get; } = originalHp;
 
   public string? Weapon { get; init; }
   public bool IsCanceled { get; set; }

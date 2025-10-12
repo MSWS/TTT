@@ -3,7 +3,6 @@ using Microsoft.Extensions.DependencyInjection;
 using TTT.API.Game;
 using TTT.API.Messages;
 using TTT.API.Player;
-using TTT.Game.lang;
 using TTT.Locale;
 
 namespace TTT.Game.Loggers;
@@ -22,7 +21,7 @@ public class SimpleLogger(IServiceProvider provider) : IActionLogger {
 
   private DateTime? epoch;
 
-  public void LogAction(IAction action) {
+  public virtual void LogAction(IAction action) {
 #if DEBUG
     msg.Value.Debug(
       $"Logging action: {action.GetType().Name} at {scheduler.Now}");

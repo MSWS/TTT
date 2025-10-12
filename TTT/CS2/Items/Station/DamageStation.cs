@@ -1,11 +1,13 @@
 ﻿using CounterStrikeSharp.API.Core;
 using Microsoft.Extensions.DependencyInjection;
 using ShopAPI.Configs.Traitor;
+using TTT.API.Events;
 using TTT.API.Extensions;
 using TTT.API.Player;
 using TTT.API.Role;
 using TTT.API.Storage;
 using TTT.CS2.Extensions;
+using TTT.Game.Events.Player;
 using TTT.Game.Roles;
 
 namespace TTT.CS2.Items.Station;
@@ -22,6 +24,8 @@ public class DamageStation(IServiceProvider provider)
     ?.Load()
      .GetAwaiter()
      .GetResult() ?? new DamageStationConfig()) {
+  private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
+
   private readonly IPlayerConverter<CCSPlayerController> converter =
     provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
 
@@ -67,8 +71,23 @@ public class DamageStation(IServiceProvider provider)
         var healthScale = 1.0 - dist / _Config.MaxRange;
         var damageAmount =
           (int)Math.Floor(_Config.HealthIncrements * healthScale);
+
+        var dmgEvent = new PlayerDamagedEvent(player,
+          info.Owner as IOnlinePlayer, damageAmount) { Weapon = $"[{Name}]" };
+
+        bus.Dispatch(dmgEvent);
+
+        damageAmount = -dmgEvent.DmgDealt;
+
         player.Health    += damageAmount;
         info.HealthGiven += damageAmount;
+
+        if (player.Health + damageAmount <= 0) {
+          var playerDeath = new PlayerDeathEvent(player)
+           .WithKiller(info.Owner as IOnlinePlayer)
+           .WithWeapon($"[{Name}]");
+          bus.Dispatch(playerDeath);
+        }
 
         gamePlayer.ExecuteClientCommand("play " + _Config.UseSound);
       }

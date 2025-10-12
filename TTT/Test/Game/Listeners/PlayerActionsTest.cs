@@ -26,7 +26,7 @@ public class PlayerActionsTest(IServiceProvider provider) : GameTest(provider) {
 
     var (alice, bob, game) = CreateActiveGame();
 
-    var ev = new PlayerDamagedEvent(alice, bob, 10, 90);
+    var ev = new PlayerDamagedEvent(alice, bob, 90);
     Bus.Dispatch(ev);
 
     Assert.Contains(game.Logger.GetActions().Select(p => p.Item2),

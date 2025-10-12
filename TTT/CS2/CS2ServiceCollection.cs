@@ -36,6 +36,7 @@ public static class CS2ServiceCollection {
     collection.AddModBehavior<IAliveSpoofer, CS2AliveSpoofer>();
     collection.AddModBehavior<IIconManager, RoleIconsHandler>();
     collection.AddModBehavior<NameDisplayer>();
+    collection.AddModBehavior<PlayerPingShopAlias>();
 
     // Configs
     collection.AddModBehavior<IStorage<TTTConfig>, CS2GameConfig>();
@@ -60,6 +61,9 @@ public static class CS2ServiceCollection {
     collection.AddModBehavior<PropMover>();
     collection.AddModBehavior<RoundStart_GameStartHandler>();
     collection.AddModBehavior<BombPlantSuppressor>();
+    collection.AddModBehavior<MapZoneRemover>();
+    collection.AddModBehavior<BuyMenuHandler>();
+    collection.AddModBehavior<TeamChangeHandler>();
 
     // Damage Cancelers
     collection.AddModBehavior<OutOfRoundCanceler>();

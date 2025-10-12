@@ -2,6 +2,7 @@
 using ShopAPI;
 using ShopAPI.Configs;
 using ShopAPI.Configs.Traitor;
+using TTT.API.Extensions;
 using TTT.API.Player;
 using TTT.API.Storage;
 using TTT.Game.Roles;
@@ -10,8 +11,8 @@ namespace TTT.CS2.Items.OneHitKnife;
 
 public static class OneHitKnifeServiceCollection {
   public static void AddOneHitKnifeService(this IServiceCollection services) {
-    services.AddSingleton<OneHitKnife>();
-    services.AddSingleton<OneHitKnifeListener>();
+    services.AddModBehavior<OneHitKnife>();
+    services.AddModBehavior<OneHitKnifeListener>();
   }
 }
 

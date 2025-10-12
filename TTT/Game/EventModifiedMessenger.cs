@@ -73,7 +73,7 @@ public abstract class EventModifiedMessenger(IServiceProvider provider)
     PlayerMessageEvent ev) {
     if (player == null) return await SendMessage(null, msg);
 
-    await Bus.Dispatch(ev);
+    Bus.Dispatch(ev);
     if (ev.IsCanceled) return false;
 
     return await SendMessage(player, ev.Message, ev.Args);

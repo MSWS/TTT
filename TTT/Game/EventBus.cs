@@ -27,17 +27,15 @@ public class EventBus(IServiceProvider provider) : IEventBus, ITerrorModule {
     }
   }
 
-  public Task Dispatch(Event ev) {
+  public void Dispatch(Event ev) {
     var type = ev.GetType();
 
     handlers.TryGetValue(type, out var list);
 
-    if (list == null || list.Count == 0) return Task.CompletedTask;
+    if (list == null || list.Count == 0) return;
 
     ICancelableEvent? cancelable           = null;
     if (ev is ICancelableEvent) cancelable = (ICancelableEvent)ev;
-
-    List<Task> tasks = [];
 
     foreach (var (listener, method) in list) {
       if (cancelable is { IsCanceled: true } && method
@@ -45,11 +43,8 @@ public class EventBus(IServiceProvider provider) : IEventBus, ITerrorModule {
       ?.IgnoreCanceled == true)
         continue;
 
-      var result = method.Invoke(listener, [ev]);
-      if (result is Task task) tasks.Add(task);
+      method.Invoke(listener, [ev]);
     }
-
-    return Task.WhenAll(tasks);
   }
 
   public void Dispose() { handlers.Clear(); }
@@ -84,6 +79,11 @@ public class EventBus(IServiceProvider provider) : IEventBus, ITerrorModule {
     HashSet<Type> dirtyTypes, MethodInfo method) {
     var attr = method.GetCustomAttribute<EventHandlerAttribute>();
     if (attr == null) return;
+
+    if (method.ReturnType != typeof(void))
+      throw new InvalidOperationException(
+        $"Method {method.Name} in {listener.GetType().Name} "
+        + "must have void return type.");
 
     var parameters = method.GetParameters();
     if (parameters.Length != 1

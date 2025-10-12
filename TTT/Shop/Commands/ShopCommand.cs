@@ -1,34 +1,45 @@
 using CounterStrikeSharp.API.Modules.Utils;
 using Microsoft.Extensions.DependencyInjection;
+using ShopAPI;
 using TTT.API.Command;
 using TTT.API.Player;
-using TTT.Game.lang;
+using TTT.Game;
 using TTT.Locale;
 
 namespace TTT.Shop.Commands;
 
-public class ShopCommand(IServiceProvider provider) : ICommand {
+public class ShopCommand(IServiceProvider provider) : ICommand, IItemSorter {
   private readonly IMsgLocalizer locale = provider
    .GetRequiredService<IMsgLocalizer>();
 
-  private readonly Dictionary<string, ICommand> subcommands = new() {
-    ["list"]    = new ListCommand(provider),
-    ["buy"]     = new BuyCommand(provider),
-    ["balance"] = new BalanceCommand(provider),
-    ["bal"]     = new BalanceCommand(provider)
-  };
+  private readonly ListCommand listCmd = new(provider);
+
+  private Dictionary<string, ICommand>? subcommands;
 
   public void Dispose() { }
   public string Id => "shop";
   public string[] Usage => ["list", "buy [item]", "balance"];
 
-  public void Start() { }
+  public void Start() {
+    subcommands = new Dictionary<string, ICommand> {
+      ["list"]    = listCmd,
+      ["buy"]     = new BuyCommand(provider),
+      ["balance"] = new BalanceCommand(provider),
+      ["bal"]     = new BalanceCommand(provider)
+    };
+  }
 
   public bool MustBeOnMainThread => true;
 
   public Task<CommandResult>
     Execute(IOnlinePlayer? executor, ICommandInfo info) {
     HashSet<string> sent = [];
+    if (subcommands == null) {
+      info.ReplySync(
+        $"{locale[GameMsgs.PREFIX]}{ChatColors.Red}No subcommands available.");
+      return Task.FromResult(CommandResult.ERROR);
+    }
+
     if (info.ArgCount == 1) {
       foreach (var (_, cmd) in subcommands) {
         if (!sent.Add(cmd.Id)) continue;
@@ -51,5 +62,14 @@ public class ShopCommand(IServiceProvider provider) : ICommand {
     if (subcommands.TryGetValue(sub, out var command))
       return command.Execute(executor, info.Skip());
     return Task.FromResult(CommandResult.ERROR);
+  }
+
+  public List<IShopItem> GetSortedItems(IOnlinePlayer? player,
+    bool refresh = false) {
+    return listCmd.GetSortedItems(player, refresh);
+  }
+
+  public DateTime? GetLastUpdate(IOnlinePlayer? player) {
+    return listCmd.GetLastUpdate(player);
   }
 }

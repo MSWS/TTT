@@ -8,6 +8,7 @@ using TTT.API.Player;
 using TTT.API.Storage;
 using TTT.Game.Events.Player;
 using TTT.Game.Listeners;
+using TTT.Game.Roles;
 
 namespace TTT.Shop.Items;
 
@@ -44,8 +45,10 @@ public class DeagleDamageListener(IServiceProvider provider)
     var attackerRole = Roles.GetRoles(attacker);
     var victimRole   = Roles.GetRoles(victim);
 
-    shop.RemoveItem(attacker, deagleItem);
-    if (attackerRole.Intersect(victimRole).Any()) {
+    shop.RemoveItem<OneShotDeagleItem>(attacker);
+    var attackerIsTraitor = attackerRole.Any(r => r is TraitorRole);
+    var victimIsTraitor   = victimRole.Any(r => r is TraitorRole);
+    if (attackerIsTraitor == victimIsTraitor) {
       if (config.KillShooterOnFF) attacker.Health = 0;
       Messenger.Message(attacker, Locale[DeagleMsgs.SHOP_ITEM_DEAGLE_HIT_FF]);
       if (!config.DoesFriendlyFire) {

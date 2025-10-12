@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using JetBrains.Annotations;
+using Microsoft.Extensions.DependencyInjection;
 using ShopAPI;
 using ShopAPI.Configs.Traitor;
 using TTT.API.Events;
@@ -12,14 +13,15 @@ namespace TTT.CS2.Items.OneHitKnife;
 
 public class OneHitKnifeListener(IServiceProvider provider)
   : BaseListener(provider) {
-  private readonly IShop shop = provider.GetRequiredService<IShop>();
-
   private readonly OneHitKnifeConfig config =
     provider.GetService<IStorage<OneHitKnifeConfig>>()
     ?.Load()
      .GetAwaiter()
      .GetResult() ?? new OneHitKnifeConfig();
 
+  private readonly IShop shop = provider.GetRequiredService<IShop>();
+
+  [UsedImplicitly]
   [EventHandler]
   public void OnDamage(PlayerDamagedEvent ev) {
     if (Games.ActiveGame is not { State: State.IN_PROGRESS }) return;
@@ -37,6 +39,6 @@ public class OneHitKnifeListener(IServiceProvider provider)
     if (friendly && !config.FriendlyFire) return;
 
     shop.RemoveItem<OneHitKnife>(attacker);
-    onlineVictim.Health = 0;
+    ev.HpLeft = 0;
   }
 }

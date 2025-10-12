@@ -3,7 +3,7 @@ using CounterStrikeSharp.API.Modules.Utils;
 using Microsoft.Extensions.DependencyInjection;
 using TTT.API.Player;
 using TTT.API.Role;
-using TTT.Game.lang;
+using TTT.Game;
 using TTT.Locale;
 using Xunit;
 

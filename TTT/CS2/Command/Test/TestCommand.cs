@@ -24,6 +24,8 @@ public class TestCommand(IServiceProvider provider) : ICommand, IPluginModule {
     subCommands.Add("index", new IndexCommand());
     subCommands.Add("showicons", new ShowIconsCommand(provider));
     subCommands.Add("sethealth", new SetHealthCommand());
+    subCommands.Add("emitsound", new EmitSoundCommand(provider));
+    subCommands.Add("credits", new CreditsCommand(provider));
   }
 
   public Task<CommandResult>

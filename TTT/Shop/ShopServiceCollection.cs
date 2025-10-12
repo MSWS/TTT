@@ -4,10 +4,12 @@ using TTT.API.Extensions;
 using TTT.CS2.Items.Armor;
 using TTT.CS2.Items.BodyPaint;
 using TTT.CS2.Items.Camouflage;
+using TTT.CS2.Items.Compass;
 using TTT.CS2.Items.DNA;
 using TTT.CS2.Items.OneHitKnife;
 using TTT.CS2.Items.PoisonShots;
 using TTT.CS2.Items.PoisonSmoke;
+using TTT.CS2.Items.SilentAWP;
 using TTT.CS2.Items.Station;
 using TTT.Shop.Commands;
 using TTT.Shop.Items;
@@ -29,8 +31,9 @@ public static class ShopServiceCollection {
     collection.AddModBehavior<RoleAssignCreditor>();
     collection.AddModBehavior<PlayerKillListener>();
     collection.AddModBehavior<PeriodicRewarder>();
+    collection.AddModBehavior<TaseRewarder>();
 
-    collection.AddModBehavior<ShopCommand>();
+    collection.AddModBehavior<IItemSorter, ShopCommand>();
     collection.AddModBehavior<BuyCommand>();
     collection.AddModBehavior<BalanceCommand>();
 
@@ -38,6 +41,7 @@ public static class ShopServiceCollection {
     collection.AddBodyPaintServices();
     collection.AddC4Services();
     collection.AddCamoServices();
+    collection.AddCompassServices();
     collection.AddDamageStation();
     collection.AddDeagleServices();
     collection.AddDnaScannerServices();
@@ -48,6 +52,7 @@ public static class ShopServiceCollection {
     collection.AddOneHitKnifeService();
     collection.AddPoisonShots();
     collection.AddPoisonSmoke();
+    collection.AddSilentAWPServices();
     collection.AddStickerServices();
     collection.AddTaserItem();
   }

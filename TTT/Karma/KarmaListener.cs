@@ -4,6 +4,7 @@ using TTT.API.Events;
 using TTT.API.Game;
 using TTT.API.Player;
 using TTT.API.Role;
+using TTT.API.Storage;
 using TTT.Game.Events.Game;
 using TTT.Game.Events.Player;
 using TTT.Game.Listeners;
@@ -12,13 +13,6 @@ using TTT.Game.Roles;
 namespace TTT.Karma;
 
 public class KarmaListener(IServiceProvider provider) : BaseListener(provider) {
-  private static readonly int INNO_ON_TRAITOR = 2;
-  private static readonly int TRAITOR_ON_DETECTIVE = 1;
-  private static readonly int INNO_ON_INNO_VICTIM = -1;
-  private static readonly int INNO_ON_INNO = -4;
-  private static readonly int TRAITOR_ON_TRAITOR = -5;
-  private static readonly int INNO_ON_DETECTIVE = -6;
-
   private readonly Dictionary<string, int> badKills = new();
 
   private readonly IGameManager games =
@@ -27,10 +21,16 @@ public class KarmaListener(IServiceProvider provider) : BaseListener(provider) {
   private readonly IKarmaService karma =
     provider.GetRequiredService<IKarmaService>();
 
+  private readonly Dictionary<IPlayer, int> queuedKarmaUpdates = new();
+
   private readonly IRoleAssigner roles =
     provider.GetRequiredService<IRoleAssigner>();
 
-  private readonly Dictionary<IPlayer, int> queuedKarmaUpdates = new();
+  private readonly KarmaConfig config =
+    provider.GetService<IStorage<KarmaConfig>>()
+    ?.Load()
+     .GetAwaiter()
+     .GetResult() ?? new KarmaConfig();
 
   [EventHandler]
   [UsedImplicitly]
@@ -63,18 +63,20 @@ public class KarmaListener(IServiceProvider provider) : BaseListener(provider) {
       case InnocentRole when killerRole is TraitorRole:
         return;
       case InnocentRole:
-        victimKarmaDelta = INNO_ON_INNO_VICTIM;
-        killerKarmaDelta = INNO_ON_INNO;
+        victimKarmaDelta = config.INNO_ON_INNO_VICTIM;
+        killerKarmaDelta = config.INNO_ON_INNO;
         break;
       case TraitorRole:
         killerKarmaDelta = killerRole is TraitorRole ?
-          TRAITOR_ON_TRAITOR :
-          INNO_ON_TRAITOR;
+          config.TRAITOR_ON_TRAITOR :
+          config.INNO_ON_TRAITOR;
         break;
       case DetectiveRole:
         killerKarmaDelta = killerRole is TraitorRole ?
-          TRAITOR_ON_DETECTIVE :
-          INNO_ON_DETECTIVE;
+          config.TRAITOR_ON_DETECTIVE :
+          config.INNO_ON_DETECTIVE;
+        if (killerRole is DetectiveRole)
+          victimKarmaDelta = config.INNO_ON_INNO_VICTIM;
         break;
     }
 
@@ -88,18 +90,15 @@ public class KarmaListener(IServiceProvider provider) : BaseListener(provider) {
 
   [UsedImplicitly]
   [EventHandler]
-  public Task OnRoundEnd(GameStateUpdateEvent ev) {
-    if (ev.NewState != State.FINISHED) return Task.CompletedTask;
+  public void OnRoundEnd(GameStateUpdateEvent ev) {
+    if (ev.NewState != State.FINISHED) return;
 
-    var tasks = new List<Task>();
-    foreach (var (player, karmaDelta) in queuedKarmaUpdates) {
-      tasks.Add(Task.Run(async () => {
+    foreach (var (player, karmaDelta) in queuedKarmaUpdates)
+      Task.Run(async () => {
         var newKarma = await karma.Load(player) + karmaDelta;
         await karma.Write(player, newKarma);
-      }));
-    }
+      });
 
     queuedKarmaUpdates.Clear();
-    return Task.WhenAll(tasks);
   }
 }

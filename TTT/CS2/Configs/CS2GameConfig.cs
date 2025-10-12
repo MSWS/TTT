@@ -11,7 +11,7 @@ namespace TTT.CS2.Configs;
 
 public class CS2GameConfig : IStorage<TTTConfig>, IPluginModule {
   public static readonly FakeConVar<int> CV_ROUND_COUNTDOWN = new(
-    "css_ttt_round_countdown", "Time to wait before starting a round", 10,
+    "css_ttt_round_countdown", "Time to wait before starting a round", 15,
     ConVarFlags.FCVAR_NONE, new RangeValidator<int>(1, 60));
 
   public static readonly FakeConVar<int> CV_MINIMUM_PLAYERS = new(
@@ -80,7 +80,7 @@ public class CS2GameConfig : IStorage<TTTConfig>, IPluginModule {
     new ItemValidator(allowMultiple: true));
 
   public static readonly FakeConVar<int> CV_TIME_BETWEEN_ROUNDS = new(
-    "css_ttt_time_between_rounds", "Time to wait between rounds in seconds", 5,
+    "css_ttt_time_between_rounds", "Time to wait between rounds in seconds", 1,
     ConVarFlags.FCVAR_NONE, new RangeValidator<int>(1, 60));
 
   public void Dispose() { }

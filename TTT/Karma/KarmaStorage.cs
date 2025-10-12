@@ -39,7 +39,7 @@ public class KarmaStorage(IServiceProvider provider) : IKarmaService {
 
     var scheduler = provider.GetRequiredService<IScheduler>();
 
-    Observable.Interval(TimeSpan.FromMinutes(5), scheduler)
+    Observable.Interval(TimeSpan.FromSeconds(30), scheduler)
      .Subscribe(_ => Task.Run(async () => await updateKarmas()));
   }
 
@@ -76,7 +76,7 @@ public class KarmaStorage(IServiceProvider provider) : IKarmaService {
     if (oldKarma == newData) return;
 
     var karmaUpdateEvent = new KarmaUpdateEvent(key, oldKarma, newData);
-    await bus.Dispatch(karmaUpdateEvent);
+    bus.Dispatch(karmaUpdateEvent);
     if (karmaUpdateEvent.IsCanceled) return;
 
     karmaCache[key] = newData;

@@ -16,33 +16,34 @@ public class PlayerKillListener(IServiceProvider provider)
 
   [UsedImplicitly]
   [EventHandler]
-  public async Task OnKill(PlayerDeathEvent ev) {
+  public void OnKill(PlayerDeathEvent ev) {
     if (Games.ActiveGame is not { State: State.IN_PROGRESS }) return;
     if (ev.Killer == null) return;
-    var victimBal = await shop.Load(ev.Victim);
-
-    shop.AddBalance(ev.Killer, victimBal / 6, "Killed " + ev.Victim.Name);
+    Task.Run(async () => {
+      var victimBal = await shop.Load(ev.Victim);
+      shop.AddBalance(ev.Killer, victimBal / 6, "Killed " + ev.Victim.Name);
+    });
   }
 
   [UsedImplicitly]
   [EventHandler(IgnoreCanceled = true)]
-  public async Task OnIdentify(BodyIdentifyEvent ev) {
+  public void OnIdentify(BodyIdentifyEvent ev) {
     if (ev.Identifier == null) return;
-    var victimBal = await shop.Load(ev.Body.OfPlayer);
-    shop.AddBalance(ev.Identifier, victimBal / 4,
-      "Identified " + ev.Body.OfPlayer.Name);
+    Task.Run(async () => {
+      var victimBal = await shop.Load(ev.Body.OfPlayer);
+      shop.AddBalance(ev.Identifier, victimBal / 4,
+        "Identified " + ev.Body.OfPlayer.Name);
 
-    if (ev.Body.Killer is not IOnlinePlayer killer) return;
+      if (ev.Body.Killer is not IOnlinePlayer killer) return;
 
-    if (!isGoodKill(ev.Body.Killer, ev.Body.OfPlayer)) {
-      var killerBal = await shop.Load(killer);
-      shop.AddBalance(killer, -killerBal / 4,
-        ev.Body.OfPlayer.Name + " Bad Kill");
-      return;
-    }
+      if (!isGoodKill(ev.Body.Killer, ev.Body.OfPlayer)) {
+        var killerBal = await shop.Load(killer);
+        shop.AddBalance(killer, -killerBal / 4 - victimBal / 2, "Bad Kill");
+        return;
+      }
 
-    shop.AddBalance(killer, victimBal / 4,
-      ev.Body.OfPlayer.Name + " Good Kill");
+      shop.AddBalance(killer, victimBal / 4, "Good Kill");
+    });
   }
 
   private bool isGoodKill(IPlayer attacker, IPlayer victim) {

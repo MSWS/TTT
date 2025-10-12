@@ -1,7 +1,6 @@
 using System.Drawing;
 using Microsoft.Extensions.DependencyInjection;
 using TTT.API.Player;
-using TTT.Game.lang;
 using TTT.Locale;
 
 namespace TTT.Game.Roles;
