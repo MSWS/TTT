@@ -105,8 +105,10 @@ public class Shop(IServiceProvider provider) : ITerrorModule, IShop {
     return items.GetValueOrDefault(player.Id, []);
   }
 
-  public void RemoveItem(IOnlinePlayer player, IShopItem item) {
+  public void RemoveItem<T>(IOnlinePlayer player) where T : IShopItem {
     if (!items.TryGetValue(player.Id, out var itemList)) return;
+    var item = itemList.FirstOrDefault(i => i is T);
+    if (item == null) return;
     itemList.Remove(item);
   }
 

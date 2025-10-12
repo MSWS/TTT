@@ -45,7 +45,7 @@ public class DeagleDamageListener(IServiceProvider provider)
     var attackerRole = Roles.GetRoles(attacker);
     var victimRole   = Roles.GetRoles(victim);
 
-    shop.RemoveItem(attacker, deagleItem);
+    shop.RemoveItem<OneShotDeagleItem>(attacker);
     var attackerIsTraitor = attackerRole.Any(r => r is TraitorRole);
     var victimIsTraitor   = victimRole.Any(r => r is TraitorRole);
     if (attackerIsTraitor == victimIsTraitor) {
