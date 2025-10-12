@@ -130,6 +130,10 @@ public class KarmaListenerTests {
 
     game.EndGame();
 
+    await Task.Delay(TimeSpan.FromMilliseconds(20),
+      TestContext.Current
+       .CancellationToken); // Wait for the karma update to process
+
     var killerKarma = await karma.Load(attacker);
     Assert.Equal(20, killerKarma);
   }
