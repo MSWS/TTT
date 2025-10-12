@@ -80,6 +80,11 @@ public class EventBus(IServiceProvider provider) : IEventBus, ITerrorModule {
     var attr = method.GetCustomAttribute<EventHandlerAttribute>();
     if (attr == null) return;
 
+    if (method.ReturnType != typeof(void))
+      throw new InvalidOperationException(
+        $"Method {method.Name} in {listener.GetType().Name} "
+        + "must have void return type.");
+
     var parameters = method.GetParameters();
     if (parameters.Length != 1
       || !typeof(Event).IsAssignableFrom(parameters[0].ParameterType))

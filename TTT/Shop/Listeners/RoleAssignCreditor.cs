@@ -30,19 +30,23 @@ public class RoleAssignCreditor(IServiceProvider provider)
 
   [UsedImplicitly]
   [EventHandler]
-  public async Task OnRoleAssign(PlayerRoleAssignEvent ev) {
+  public void OnRoleAssign(PlayerRoleAssignEvent ev) {
     var toGive = config.StartingCreditsForRole(ev.Role);
     if (ev.Player is not IOnlinePlayer online) return;
 
-    if (karmaService != null) {
+    if (karmaService == null) {
+      shop.AddBalance(online, toGive, "Round Start", false);
+      return;
+    }
+
+    Task.Run(async () => {
       var karma = await karmaService.Load(ev.Player);
       var percent = (karma + karmaConfig.MinKarma)
         / (float)karmaConfig.MaxKarma(ev.Player);
       var givenScale = toGive * getKarmaScale(percent);
       toGive = (int)Math.Ceiling(givenScale);
-    }
-
-    shop.AddBalance(online, toGive, "Round Start", false);
+      shop.AddBalance(online, toGive, "Round Start", false);
+    });
   }
 
   private float getKarmaScale(float percent) {
