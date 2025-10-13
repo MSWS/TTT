@@ -10,11 +10,10 @@ public class LogsCommand(IServiceProvider provider) : ICommand {
     provider.GetRequiredService<IGameManager>();
 
   public void Dispose() { }
+  public string[] RequiredFlags => ["@ttt/admin"];
 
   public string Id => "logs";
   public void Start() { }
-
-  // TODO: Restrict and verbalize usage
 
   public Task<CommandResult>
     Execute(IOnlinePlayer? executor, ICommandInfo info) {

@@ -49,7 +49,7 @@ public class RoleAssigner(IServiceProvider provider) : IRoleAssigner {
       assignedRoles[player].Add(ev.Role);
       ev.Role.OnAssign(player);
 
-      onlineMessenger?.BackgroundMsgAll(
+      onlineMessenger?.Debug(
         $"{player.Name} was assigned the role of {role.Name}.");
       return true;
     }
