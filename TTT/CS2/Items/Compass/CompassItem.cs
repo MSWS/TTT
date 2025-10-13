@@ -42,7 +42,7 @@ public class CompassItem(IServiceProvider provider)
 
   public void Start(BasePlugin? plugin) {
     base.Start();
-    plugin?.AddTimer(0.5f, tick, TimerFlags.REPEAT);
+    plugin?.AddTimer(0.1f, tick, TimerFlags.REPEAT);
   }
 
   public override void OnPurchase(IOnlinePlayer player) { }
