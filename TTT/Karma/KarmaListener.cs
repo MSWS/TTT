@@ -45,7 +45,7 @@ public class KarmaListener(IServiceProvider provider) : BaseListener(provider) {
     var killer = ev.Killer;
 
     if (killer == null) return;
-    if (victim == killer) return;
+    if (victim.Id ==  killer.Id) return;
 
     var victimRole = roles.GetRoles(victim).First();
     var killerRole = roles.GetRoles(killer).First();
