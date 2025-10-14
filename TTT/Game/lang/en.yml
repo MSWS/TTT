@@ -22,4 +22,5 @@ NOT_ENOUGH_PLAYERS: "%PREFIX%{red}Game was canceled due to having fewer than {ye
 BODY_IDENTIFIED: "%PREFIX%{default}{0}{grey} identified the body of {blue}{1}{grey}, they were %an% {2}{grey}!"
 GAME_LOGS_HEADER: "---------- Game Logs ----------"
 GAME_LOGS_FOOTER: "-------------------------------"
+GAME_LOGS_NONE: "%PREFIX%There is no game active."
 LOGS_VIEWED_ALIVE: "%PREFIX%{red}{0}{grey} viewed the logs while alive."

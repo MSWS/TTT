@@ -32,7 +32,7 @@ public class LogsCommand(IServiceProvider provider) : ICommand {
     if (games.ActiveGame is not {
       State: State.IN_PROGRESS or State.FINISHED
     }) {
-      info.ReplySync("No active game to show logs for.");
+      messenger.Message(executor, localizer[GameMsgs.GAME_LOGS_NONE]);
       return Task.FromResult(CommandResult.ERROR);
     }
 
