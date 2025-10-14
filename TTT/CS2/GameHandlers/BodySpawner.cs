@@ -12,11 +12,13 @@ using TTT.API.Game;
 using TTT.API.Player;
 using TTT.CS2.Extensions;
 using TTT.Game.Events.Body;
+using TTT.Game.Events.Player;
+using TTT.Game.Listeners;
 using TTT.Game.Roles;
 
 namespace TTT.CS2.GameHandlers;
 
-public class BodySpawner(IServiceProvider provider) : IPluginModule {
+public class BodySpawner(IServiceProvider provider) : BaseListener(provider) {
   private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
 
   private readonly IPlayerConverter<CCSPlayerController> converter =
@@ -25,31 +27,37 @@ public class BodySpawner(IServiceProvider provider) : IPluginModule {
   private readonly IGameManager games =
     provider.GetRequiredService<IGameManager>();
 
-  public void Dispose() { }
-  public void Start() { }
+  [UsedImplicitly]
+  [EventHandler]
+  public void OnLeave(PlayerLeaveEvent ev) {
+    if (games.ActiveGame is not { State: State.IN_PROGRESS }) return;
+    spawnRagdoll(ev.Player);
+  }
 
   [UsedImplicitly]
-  [GameEventHandler]
-  public HookResult OnDeath(EventPlayerDeath ev, GameEventInfo _) {
-    if (games.ActiveGame is not { State: State.IN_PROGRESS })
-      return HookResult.Continue;
-    var player = ev.Userid;
-    if (player == null || !player.IsValid) return HookResult.Continue;
+  [EventHandler]
+  public void OnDeath(PlayerDeathEvent ev) {
+    if (games.ActiveGame is not { State: State.IN_PROGRESS }) return;
+    spawnRagdoll(ev.Player, ev.Killer, ev.Weapon);
+  }
+
+  private void spawnRagdoll(IPlayer apiPlayer, IOnlinePlayer? killer = null,
+    string? weapon = null) {
+    var player = converter.GetPlayer(apiPlayer);
+    if (player == null || !player.IsValid) return;
     player.SetColor(Color.FromArgb(0, 255, 255, 255));
 
     var ragdollBody = makeGameRagdoll(player);
     var body        = new CS2Body(ragdollBody, converter.GetPlayer(player));
 
-    if (ev.Attacker != null && ev.Attacker.IsValid)
-      body.WithKiller(converter.GetPlayer(ev.Attacker));
+    if (killer != null) body.WithKiller(killer);
 
-    body.WithWeapon(new BaseWeapon(ev.Weapon));
+    body.WithWeapon(new BaseWeapon(weapon ?? "unknown"));
 
     var bodyCreatedEvent = new BodyCreateEvent(body);
     bus.Dispatch(bodyCreatedEvent);
 
     if (bodyCreatedEvent.IsCanceled) ragdollBody.AcceptInput("Kill");
-    return HookResult.Continue;
   }
 
   [UsedImplicitly]

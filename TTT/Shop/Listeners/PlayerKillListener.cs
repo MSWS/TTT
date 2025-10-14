@@ -21,7 +21,7 @@ public class PlayerKillListener(IServiceProvider provider)
     if (ev.Killer == null) return;
     Task.Run(async () => {
       var victimBal = await shop.Load(ev.Victim);
-      shop.AddBalance(ev.Killer, victimBal / 6, "Killed " + ev.Victim.Name);
+      shop.AddBalance(ev.Killer, victimBal / 2, "Killed " + ev.Victim.Name);
     });
   }
 
@@ -38,7 +38,7 @@ public class PlayerKillListener(IServiceProvider provider)
 
       if (!isGoodKill(ev.Body.Killer, ev.Body.OfPlayer)) {
         var killerBal = await shop.Load(killer);
-        shop.AddBalance(killer, -killerBal / 4 - victimBal / 2, "Bad Kill");
+        shop.AddBalance(killer, -killerBal / 3 - victimBal / 2, "Bad Kill");
         return;
       }
 
