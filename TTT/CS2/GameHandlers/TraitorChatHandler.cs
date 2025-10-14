@@ -1,4 +1,5 @@
-﻿using CounterStrikeSharp.API.Core;
+﻿using CounterStrikeSharp.API;
+using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Commands;
 using MAULActainShared.plugin;
 using Microsoft.Extensions.DependencyInjection;
@@ -33,15 +34,25 @@ public class TraitorChatHandler(IServiceProvider provider) : IPluginModule {
   private IActain? maulService = null;
 
   public void Start(BasePlugin? plugin) {
-    plugin?.AddCommandListener("say_team", onSay);
     try {
       maulService ??= EgoApi.MAUL.Get();
-      if (maulService != null)
-        maulService.getChatShareService().OnChatShare += (
-          CCSPlayerController? player, CommandInfo info, ref bool canceled) => {
-          canceled = true;
-        };
-    } catch (KeyNotFoundException) { }
+      if (maulService != null) {
+        maulService.getChatShareService().OnChatShare += OnOnChatShare;
+        return;
+      }
+
+      plugin?.AddCommandListener("say_team", onSay);
+    } catch (KeyNotFoundException) {
+      plugin?.AddCommandListener("say_team", onSay);
+    }
+  }
+
+  private void OnOnChatShare(CCSPlayerController? player, CommandInfo info,
+    ref bool canceled) {
+    if (!info.GetArg(0).Equals("say_team", StringComparison.OrdinalIgnoreCase))
+      return;
+    var result                                 = onSay(player, info);
+    if (result == HookResult.Handled) canceled = true;
   }
 
   private HookResult onSay(CCSPlayerController? player,
@@ -58,14 +69,18 @@ public class TraitorChatHandler(IServiceProvider provider) : IPluginModule {
     if (teammates == null) return HookResult.Continue;
 
     var msg = commandInfo.ArgString;
-    if (msg.StartsWith('\\') && msg.EndsWith('\\') && msg.Length >= 2)
+    if (msg.StartsWith('"') && msg.EndsWith('"') && msg.Length >= 2)
       msg = msg[1..^1];
     var formatted = locale[CS2Msgs.TRAITOR_CHAT_FORMAT(apiPlayer, msg)];
 
     foreach (var mate in teammates) messenger.Message(mate, formatted);
-    return HookResult.Stop;
+    return HookResult.Handled;
   }
 
-  public void Dispose() { }
+  public void Dispose() {
+    if (maulService != null)
+      maulService.getChatShareService().OnChatShare -= OnOnChatShare;
+  }
+
   public void Start() { }
 }
