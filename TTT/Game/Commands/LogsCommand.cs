@@ -16,12 +16,13 @@ public class LogsCommand(IServiceProvider provider) : ICommand {
 
   private readonly IMsgLocalizer localizer =
     provider.GetRequiredService<IMsgLocalizer>();
-  
-  private readonly IIconManager? icons =
-    provider.GetService<IIconManager>();
+
+  private readonly IIconManager? icons = provider.GetService<IIconManager>();
 
   public void Dispose() { }
   public string[] RequiredFlags => ["@ttt/admin"];
+
+  public bool MustBeOnMainThread => true;
 
   public string Id => "logs";
   public void Start() { }
@@ -38,7 +39,7 @@ public class LogsCommand(IServiceProvider provider) : ICommand {
     if (executor is { IsAlive: true })
       messenger.MessageAll(localizer[GameMsgs.LOGS_VIEWED_ALIVE(executor)]);
     else if (icons != null && executor != null) {
-      if(int.TryParse(executor.Id, out var slot))
+      if (int.TryParse(executor.Id, out var slot))
         icons.SetVisiblePlayers(slot, ulong.MaxValue);
     }
 
