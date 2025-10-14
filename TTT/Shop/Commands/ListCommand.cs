@@ -5,6 +5,8 @@ using ShopAPI;
 using TTT.API.Command;
 using TTT.API.Game;
 using TTT.API.Player;
+using TTT.API.Role;
+using TTT.Locale;
 
 namespace TTT.Shop.Commands;
 
@@ -17,6 +19,12 @@ public class ListCommand(IServiceProvider provider) : ICommand, IItemSorter {
 
   private readonly IDictionary<IOnlinePlayer, DateTime> lastUpdate =
     new Dictionary<IOnlinePlayer, DateTime>();
+
+  private readonly IRoleAssigner roles = provider
+   .GetRequiredService<IRoleAssigner>();
+
+  private readonly IMsgLocalizer locale = provider
+   .GetRequiredService<IMsgLocalizer>();
 
   private readonly IShop shop = provider.GetRequiredService<IShop>();
 
@@ -43,6 +51,13 @@ public class ListCommand(IServiceProvider provider) : ICommand, IItemSorter {
       info.ReplySync(formatItem(item, items.Count - index, canPurchase));
     }
 
+    if (games.ActiveGame is not { State: State.IN_PROGRESS }
+      || executor == null)
+      return CommandResult.SUCCESS;
+    var role = roles.GetRoles(executor).FirstOrDefault();
+    if (role == null) return CommandResult.SUCCESS;
+
+    info.ReplySync(locale[ShopMsgs.SHOP_LIST_FOOTER(role, balance)]);
     return CommandResult.SUCCESS;
   }
 
