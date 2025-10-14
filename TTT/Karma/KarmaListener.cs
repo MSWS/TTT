@@ -32,6 +32,8 @@ public class KarmaListener(IServiceProvider provider) : BaseListener(provider) {
      .GetAwaiter()
      .GetResult() ?? new KarmaConfig();
 
+  public bool GiveKarmaOnRoundEnd = true;
+
   [EventHandler]
   [UsedImplicitly]
   public void OnRoundStart(GameStateUpdateEvent ev) { badKills.Clear(); }
@@ -95,16 +97,17 @@ public class KarmaListener(IServiceProvider provider) : BaseListener(provider) {
     if (ev.NewState != State.FINISHED) return;
 
     var winner = ev.Game.WinningRole;
-    foreach (var player in ev.Game.Players) {
-      if (Roles.GetRoles(player).Any(r => r.GetType() == winner?.GetType()))
-        queuedKarmaUpdates[player] =
-          queuedKarmaUpdates.GetValueOrDefault(player, 0)
-          + config.KarmaPerRoundWin;
-      else
-        queuedKarmaUpdates[player] =
-          queuedKarmaUpdates.GetValueOrDefault(player, 0)
-          + config.KarmaPerRound;
-    }
+    if (GiveKarmaOnRoundEnd)
+      foreach (var player in ev.Game.Players) {
+        if (Roles.GetRoles(player).Any(r => r.GetType() == winner?.GetType()))
+          queuedKarmaUpdates[player] =
+            queuedKarmaUpdates.GetValueOrDefault(player, 0)
+            + config.KarmaPerRoundWin;
+        else
+          queuedKarmaUpdates[player] =
+            queuedKarmaUpdates.GetValueOrDefault(player, 0)
+            + config.KarmaPerRound;
+      }
 
     foreach (var (player, karmaDelta) in queuedKarmaUpdates)
       Task.Run(async () => {

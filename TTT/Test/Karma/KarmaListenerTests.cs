@@ -35,7 +35,10 @@ public class KarmaListenerTests {
       new DetectiveRole(provider)
     };
 
-    bus.RegisterListener(new KarmaListener(provider));
+    var listener = new KarmaListener(provider);
+    listener.GiveKarmaOnRoundEnd = false;
+
+    bus.RegisterListener(listener);
   }
 
   [Fact]
@@ -59,13 +62,13 @@ public class KarmaListenerTests {
 
   [Theory]
   [InlineData(RoleEnum.Innocent, RoleEnum.Innocent, 46, 49)]
-  [InlineData(RoleEnum.Innocent, RoleEnum.Traitor, 52, 50)]
+  [InlineData(RoleEnum.Innocent, RoleEnum.Traitor, 55, 50)]
   [InlineData(RoleEnum.Innocent, RoleEnum.Detective, 44, 50)]
   [InlineData(RoleEnum.Traitor, RoleEnum.Innocent, 50, 50)]
   [InlineData(RoleEnum.Traitor, RoleEnum.Traitor, 45, 50)]
   [InlineData(RoleEnum.Traitor, RoleEnum.Detective, 51, 50)]
   [InlineData(RoleEnum.Detective, RoleEnum.Innocent, 46, 49)]
-  [InlineData(RoleEnum.Detective, RoleEnum.Traitor, 52, 50)]
+  [InlineData(RoleEnum.Detective, RoleEnum.Traitor, 55, 50)]
   [InlineData(RoleEnum.Detective, RoleEnum.Detective, 44, 49)]
   public async Task OnKill_AffectsKarma(RoleEnum attackerRole,
     RoleEnum victimRole, int expAttackerKarma, int expVictimKarma) {
