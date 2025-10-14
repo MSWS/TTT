@@ -1,6 +1,5 @@
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Admin;
-using CounterStrikeSharp.API.Modules.Entities;
 using TTT.API.Player;
 
 namespace TTT.CS2.Player;

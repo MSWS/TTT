@@ -44,7 +44,9 @@ public class PlayerPingShopAlias(IServiceProvider provider) : IPluginModule {
     if (converter.GetPlayer(player) is not IOnlinePlayer gamePlayer) return;
 
     var lastUpdated = itemSorter.GetLastUpdate(gamePlayer);
-    if (lastUpdated == null || DateTime.Now - lastUpdated > TimeSpan.FromSeconds(20)) return;
+    if (lastUpdated == null
+      || DateTime.Now - lastUpdated > TimeSpan.FromSeconds(20))
+      return;
     var cmdInfo = new CS2CommandInfo(provider, gamePlayer, 0, "css_shop", "buy",
       (index - 1).ToString());
     cmdInfo.CallingContext = CommandCallingContext.Chat;

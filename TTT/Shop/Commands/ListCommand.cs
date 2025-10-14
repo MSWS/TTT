@@ -1,5 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-using CounterStrikeSharp.API.Modules.Utils;
+﻿using CounterStrikeSharp.API.Modules.Utils;
 using Microsoft.Extensions.DependencyInjection;
 using ShopAPI;
 using TTT.API.Command;
@@ -11,20 +10,20 @@ using TTT.Locale;
 namespace TTT.Shop.Commands;
 
 public class ListCommand(IServiceProvider provider) : ICommand, IItemSorter {
-  private readonly IGameManager games = provider
-   .GetRequiredService<IGameManager>();
-
   private readonly IDictionary<IOnlinePlayer, List<IShopItem>> cache =
     new Dictionary<IOnlinePlayer, List<IShopItem>>();
+
+  private readonly IGameManager games = provider
+   .GetRequiredService<IGameManager>();
 
   private readonly IDictionary<IOnlinePlayer, DateTime> lastUpdate =
     new Dictionary<IOnlinePlayer, DateTime>();
 
-  private readonly IRoleAssigner roles = provider
-   .GetRequiredService<IRoleAssigner>();
-
   private readonly IMsgLocalizer locale = provider
    .GetRequiredService<IMsgLocalizer>();
+
+  private readonly IRoleAssigner roles = provider
+   .GetRequiredService<IRoleAssigner>();
 
   private readonly IShop shop = provider.GetRequiredService<IShop>();
 
@@ -61,6 +60,20 @@ public class ListCommand(IServiceProvider provider) : ICommand, IItemSorter {
     return CommandResult.SUCCESS;
   }
 
+  public List<IShopItem> GetSortedItems(IOnlinePlayer? player,
+    bool refresh = false) {
+    if (player == null) return calculateSortedItems(null);
+    if (refresh || !cache.ContainsKey(player))
+      cache[player] = calculateSortedItems(player);
+    return cache[player];
+  }
+
+  public DateTime? GetLastUpdate(IOnlinePlayer? player) {
+    if (player == null) return null;
+    lastUpdate.TryGetValue(player, out var time);
+    return time;
+  }
+
   private List<IShopItem> calculateSortedItems(IOnlinePlayer? player) {
     var items = new List<IShopItem>(shop.Items).Where(item
         => player == null
@@ -90,10 +103,9 @@ public class ListCommand(IServiceProvider provider) : ICommand, IItemSorter {
       return
         $" {ChatColors.Grey}- [{ChatColors.DarkRed}{item.Config.Price}{ChatColors.Grey}] {ChatColors.Red}{item.Name}";
 
-    if (index > 9) {
+    if (index > 9)
       return
         $" {ChatColors.Default}- [{ChatColors.Yellow}{item.Config.Price}{ChatColors.Default}] {ChatColors.Green}{item.Name}";
-    }
 
     return
       $" {ChatColors.Blue}/{index} {ChatColors.Default}| [{ChatColors.Yellow}{item.Config.Price}{ChatColors.Default}] {ChatColors.Green}{item.Name}";
@@ -102,19 +114,5 @@ public class ListCommand(IServiceProvider provider) : ICommand, IItemSorter {
   private string formatItem(IShopItem item, int index, bool canBuy) {
     return
       $" {formatPrefix(item, index, canBuy)} {ChatColors.Grey} | {item.Description}";
-  }
-
-  public List<IShopItem> GetSortedItems(IOnlinePlayer? player,
-    bool refresh = false) {
-    if (player == null) return calculateSortedItems(null);
-    if (refresh || !cache.ContainsKey(player))
-      cache[player] = calculateSortedItems(player);
-    return cache[player];
-  }
-
-  public DateTime? GetLastUpdate(IOnlinePlayer? player) {
-    if (player == null) return null;
-    lastUpdate.TryGetValue(player, out var time);
-    return time;
   }
 }

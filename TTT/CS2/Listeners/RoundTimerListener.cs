@@ -57,7 +57,7 @@ public class RoundTimerListener(IServiceProvider provider)
       return;
     }
 
-    if (ev.NewState == State.IN_PROGRESS) {
+    if (ev.NewState == State.IN_PROGRESS)
       Server.NextWorldUpdate(() => {
         foreach (var player in Utilities.GetPlayers()
          .Where(p => p.LifeState != (int)LifeState_t.LIFE_ALIVE && p is {
@@ -65,7 +65,6 @@ public class RoundTimerListener(IServiceProvider provider)
           }))
           player.Respawn();
       });
-    }
 
     if (ev.NewState == State.FINISHED) endTimer?.Dispose();
     if (ev.NewState != State.IN_PROGRESS) return;

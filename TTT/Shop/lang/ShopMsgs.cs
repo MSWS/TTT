@@ -1,7 +1,6 @@
 using CounterStrikeSharp.API.Modules.Utils;
 using ShopAPI;
 using TTT.API.Role;
-using TTT.Game;
 using TTT.Locale;
 
 namespace TTT.Shop;

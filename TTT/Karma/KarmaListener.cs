@@ -15,6 +15,12 @@ namespace TTT.Karma;
 public class KarmaListener(IServiceProvider provider) : BaseListener(provider) {
   private readonly Dictionary<string, int> badKills = new();
 
+  private readonly KarmaConfig config =
+    provider.GetService<IStorage<KarmaConfig>>()
+    ?.Load()
+     .GetAwaiter()
+     .GetResult() ?? new KarmaConfig();
+
   private readonly IGameManager games =
     provider.GetRequiredService<IGameManager>();
 
@@ -25,12 +31,6 @@ public class KarmaListener(IServiceProvider provider) : BaseListener(provider) {
 
   private readonly IRoleAssigner roles =
     provider.GetRequiredService<IRoleAssigner>();
-
-  private readonly KarmaConfig config =
-    provider.GetService<IStorage<KarmaConfig>>()
-    ?.Load()
-     .GetAwaiter()
-     .GetResult() ?? new KarmaConfig();
 
   public bool GiveKarmaOnRoundEnd = true;
 
@@ -98,7 +98,7 @@ public class KarmaListener(IServiceProvider provider) : BaseListener(provider) {
 
     var winner = ev.Game.WinningRole;
     if (GiveKarmaOnRoundEnd)
-      foreach (var player in ev.Game.Players) {
+      foreach (var player in ev.Game.Players)
         if (Roles.GetRoles(player).Any(r => r.GetType() == winner?.GetType()))
           queuedKarmaUpdates[player] =
             queuedKarmaUpdates.GetValueOrDefault(player, 0)
@@ -107,7 +107,6 @@ public class KarmaListener(IServiceProvider provider) : BaseListener(provider) {
           queuedKarmaUpdates[player] =
             queuedKarmaUpdates.GetValueOrDefault(player, 0)
             + config.KarmaPerRound;
-      }
 
     foreach (var (player, karmaDelta) in queuedKarmaUpdates)
       Task.Run(async () => {

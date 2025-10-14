@@ -14,13 +14,13 @@ using TTT.Game.Events.Player;
 namespace TTT.CS2.GameHandlers;
 
 public class TeamChangeHandler(IServiceProvider provider) : IPluginModule {
-  private readonly IGameManager games =
-    provider.GetRequiredService<IGameManager>();
+  private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
 
   private readonly IPlayerConverter<CCSPlayerController> converter =
     provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
 
-  private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
+  private readonly IGameManager games =
+    provider.GetRequiredService<IGameManager>();
 
   public void Dispose() { }
   public void Start() { }

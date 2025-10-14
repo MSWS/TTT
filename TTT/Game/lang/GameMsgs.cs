@@ -79,6 +79,10 @@ public static class GameMsgs {
 
   #endregion
 
+  public static IMsg LOGS_VIEWED_ALIVE(IPlayer player) {
+    return MsgFactory.Create(nameof(LOGS_VIEWED_ALIVE), player.Name);
+  }
+
   #region GENERIC
 
   public static IMsg GENERIC_UNKNOWN(string command) {
@@ -108,7 +112,4 @@ public static class GameMsgs {
   }
 
   #endregion
-
-  public static IMsg LOGS_VIEWED_ALIVE(IPlayer player)
-    => MsgFactory.Create(nameof(LOGS_VIEWED_ALIVE), player.Name);
 }

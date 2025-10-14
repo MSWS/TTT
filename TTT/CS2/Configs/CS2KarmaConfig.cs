@@ -1,15 +1,12 @@
-﻿using TTT.API.Storage;
-
-namespace TTT.CS2.Configs;
-
-using System;
-using System.Threading.Tasks;
-using CounterStrikeSharp.API;
+﻿using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Cvars;
 using CounterStrikeSharp.API.Modules.Cvars.Validators;
 using TTT.API;
-using Karma;
+using TTT.API.Storage;
+using TTT.Karma;
+
+namespace TTT.CS2.Configs;
 
 public class CS2KarmaConfig : IStorage<KarmaConfig>, IPluginModule {
   public static readonly FakeConVar<string> CV_DB_STRING = new(

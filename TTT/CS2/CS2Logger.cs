@@ -1,5 +1,4 @@
 using CounterStrikeSharp.API;
-using Serilog;
 using TTT.API.Game;
 using TTT.API.Player;
 using TTT.Game.Loggers;

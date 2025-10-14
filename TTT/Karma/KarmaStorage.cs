@@ -1,5 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using System.Data;
+using System.Diagnostics;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Reactive.Threading.Tasks;
@@ -14,35 +15,34 @@ using TTT.Karma.Events;
 namespace TTT.Karma;
 
 public sealed class KarmaStorage(IServiceProvider provider) : IKarmaService {
+  // Toggle immediate writes. If false, every Write triggers a flush
+  private const bool EnableCache = true;
   private readonly IEventBus _bus = provider.GetRequiredService<IEventBus>();
-
-  private readonly IScheduler _scheduler =
-    provider.GetRequiredService<IScheduler>();
 
   private readonly IStorage<KarmaConfig>? _configStorage =
     provider.GetService<IStorage<KarmaConfig>>();
 
+  private readonly SemaphoreSlim _flushGate = new(1, 1);
+
   // Cache keyed by stable player id to avoid relying on IPlayer equality
   private readonly ConcurrentDictionary<string, int> _karmaCache = new();
+
+  private readonly IScheduler _scheduler =
+    provider.GetRequiredService<IScheduler>();
 
   private KarmaConfig _config = new();
   private IDbConnection? _connection;
   private IDisposable? _flushSubscription;
-  private readonly SemaphoreSlim _flushGate = new(1, 1);
-
-  // Toggle immediate writes. If false, every Write triggers a flush
-  private const bool EnableCache = true;
 
   public string Id => nameof(KarmaStorage);
   public string Version => GitVersionInformation.FullSemVer;
 
   public void Start() {
     // Load configuration first
-    if (_configStorage is not null) {
+    if (_configStorage is not null)
       // Synchronously wait here since IKarmaService.Start is sync
       _config = _configStorage.Load().GetAwaiter().GetResult()
         ?? new KarmaConfig();
-    }
 
     // Open a dedicated connection used only by this service
     _connection = new SqliteConnection(_config.DbString);
@@ -61,7 +61,7 @@ public sealed class KarmaStorage(IServiceProvider provider) : IKarmaService {
      .Subscribe(_ => { }, // no-op on success
         ex => {
           // Replace with your logger if available
-          System.Diagnostics.Trace.TraceError($"Karma flush failed: {ex}");
+          Trace.TraceError($"Karma flush failed: {ex}");
         });
   }
 
@@ -81,7 +81,7 @@ SELECT COALESCE(
   @DefaultKarma
 )";
     var karma = await conn.QuerySingleAsync<int>(sql,
-      new { PlayerId = key, DefaultKarma = _config.DefaultKarma });
+      new { PlayerId = key, _config.DefaultKarma });
 
     if (EnableCache) _karmaCache[key] = karma;
     return karma;
@@ -97,17 +97,15 @@ SELECT COALESCE(
         $"Karma must be less than {max} for player {key}.");
 
     int oldValue;
-    if (!_karmaCache.TryGetValue(key, out oldValue)) {
+    if (!_karmaCache.TryGetValue(key, out oldValue))
       oldValue = await Load(player);
-    }
 
     if (oldValue == newValue) return;
 
     var evt = new KarmaUpdateEvent(player, oldValue, newValue);
     try { _bus.Dispatch(evt); } catch {
       // Replace with your logger if available
-      System.Diagnostics.Trace.TraceError(
-        "Exception during KarmaUpdateEvent dispatch.");
+      Trace.TraceError("Exception during KarmaUpdateEvent dispatch.");
       throw;
     }
 
@@ -116,6 +114,20 @@ SELECT COALESCE(
     _karmaCache[key] = newValue;
 
     if (!EnableCache) await FlushAsync();
+  }
+
+  public void Dispose() {
+    try {
+      _flushSubscription?.Dispose();
+      // Best effort final flush
+      if (_connection is { State: ConnectionState.Open })
+        FlushAsync().GetAwaiter().GetResult();
+    } catch (Exception ex) {
+      Trace.TraceError($"Dispose flush failed: {ex}");
+    } finally {
+      _connection?.Dispose();
+      _flushGate.Dispose();
+    }
   }
 
   private async Task FlushAsync() {
@@ -136,10 +148,9 @@ INSERT INTO PlayerKarma (PlayerId, Karma)
 VALUES (@PlayerId, @Karma)
 ON CONFLICT(PlayerId) DO UPDATE SET Karma = excluded.Karma
 ";
-      foreach (var (playerId, karma) in snapshot) {
+      foreach (var (playerId, karma) in snapshot)
         await conn.ExecuteAsync(upsert,
           new { PlayerId = playerId, Karma = karma }, tx);
-      }
 
       tx.Commit();
     } finally { _flushGate.Release(); }
@@ -150,20 +161,5 @@ ON CONFLICT(PlayerId) DO UPDATE SET Karma = excluded.Karma
       throw new InvalidOperationException(
         "Storage connection is not initialized.");
     return _connection;
-  }
-
-  public void Dispose() {
-    try {
-      _flushSubscription?.Dispose();
-      // Best effort final flush
-      if (_connection is { State: ConnectionState.Open }) {
-        FlushAsync().GetAwaiter().GetResult();
-      }
-    } catch (Exception ex) {
-      System.Diagnostics.Trace.TraceError($"Dispose flush failed: {ex}");
-    } finally {
-      _connection?.Dispose();
-      _flushGate.Dispose();
-    }
   }
 }
