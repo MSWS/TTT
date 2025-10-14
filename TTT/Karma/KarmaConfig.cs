@@ -47,6 +47,12 @@ public record KarmaConfig {
 
   public int MaxKarma(IPlayer? player) { return 100; }
 
+  /// <summary>
+  /// Amount of karma a player will gain at the end of each round.
+  /// </summary>
+  public int KarmaPerRound { get; init; } = 3;
+  public int KarmaPerRoundWin { get; init; } = 5;
+
   public int INNO_ON_TRAITOR { get; init; } = 2;
   public int TRAITOR_ON_DETECTIVE { get; init; } = 1;
   public int INNO_ON_INNO_VICTIM { get; init; } = -1;

@@ -45,7 +45,7 @@ public class KarmaListener(IServiceProvider provider) : BaseListener(provider) {
     var killer = ev.Killer;
 
     if (killer == null) return;
-    if (victim.Id ==  killer.Id) return;
+    if (victim.Id == killer.Id) return;
 
     var victimRole = roles.GetRoles(victim).First();
     var killerRole = roles.GetRoles(killer).First();
@@ -93,6 +93,18 @@ public class KarmaListener(IServiceProvider provider) : BaseListener(provider) {
   [EventHandler]
   public void OnRoundEnd(GameStateUpdateEvent ev) {
     if (ev.NewState != State.FINISHED) return;
+
+    var winner = ev.Game.WinningRole;
+    foreach (var player in ev.Game.Players) {
+      if (Roles.GetRoles(player).Any(r => r.GetType() == winner?.GetType()))
+        queuedKarmaUpdates[player] =
+          queuedKarmaUpdates.GetValueOrDefault(player, 0)
+          + config.KarmaPerRoundWin;
+      else
+        queuedKarmaUpdates[player] =
+          queuedKarmaUpdates.GetValueOrDefault(player, 0)
+          + config.KarmaPerRound;
+    }
 
     foreach (var (player, karmaDelta) in queuedKarmaUpdates)
       Task.Run(async () => {
