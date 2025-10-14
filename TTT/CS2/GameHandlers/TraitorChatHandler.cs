@@ -14,7 +14,7 @@ using TTT.Locale;
 
 namespace TTT.CS2.GameHandlers;
 
-public class ChatHandler(IServiceProvider provider) : IPluginModule {
+public class TraitorChatHandler(IServiceProvider provider) : IPluginModule {
   private readonly IGameManager game =
     provider.GetRequiredService<IGameManager>();
 
@@ -37,6 +37,7 @@ public class ChatHandler(IServiceProvider provider) : IPluginModule {
   private HookResult onSay(CCSPlayerController? player,
     CommandInfo commandInfo) {
     if (player == null
+      || game.ActiveGame is not { State: State.IN_PROGRESS or State.FINISHED }
       || converter.GetPlayer(player) is not IOnlinePlayer apiPlayer
       || !roles.GetRoles(apiPlayer).Any(r => r is TraitorRole))
       return HookResult.Continue;
@@ -46,8 +47,10 @@ public class ChatHandler(IServiceProvider provider) : IPluginModule {
      .ToList();
     if (teammates == null) return HookResult.Continue;
 
-    var formatted =
-      locale[CS2Msgs.TRAITOR_CHAT_FORMAT(apiPlayer, commandInfo.ArgString)];
+    var msg = commandInfo.ArgString;
+    if (msg.StartsWith('\\') && msg.EndsWith('\\') && msg.Length >= 2)
+      msg = msg[1..^1];
+    var formatted = locale[CS2Msgs.TRAITOR_CHAT_FORMAT(apiPlayer, msg)];
 
     foreach (var mate in teammates) messenger.Message(mate, formatted);
     return HookResult.Stop;

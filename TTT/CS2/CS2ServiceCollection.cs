@@ -64,7 +64,7 @@ public static class CS2ServiceCollection {
     collection.AddModBehavior<MapZoneRemover>();
     collection.AddModBehavior<BuyMenuHandler>();
     collection.AddModBehavior<TeamChangeHandler>();
-    collection.AddModBehavior<ChatHandler>();
+    collection.AddModBehavior<TraitorChatHandler>();
 
     // Damage Cancelers
     collection.AddModBehavior<OutOfRoundCanceler>();
