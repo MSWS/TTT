@@ -65,6 +65,7 @@ public static class CS2ServiceCollection {
     collection.AddModBehavior<BuyMenuHandler>();
     collection.AddModBehavior<TeamChangeHandler>();
     collection.AddModBehavior<TraitorChatHandler>();
+    collection.AddModBehavior<PlayerMuter>();
 
     // Damage Cancelers
     collection.AddModBehavior<OutOfRoundCanceler>();

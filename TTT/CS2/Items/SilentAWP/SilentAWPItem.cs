@@ -58,7 +58,6 @@ public class SilentAWPItem(IServiceProvider provider)
 
   private HookResult onWeaponSound(UserMessage msg) {
     var defIndex = msg.ReadUInt("item_def_index");
-    Server.PrintToChatAll(msg.DebugString);
 
     if (config.WeaponIndex != defIndex) return HookResult.Continue;
     var splits = msg.DebugString.Split("\n");

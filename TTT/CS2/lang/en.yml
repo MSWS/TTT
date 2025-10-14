@@ -3,6 +3,8 @@ TRAITOR_CHAT_FORMAT: "{darkred}[TRAITORS] {red}{0}: {default}{1}"
 TASER_SCANNED: "%PREFIX%You scanned {0}{grey}, they are %an% {1}{grey}!"
 DNA_PREFIX: "{darkblue}D{blue}N{lightblue}A{grey} | {grey}"
 
+DEAD_MUTE_REMINDER: "%PREFIX%You are dead and cannot be heard."
+
 SHOP_ITEM_DNA: "DNA Scanner"
 SHOP_ITEM_DNA_DESC: "Scan bodies to reveal the person who killed them."
 SHOP_ITEM_DNA_SCANNED: "%DNA_PREFIX%You scanned {0}{1}'%s% {grey}body, their killer was {red}{2}{grey}."
