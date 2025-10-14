@@ -21,7 +21,7 @@ public class LogsTest(IServiceProvider provider) : CommandTest(provider,
     var result = await Commands.ProcessCommand(info);
     Assert.Equal(CommandResult.ERROR, result);
     Assert.Single(player.Messages);
-    Assert.Contains("No active game", player.Messages.First());
+    Assert.Contains(locale[GameMsgs.GAME_LOGS_NONE], player.Messages);
   }
 
   [Fact]
