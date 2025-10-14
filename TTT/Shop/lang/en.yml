@@ -32,7 +32,7 @@ SHOP_INSUFFICIENT_BALANCE: "%SHOP_PREFIX%You cannot afford {white}{0}{grey}, it 
 SHOP_CANNOT_PURCHASE: "%SHOP_PREFIX%You cannot purchase this item."
 SHOP_CANNOT_PURCHASE_WITH_REASON: "%SHOP_PREFIX%You cannot purchase this item: {red}{0}{grey}."
 SHOP_PURCHASED: "%SHOP_PREFIX%You purchased {white}{0}{grey}."
-SHOP_LIST_FOOTER: "%SHOP_PREFIX%You are a%n% {0}, you have {yellow}{1}{grey} %CREDITS_NAME%%s%."
+SHOP_LIST_FOOTER: "%SHOP_PREFIX%You are %an% {0}{grey}, you have {yellow}{1}{grey} %CREDITS_NAME%%s%."
 
 CREDITS_NAME: "credit"
 CREDITS_GIVEN: "%SHOP_PREFIX%{0}{1} %CREDITS_NAME%%s%"
