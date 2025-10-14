@@ -1,6 +1,6 @@
 ﻿using CounterStrikeSharp.API.Core;
-using CounterStrikeSharp.API.Core.Attributes.Registration;
 using CounterStrikeSharp.API.Modules.Commands;
+using MAULActainShared.plugin;
 using Microsoft.Extensions.DependencyInjection;
 using TTT.API;
 using TTT.API.Game;
@@ -8,7 +8,7 @@ using TTT.API.Messages;
 using TTT.API.Player;
 using TTT.API.Role;
 using TTT.CS2.lang;
-using TTT.Game.Listeners;
+using TTT.CS2.ThirdParties.eGO;
 using TTT.Game.Roles;
 using TTT.Locale;
 
@@ -30,8 +30,18 @@ public class TraitorChatHandler(IServiceProvider provider) : IPluginModule {
   private readonly IMsgLocalizer locale =
     provider.GetRequiredService<IMsgLocalizer>();
 
+  private IActain? maulService = null;
+
   public void Start(BasePlugin? plugin) {
     plugin?.AddCommandListener("say_team", onSay);
+    try {
+      maulService ??= EgoApi.MAUL.Get();
+      if (maulService != null)
+        maulService.getChatShareService().OnChatShare += (
+          CCSPlayerController? player, CommandInfo info, ref bool canceled) => {
+          canceled = true;
+        };
+    } catch (KeyNotFoundException) { }
   }
 
   private HookResult onSay(CCSPlayerController? player,
