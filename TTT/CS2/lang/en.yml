@@ -1,4 +1,5 @@
 ROLE_SPECTATOR: "Spectator"
+TRAITOR_CHAT_FORMAT: "{darkred}[TRAITOR] {red}{0}: {default}{1}"
 TASER_SCANNED: "%PREFIX%You scanned {0}{grey}, they are %an% {1}{grey}!"
 DNA_PREFIX: "{darkblue}D{blue}N{lightblue}A{grey} | {grey}"
 
