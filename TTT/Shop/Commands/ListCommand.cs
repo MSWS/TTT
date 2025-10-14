@@ -10,14 +10,14 @@ using TTT.Locale;
 namespace TTT.Shop.Commands;
 
 public class ListCommand(IServiceProvider provider) : ICommand, IItemSorter {
-  private readonly IDictionary<IOnlinePlayer, List<IShopItem>> cache =
-    new Dictionary<IOnlinePlayer, List<IShopItem>>();
+  private readonly IDictionary<string, List<IShopItem>> cache =
+    new Dictionary<string, List<IShopItem>>();
 
   private readonly IGameManager games = provider
    .GetRequiredService<IGameManager>();
 
-  private readonly IDictionary<IOnlinePlayer, DateTime> lastUpdate =
-    new Dictionary<IOnlinePlayer, DateTime>();
+  private readonly IDictionary<string, DateTime> lastUpdate =
+    new Dictionary<string, DateTime>();
 
   private readonly IMsgLocalizer locale = provider
    .GetRequiredService<IMsgLocalizer>();
@@ -37,7 +37,7 @@ public class ListCommand(IServiceProvider provider) : ICommand, IItemSorter {
     ICommandInfo info) {
     var items = calculateSortedItems(executor);
 
-    if (executor != null) cache[executor] = items;
+    if (executor != null) cache[executor.Id] = items;
     items = new List<IShopItem>(items);
     items.Reverse();
 
@@ -63,14 +63,14 @@ public class ListCommand(IServiceProvider provider) : ICommand, IItemSorter {
   public List<IShopItem> GetSortedItems(IOnlinePlayer? player,
     bool refresh = false) {
     if (player == null) return calculateSortedItems(null);
-    if (refresh || !cache.ContainsKey(player))
-      cache[player] = calculateSortedItems(player);
-    return cache[player];
+    if (refresh || !cache.ContainsKey(player.Id))
+      cache[player.Id] = calculateSortedItems(player);
+    return cache[player.Id];
   }
 
   public DateTime? GetLastUpdate(IOnlinePlayer? player) {
     if (player == null) return null;
-    lastUpdate.TryGetValue(player, out var time);
+    lastUpdate.TryGetValue(player.Id, out var time);
     return time;
   }
 
@@ -94,7 +94,7 @@ public class ListCommand(IServiceProvider provider) : ICommand, IItemSorter {
       return string.Compare(a.Name, b.Name, StringComparison.Ordinal);
     });
 
-    if (player != null) lastUpdate[player] = DateTime.Now;
+    if (player != null) lastUpdate[player.Id] = DateTime.Now;
     return items;
   }
 
