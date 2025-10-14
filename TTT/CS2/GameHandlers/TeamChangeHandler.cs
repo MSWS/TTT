@@ -1,16 +1,26 @@
 ﻿using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
+using CounterStrikeSharp.API.Core.Attributes.Registration;
 using CounterStrikeSharp.API.Modules.Commands;
 using CounterStrikeSharp.API.Modules.Utils;
+using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using TTT.API;
+using TTT.API.Events;
 using TTT.API.Game;
+using TTT.API.Player;
+using TTT.Game.Events.Player;
 
 namespace TTT.CS2.GameHandlers;
 
 public class TeamChangeHandler(IServiceProvider provider) : IPluginModule {
   private readonly IGameManager games =
     provider.GetRequiredService<IGameManager>();
+
+  private readonly IPlayerConverter<CCSPlayerController> converter =
+    provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
+
+  private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
 
   public void Dispose() { }
   public void Start() { }
@@ -44,5 +54,19 @@ public class TeamChangeHandler(IServiceProvider provider) : IPluginModule {
         return HookResult.Continue;
 
     return HookResult.Handled;
+  }
+
+  [UsedImplicitly]
+  [GameEventHandler]
+  public HookResult OnChangeTeam(EventPlayerTeam ev, GameEventInfo _) {
+    if (ev.Userid == null) return HookResult.Continue;
+    if (ev.Userid.LifeState == (int)LifeState_t.LIFE_ALIVE)
+      return HookResult.Continue;
+
+    var apiPlayer = converter.GetPlayer(ev.Userid);
+
+    var playerDeath = new PlayerDeathEvent(apiPlayer);
+    bus.Dispatch(playerDeath);
+    return HookResult.Continue;
   }
 }

@@ -69,6 +69,12 @@ public class RoleIconsHandler(IServiceProvider provider)
     visibilities[client] &= ~(1UL << player);
   }
 
+  public void SetVisiblePlayers(IOnlinePlayer online, ulong playersBitmask) {
+    var gamePlayer = players.GetPlayer(online);
+    if (gamePlayer == null || !gamePlayer.IsValid) return;
+    SetVisiblePlayers(gamePlayer.Slot, playersBitmask);
+  }
+
   public void ClearAllVisibility() {
     Array.Clear(visibilities, 0, visibilities.Length);
   }

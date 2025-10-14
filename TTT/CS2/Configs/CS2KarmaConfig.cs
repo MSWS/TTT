@@ -27,7 +27,7 @@ public class CS2KarmaConfig : IStorage<KarmaConfig>, IPluginModule {
   public static readonly FakeConVar<string> CV_LOW_KARMA_COMMAND = new(
     "css_ttt_karma_low_command",
     "Command executed when a player's karma falls below the minimum (use {0} for player slot)",
-    "karmaban {0} Bad Player!");
+    "css_ban #{0} 2880 Low Karma");
 
   public static readonly FakeConVar<int> CV_TIMEOUT_THRESHOLD = new(
     "css_ttt_karma_timeout_threshold",
@@ -47,7 +47,7 @@ public class CS2KarmaConfig : IStorage<KarmaConfig>, IPluginModule {
   // Karma deltas
   public static readonly FakeConVar<int> CV_INNO_ON_TRAITOR = new(
     "css_ttt_karma_inno_on_traitor",
-    "Karma gained when Innocent kills a Traitor", 2, ConVarFlags.FCVAR_NONE,
+    "Karma gained when Innocent kills a Traitor", 5, ConVarFlags.FCVAR_NONE,
     new RangeValidator<int>(-50, 50));
 
   public static readonly FakeConVar<int> CV_TRAITOR_ON_DETECTIVE = new(

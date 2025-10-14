@@ -108,4 +108,7 @@ public static class GameMsgs {
   }
 
   #endregion
+
+  public static IMsg LOGS_VIEWED_ALIVE(IPlayer player)
+    => MsgFactory.Create(nameof(LOGS_VIEWED_ALIVE), player.Name);
 }

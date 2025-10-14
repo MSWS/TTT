@@ -84,6 +84,7 @@ public class SilentAWPItem(IServiceProvider provider)
       Shop.RemoveItem<SilentAWPItem>(apiPlayer);
     }
 
+    msg.Recipients.Clear();
     return HookResult.Handled;
   }
 

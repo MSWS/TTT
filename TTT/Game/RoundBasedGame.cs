@@ -170,6 +170,7 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
 
     StartedAt = DateTime.Now;
     RoleAssigner.AssignRoles(online, Roles);
+
     players.AddRange(online.Where(p
       => RoleAssigner.GetRoles(p)
        .Any(r => r is TraitorRole or DetectiveRole or InnocentRole)));
