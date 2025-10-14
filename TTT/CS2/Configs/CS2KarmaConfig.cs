@@ -44,7 +44,7 @@ public class CS2KarmaConfig : IStorage<KarmaConfig>, IPluginModule {
   // Karma deltas
   public static readonly FakeConVar<int> CV_INNO_ON_TRAITOR = new(
     "css_ttt_karma_inno_on_traitor",
-    "Karma gained when Innocent kills a Traitor", 5, ConVarFlags.FCVAR_NONE,
+    "Karma gained when Innocent kills a Traitor", 4, ConVarFlags.FCVAR_NONE,
     new RangeValidator<int>(-50, 50));
 
   public static readonly FakeConVar<int> CV_TRAITOR_ON_DETECTIVE = new(
@@ -59,18 +59,28 @@ public class CS2KarmaConfig : IStorage<KarmaConfig>, IPluginModule {
 
   public static readonly FakeConVar<int> CV_INNO_ON_INNO = new(
     "css_ttt_karma_inno_on_inno",
-    "Karma lost when Innocent kills another Innocent", -4,
+    "Karma lost when Innocent kills another Innocent", -5,
     ConVarFlags.FCVAR_NONE, new RangeValidator<int>(-50, 50));
 
   public static readonly FakeConVar<int> CV_TRAITOR_ON_TRAITOR = new(
     "css_ttt_karma_traitor_on_traitor",
-    "Karma lost when Traitor kills another Traitor", -5, ConVarFlags.FCVAR_NONE,
+    "Karma lost when Traitor kills another Traitor", -6, ConVarFlags.FCVAR_NONE,
     new RangeValidator<int>(-50, 50));
 
   public static readonly FakeConVar<int> CV_INNO_ON_DETECTIVE = new(
     "css_ttt_karma_inno_on_detective",
-    "Karma lost when Innocent kills a Detective", -6, ConVarFlags.FCVAR_NONE,
+    "Karma lost when Innocent kills a Detective", -8, ConVarFlags.FCVAR_NONE,
     new RangeValidator<int>(-50, 50));
+
+  public static readonly FakeConVar<int> CV_KARMA_PER_ROUND = new(
+    "css_ttt_karma_per_round",
+    "Amount of karma a player will gain at the end of each round", 2,
+    ConVarFlags.FCVAR_NONE, new RangeValidator<int>(0, 50));
+
+  public static readonly FakeConVar<int> CV_KARMA_PER_ROUND_WIN = new(
+    "css_ttt_karma_per_round_win",
+    "Amount of karma a player will gain at the end of each round if their team won",
+    4, ConVarFlags.FCVAR_NONE, new RangeValidator<int>(0, 50));
 
   public void Dispose() { }
 
@@ -90,6 +100,8 @@ public class CS2KarmaConfig : IStorage<KarmaConfig>, IPluginModule {
       KarmaTimeoutThreshold = CV_TIMEOUT_THRESHOLD.Value,
       KarmaRoundTimeout     = CV_ROUND_TIMEOUT.Value,
       KarmaWarningWindow    = TimeSpan.FromHours(CV_WARNING_WINDOW_HOURS.Value),
+      KarmaPerRound         = CV_KARMA_PER_ROUND.Value,
+      KarmaPerRoundWin      = CV_KARMA_PER_ROUND_WIN.Value,
       INNO_ON_TRAITOR       = CV_INNO_ON_TRAITOR.Value,
       TRAITOR_ON_DETECTIVE  = CV_TRAITOR_ON_DETECTIVE.Value,
       INNO_ON_INNO_VICTIM   = CV_INNO_ON_INNO_VICTIM.Value,
