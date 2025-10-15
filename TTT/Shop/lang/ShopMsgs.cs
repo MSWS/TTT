@@ -1,5 +1,6 @@
 using CounterStrikeSharp.API.Modules.Utils;
 using ShopAPI;
+using TTT.API.Role;
 using TTT.Locale;
 
 namespace TTT.Shop;
@@ -47,5 +48,9 @@ public static class ShopMsgs {
 
   public static IMsg COMMAND_BALANCE(int bal) {
     return MsgFactory.Create(nameof(COMMAND_BALANCE), bal);
+  }
+
+  public static IMsg SHOP_LIST_FOOTER(IRole role, int bal) {
+    return MsgFactory.Create(nameof(SHOP_LIST_FOOTER), role.Name, bal);
   }
 }

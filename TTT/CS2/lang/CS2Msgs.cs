@@ -14,4 +14,11 @@ public static class CS2Msgs {
     return MsgFactory.Create(nameof(TASER_SCANNED),
       rolePrefix + scannedPlayer.Name, role.Name);
   }
+
+  public static IMsg TRAITOR_CHAT_FORMAT(IOnlinePlayer player, string msg) {
+    return MsgFactory.Create(nameof(TRAITOR_CHAT_FORMAT), player.Name, msg);
+  }
+
+  public static IMsg DEAD_MUTE_REMINDER
+    => MsgFactory.Create(nameof(DEAD_MUTE_REMINDER));
 }

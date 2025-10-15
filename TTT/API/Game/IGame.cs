@@ -33,9 +33,6 @@ public interface IGame : IDisposable {
 
   bool CheckEndConditions();
 
-  [Obsolete("This method is ambiguous, check the game state directly.")]
-  bool IsInProgress() { return State is State.COUNTDOWN or State.IN_PROGRESS; }
-
   ISet<IOnlinePlayer> GetAlive() {
     return Players.OfType<IOnlinePlayer>().Where(p => p.IsAlive).ToHashSet();
   }

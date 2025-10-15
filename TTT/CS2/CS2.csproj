@@ -16,6 +16,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Reference Include="MAULActainShared.dll">
+      <HintPath>./ThirdParties/Binaries/MAULActainShared.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="RayTrace\"/>
   </ItemGroup>
 

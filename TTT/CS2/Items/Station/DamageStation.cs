@@ -73,9 +73,7 @@ public class DamageStation(IServiceProvider provider)
           (int)Math.Floor(_Config.HealthIncrements * healthScale);
 
         var dmgEvent = new PlayerDamagedEvent(player,
-          info.Owner as IOnlinePlayer, player.Health + damageAmount) {
-          Weapon = $"[{Name}]"
-        };
+          info.Owner as IOnlinePlayer, damageAmount) { Weapon = $"[{Name}]" };
 
         bus.Dispatch(dmgEvent);
 

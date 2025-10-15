@@ -33,7 +33,6 @@ public class DamageCanceler(IServiceProvider provider) : IPluginModule {
     var damagedEvent = new PlayerDamagedEvent(converter, hook);
 
     bus.Dispatch(damagedEvent);
-
     if (damagedEvent.IsCanceled) return HookResult.Handled;
 
     var info = hook.GetParam<CTakeDamageInfo>(1);

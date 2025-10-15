@@ -11,6 +11,7 @@ using TTT.API;
 using TTT.API.Player;
 using TTT.API.Role;
 using TTT.CS2.Extensions;
+using TTT.CS2.RayTrace.Class;
 
 namespace TTT.CS2.Items.Station;
 
@@ -127,14 +128,8 @@ public abstract class StationItem<T>(IServiceProvider provider,
       if (gamePlayer == null || !gamePlayer.Pawn.IsValid
         || gamePlayer.Pawn.Value == null)
         return;
-      var spawnPos = gamePlayer.Pawn.Value.AbsOrigin.Clone();
-      if (spawnPos != null && gamePlayer.PlayerPawn.Value != null) {
-        var forward = gamePlayer.PlayerPawn.Value.EyeAngles.ToForward();
-        forward.Z =  0;
-        spawnPos  += forward.Normalized() * 8;
-      }
 
-      prop.Teleport(spawnPos);
+      prop.Teleport(gamePlayer.GetEyePosition());
     });
   }
 

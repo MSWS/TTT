@@ -36,19 +36,18 @@ public class CombatHandler(IServiceProvider provider) : IPluginModule {
   [UsedImplicitly]
   [GameEventHandler(HookMode.Pre)]
   public HookResult OnPlayerDeath_Pre(EventPlayerDeath ev, GameEventInfo info) {
-    if (games.ActiveGame is not { State: State.IN_PROGRESS })
-      return HookResult.Continue;
     var player = ev.Userid;
     if (player == null) return HookResult.Continue;
     var deathEvent = new PlayerDeathEvent(converter, ev);
-
-    Server.NextWorldUpdateAsync(() => bus.Dispatch(deathEvent));
-
-    info.DontBroadcast = true;
-
+    
     hideAndTrackStats(ev, player);
 
+    if (games.ActiveGame is not { State: State.IN_PROGRESS })
+      return HookResult.Continue;
+
+    info.DontBroadcast = true;
     spoofer.SpoofAlive(player);
+    Server.NextWorldUpdateAsync(() => bus.Dispatch(deathEvent));
     return HookResult.Continue;
   }
 

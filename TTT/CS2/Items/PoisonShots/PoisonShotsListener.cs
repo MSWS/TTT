@@ -66,7 +66,6 @@ public class PoisonShotsListener(IServiceProvider provider)
     if (ev.Attacker == null) return;
     if (!poisonShots.TryGetValue(ev.Attacker, out var shot) || shot <= 0)
       return;
-    Messenger.DebugAnnounce("weapon: " + ev.Weapon);
     if (ev.Weapon == null || !Tag.GUNS.Contains(ev.Weapon)) return;
     Messenger.Message(ev.Attacker,
       Locale[PoisonShotMsgs.SHOP_ITEM_POISON_HIT(ev.Player)]);
@@ -105,7 +104,7 @@ public class PoisonShotsListener(IServiceProvider provider)
     if (!online.IsAlive) return false;
 
     var dmgEvent = new PlayerDamagedEvent(online,
-      effect.Shooter as IOnlinePlayer,
+      effect.Shooter as IOnlinePlayer, online.Health,
       online.Health - config.PoisonConfig.DamagePerTick) {
       Weapon = $"[{Locale[PoisonShotMsgs.SHOP_ITEM_POISON_SHOTS]}]"
     };

@@ -33,7 +33,7 @@ public static class ShopServiceCollection {
     collection.AddModBehavior<PeriodicRewarder>();
     collection.AddModBehavior<TaseRewarder>();
 
-    collection.AddModBehavior<ShopCommand>();
+    collection.AddModBehavior<IItemSorter, ShopCommand>();
     collection.AddModBehavior<BuyCommand>();
     collection.AddModBehavior<BalanceCommand>();
 
