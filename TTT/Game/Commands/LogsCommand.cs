@@ -36,9 +36,9 @@ public class LogsCommand(IServiceProvider provider) : ICommand {
       return Task.FromResult(CommandResult.ERROR);
     }
 
-    if (executor is { IsAlive: true })
+    if (executor is { IsAlive: true }) {
       messenger.MessageAll(localizer[GameMsgs.LOGS_VIEWED_ALIVE(executor)]);
-    else if (icons != null && executor != null) {
+    } else if (icons != null && executor != null) {
       icons.SetVisiblePlayers(executor, ulong.MaxValue);
       messenger.Message(executor, localizer[GameMsgs.LOGS_VIEWED_INFO]);
     }

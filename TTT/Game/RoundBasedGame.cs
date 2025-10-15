@@ -183,7 +183,9 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
       GameMsgs.GAME_STATE_STARTED(traitors, nonTraitors)]);
   }
 
-  virtual protected ISet<IOnlinePlayer> GetParticipants() => finder.GetOnline();
+  virtual protected ISet<IOnlinePlayer> GetParticipants() {
+    return finder.GetOnline();
+  }
 
   #region classDeps
 

@@ -39,7 +39,7 @@ public class CombatHandler(IServiceProvider provider) : IPluginModule {
     var player = ev.Userid;
     if (player == null) return HookResult.Continue;
     var deathEvent = new PlayerDeathEvent(converter, ev);
-    
+
     hideAndTrackStats(ev, player);
 
     if (games.ActiveGame is not { State: State.IN_PROGRESS })

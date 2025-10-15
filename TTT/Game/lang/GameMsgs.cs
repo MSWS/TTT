@@ -26,9 +26,12 @@ public static class GameMsgs {
 
   public static IMsg GAME_LOGS_FOOTER
     => MsgFactory.Create(nameof(GAME_LOGS_FOOTER));
-  
-  public static IMsg GAME_LOGS_NONE 
+
+  public static IMsg GAME_LOGS_NONE
     => MsgFactory.Create(nameof(GAME_LOGS_NONE));
+
+  public static IMsg LOGS_VIEWED_INFO
+    => MsgFactory.Create(nameof(LOGS_VIEWED_INFO));
 
   public static IMsg ROLE_REVEAL_DEATH(IRole killerRole) {
     return MsgFactory.Create(nameof(ROLE_REVEAL_DEATH),
@@ -81,8 +84,6 @@ public static class GameMsgs {
   }
 
   #endregion
-  
-  public static IMsg LOGS_VIEWED_INFO => MsgFactory.Create(nameof(LOGS_VIEWED_INFO));
 
   public static IMsg LOGS_VIEWED_ALIVE(IPlayer player) {
     return MsgFactory.Create(nameof(LOGS_VIEWED_ALIVE), player.Name);

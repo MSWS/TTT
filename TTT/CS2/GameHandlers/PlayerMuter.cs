@@ -7,20 +7,19 @@ using TTT.API;
 using TTT.API.Messages;
 using TTT.API.Player;
 using TTT.CS2.lang;
-using TTT.Game.Listeners;
 using TTT.Locale;
 
 namespace TTT.CS2.GameHandlers;
 
 public class PlayerMuter(IServiceProvider provider) : IPluginModule {
+  private readonly IPlayerConverter<CCSPlayerController> converter =
+    provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
+
   private readonly IMsgLocalizer locale =
     provider.GetRequiredService<IMsgLocalizer>();
 
   private readonly IMessenger messenger =
     provider.GetRequiredService<IMessenger>();
-
-  private readonly IPlayerConverter<CCSPlayerController> converter =
-    provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
 
   public void Dispose() { }
   public void Start() { }
