@@ -56,19 +56,19 @@ public class TeamChangeHandler(IServiceProvider provider) : IPluginModule {
     return HookResult.Handled;
   }
 
-  [UsedImplicitly]
-  [GameEventHandler]
-  public HookResult OnChangeTeam(EventPlayerTeam ev, GameEventInfo _) {
-    if (ev.Userid == null) return HookResult.Continue;
-    var team = (CsTeam)ev.Team;
-    if (team is not (CsTeam.Spectator or CsTeam.None))
-      return HookResult.Continue;
-    var apiPlayer = converter.GetPlayer(ev.Userid);
-
-    Server.NextWorldUpdate(() => {
-      var playerDeath = new PlayerDeathEvent(apiPlayer);
-      bus.Dispatch(playerDeath);
-    });
-    return HookResult.Continue;
-  }
+  // [UsedImplicitly]
+  // [GameEventHandler]
+  // public HookResult OnChangeTeam(EventPlayerTeam ev, GameEventInfo _) {
+  //   if (ev.Userid == null) return HookResult.Continue;
+  //   var team = (CsTeam)ev.Team;
+  //   if (team is not (CsTeam.Spectator or CsTeam.None))
+  //     return HookResult.Continue;
+  //   var apiPlayer = converter.GetPlayer(ev.Userid);
+  //
+  //   Server.NextWorldUpdate(() => {
+  //     var playerDeath = new PlayerDeathEvent(apiPlayer);
+  //     bus.Dispatch(playerDeath);
+  //   });
+  //   return HookResult.Continue;
+  // }
 }
