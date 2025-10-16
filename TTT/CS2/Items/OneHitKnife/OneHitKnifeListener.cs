@@ -32,13 +32,12 @@ public class OneHitKnifeListener(IServiceProvider provider)
 
     if (attacker == null) return;
     if (!shop.HasItem<OneHitKnife>(attacker)) return;
-    if (victim is not IOnlinePlayer onlineVictim) return;
 
     var friendly = Roles.GetRoles(attacker)
      .Any(r => Roles.GetRoles(victim).Contains(r));
     if (friendly && !config.FriendlyFire) return;
 
     shop.RemoveItem<OneHitKnife>(attacker);
-    ev.HpLeft = 0;
+    ev.HpLeft = -100;
   }
 }

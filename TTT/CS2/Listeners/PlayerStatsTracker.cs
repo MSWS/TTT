@@ -1,5 +1,6 @@
 ﻿using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
+using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using TTT.API.Events;
 using TTT.API.Game;
@@ -24,6 +25,7 @@ public class PlayerStatsTracker(IServiceProvider provider) : IListener {
 
   public void Dispose() { }
 
+  [UsedImplicitly]
   [EventHandler(Priority = Priority.MONITOR)]
   public void OnIdentify(BodyIdentifyEvent ev) {
     var gamePlayer = converter.GetPlayer(ev.Body.OfPlayer);
@@ -40,6 +42,7 @@ public class PlayerStatsTracker(IServiceProvider provider) : IListener {
 
   // Needs to be higher so we detect the kill before the game ends
   // in the case that this is the last player
+  [UsedImplicitly]
   [EventHandler(Priority = Priority.HIGH)]
   public void OnKill(PlayerDeathEvent ev) {
     var killer = ev.Killer == null ? null : converter.GetPlayer(ev.Killer);
@@ -59,6 +62,7 @@ public class PlayerStatsTracker(IServiceProvider provider) : IListener {
     }
   }
 
+  [UsedImplicitly]
   [EventHandler]
   public void OnRoundEnd(GameStateUpdateEvent ev) {
     if (ev.NewState == State.IN_PROGRESS) {

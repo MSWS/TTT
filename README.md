@@ -14,8 +14,8 @@ survive while eliminating the traitors among them.
     - [X] Traitors
     - [X] Detectives
     - [X] Innocents
-- [ ] Shop
-- [ ] Karma
+- [X] Shop
+- [X] Karma
 - [ ] Statistics
 
 ## Versioning

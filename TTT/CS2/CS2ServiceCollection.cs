@@ -64,6 +64,8 @@ public static class CS2ServiceCollection {
     collection.AddModBehavior<MapZoneRemover>();
     collection.AddModBehavior<BuyMenuHandler>();
     collection.AddModBehavior<TeamChangeHandler>();
+    collection.AddModBehavior<TraitorChatHandler>();
+    collection.AddModBehavior<PlayerMuter>();
 
     // Damage Cancelers
     collection.AddModBehavior<OutOfRoundCanceler>();
@@ -82,6 +84,7 @@ public static class CS2ServiceCollection {
     // Commands
 #if DEBUG
     collection.AddModBehavior<TestCommand>();
+    collection.AddModBehavior<DebugMessage>();
 #endif
 
     collection.AddScoped<IGameManager, CS2GameManager>();

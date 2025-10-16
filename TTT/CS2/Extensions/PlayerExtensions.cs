@@ -2,6 +2,7 @@
 using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.UserMessages;
+using CounterStrikeSharp.API.Modules.Utils;
 
 namespace TTT.CS2.Extensions;
 
@@ -107,4 +108,19 @@ public static class PlayerExtensions {
       color.R | color.G << 8 | color.B << 16 | color.A << 24);
     fadeMsg.Send(player);
   }
+
+  public static void DealPoisonDamage(this CCSPlayerController player,
+    int damage) {
+    if (player.Pawn.Value == null) return;
+    player.AddHealth(-damage);
+    player.PlayerPawn.Value?.EmitSound("Player.DamageBody.Onlooker",
+      OTHERS(player.Slot), 0.2f, 1);
+    player.PlayerPawn.Value?.EmitSound("Player.DamageBody.Victim",
+      SELF(player.Slot), 0.2f, 1);
+  }
+
+  private static RecipientFilter SELF(int slot) => new(slot);
+
+  private static RecipientFilter OTHERS(int slot)
+    => new(ulong.MaxValue & ~(1ul << slot));
 }

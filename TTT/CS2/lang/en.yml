@@ -1,6 +1,9 @@
 ROLE_SPECTATOR: "Spectator"
+TRAITOR_CHAT_FORMAT: "{darkred}[TRAITORS] {red}{0}: {default}{1}"
 TASER_SCANNED: "%PREFIX%You scanned {0}{grey}, they are %an% {1}{grey}!"
 DNA_PREFIX: "{darkblue}D{blue}N{lightblue}A{grey} | {grey}"
+
+DEAD_MUTE_REMINDER: "%PREFIX%You are dead and cannot be heard."
 
 SHOP_ITEM_DNA: "DNA Scanner"
 SHOP_ITEM_DNA_DESC: "Scan bodies to reveal the person who killed them."
@@ -34,8 +37,14 @@ SHOP_ITEM_ARMOR_DESC: "Wear armor that reduces incoming damage."
 SHOP_ITEM_ONE_HIT_KNIFE: "One-Hit Knife"
 SHOP_ITEM_ONE_HIT_KNIFE_DESC: "Your next knife hit will be a guaranteed kill."
 
-SHOP_ITEM_COMPASS: "Player Compass"
-SHOP_ITEM_COMPASS_DESC: "Reveals the direction that the nearest non-Traitor is in."
+SHOP_ITEM_COMPASS_PLAYER: "Player Compass"
+SHOP_ITEM_COMPASS_PLAYER_DESC: "Reveals the direction that the nearest non-Traitor is in."
+
+SHOP_ITEM_COMPASS_BODY: "Body Compass"
+SHOP_ITEM_COMPASS_BODY_DESC: "Reveals the direction that the nearest unidentified body is in."
 
 SHOP_ITEM_SILENT_AWP: "Silent AWP"
 SHOP_ITEM_SILENT_AWP_DESC: "Receive a silenced AWP with limited ammo."
+
+SHOP_ITEM_CLUSTER_GRENADE: "Cluster Grenade"
+SHOP_ITEM_CLUSTER_GRENADE_DESC: "A grenade that splits into multiple smaller grenades."

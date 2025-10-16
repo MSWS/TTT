@@ -14,13 +14,13 @@ using TTT.Game.Events.Player;
 namespace TTT.CS2.GameHandlers;
 
 public class TeamChangeHandler(IServiceProvider provider) : IPluginModule {
-  private readonly IGameManager games =
-    provider.GetRequiredService<IGameManager>();
+  private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
 
   private readonly IPlayerConverter<CCSPlayerController> converter =
     provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
 
-  private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
+  private readonly IGameManager games =
+    provider.GetRequiredService<IGameManager>();
 
   public void Dispose() { }
   public void Start() { }
@@ -60,13 +60,15 @@ public class TeamChangeHandler(IServiceProvider provider) : IPluginModule {
   [GameEventHandler]
   public HookResult OnChangeTeam(EventPlayerTeam ev, GameEventInfo _) {
     if (ev.Userid == null) return HookResult.Continue;
-    if (ev.Userid.LifeState == (int)LifeState_t.LIFE_ALIVE)
+    var team = (CsTeam)ev.Team;
+    if (team is not (CsTeam.Spectator or CsTeam.None))
       return HookResult.Continue;
-
     var apiPlayer = converter.GetPlayer(ev.Userid);
 
-    var playerDeath = new PlayerDeathEvent(apiPlayer);
-    bus.Dispatch(playerDeath);
+    Server.NextWorldUpdate(() => {
+      var playerDeath = new PlayerDeathEvent(apiPlayer);
+      bus.Dispatch(playerDeath);
+    });
     return HookResult.Continue;
   }
 }

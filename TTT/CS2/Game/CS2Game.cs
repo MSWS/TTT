@@ -1,7 +1,10 @@
 ﻿using System.Reactive.Linq;
 using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
+using CounterStrikeSharp.API.Modules.Utils;
+using Microsoft.Extensions.DependencyInjection;
 using TTT.API.Game;
+using TTT.API.Player;
 using TTT.API.Role;
 using TTT.CS2.Roles;
 using TTT.CS2.Utils;
@@ -12,6 +15,9 @@ using TTT.Game.Roles;
 namespace TTT.CS2.Game;
 
 public class CS2Game(IServiceProvider provider) : RoundBasedGame(provider) {
+  private readonly IPlayerConverter<CCSPlayerController> converter =
+    provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
+
   public override State State {
     set {
       var ev = new GameStateUpdateEvent(this, value);
@@ -69,5 +75,14 @@ public class CS2Game(IServiceProvider provider) : RoundBasedGame(provider) {
     });
 
     return timer;
+  }
+
+  override protected ISet<IOnlinePlayer> GetParticipants() {
+    var players = Utilities.GetPlayers()
+     .Where(p => p is { Team: CsTeam.Terrorist or CsTeam.CounterTerrorist });
+
+    return players.Select(p => converter.GetPlayer(p))
+     .OfType<IOnlinePlayer>()
+     .ToHashSet();
   }
 }

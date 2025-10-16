@@ -58,7 +58,8 @@ public class GiveItemCommand(IServiceProvider provider) : ICommand {
 
   private IShopItem? searchItem(string query) {
     var item = shop.Items.FirstOrDefault(it
-      => it.Name.Equals(query, StringComparison.OrdinalIgnoreCase));
+      => it.Name.Replace(" ", "")
+       .Equals(query, StringComparison.OrdinalIgnoreCase));
 
     if (item != null) return item;
 

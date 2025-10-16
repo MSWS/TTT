@@ -12,7 +12,7 @@ namespace TTT.CS2.Configs.ShopItems;
 public class CS2OneShotDeagleConfig : IStorage<OneShotDeagleConfig>,
   IPluginModule {
   public static readonly FakeConVar<int> CV_PRICE = new(
-    "css_ttt_shop_onedeagle_price", "Price of the One-Shot Deagle item", 100,
+    "css_ttt_shop_onedeagle_price", "Price of the One-Shot Deagle item", 110,
     ConVarFlags.FCVAR_NONE, new RangeValidator<int>(0, 10000));
 
   public static readonly FakeConVar<bool> CV_FRIENDLY_FIRE = new(

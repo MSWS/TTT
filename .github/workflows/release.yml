@@ -33,7 +33,31 @@ jobs:
         id: gitversion
         uses: gittools/actions/gitversion/execute@v4
 
+      # Early exit guard: if tag already exists, mark and skip all following steps
+      - name: Check if tag exists
+        id: tag_exists
+        run: |
+          set -euo pipefail
+          git fetch --tags --force
+          TAG="${{ steps.gitversion.outputs.fullSemVer }}"
+          if git rev-parse -q --verify "refs/tags/${TAG}" >/dev/null; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+            echo "Tag ${TAG} already exists locally."
+          elif git ls-remote --tags origin "refs/tags/${TAG}" | grep -q "refs/tags/${TAG}$"; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+            echo "Tag ${TAG} already exists on origin."
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+            echo "Tag ${TAG} does not exist. Continuing."
+          fi
+
+      # Short-circuit info step for logs
+      - name: Tag exists, nothing to do
+        if: steps.tag_exists.outputs.exists == 'true'
+        run: echo "Release already exists for tag ${{ steps.gitversion.outputs.fullSemVer }}. Exiting successfully."
+
       - name: Build Locale
+        if: steps.tag_exists.outputs.exists != 'true'
         run: |
           mkdir -p build/TTT/lang
           dotnet restore Locale/Locale.csproj
@@ -41,22 +65,26 @@ jobs:
           cp lang/*.json build/TTT/lang
 
       - name: Copy Gamedata
+        if: steps.tag_exists.outputs.exists != 'true'
         run: |
           mkdir -p build/TTT/gamedata
           cp -r TTT/CS2/gamedata/* build/TTT/gamedata
 
       - name: Publish Plugin
+        if: steps.tag_exists.outputs.exists != 'true'
         run: |
           dotnet restore TTT/Plugin/Plugin.csproj
           dotnet publish TTT/Plugin/Plugin.csproj --no-restore -c Release -o build/TTT
 
       - name: Zip Artifacts
+        if: steps.tag_exists.outputs.exists != 'true'
         run: |
           cd build/TTT
           zip -r TTT-${{ steps.gitversion.outputs.fullSemVer }}.zip *
 
       # 2. Get latest tag
       - name: Get latest tag
+        if: steps.tag_exists.outputs.exists != 'true'
         id: latest_tag
         run: |
           if git describe --tags --abbrev=0 >/dev/null 2>&1; then
@@ -66,58 +94,59 @@ jobs:
           fi
 
       - name: Create and push new tag
-        if: steps.gitversion.outputs.fullSemVer != steps.latest_tag.outputs.tag
+        if: steps.tag_exists.outputs.exists != 'true' && steps.gitversion.outputs.fullSemVer != steps.latest_tag.outputs.tag
         run: |
+          set -euo pipefail
+          TAG="${{ steps.gitversion.outputs.fullSemVer }}"
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git tag ${{ steps.gitversion.outputs.fullSemVer }}
-          git push origin ${{ steps.gitversion.outputs.fullSemVer }}
+          if ! git rev-parse -q --verify "refs/tags/${TAG}" >/dev/null; then
+            git tag "${TAG}"
+          fi
+          if git ls-remote --tags origin "refs/tags/${TAG}" | grep -q "refs/tags/${TAG}$"; then
+            echo "Tag ${TAG} already on origin. Skipping push."
+          else
+            git push origin "${TAG}"
+          fi
 
       - name: Determine previous relevant tag
+        if: steps.tag_exists.outputs.exists != 'true'
         id: prev_tag
         run: |
           set -euo pipefail
           branch="${GITHUB_REF_NAME}"
 
-          # Use HEAD^ to skip the tag we just created. If no parent, fall back to HEAD.
           if git rev-parse --verify -q HEAD^ >/dev/null; then
             base_rev="HEAD^"
           else
             base_rev="HEAD"
           fi
 
-          # Match stable tags on main and prerelease tags on non-main
           if [[ "$branch" == "main" ]]; then
             pattern='[0-9]*.[0-9]*.[0-9]*'
           else
             pattern='[0-9]*.[0-9]*.[0-9]*-*'
           fi
 
-          # Nearest tag reachable on this lineage, not just "second most recent by date"
           prev=$(git describe --tags --abbrev=0 --match "$pattern" --tags "$base_rev" 2>/dev/null || true)
-
           echo "tag=${prev:-0.0.0}" >> "$GITHUB_OUTPUT"
 
-
       - name: Generate changelog
+        if: steps.tag_exists.outputs.exists != 'true'
         run: |
           set -euo pipefail
 
           prev="${{ steps.prev_tag.outputs.tag }}"
           curr="${{ steps.gitversion.outputs.fullSemVer }}"
 
-          # Choose what you want in the raw feed: %s = subject only, %B = full message
           GIT_LOG_FORMAT='%B'
 
           if [[ "$prev" == "0.0.0" ]]; then
-            # First release: whole history to this tag, first-parent to reflect main’s narrative
             git log --no-merges --format="${GIT_LOG_FORMAT}" --reverse "$curr" > CHANGELOG.md
           else
-            # Strict range between the previous reachable tag and the new tag on this lineage
             git log --no-merges --format="${GIT_LOG_FORMAT}" --reverse "$prev..$curr" > CHANGELOG.md
           fi
 
-          # Fallback in case nothing was captured
           if [[ ! -s CHANGELOG.md ]]; then
             echo "No commits found between $prev and $curr on first-parent. Using full messages without first-parent filter." >&2
             if [[ "$prev" == "0.0.0" ]]; then
@@ -131,7 +160,7 @@ jobs:
 
       - name: Rewrite changelog with OpenAI
         id: ai_changelog
-        if: success()
+        if: steps.tag_exists.outputs.exists != 'true'
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           OPENAI_MODEL: ${{ env.OPENAI_MODEL }}
@@ -140,25 +169,19 @@ jobs:
         run: |
           set -euo pipefail
 
-          # Ensure we have a changelog to work with
           if [[ ! -s CHANGELOG.md ]]; then
             echo "CHANGELOG.md is empty. Skipping AI rewrite."
             echo "skipped=true" >> $GITHUB_OUTPUT
             exit 0
           fi
 
-          # Trim the input to a safe size for token limits
           head -c "${MAX_CHANGELOG_CHARS}" CHANGELOG.md > CHANGELOG_RAW.md
 
-          # Build the JSON body. We feed system guidance and the raw changelog
-          # See OpenAI Responses API docs for the schema and output_text helper. :contentReference[oaicite:0]{index=0}
           jq -Rs --arg sys "You are an expert release-notes writer. Given a list of changes in various formats (e.g: commits, merges, etc.), write release notes intended for reading by the public, grouping by features, features, and other pertinent groups where appropriate. Do not include a group if it is unnecessary. Remove internal ticket IDs and commit hashes unless essential. Merge duplicates. Use imperative, past tense voice with proper prose. Output valid Markdown only." \
                 --arg temp "${OPENAI_TEMPERATURE}" \
                 --arg model "${OPENAI_MODEL}" \
                 '{model:$model, temperature: ($temp|tonumber), input:[{role:"system", content:$sys},{role:"user", content:.}]}' CHANGELOG_RAW.md > request.json
 
-          # Call the API
-          # Basic retry on transient failures
           for i in 1 2 3; do
             HTTP_CODE=$(curl -sS -w "%{http_code}" -o ai_response.json \
               https://api.openai.com/v1/responses \
@@ -175,14 +198,12 @@ jobs:
             exit 0
           fi
 
-          # Prefer output_text if present. Fallback to first text item. :contentReference[oaicite:1]{index=1}
           if jq -e '.output_text' ai_response.json >/dev/null; then
             jq -r '.output_text' ai_response.json > CHANGELOG.md
           else
             jq -r '.output[0].content[] | select(.type=="output_text") | .text' ai_response.json | sed '/^[[:space:]]*$/d' > CHANGELOG.md
           fi
 
-          # If the rewrite somehow produced an empty file, keep the raw one
           if [[ ! -s CHANGELOG.md ]]; then
             echo "AI returned empty content. Restoring raw changelog."
             mv CHANGELOG_RAW.md CHANGELOG.md
@@ -195,6 +216,7 @@ jobs:
           cat CHANGELOG.md
 
       - name: Create GitHub release
+        if: steps.tag_exists.outputs.exists != 'true'
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.gitversion.outputs.fullSemVer }}
@@ -204,9 +226,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # 7. Cleanup old pre-releases
       - name: Delete old pre-releases
-        if: github.ref_name != 'main'
+        if: steps.tag_exists.outputs.exists != 'true' && github.ref_name != 'main'
         run: |
           gh release list --limit 100 --json name,isPrerelease \
             --jq '.[] | select(.isPrerelease) | .name' | tail -n +11 | \

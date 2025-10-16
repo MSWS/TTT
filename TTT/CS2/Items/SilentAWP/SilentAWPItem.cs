@@ -33,8 +33,8 @@ public class SilentAWPItem(IServiceProvider provider)
   private readonly IPlayerConverter<CCSPlayerController> playerConverter =
     provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
 
-  private readonly IDictionary<IOnlinePlayer, int> silentShots =
-    new Dictionary<IOnlinePlayer, int>();
+  private readonly IDictionary<string, int> silentShots =
+    new Dictionary<string, int>();
 
   public override string Name => Locale[SilentAWPMsgs.SHOP_ITEM_SILENT_AWP];
 
@@ -49,8 +49,11 @@ public class SilentAWPItem(IServiceProvider provider)
   }
 
   public override void OnPurchase(IOnlinePlayer player) {
-    silentShots[player] = config.CurrentAmmo ?? 0 + config.ReserveAmmo ?? 0;
-    Inventory.GiveWeapon(player, config);
+    silentShots[player.Id] = config.CurrentAmmo ?? 0 + config.ReserveAmmo ?? 0;
+    Task.Run(async () => {
+      await Inventory.RemoveWeaponInSlot(player, 0);
+      await Inventory.GiveWeapon(player, config);
+    });
   }
 
   private HookResult onWeaponSound(UserMessage msg) {
@@ -75,12 +78,12 @@ public class SilentAWPItem(IServiceProvider provider)
     if (playerConverter.GetPlayer(player) is not IOnlinePlayer apiPlayer)
       return HookResult.Continue;
 
-    if (!silentShots.TryGetValue(apiPlayer, out var shots) || shots <= 0)
+    if (!silentShots.TryGetValue(apiPlayer.Id, out var shots) || shots <= 0)
       return HookResult.Continue;
 
-    silentShots[apiPlayer] = shots - 1;
-    if (silentShots[apiPlayer] == 0) {
-      silentShots.Remove(apiPlayer);
+    silentShots[apiPlayer.Id] = shots - 1;
+    if (silentShots[apiPlayer.Id] == 0) {
+      silentShots.Remove(apiPlayer.Id);
       Shop.RemoveItem<SilentAWPItem>(apiPlayer);
     }
 

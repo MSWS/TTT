@@ -11,13 +11,13 @@ public class LogsCommand(IServiceProvider provider) : ICommand {
   private readonly IGameManager games =
     provider.GetRequiredService<IGameManager>();
 
-  private readonly IMessenger messenger =
-    provider.GetRequiredService<IMessenger>();
+  private readonly IIconManager? icons = provider.GetService<IIconManager>();
 
   private readonly IMsgLocalizer localizer =
     provider.GetRequiredService<IMsgLocalizer>();
 
-  private readonly IIconManager? icons = provider.GetService<IIconManager>();
+  private readonly IMessenger messenger =
+    provider.GetRequiredService<IMessenger>();
 
   public void Dispose() { }
   public string[] RequiredFlags => ["@ttt/admin"];
@@ -32,15 +32,15 @@ public class LogsCommand(IServiceProvider provider) : ICommand {
     if (games.ActiveGame is not {
       State: State.IN_PROGRESS or State.FINISHED
     }) {
-      info.ReplySync("No active game to show logs for.");
+      messenger.Message(executor, localizer[GameMsgs.GAME_LOGS_NONE]);
       return Task.FromResult(CommandResult.ERROR);
     }
 
-    if (executor is { IsAlive: true })
+    if (executor is { IsAlive: true }) {
       messenger.MessageAll(localizer[GameMsgs.LOGS_VIEWED_ALIVE(executor)]);
-    else if (icons != null && executor != null) {
-      if (int.TryParse(executor.Id, out var slot))
-        icons.SetVisiblePlayers(slot, ulong.MaxValue);
+    } else if (icons != null && executor != null) {
+      icons.SetVisiblePlayers(executor, ulong.MaxValue);
+      messenger.Message(executor, localizer[GameMsgs.LOGS_VIEWED_INFO]);
     }
 
     games.ActiveGame.Logger.PrintLogs(executor);

@@ -159,7 +159,7 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
   }
 
   virtual protected void StartRound() {
-    var online = finder.GetOnline();
+    var online = GetParticipants();
 
     if (online.Count < config.RoundCfg.MinimumPlayers) {
       Messenger?.MessageAll(
@@ -181,6 +181,10 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
     var nonTraitors = players.Count - traitors;
     Messenger?.MessageAll(Locale[
       GameMsgs.GAME_STATE_STARTED(traitors, nonTraitors)]);
+  }
+
+  virtual protected ISet<IOnlinePlayer> GetParticipants() {
+    return finder.GetOnline();
   }
 
   #region classDeps

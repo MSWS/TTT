@@ -31,15 +31,12 @@ public class DeagleDamageListener(IServiceProvider provider)
 
     if (attacker == null) return;
 
-    var deagleItem = shop.GetOwnedItems(attacker)
-     .FirstOrDefault(s => s is OneShotDeagleItem);
-    if (deagleItem == null) return;
+    if (!shop.HasItem<OneShotDeagleItem>(attacker)) return;
 
     if (ev.Weapon != config.Weapon)
       // CS2 specifically causes the weapon to be "weapon_deagle" even if
       // the player is holding a revolver, so we need to check for that as well
-      if (ev.Weapon is not "weapon_deagle"
-        || !config.Weapon.Equals("weapon_revolver"))
+      if (ev.Weapon != "weapon_deagle" || config.Weapon != "weapon_revolver")
         return;
 
     var attackerRole = Roles.GetRoles(attacker);
@@ -57,7 +54,6 @@ public class DeagleDamageListener(IServiceProvider provider)
       }
     }
 
-    if (victim is not IOnlinePlayer onlineVictim) return;
-    onlineVictim.Health = 0;
+    ev.HpLeft = -100;
   }
 }

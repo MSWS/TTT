@@ -9,10 +9,10 @@ using TTT.Locale;
 namespace TTT.Shop.Commands;
 
 public class ShopCommand(IServiceProvider provider) : ICommand, IItemSorter {
+  private readonly ListCommand listCmd = new(provider);
+
   private readonly IMsgLocalizer locale = provider
    .GetRequiredService<IMsgLocalizer>();
-
-  private readonly ListCommand listCmd = new(provider);
 
   private Dictionary<string, ICommand>? subcommands;
 
