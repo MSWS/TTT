@@ -1,9 +1,12 @@
 ﻿using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Core.Attributes.Registration;
+using CounterStrikeSharp.API.Modules.Commands;
 using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using TTT.API;
+using TTT.API.Command;
 using TTT.API.Player;
+using TTT.CS2.Command;
 using TTT.CS2.Extensions;
 using TTT.Game.Roles;
 
@@ -47,8 +50,16 @@ public class BuyMenuHandler(IServiceProvider provider) : IPluginModule {
 
     inventory.RemoveWeapon(player, new BaseWeapon(ev.Weapon));
 
-    if (shopAliases.TryGetValue(ev.Weapon, out var alias))
-      ev.Userid.ExecuteClientCommandFromServer("css_buy " + alias);
+    if (!shopAliases.TryGetValue(ev.Weapon, out var alias))
+      return HookResult.Continue;
+
+    var commandManager = provider.GetRequiredService<ICommandManager>();
+    var newInfo = new CS2CommandInfo(provider, player, 0, "css_shop", "buy",
+      alias);
+
+    newInfo.CallingContext = CommandCallingContext.Chat;
+
+    commandManager.ProcessCommand(newInfo);
     return HookResult.Handled;
   }
 }

@@ -1,7 +1,7 @@
 ﻿namespace ShopAPI.Configs.Traitor;
 
 public record PoisonSmokeConfig : ShopItemConfig {
-  public override int Price { get; init; } = 30;
+  public override int Price { get; init; } = 35;
 
   public string Weapon { get; init; } = "smoke";
 
