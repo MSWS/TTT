@@ -13,6 +13,7 @@ using TTT.API.Game;
 using TTT.API.Player;
 using TTT.API.Storage;
 using TTT.CS2.Extensions;
+using TTT.Game.Events.Body;
 using TTT.Game.Events.Game;
 using TTT.Game.Events.Player;
 using TTT.Game.Listeners;
@@ -40,6 +41,8 @@ public class PoisonShotsListener(IServiceProvider provider)
     provider.GetRequiredService<IScheduler>();
 
   private readonly IShop shop = provider.GetRequiredService<IShop>();
+
+  private readonly ISet<string> killedWithPoison = new HashSet<string>();
 
   public override void Dispose() {
     base.Dispose();
@@ -80,6 +83,7 @@ public class PoisonShotsListener(IServiceProvider provider)
     foreach (var timer in poisonTimers) timer.Dispose();
     poisonTimers.Clear();
     poisonShots.Clear();
+    killedWithPoison.Clear();
   }
 
   [SuppressMessage("ReSharper", "AccessToModifiedClosure")]
@@ -114,19 +118,22 @@ public class PoisonShotsListener(IServiceProvider provider)
     if (dmgEvent.IsCanceled) return true;
 
     if (online.Health - config.PoisonConfig.DamagePerTick <= 0) {
+      killedWithPoison.Add(online.Id);
       var deathEvent = new PlayerDeathEvent(online)
        .WithKiller(effect.Shooter as IOnlinePlayer)
        .WithWeapon($"[{Locale[PoisonShotMsgs.SHOP_ITEM_POISON_SHOTS]}]");
       bus.Dispatch(deathEvent);
     }
 
-    online.Health -= config.PoisonConfig.DamagePerTick;
+    // online.Health -= config.PoisonConfig.DamagePerTick;
     effect.Ticks++;
     effect.DamageGiven += config.PoisonConfig.DamagePerTick;
 
     var gamePlayer = converter.GetPlayer(online);
     gamePlayer?.ColorScreen(config.PoisonColor, 0.2f, 0.3f);
-    gamePlayer?.ExecuteClientCommand("play " + config.PoisonConfig.PoisonSound);
+    // gamePlayer?.ExecuteClientCommand("play " + config.PoisonConfig.PoisonSound);
+    if (gamePlayer != null)
+      gamePlayer.DealPoisonDamage(config.PoisonConfig.DamagePerTick);
 
     return effect.DamageGiven < config.PoisonConfig.TotalDamage;
   }
@@ -156,5 +163,14 @@ public class PoisonShotsListener(IServiceProvider provider)
     public IPlayer Shooter { get; } = shooter;
     public int Ticks { get; set; }
     public int DamageGiven { get; set; }
+  }
+
+
+  [UsedImplicitly]
+  [EventHandler]
+  public void OnRagdollSpawn(BodyCreateEvent ev) {
+    if (!killedWithPoison.Contains(ev.Body.OfPlayer.Id)) return;
+    if (ev.Body.Killer == null || ev.Body.Killer.Id == ev.Body.OfPlayer.Id)
+      ev.IsCanceled = true;
   }
 }

@@ -84,6 +84,7 @@ public static class CS2ServiceCollection {
     // Commands
 #if DEBUG
     collection.AddModBehavior<TestCommand>();
+    collection.AddModBehavior<DebugMessage>();
 #endif
 
     collection.AddScoped<IGameManager, CS2GameManager>();

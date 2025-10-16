@@ -4,7 +4,7 @@ SHOP_ITEM_NOT_FOUND: "%SHOP_PREFIX%Could not find an item named \"{default}{0}{g
 
 SHOP_ITEM_DEAGLE: "One-Hit Revolver"
 SHOP_ITEM_DEAGLE_DESC: "A one-hit kill revolver with a single bullet. Aim carefully!"
-SHOP_ITEM_DEAGLE_HIT_FF: "You hit a teammate!"
+SHOP_ITEM_DEAGLE_HIT_FF: "%PREFIX%You hit a teammate!"
 
 SHOP_ITEM_STICKERS: "Stickers"
 SHOP_ITEM_STICKERS_DESC: "Reveal the roles of all players you taser to others."

@@ -1,12 +1,17 @@
-﻿using CounterStrikeSharp.API.Core;
+﻿using CounterStrikeSharp.API;
+using CounterStrikeSharp.API.Core;
+using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using ShopAPI.Configs.Traitor;
 using TTT.API.Events;
 using TTT.API.Extensions;
+using TTT.API.Game;
 using TTT.API.Player;
 using TTT.API.Role;
 using TTT.API.Storage;
 using TTT.CS2.Extensions;
+using TTT.Game.Events.Body;
+using TTT.Game.Events.Game;
 using TTT.Game.Events.Player;
 using TTT.Game.Roles;
 
@@ -23,7 +28,7 @@ public class DamageStation(IServiceProvider provider)
     provider.GetService<IStorage<DamageStationConfig>>()
     ?.Load()
      .GetAwaiter()
-     .GetResult() ?? new DamageStationConfig()) {
+     .GetResult() ?? new DamageStationConfig()), IListener {
   private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
 
   private readonly IPlayerConverter<CCSPlayerController> converter =
@@ -39,6 +44,8 @@ public class DamageStation(IServiceProvider provider)
 
   public override string Description
     => Locale[StationMsgs.SHOP_ITEM_STATION_HURT_DESC];
+
+  private readonly ISet<string> killedWithStation = new HashSet<string>();
 
   override protected void onInterval() {
     var players  = finder.GetOnline();
@@ -79,20 +86,37 @@ public class DamageStation(IServiceProvider provider)
 
         damageAmount = -dmgEvent.DmgDealt;
 
-        player.Health    += damageAmount;
-        info.HealthGiven += damageAmount;
-
         if (player.Health + damageAmount <= 0) {
+          killedWithStation.Add(player.Id);
           var playerDeath = new PlayerDeathEvent(player)
            .WithKiller(info.Owner as IOnlinePlayer)
            .WithWeapon($"[{Name}]");
           bus.Dispatch(playerDeath);
         }
 
-        gamePlayer.ExecuteClientCommand("play " + _Config.UseSound);
+        player.Health    += damageAmount;
+        info.HealthGiven += damageAmount;
+
+        gamePlayer.EmitSound("Player.DamageFall", null, 0.2f);
       }
     }
 
     foreach (var prop in toRemove) props.Remove(prop);
+  }
+
+  [UsedImplicitly]
+  [EventHandler]
+  public void OnGameEnd(GameStateUpdateEvent ev) {
+    if (ev.NewState != State.FINISHED) return;
+
+    killedWithStation.Clear();
+  }
+
+  [UsedImplicitly]
+  [EventHandler]
+  public void OnRagdollSpawn(BodyCreateEvent ev) {
+    if (!killedWithStation.Contains(ev.Body.OfPlayer.Id)) return;
+    if (ev.Body.Killer == null || ev.Body.Killer.Id == ev.Body.OfPlayer.Id)
+      ev.IsCanceled = true;
   }
 }

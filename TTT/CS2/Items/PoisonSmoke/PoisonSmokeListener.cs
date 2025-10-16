@@ -9,15 +9,22 @@ using Microsoft.Extensions.DependencyInjection;
 using ShopAPI;
 using ShopAPI.Configs.Traitor;
 using TTT.API;
+using TTT.API.Events;
+using TTT.API.Game;
 using TTT.API.Player;
 using TTT.API.Role;
 using TTT.API.Storage;
 using TTT.CS2.Extensions;
+using TTT.Game.Events.Body;
+using TTT.Game.Events.Game;
+using TTT.Game.Events.Player;
+using TTT.Game.Listeners;
 using TTT.Game.Roles;
 
 namespace TTT.CS2.Items.PoisonSmoke;
 
-public class PoisonSmokeListener(IServiceProvider provider) : IPluginModule {
+public class PoisonSmokeListener(IServiceProvider provider)
+  : BaseListener(provider), IPluginModule {
   private readonly PoisonSmokeConfig config =
     provider.GetService<IStorage<PoisonSmokeConfig>>()
     ?.Load()
@@ -27,26 +34,20 @@ public class PoisonSmokeListener(IServiceProvider provider) : IPluginModule {
   private readonly IPlayerConverter<CCSPlayerController> converter =
     provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
 
-  private readonly IPlayerFinder finder =
-    provider.GetRequiredService<IPlayerFinder>();
-
   private readonly List<IDisposable> poisonSmokes = [];
-
-  private readonly IRoleAssigner roleAssigner =
-    provider.GetRequiredService<IRoleAssigner>();
-
-  private readonly IScheduler scheduler =
-    provider.GetRequiredService<IScheduler>();
 
   private readonly IShop shop = provider.GetRequiredService<IShop>();
 
-  public void Dispose() {
+  private readonly ISet<string> killedWithPoison = new HashSet<string>();
+
+  public override void Dispose() {
+    base.Dispose();
     foreach (var timer in poisonSmokes) timer.Dispose();
 
     poisonSmokes.Clear();
+    killedWithPoison.Clear();
   }
 
-  public void Start() { }
 
   [UsedImplicitly]
   [GameEventHandler]
@@ -62,17 +63,18 @@ public class PoisonSmokeListener(IServiceProvider provider) : IPluginModule {
     var projectile =
       Utilities.GetEntityFromIndex<CSmokeGrenadeProjectile>(ev.Entityid);
     if (projectile == null || !projectile.IsValid) return HookResult.Continue;
-    startPoisonEffect(projectile);
+    startPoisonEffect(projectile, player);
     return HookResult.Continue;
   }
 
   [SuppressMessage("ReSharper", "AccessToModifiedClosure")]
-  private void startPoisonEffect(CSmokeGrenadeProjectile projectile) {
+  private void startPoisonEffect(CSmokeGrenadeProjectile projectile,
+    IOnlinePlayer thrower) {
     IDisposable? timer = null;
 
-    var effect = new PoisonEffect(projectile);
+    var effect = new PoisonEffect(projectile, thrower);
 
-    timer = scheduler.SchedulePeriodic(config.PoisonConfig.TimeBetweenDamage, ()
+    timer = Scheduler.SchedulePeriodic(config.PoisonConfig.TimeBetweenDamage, ()
       => {
       Server.NextWorldUpdate(() => {
         if (tickPoisonEffect(effect) || timer == null) return;
@@ -88,31 +90,67 @@ public class PoisonSmokeListener(IServiceProvider provider) : IPluginModule {
     if (!effect.Projectile.IsValid) return false;
     effect.Ticks++;
 
-    var players = finder.GetOnline()
-     .Where(player => player.IsAlive && roleAssigner.GetRoles(player)
+    var players = Finder.GetOnline()
+     .Where(player => player.IsAlive && Roles.GetRoles(player)
        .Any(role => role is InnocentRole or DetectiveRole));
 
-    var gamePlayers = players.Select(p => converter.GetPlayer(p))
-     .Where(p => p != null && p.Pawn.Value != null && p.Pawn.Value.IsValid)
-     .Select(p => (p!, p?.Pawn.Value?.AbsOrigin.Clone()!));
+    var gamePlayers = players.Select(p => (p, converter.GetPlayer(p)))
+     .Where(p => p.Item2 != null && p.Item2.Pawn.Value != null
+        && p.Item2.Pawn.Value.IsValid)
+     .Select(p => (p!, p.Item2?.Pawn.Value?.AbsOrigin.Clone()!));
 
     gamePlayers = gamePlayers.Where(t
       => t.Item2.Distance(effect.Origin) <= config.SmokeRadius);
 
-    foreach (var player in gamePlayers.Select(p => p.Item1)) {
+    foreach (var (apiPlayer, gamePlayer) in gamePlayers.Select(p => p.Item1)) {
       if (effect.DamageGiven >= config.PoisonConfig.TotalDamage) continue;
-      player.AddHealth(-config.PoisonConfig.DamagePerTick);
-      player.ExecuteClientCommand("play " + config.PoisonConfig.PoisonSound);
+      if (gamePlayer.GetHealth() - config.PoisonConfig.DamagePerTick <= 0) {
+        killedWithPoison.Add(apiPlayer.Id);
+        var playerDeathEvent = new PlayerDeathEvent(apiPlayer)
+         .WithKiller(effect.Attacker as IOnlinePlayer)
+         .WithWeapon("[Poison Smoke]");
+        Bus.Dispatch(playerDeathEvent);
+
+        gamePlayer.SetHealth(0);
+        continue;
+      }
+
+      var dmgEvent = new PlayerDamagedEvent(apiPlayer,
+        effect.Attacker as IOnlinePlayer, config.PoisonConfig.DamagePerTick) {
+        Weapon = "[Poison Smoke]"
+      };
+
+      Bus.Dispatch(dmgEvent);
+
+      gamePlayer.DealPoisonDamage(config.PoisonConfig.DamagePerTick);
       effect.DamageGiven += config.PoisonConfig.DamagePerTick;
     }
 
     return effect.DamageGiven < config.PoisonConfig.TotalDamage;
   }
 
-  private class PoisonEffect(CSmokeGrenadeProjectile projectile) {
+  private class PoisonEffect(CSmokeGrenadeProjectile projectile,
+    IOnlinePlayer attacker) {
     public int Ticks { get; set; }
     public int DamageGiven { get; set; }
     public Vector Origin { get; } = projectile.AbsOrigin.Clone()!;
     public CSmokeGrenadeProjectile Projectile { get; } = projectile;
+    public IPlayer Attacker { get; } = attacker;
+  }
+
+  [UsedImplicitly]
+  [EventHandler]
+  public void OnGameEnd(GameStateUpdateEvent ev) {
+    if (ev.NewState != State.FINISHED) return;
+
+    killedWithPoison.Clear();
+  }
+
+  [UsedImplicitly]
+  [EventHandler]
+  public void OnRagdollSpawn(BodyCreateEvent ev) {
+    if (!killedWithPoison.Contains(ev.Body.OfPlayer.Id)) return;
+    if (ev.Body.Killer == null || ev.Body.Killer.Id == ev.Body.OfPlayer.Id)
+      ev.IsCanceled = true;
   }
 }

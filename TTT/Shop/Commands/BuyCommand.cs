@@ -82,8 +82,7 @@ public class BuyCommand(IServiceProvider provider) : ICommand {
   }
 
   private List<IShopItem> sortItems(IOnlinePlayer? player) {
-    var items = new List<IShopItem>(shop.Items).Where(item => player == null)
-     .ToList();
+    var items = new List<IShopItem>(shop.Items).ToList();
     items.Sort((a, b) => {
       var aPrice = a.Config.Price;
       var bPrice = b.Config.Price;

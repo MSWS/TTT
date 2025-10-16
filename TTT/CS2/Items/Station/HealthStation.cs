@@ -49,13 +49,14 @@ public class HealthStation(IServiceProvider provider)
       foreach (var (player, dist) in playerDists) {
         var maxHp       = player.Pawn.Value?.MaxHealth ?? 100;
         var healthScale = 1.0 - dist / _Config.MaxRange;
-        var healAmount =
+        var maxHealAmo =
           (int)Math.Ceiling(_Config.HealthIncrements * healthScale);
-        var newHealth = Math.Min(player.GetHealth() + healAmount, maxHp);
+        var newHealth   = Math.Min(player.GetHealth() + maxHealAmo, maxHp);
+        var healthGiven = newHealth - player.GetHealth();
         player.SetHealth(newHealth);
-        info.HealthGiven += healAmount;
+        info.HealthGiven += healthGiven;
 
-        player.ExecuteClientCommand("play " + _Config.UseSound);
+        if (healthGiven > 0) player.EmitSound("HealthShot.Pickup", null, 0.1f);
       }
     }
 
