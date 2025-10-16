@@ -129,7 +129,16 @@ public abstract class StationItem<T>(IServiceProvider provider,
         || gamePlayer.Pawn.Value == null)
         return;
 
-      prop.Teleport(gamePlayer.GetEyePosition());
+      var spawnPos = gamePlayer.GetEyePosition();
+      var forward  = gamePlayer.Pawn.Value.AbsRotation;
+
+      if (spawnPos == null) return;
+
+      if (forward == null) forward = new QAngle(0, 0, 0);
+
+      spawnPos += forward.ToForward() * 50;
+
+      prop.Teleport(spawnPos);
     });
   }
 

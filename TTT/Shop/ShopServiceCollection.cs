@@ -41,7 +41,8 @@ public static class ShopServiceCollection {
     collection.AddBodyPaintServices();
     collection.AddC4Services();
     collection.AddCamoServices();
-    collection.AddCompassServices();
+    collection.AddInnoCompassServices();
+    collection.AddBodyCompassServices();
     collection.AddDamageStation();
     collection.AddDeagleServices();
     collection.AddDnaScannerServices();
