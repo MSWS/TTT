@@ -4,6 +4,7 @@ using TTT.API.Extensions;
 using TTT.CS2.Items.Armor;
 using TTT.CS2.Items.BodyPaint;
 using TTT.CS2.Items.Camouflage;
+using TTT.CS2.Items.ClusterGrenade;
 using TTT.CS2.Items.Compass;
 using TTT.CS2.Items.DNA;
 using TTT.CS2.Items.OneHitKnife;
@@ -38,17 +39,18 @@ public static class ShopServiceCollection {
     collection.AddModBehavior<BalanceCommand>();
 
     collection.AddArmorServices();
+    collection.AddBodyCompassServices();
     collection.AddBodyPaintServices();
     collection.AddC4Services();
     collection.AddCamoServices();
-    collection.AddInnoCompassServices();
-    collection.AddBodyCompassServices();
+    collection.AddClusterGrenade();
     collection.AddDamageStation();
     collection.AddDeagleServices();
     collection.AddDnaScannerServices();
     collection.AddGlovesServices();
     collection.AddHealthStation();
     collection.AddHealthshot();
+    collection.AddInnoCompassServices();
     collection.AddM4A1Services();
     collection.AddOneHitKnifeService();
     collection.AddPoisonShots();
