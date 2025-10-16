@@ -2,6 +2,9 @@
 using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Core.Attributes.Registration;
+using CounterStrikeSharp.API.Modules.Memory;
+using CounterStrikeSharp.API.Modules.Memory.DynamicFunctions;
+using CounterStrikeSharp.API.Modules.Utils;
 using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using ShopAPI;
@@ -23,17 +26,6 @@ public class ClusterGrenadeListener(IServiceProvider provider) : IPluginModule {
   private readonly IPlayerConverter<CCSPlayerController> converter =
     provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
 
-  private readonly IPlayerFinder finder =
-    provider.GetRequiredService<IPlayerFinder>();
-
-  private readonly List<IDisposable> poisonSmokes = [];
-
-  private readonly IRoleAssigner roleAssigner =
-    provider.GetRequiredService<IRoleAssigner>();
-
-  private readonly IScheduler scheduler =
-    provider.GetRequiredService<IScheduler>();
-
   private readonly IShop shop = provider.GetRequiredService<IShop>();
 
   [UsedImplicitly]
@@ -45,9 +37,26 @@ public class ClusterGrenadeListener(IServiceProvider provider) : IPluginModule {
     if (!shop.HasItem<ClusterGrenadeItem>(player)) return HookResult.Continue;
 
     shop.RemoveItem<ClusterGrenadeItem>(player);
-    // Utilities.CreateEntityByName<>()
 
-    Server.PrintToChatAll("[TTT] Cluster Grenade detonated!");
+    for (var i = 0; i < config.GrenadeCount; i++) {
+      var entity =
+        Utilities.GetEntityFromIndex<CHEGrenadeProjectile>(ev.Entityid);
+
+      if (entity == null || entity.AbsOrigin == null) continue;
+
+      // Throw grenade in circular pattern
+      var angle = new Vector(
+        (float)(Math.Cos(2 * Math.PI / config.GrenadeCount * i)
+          * config.ThrowForce),
+        (float)(Math.Sin(2 * Math.PI / config.GrenadeCount * i)
+          * config.ThrowForce), config.UpForce);
+
+      if (ev.Userid.Pawn.Value == null) continue;
+
+      GrenadeDataHelper.CreateGrenade(entity.AbsOrigin, QAngle.Zero, angle,
+        Vector.Zero, ev.Userid.Pawn.Value.Handle, ev.Userid.Team);
+    }
+
     return HookResult.Continue;
   }
 

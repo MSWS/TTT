@@ -8,4 +8,6 @@ public record ClusterGrenadeConfig : ShopItemConfig, IWeapon {
   public string WeaponId { get; } = "weapon_hegrenade";
   public int? ReserveAmmo { get; } = null;
   public int? CurrentAmmo { get; } = null;
+  public float UpForce { get; init; } = 100f;
+  public float ThrowForce { get; init; } = 400f;
 }
