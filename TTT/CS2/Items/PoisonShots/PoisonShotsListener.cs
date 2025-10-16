@@ -130,7 +130,6 @@ public class PoisonShotsListener(IServiceProvider provider)
 
     var gamePlayer = converter.GetPlayer(online);
     gamePlayer?.ColorScreen(config.PoisonColor, 0.2f, 0.3f);
-    // gamePlayer?.ExecuteClientCommand("play " + config.PoisonConfig.PoisonSound);
     if (gamePlayer != null)
       gamePlayer.DealPoisonDamage(config.PoisonConfig.DamagePerTick);
 
