@@ -58,7 +58,6 @@ public class BodySpawner(IServiceProvider provider) : BaseListener(provider) {
 
     if (bodyCreatedEvent.IsCanceled) {
       ragdollBody.AcceptInput("Kill");
-      // ragdollBody.Remove();
     }
   }
 
