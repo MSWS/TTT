@@ -125,7 +125,6 @@ public class PoisonShotsListener(IServiceProvider provider)
       bus.Dispatch(deathEvent);
     }
 
-    // online.Health -= config.PoisonConfig.DamagePerTick;
     effect.Ticks++;
     effect.DamageGiven += config.PoisonConfig.DamagePerTick;
 
