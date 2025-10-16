@@ -1,5 +1,4 @@
-﻿using CounterStrikeSharp.API;
-using CounterStrikeSharp.API.Core;
+﻿using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Commands;
 using MAULActainShared.plugin;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,22 +15,22 @@ using TTT.Locale;
 namespace TTT.CS2.GameHandlers;
 
 public class TraitorChatHandler(IServiceProvider provider) : IPluginModule {
-  private readonly IGameManager game =
-    provider.GetRequiredService<IGameManager>();
-
-  private readonly IRoleAssigner roles =
-    provider.GetRequiredService<IRoleAssigner>();
-
   private readonly IPlayerConverter<CCSPlayerController> converter =
     provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
 
-  private readonly IMessenger messenger =
-    provider.GetRequiredService<IMessenger>();
+  private readonly IGameManager game =
+    provider.GetRequiredService<IGameManager>();
 
   private readonly IMsgLocalizer locale =
     provider.GetRequiredService<IMsgLocalizer>();
 
-  private IActain? maulService = null;
+  private readonly IMessenger messenger =
+    provider.GetRequiredService<IMessenger>();
+
+  private readonly IRoleAssigner roles =
+    provider.GetRequiredService<IRoleAssigner>();
+
+  private IActain? maulService;
 
   public void Start(BasePlugin? plugin) {
     try {
@@ -46,6 +45,13 @@ public class TraitorChatHandler(IServiceProvider provider) : IPluginModule {
       plugin?.AddCommandListener("say_team", onSay);
     }
   }
+
+  public void Dispose() {
+    if (maulService != null)
+      maulService.getChatShareService().OnChatShare -= OnOnChatShare;
+  }
+
+  public void Start() { }
 
   private void OnOnChatShare(CCSPlayerController? player, CommandInfo info,
     ref bool canceled) {
@@ -76,11 +82,4 @@ public class TraitorChatHandler(IServiceProvider provider) : IPluginModule {
     foreach (var mate in teammates) messenger.Message(mate, formatted);
     return HookResult.Handled;
   }
-
-  public void Dispose() {
-    if (maulService != null)
-      maulService.getChatShareService().OnChatShare -= OnOnChatShare;
-  }
-
-  public void Start() { }
 }

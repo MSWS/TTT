@@ -24,8 +24,10 @@ public class BuyMenuHandler(IServiceProvider provider) : IPluginModule {
     { "weapon_smokegrenade", "Poison Smoke" },
     { "weapon_m4a1_silencer", "M4A1" },
     { "weapon_usp_silencer", "M4A1" },
+    { "weapon_sg556", "M4A1" },
     { "weapon_mp5sd", "M4A1" },
-    { "weapon_decoy", "healthshot" }
+    { "weapon_decoy", "healthshot" },
+    { "weapon_awp", "AWP" }
   };
 
   public void Dispose() { }

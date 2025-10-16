@@ -15,6 +15,9 @@ using TTT.Game.Roles;
 namespace TTT.CS2.Game;
 
 public class CS2Game(IServiceProvider provider) : RoundBasedGame(provider) {
+  private readonly IPlayerConverter<CCSPlayerController> converter =
+    provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
+
   public override State State {
     set {
       var ev = new GameStateUpdateEvent(this, value);
@@ -32,9 +35,6 @@ public class CS2Game(IServiceProvider provider) : RoundBasedGame(provider) {
     new SpectatorRole(provider), new InnocentRole(provider),
     new TraitorRole(provider), new DetectiveRole(provider)
   ];
-
-  private readonly IPlayerConverter<CCSPlayerController> converter =
-    provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
 
   override protected void StartRound() {
     Server.NextWorldUpdate(() => {
