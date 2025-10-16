@@ -21,10 +21,10 @@ public class BodyCompassItem(IServiceProvider provider)
   private readonly IBodyTracker bodies =
     provider.GetRequiredService<IBodyTracker>();
 
-  public override string Name => Locale[CompassMsgs.SHOP_ITEM_COMPASS_PLAYER];
+  public override string Name => Locale[CompassMsgs.SHOP_ITEM_COMPASS_BODY];
 
   public override string Description
-    => Locale[CompassMsgs.SHOP_ITEM_COMPASS_PLAYER_DESC];
+    => Locale[CompassMsgs.SHOP_ITEM_COMPASS_BODY_DESC];
 
   /// <summary>
   /// For innocents: point to nearest traitor.
