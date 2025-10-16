@@ -56,9 +56,7 @@ public class BodySpawner(IServiceProvider provider) : BaseListener(provider) {
     var bodyCreatedEvent = new BodyCreateEvent(body);
     bus.Dispatch(bodyCreatedEvent);
 
-    if (bodyCreatedEvent.IsCanceled) {
-      ragdollBody.AcceptInput("Kill");
-    }
+    if (bodyCreatedEvent.IsCanceled) { ragdollBody.AcceptInput("Kill"); }
   }
 
   [UsedImplicitly]
@@ -80,6 +78,10 @@ public class BodySpawner(IServiceProvider provider) : BaseListener(provider) {
 
     if (pawn == null || !pawn.IsValid)
       throw new ArgumentException("Pawn is not valid",
+        nameof(playerController));
+
+    if (pawn.AbsOrigin == null || pawn.AbsRotation == null)
+      throw new ArgumentException("Pawn AbsOrigin or AbsRotation is null",
         nameof(playerController));
 
     var origin   = pawn.AbsOrigin.Clone();
