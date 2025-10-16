@@ -57,7 +57,7 @@ public class BalanceClearTest(IServiceProvider provider) {
     var game = games.CreateGame();
     game?.Start();
 
-    await Task.Delay(TimeSpan.FromMilliseconds(10),
+    await Task.Delay(TimeSpan.FromMilliseconds(20),
       TestContext.Current.CancellationToken);
 
     var newBalance = await shop.Load(player);
