@@ -29,12 +29,13 @@ public class DeagleTests {
     victim     = finder.AddPlayer(TestPlayer.Random());
     survivor   = finder.AddPlayer(TestPlayer.Random());
 
+    bus.RegisterListener(new DeagleDamageListener(provider));
+    bus.RegisterListener(new TestDamageApplier(provider));
     games.CreateGame()?.Start();
   }
 
   [Fact]
   public void Deagle_Kills_OnDamage() {
-    bus.RegisterListener(new DeagleDamageListener(provider));
     shop.GiveItem(testPlayer, item);
 
     var playerDmgEvent =
@@ -47,7 +48,6 @@ public class DeagleTests {
 
   [Fact]
   public void Deagle_DoesNotKill_AfterFirstKill() {
-    bus.RegisterListener(new DeagleDamageListener(provider));
     shop.GiveItem(testPlayer, item);
 
     var playerDmgEvent =
