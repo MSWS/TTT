@@ -63,19 +63,41 @@ public class BuyCommand(IServiceProvider provider) : ICommand {
       return null;
     }
 
-    var item = shop.Items.FirstOrDefault(it
+    var searchSet = sortItems(player);
+
+    var item = searchSet.FirstOrDefault(it
       => it.Name.Equals(query, StringComparison.OrdinalIgnoreCase));
 
     if (item != null) return item;
 
-    item = shop.Items.FirstOrDefault(it
+    item = searchSet.FirstOrDefault(it
       => it.Name.Contains(query, StringComparison.OrdinalIgnoreCase));
 
     if (item != null) return item;
 
-    item = shop.Items.FirstOrDefault(it
+    item = searchSet.FirstOrDefault(it
       => it.Description.Contains(query, StringComparison.OrdinalIgnoreCase));
 
     return item;
+  }
+
+  private List<IShopItem> sortItems(IOnlinePlayer? player) {
+    var items = new List<IShopItem>(shop.Items).Where(item => player == null)
+     .ToList();
+    items.Sort((a, b) => {
+      var aPrice = a.Config.Price;
+      var bPrice = b.Config.Price;
+      var aCanBuy = player != null
+        && a.CanPurchase(player) == PurchaseResult.SUCCESS;
+      var bCanBuy = player != null
+        && b.CanPurchase(player) == PurchaseResult.SUCCESS;
+
+      if (aCanBuy && !bCanBuy) return -1;
+      if (!aCanBuy && bCanBuy) return 1;
+      if (aPrice != bPrice) return aPrice.CompareTo(bPrice);
+      return string.Compare(a.Name, b.Name, StringComparison.Ordinal);
+    });
+
+    return items;
   }
 }
