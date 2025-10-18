@@ -11,7 +11,7 @@ namespace TTT.CS2.Configs;
 
 public class CS2TaserConfig : IStorage<TaserConfig>, IPluginModule {
   public static readonly FakeConVar<int> CV_PRICE = new(
-    "css_ttt_shop_taser_price", "Price of the Taser item", 100,
+    "css_ttt_shop_taser_price", "Price of the Taser item", 120,
     ConVarFlags.FCVAR_NONE, new RangeValidator<int>(0, 10000));
 
   public static readonly FakeConVar<string> CV_WEAPON = new(
