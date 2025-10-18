@@ -21,25 +21,6 @@ public class DamageDealingHelper {
 
     var damageInfo = new CTakeDamageInfo(infoPtr);
 
-    // var attackerInfo = new CAttackerInfo() {
-    //   AttackerUserId =
-    //     attacker != null && attacker.UserId != null ?
-    //       (ushort)attacker.UserId :
-    //       unchecked((ushort)(-1)),
-    //   AttackerPawn = attacker != null ? attacker.Pawn.Raw : 0,
-    //   NeedInit     = false,
-    //   TeamNum =
-    //     attacker != null && attacker.Pawn.Value != null ?
-    //       attacker.Pawn.Value.TeamNum :
-    //       0,
-    //   TeamChecked = 0,
-    //   IsWorld     = attacker == null,
-    //   IsPawn      = attacker != null,
-    // };
-
-    // Marshal.StructureToPtr(attackerInfo, new IntPtr(infoPtr.ToInt64() + 0x80),
-    //   false);
-
     Schema.SetSchemaValue(damageInfo.Handle, "CTakeDamageInfo", "m_hInflictor",
       attacker != null ? attacker.Pawn.Raw : 0);
     Schema.SetSchemaValue(damageInfo.Handle, "CTakeDamageInfo", "m_hAttacker",

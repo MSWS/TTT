@@ -46,7 +46,6 @@ public class DamageStation(IServiceProvider provider)
   public override string Description
     => Locale[StationMsgs.SHOP_ITEM_STATION_HURT_DESC];
 
-  // private readonly ISet<string> killedWithStation = new HashSet<string>();
   private Dictionary<string, StationInfo> killedWithStation =
     new Dictionary<string, StationInfo>();
 

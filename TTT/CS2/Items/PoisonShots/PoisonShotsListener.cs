@@ -42,7 +42,6 @@ public class PoisonShotsListener(IServiceProvider provider)
 
   private readonly IShop shop = provider.GetRequiredService<IShop>();
 
-  // private readonly ISet<string> killedWithPoison = new HashSet<string>();
   private readonly Dictionary<string, IPlayer> killedWithPoison = new();
 
   public override void Dispose() {
