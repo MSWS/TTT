@@ -10,6 +10,7 @@ using TTT.API.Player;
 using TTT.API.Role;
 using TTT.API.Storage;
 using TTT.CS2.Extensions;
+using TTT.CS2.Utils;
 using TTT.Game.Events.Body;
 using TTT.Game.Events.Game;
 using TTT.Game.Events.Player;
@@ -45,7 +46,8 @@ public class DamageStation(IServiceProvider provider)
   public override string Description
     => Locale[StationMsgs.SHOP_ITEM_STATION_HURT_DESC];
 
-  private readonly ISet<string> killedWithStation = new HashSet<string>();
+  private Dictionary<string, StationInfo> killedWithStation =
+    new Dictionary<string, StationInfo>();
 
   override protected void onInterval() {
     var players  = finder.GetOnline();
@@ -87,7 +89,7 @@ public class DamageStation(IServiceProvider provider)
         damageAmount = -dmgEvent.DmgDealt;
 
         if (player.Health + damageAmount <= 0) {
-          killedWithStation.Add(player.Id);
+          killedWithStation[player.Id] = info;
           var playerDeath = new PlayerDeathEvent(player)
            .WithKiller(info.Owner as IOnlinePlayer)
            .WithWeapon($"[{Name}]");
@@ -115,8 +117,11 @@ public class DamageStation(IServiceProvider provider)
   [UsedImplicitly]
   [EventHandler]
   public void OnRagdollSpawn(BodyCreateEvent ev) {
-    if (!killedWithStation.Contains(ev.Body.OfPlayer.Id)) return;
-    if (ev.Body.Killer == null || ev.Body.Killer.Id == ev.Body.OfPlayer.Id)
-      ev.IsCanceled = true;
+    if (!killedWithStation.TryGetValue(ev.Body.OfPlayer.Id,
+      out var stationInfo))
+      return;
+    if (ev.Body.Killer != null && ev.Body.Killer.Id != ev.Body.OfPlayer.Id)
+      return;
+    ev.Body.Killer = stationInfo.Owner as IOnlinePlayer;
   }
 }

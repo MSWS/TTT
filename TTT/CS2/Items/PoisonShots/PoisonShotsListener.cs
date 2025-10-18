@@ -42,7 +42,7 @@ public class PoisonShotsListener(IServiceProvider provider)
 
   private readonly IShop shop = provider.GetRequiredService<IShop>();
 
-  private readonly ISet<string> killedWithPoison = new HashSet<string>();
+  private readonly Dictionary<string, IPlayer> killedWithPoison = new();
 
   public override void Dispose() {
     base.Dispose();
@@ -118,7 +118,7 @@ public class PoisonShotsListener(IServiceProvider provider)
     if (dmgEvent.IsCanceled) return true;
 
     if (online.Health - config.PoisonConfig.DamagePerTick <= 0) {
-      killedWithPoison.Add(online.Id);
+      killedWithPoison[online.Id] = effect.Shooter;
       var deathEvent = new PlayerDeathEvent(online)
        .WithKiller(effect.Shooter as IOnlinePlayer)
        .WithWeapon($"[{Locale[PoisonShotMsgs.SHOP_ITEM_POISON_SHOTS]}]");
@@ -167,8 +167,10 @@ public class PoisonShotsListener(IServiceProvider provider)
   [UsedImplicitly]
   [EventHandler]
   public void OnRagdollSpawn(BodyCreateEvent ev) {
-    if (!killedWithPoison.Contains(ev.Body.OfPlayer.Id)) return;
-    if (ev.Body.Killer == null || ev.Body.Killer.Id == ev.Body.OfPlayer.Id)
-      ev.IsCanceled = true;
+    if (!killedWithPoison.TryGetValue(ev.Body.OfPlayer.Id, out var shooter))
+      return;
+    if (ev.Body.Killer != null && ev.Body.Killer.Id != ev.Body.OfPlayer.Id)
+      return;
+    ev.Body.Killer = shooter as IOnlinePlayer;
   }
 }

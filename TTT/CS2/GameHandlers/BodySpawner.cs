@@ -6,18 +6,17 @@ using CounterStrikeSharp.API.Modules.Entities.Constants;
 using CounterStrikeSharp.API.Modules.Utils;
 using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
+using TTT.API;
 using TTT.API.Events;
 using TTT.API.Game;
 using TTT.API.Player;
 using TTT.CS2.Extensions;
 using TTT.Game.Events.Body;
-using TTT.Game.Events.Player;
-using TTT.Game.Listeners;
 using TTT.Game.Roles;
 
 namespace TTT.CS2.GameHandlers;
 
-public class BodySpawner(IServiceProvider provider) : BaseListener(provider) {
+public class BodySpawner(IServiceProvider provider) : IPluginModule {
   private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
 
   private readonly IPlayerConverter<CCSPlayerController> converter =
@@ -26,37 +25,31 @@ public class BodySpawner(IServiceProvider provider) : BaseListener(provider) {
   private readonly IGameManager games =
     provider.GetRequiredService<IGameManager>();
 
-  [UsedImplicitly]
-  [EventHandler]
-  public void OnLeave(PlayerLeaveEvent ev) {
-    if (games.ActiveGame is not { State: State.IN_PROGRESS }) return;
-    spawnRagdoll(ev.Player);
-  }
+  public void Dispose() { }
+  public void Start() { }
 
   [UsedImplicitly]
-  [EventHandler]
-  public void OnDeath(PlayerDeathEvent ev) {
-    if (games.ActiveGame is not { State: State.IN_PROGRESS }) return;
-    spawnRagdoll(ev.Player, ev.Killer, ev.Weapon);
-  }
-
-  private void spawnRagdoll(IPlayer apiPlayer, IOnlinePlayer? killer = null,
-    string? weapon = null) {
-    var player = converter.GetPlayer(apiPlayer);
-    if (player == null || !player.IsValid) return;
+  [GameEventHandler]
+  public HookResult OnDeath(EventPlayerDeath ev, GameEventInfo _) {
+    if (games.ActiveGame is not { State: State.IN_PROGRESS })
+      return HookResult.Continue;
+    var player = ev.Userid;
+    if (player == null || !player.IsValid) return HookResult.Continue;
     player.SetColor(Color.FromArgb(0, 255, 255, 255));
 
     var ragdollBody = makeGameRagdoll(player);
     var body        = new CS2Body(ragdollBody, converter.GetPlayer(player));
 
-    if (killer != null) body.WithKiller(killer);
+    if (ev.Attacker != null && ev.Attacker.IsValid)
+      body.WithKiller(converter.GetPlayer(ev.Attacker));
 
-    body.WithWeapon(new BaseWeapon(weapon ?? "unknown"));
+    body.WithWeapon(new BaseWeapon(ev.Weapon));
 
     var bodyCreatedEvent = new BodyCreateEvent(body);
     bus.Dispatch(bodyCreatedEvent);
 
-    if (bodyCreatedEvent.IsCanceled) { ragdollBody.AcceptInput("Kill"); }
+    if (bodyCreatedEvent.IsCanceled) ragdollBody.AcceptInput("Kill");
+    return HookResult.Continue;
   }
 
   [UsedImplicitly]
@@ -78,10 +71,6 @@ public class BodySpawner(IServiceProvider provider) : BaseListener(provider) {
 
     if (pawn == null || !pawn.IsValid)
       throw new ArgumentException("Pawn is not valid",
-        nameof(playerController));
-
-    if (pawn.AbsOrigin == null || pawn.AbsRotation == null)
-      throw new ArgumentException("Pawn AbsOrigin or AbsRotation is null",
         nameof(playerController));
 
     var origin   = pawn.AbsOrigin.Clone();
