@@ -1,14 +1,19 @@
 ﻿using System.Net;
+using System.Numerics;
 using System.Runtime.InteropServices;
+using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Memory;
+using Vector = CounterStrikeSharp.API.Modules.Utils.Vector;
 
 namespace TTT.CS2.Utils;
 
 public class DamageDealingHelper {
   public static void DealDamage(CCSPlayerController target,
     CCSPlayerController? attacker, int damage, string source,
-    DamageTypes_t type = DamageTypes_t.DMG_BULLET) {
+    DamageTypes_t type = DamageTypes_t.DMG_BLAST_SURFACE) {
+    if (target.Pawn.Value == null) return;
+
     var infoSize = Schema.GetClassSize("CTakeDamageInfo");
     var infoPtr  = Marshal.AllocHGlobal(infoSize);
 
@@ -16,24 +21,24 @@ public class DamageDealingHelper {
 
     var damageInfo = new CTakeDamageInfo(infoPtr);
 
-    var attackerInfo = new CAttackerInfo() {
-      AttackerUserId =
-        attacker != null && attacker.UserId != null ?
-          (ushort)attacker.UserId :
-          unchecked((ushort)(-1)),
-      AttackerPawn = attacker != null ? attacker.Pawn.Raw : 0,
-      NeedInit     = false,
-      TeamNum =
-        attacker != null && attacker.Pawn.Value != null ?
-          attacker.Pawn.Value.TeamNum :
-          0,
-      TeamChecked = 0,
-      IsWorld     = attacker == null,
-      IsPawn      = attacker != null
-    };
+    // var attackerInfo = new CAttackerInfo() {
+    //   AttackerUserId =
+    //     attacker != null && attacker.UserId != null ?
+    //       (ushort)attacker.UserId :
+    //       unchecked((ushort)(-1)),
+    //   AttackerPawn = attacker != null ? attacker.Pawn.Raw : 0,
+    //   NeedInit     = false,
+    //   TeamNum =
+    //     attacker != null && attacker.Pawn.Value != null ?
+    //       attacker.Pawn.Value.TeamNum :
+    //       0,
+    //   TeamChecked = 0,
+    //   IsWorld     = attacker == null,
+    //   IsPawn      = attacker != null,
+    // };
 
-    Marshal.StructureToPtr(attackerInfo, new IntPtr(infoPtr.ToInt64() + 0x80),
-      false);
+    // Marshal.StructureToPtr(attackerInfo, new IntPtr(infoPtr.ToInt64() + 0x80),
+    //   false);
 
     Schema.SetSchemaValue(damageInfo.Handle, "CTakeDamageInfo", "m_hInflictor",
       attacker != null ? attacker.Pawn.Raw : 0);
@@ -41,6 +46,16 @@ public class DamageDealingHelper {
       attacker != null ? attacker.EntityHandle.Raw : 0);
     damageInfo.Damage         = damage;
     damageInfo.BitsDamageType = type;
+
+    if (target.Pawn.Value?.AbsOrigin != null)
+      Schema.SetSchemaValue(damageInfo.Handle, "CTakeDamageInfo",
+        "m_vecDamagePosition",
+        target.Pawn.Value != null ?
+          target.Pawn.Value.AbsOrigin.Handle :
+          Vector.Zero.Handle);
+
+    Schema.SetSchemaValue(damageInfo.Handle, "CTakeDamageInfo",
+      "m_vecDamageForce", Vector.Zero.Handle);
 
     var damageResultSize = Schema.GetClassSize("CTakeDamageResult");
     var damageResultPtr  = Marshal.AllocHGlobal(damageResultSize);
@@ -57,9 +72,12 @@ public class DamageDealingHelper {
     damageResult.TotalledDamageDealt = damage;
     damageResult.WasDamageSuppressed = false;
 
-    if (target.Pawn.Value != null)
-      VirtualFunctions.CBaseEntity_TakeDamageOldFunc.Invoke(target.Pawn.Value,
-        damageInfo, damageResult);
+    if (target.EntityHandle.Value != null)
+      VirtualFunctions.CBaseEntity_TakeDamageOldFunc.Invoke(
+        target.EntityHandle.Value, damageInfo, damageResult);
+
+    Marshal.FreeHGlobal(infoPtr);
+    Marshal.FreeHGlobal(damageResultPtr);
   }
 }
 

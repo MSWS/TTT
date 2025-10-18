@@ -12,8 +12,6 @@ using TTT.API.Game;
 using TTT.API.Player;
 using TTT.CS2.Extensions;
 using TTT.Game.Events.Body;
-using TTT.Game.Events.Player;
-using TTT.Game.Listeners;
 using TTT.Game.Roles;
 
 namespace TTT.CS2.GameHandlers;
@@ -27,13 +25,15 @@ public class BodySpawner(IServiceProvider provider) : IPluginModule {
   private readonly IGameManager games =
     provider.GetRequiredService<IGameManager>();
 
+  public void Dispose() { }
+  public void Start() { }
+
   [UsedImplicitly]
-  [GameEventHandler(HookMode.Pre)]
+  [GameEventHandler]
   public HookResult OnDeath(EventPlayerDeath ev, GameEventInfo _) {
     if (games.ActiveGame is not { State: State.IN_PROGRESS })
       return HookResult.Continue;
     var player = ev.Userid;
-
     if (player == null || !player.IsValid) return HookResult.Continue;
     player.SetColor(Color.FromArgb(0, 255, 255, 255));
 
@@ -83,39 +83,12 @@ public class BodySpawner(IServiceProvider provider) : IPluginModule {
     origin.Z      += 30;
     ragdoll.Speed =  0;
 
-    var bodyComponent = pawn.CBodyComponent;
-
-    if (bodyComponent == null)
-      throw new ArgumentException("Pawn CBodyComponent is not valid",
-        nameof(playerController));
-
-    var sceneNode = bodyComponent.SceneNode;
-
-    if (sceneNode == null)
-      throw new ArgumentException("Pawn CBodyComponent SceneNode is not valid",
-        nameof(playerController));
-
-    var sceneNodeOwner = sceneNode.Owner;
-
-    if (sceneNodeOwner == null)
-      throw new ArgumentException(
-        "Pawn CBodyComponent SceneNode Owner is not valid",
-        nameof(playerController));
-
-    var sceneNodeEntity = sceneNodeOwner.Entity;
-
-    if (sceneNodeEntity == null)
-      throw new ArgumentException(
-        "Pawn CBodyComponent SceneNode Owner Entity is not valid",
-        nameof(playerController));
-
-    // ragdoll.CBodyComponent.SceneNode.Owner.Entity.Flags =
-    //   (uint)(ragdoll.CBodyComponent.SceneNode.Owner.Entity.Flags & ~(1 << 2));
-
-    sceneNodeEntity.Flags = (uint)(sceneNodeEntity.Flags & ~(1 << 2));
+    ragdoll.CBodyComponent!.SceneNode!.Owner!.Entity!.Flags =
+      (uint)(ragdoll.CBodyComponent!.SceneNode!.Owner!.Entity!.Flags
+        & ~(1 << 2));
+    ragdoll.SetModel(pawn.CBodyComponent!.SceneNode!.GetSkeletonInstance()
+     .ModelState.ModelName);
     ragdoll.DispatchSpawn();
-
-    ragdoll.SetModel(sceneNode.GetSkeletonInstance().ModelState.ModelName);
     ragdoll.Collision.CollisionGroup =
       (byte)CollisionGroup.COLLISION_GROUP_DEBRIS;
     ragdoll.Collision.CollisionAttribute.CollisionGroup =
@@ -123,8 +96,7 @@ public class BodySpawner(IServiceProvider provider) : IPluginModule {
     ragdoll.Collision.SolidType = SolidType_t.SOLID_VPHYSICS;
     ragdoll.MoveType            = MoveType_t.MOVETYPE_VPHYSICS;
     Utilities.SetStateChanged(ragdoll, "CBaseEntity", "m_MoveType");
-    if (ragdoll.Entity != null)
-      ragdoll.Entity.Name = "player_body__" + playerController.Index;
+    ragdoll.Entity!.Name = "player_body__" + playerController.Index;
     ragdoll.Teleport(origin, rotation, Vector.Zero);
     Server.NextWorldUpdate(()
       => correctRagdoll(ragdoll, origin, rotation ?? QAngle.Zero, true));
@@ -142,7 +114,4 @@ public class BodySpawner(IServiceProvider provider) : IPluginModule {
 
     ragdoll.Teleport(origin, rotation, Vector.Zero);
   }
-
-  public void Dispose() { }
-  public void Start() { }
 }

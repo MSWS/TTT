@@ -88,17 +88,14 @@ public class DamageStation(IServiceProvider provider)
         damageAmount = -dmgEvent.DmgDealt;
 
         if (player.Health + damageAmount <= 0) {
-          // killedWithStation.Add(player.Id);
-          // var playerDeath = new PlayerDeathEvent(player)
-          //  .WithKiller(info.Owner as IOnlinePlayer)
-          //  .WithWeapon($"[{Name}]");
-          // bus.Dispatch(playerDeath);
+          killedWithStation.Add(player.Id);
+          var playerDeath = new PlayerDeathEvent(player)
+           .WithKiller(info.Owner as IOnlinePlayer)
+           .WithWeapon($"[{Name}]");
+          bus.Dispatch(playerDeath);
         }
 
-        DamageDealingHelper.DealDamage(gamePlayer, null, damageAmount,
-          "Hurt Station");
-
-        // player.Health    += damageAmount;
+        player.Health    += damageAmount;
         info.HealthGiven += damageAmount;
 
         gamePlayer.EmitSound("Player.DamageFall", null, 0.2f);
