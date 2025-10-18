@@ -24,7 +24,7 @@ public class GlovesListener(IServiceProvider provider)
   private readonly Dictionary<IPlayer, int> uses = new();
 
   [UsedImplicitly]
-  [EventHandler]
+  [EventHandler(Priority = Priority.LOW)]
   public void BodyCreate(BodyCreateEvent ev) {
     if (ev.Body.Killer == null || !useGloves(ev.Body.Killer)) return;
     if (ev.Body.Killer is not IOnlinePlayer online) return;
