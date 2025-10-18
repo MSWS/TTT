@@ -45,7 +45,7 @@ public class RoundTimerListener(IServiceProvider provider)
          .TotalSeconds);
         Server.ExecuteCommand("mp_ignore_round_win_conditions 1");
         foreach (var player in Utilities.GetPlayers()
-         .Where(p => p.LifeState != (int)LifeState_t.LIFE_ALIVE && p is {
+         .Where(p => p.GetHealth() <= 0 && p is {
             Team: CsTeam.CounterTerrorist or CsTeam.Terrorist
           }))
           player.Respawn();
@@ -60,7 +60,7 @@ public class RoundTimerListener(IServiceProvider provider)
     if (ev.NewState == State.IN_PROGRESS)
       Server.NextWorldUpdate(() => {
         foreach (var player in Utilities.GetPlayers()
-         .Where(p => p.LifeState != (int)LifeState_t.LIFE_ALIVE && p is {
+         .Where(p => p.GetHealth() <= 0 && p is {
             Team: CsTeam.CounterTerrorist or CsTeam.Terrorist
           }))
           player.Respawn();

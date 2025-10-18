@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using TTT.API.Events;
 using TTT.API.Game;
 using TTT.API.Player;
+using TTT.CS2.Extensions;
 using TTT.Game.Events.Game;
 using TTT.Game.Events.Player;
 using TTT.Game.Listeners;
@@ -36,8 +37,8 @@ public class LateSpawnListener(IServiceProvider provider)
 
     Server.NextWorldUpdate(() => {
       foreach (var player in Utilities.GetPlayers()
-       .Where(p => p.LifeState != (int)LifeState_t.LIFE_ALIVE
-          && p.Team != CsTeam.Spectator && p.Team != CsTeam.None))
+       .Where(p => p.GetHealth() <= 0 && p.Team != CsTeam.Spectator
+          && p.Team != CsTeam.None))
         player.Respawn();
     });
   }

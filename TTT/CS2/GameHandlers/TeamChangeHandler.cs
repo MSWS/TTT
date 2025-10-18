@@ -9,6 +9,7 @@ using TTT.API;
 using TTT.API.Events;
 using TTT.API.Game;
 using TTT.API.Player;
+using TTT.CS2.Extensions;
 using TTT.Game.Events.Player;
 
 namespace TTT.CS2.GameHandlers;
@@ -44,7 +45,7 @@ public class TeamChangeHandler(IServiceProvider provider) : IPluginModule {
       };
 
     if (games.ActiveGame is not { State: State.IN_PROGRESS }) {
-      if (player != null && player.LifeState != (int)LifeState_t.LIFE_ALIVE)
+      if (player != null && player.GetHealth() <= 0)
         Server.NextWorldUpdate(player.Respawn);
       return HookResult.Continue;
     }
@@ -65,8 +66,10 @@ public class TeamChangeHandler(IServiceProvider provider) : IPluginModule {
       return HookResult.Continue;
     var apiPlayer = converter.GetPlayer(ev.Userid);
 
-    var playerDeath = new PlayerDeathEvent(apiPlayer);
-    bus.Dispatch(playerDeath);
+    Server.NextWorldUpdate(() => {
+      var playerDeath = new PlayerDeathEvent(apiPlayer);
+      bus.Dispatch(playerDeath);
+    });
     return HookResult.Continue;
   }
 }
