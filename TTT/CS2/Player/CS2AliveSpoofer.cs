@@ -1,5 +1,7 @@
 ﻿using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
+using CounterStrikeSharp.API.Core.Attributes.Registration;
+using JetBrains.Annotations;
 using TTT.API;
 using TTT.CS2.API;
 
@@ -50,6 +52,14 @@ public class CS2AliveSpoofer : IAliveSpoofer, IPluginModule {
   public void Start(BasePlugin? plugin) {
     plugin?.RegisterListener<CounterStrikeSharp.API.Core.Listeners.OnTick>(
       onTick);
+  }
+
+  [UsedImplicitly]
+  [GameEventHandler]
+  public HookResult OnDisconnect(EventPlayerDisconnect ev) {
+    if (ev.Userid == null) return HookResult.Continue;
+    _fakeAlivePlayers.Remove(ev.Userid);
+    return HookResult.Continue;
   }
 
   private void onTick() {

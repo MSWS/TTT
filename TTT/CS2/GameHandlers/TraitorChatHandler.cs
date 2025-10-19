@@ -1,5 +1,6 @@
 ﻿using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Commands;
+using CounterStrikeSharp.API.Modules.Utils;
 using MAULActainShared.plugin;
 using Microsoft.Extensions.DependencyInjection;
 using TTT.API;
@@ -55,8 +56,10 @@ public class TraitorChatHandler(IServiceProvider provider) : IPluginModule {
 
   private void OnChatShare(CCSPlayerController? player, CommandInfo info,
     ref bool canceled) {
+    if (player == null) return;
     if (!info.GetArg(0).Equals("say_team", StringComparison.OrdinalIgnoreCase))
       return;
+    if (player.Team == CsTeam.CounterTerrorist) return;
     var result = onSay(player, info);
     canceled = true;
     if (result == HookResult.Handled) return;
