@@ -36,7 +36,7 @@ public class TraitorChatHandler(IServiceProvider provider) : IPluginModule {
     try {
       maulService ??= EgoApi.MAUL.Get();
       if (maulService != null) {
-        maulService.getChatShareService().OnChatShare += OnOnChatShare;
+        maulService.getChatShareService().OnChatShare += OnChatShare;
         return;
       }
 
@@ -48,17 +48,19 @@ public class TraitorChatHandler(IServiceProvider provider) : IPluginModule {
 
   public void Dispose() {
     if (maulService != null)
-      maulService.getChatShareService().OnChatShare -= OnOnChatShare;
+      maulService.getChatShareService().OnChatShare -= OnChatShare;
   }
 
   public void Start() { }
 
-  private void OnOnChatShare(CCSPlayerController? player, CommandInfo info,
+  private void OnChatShare(CCSPlayerController? player, CommandInfo info,
     ref bool canceled) {
     if (!info.GetArg(0).Equals("say_team", StringComparison.OrdinalIgnoreCase))
       return;
-    var result                                 = onSay(player, info);
-    if (result == HookResult.Handled) canceled = true;
+    var result = onSay(player, info);
+    canceled = true;
+    if (result == HookResult.Handled) return;
+    player?.ExecuteClientCommandFromServer("say " + info.ArgString);
   }
 
   private HookResult onSay(CCSPlayerController? player,
