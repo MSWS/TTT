@@ -8,7 +8,6 @@ namespace TTT.CS2.Player;
 public class CS2AliveSpoofer : IAliveSpoofer, IPluginModule {
   private readonly HashSet<CCSPlayerController> _fakeAlivePlayers = new();
   public ISet<CCSPlayerController> FakeAlivePlayers => _fakeAlivePlayers;
-  private BasePlugin? plugin = null;
 
   public void SpoofAlive(CCSPlayerController player) {
     if (player.IsBot) {
@@ -45,31 +44,17 @@ public class CS2AliveSpoofer : IAliveSpoofer, IPluginModule {
     FakeAlivePlayers.Remove(player);
   }
 
-  public void Dispose() {
-    _fakeAlivePlayers.Clear();
-    plugin?.RemoveListener<CounterStrikeSharp.API.Core.Listeners.OnTick>(
-      onTick);
-  }
-
+  public void Dispose() { }
   public void Start() { }
 
   public void Start(BasePlugin? plugin) {
-    this.plugin = plugin;
     plugin?.RegisterListener<CounterStrikeSharp.API.Core.Listeners.OnTick>(
       onTick);
-    plugin?.RegisterListener<CounterStrikeSharp.API.Core.Listeners.OnMapStart>(
-      onMapStart);
-  }
-
-  private void onMapStart(string mapName) {
-    Dispose();
-    Start(plugin);
   }
 
   private void onTick() {
     _fakeAlivePlayers.RemoveWhere(p => !p.IsValid || p.Handle == IntPtr.Zero);
     foreach (var player in _fakeAlivePlayers) {
-      if (!player.IsValid) continue;
       player.PawnIsAlive = true;
       Utilities.SetStateChanged(player, "CCSPlayerController",
         "m_bPawnIsAlive");
