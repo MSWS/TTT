@@ -18,11 +18,11 @@ public static class ClusterGrenadeServiceCollection {
 
 public class ClusterGrenadeItem(IServiceProvider provider)
   : RoleRestrictedItem<TraitorRole>(provider) {
-  private readonly ClusterGrenadeConfig config = provider
-   .GetService<IStorage<ClusterGrenadeConfig>>()
-  ?.Load()
-   .GetAwaiter()
-   .GetResult() ?? new ClusterGrenadeConfig();
+  private ClusterGrenadeConfig config
+    => Provider.GetService<IStorage<ClusterGrenadeConfig>>()
+    ?.Load()
+     .GetAwaiter()
+     .GetResult() ?? new ClusterGrenadeConfig();
 
   public override string Name
     => Locale[ClusterGrenadeMsgs.SHOP_ITEM_CLUSTER_GRENADE];

@@ -18,8 +18,8 @@ public static class PoisonSmokeServiceCollection {
 
 public class PoisonSmokeItem(IServiceProvider provider)
   : RoleRestrictedItem<TraitorRole>(provider) {
-  private readonly PoisonSmokeConfig config =
-    provider.GetService<IStorage<PoisonSmokeConfig>>()
+  private PoisonSmokeConfig config
+    => Provider.GetService<IStorage<PoisonSmokeConfig>>()
     ?.Load()
      .GetAwaiter()
      .GetResult() ?? new PoisonSmokeConfig();

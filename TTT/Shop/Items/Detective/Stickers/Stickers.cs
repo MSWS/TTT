@@ -18,11 +18,11 @@ public static class StickerExtensions {
 
 public class Stickers(IServiceProvider provider)
   : RoleRestrictedItem<DetectiveRole>(provider) {
-  private readonly StickersConfig config = provider
-   .GetService<IStorage<StickersConfig>>()
-  ?.Load()
-   .GetAwaiter()
-   .GetResult() ?? new StickersConfig();
+  private StickersConfig config
+    => Provider.GetService<IStorage<StickersConfig>>()
+    ?.Load()
+     .GetAwaiter()
+     .GetResult() ?? new StickersConfig();
 
   public override string Name => Locale[StickerMsgs.SHOP_ITEM_STICKERS];
 

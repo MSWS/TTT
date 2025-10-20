@@ -17,11 +17,11 @@ public static class DeagleServiceCollection {
 
 public class OneShotDeagleItem(IServiceProvider provider)
   : BaseItem(provider), IWeapon {
-  private readonly OneShotDeagleConfig deagleConfigStorage = provider
-   .GetService<IStorage<OneShotDeagleConfig>>()
-  ?.Load()
-   .GetAwaiter()
-   .GetResult() ?? new OneShotDeagleConfig();
+  private OneShotDeagleConfig deagleConfigStorage
+    => Provider.GetService<IStorage<OneShotDeagleConfig>>()
+    ?.Load()
+     .GetAwaiter()
+     .GetResult() ?? new OneShotDeagleConfig();
 
   public override string Name => Locale[DeagleMsgs.SHOP_ITEM_DEAGLE];
 

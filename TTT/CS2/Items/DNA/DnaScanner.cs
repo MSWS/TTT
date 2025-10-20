@@ -18,11 +18,11 @@ public static class DnaScannerServiceCollection {
 
 public class DnaScanner(IServiceProvider provider)
   : RoleRestrictedItem<DetectiveRole>(provider) {
-  private readonly DnaScannerConfig config = provider
-   .GetService<IStorage<DnaScannerConfig>>()
-  ?.Load()
-   .GetAwaiter()
-   .GetResult() ?? new DnaScannerConfig();
+  private DnaScannerConfig config
+    => Provider.GetService<IStorage<DnaScannerConfig>>()
+    ?.Load()
+     .GetAwaiter()
+     .GetResult() ?? new DnaScannerConfig();
 
   public override string Name => Locale[DnaMsgs.SHOP_ITEM_DNA];
   public override string Description => Locale[DnaMsgs.SHOP_ITEM_DNA_DESC];

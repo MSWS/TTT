@@ -11,11 +11,11 @@ using TTT.API.Storage;
 namespace TTT.Shop;
 
 public class PeriodicRewarder(IServiceProvider provider) : ITerrorModule {
-  private readonly ShopConfig config = provider
-   .GetService<IStorage<ShopConfig>>()
-  ?.Load()
-   .GetAwaiter()
-   .GetResult() ?? new ShopConfig(provider);
+  private ShopConfig config
+    => provider.GetService<IStorage<ShopConfig>>()
+    ?.Load()
+     .GetAwaiter()
+     .GetResult() ?? new ShopConfig(provider);
 
   private readonly IPlayerFinder finder =
     provider.GetRequiredService<IPlayerFinder>();

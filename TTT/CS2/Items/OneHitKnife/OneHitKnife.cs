@@ -18,11 +18,11 @@ public static class OneHitKnifeServiceCollection {
 
 public class OneHitKnife(IServiceProvider provider)
   : RoleRestrictedItem<TraitorRole>(provider) {
-  private readonly OneHitKnifeConfig config = provider
-   .GetService<IStorage<OneHitKnifeConfig>>()
-  ?.Load()
-   .GetAwaiter()
-   .GetResult() ?? new OneHitKnifeConfig();
+  private OneHitKnifeConfig config
+    => Provider.GetService<IStorage<OneHitKnifeConfig>>()
+    ?.Load()
+     .GetAwaiter()
+     .GetResult() ?? new OneHitKnifeConfig();
 
   public override string Name
     => Locale[OneHitKnifeMsgs.SHOP_ITEM_ONE_HIT_KNIFE];

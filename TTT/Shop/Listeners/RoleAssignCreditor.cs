@@ -17,8 +17,8 @@ public class RoleAssignCreditor(IServiceProvider provider)
     provider.GetService<IStorage<ShopConfig>>()?.Load().GetAwaiter().GetResult()
     ?? new ShopConfig(provider);
 
-  private readonly KarmaConfig karmaConfig =
-    provider.GetService<IStorage<KarmaConfig>>()
+  private KarmaConfig karmaConfig
+    => Provider.GetService<IStorage<KarmaConfig>>()
     ?.Load()
      .GetAwaiter()
      .GetResult() ?? new KarmaConfig();
