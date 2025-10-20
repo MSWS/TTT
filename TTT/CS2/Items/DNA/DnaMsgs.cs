@@ -1,6 +1,7 @@
 ﻿using TTT.API.Player;
 using TTT.API.Role;
 using TTT.Game;
+using TTT.Game.lang;
 using TTT.Locale;
 
 namespace TTT.CS2.Items.DNA;

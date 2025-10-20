@@ -14,8 +14,8 @@ namespace TTT.Shop.Items.Traitor.Gloves;
 
 public class GlovesListener(IServiceProvider provider)
   : BaseListener(provider) {
-  private readonly GlovesConfig config =
-    provider.GetService<IStorage<GlovesConfig>>()
+  private GlovesConfig config
+    => Provider.GetService<IStorage<GlovesConfig>>()
     ?.Load()
      .GetAwaiter()
      .GetResult() ?? new GlovesConfig();

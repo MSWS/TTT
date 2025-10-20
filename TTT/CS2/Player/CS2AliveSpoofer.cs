@@ -56,7 +56,7 @@ public class CS2AliveSpoofer : IAliveSpoofer, IPluginModule {
 
   [UsedImplicitly]
   [GameEventHandler]
-  public HookResult OnDisconnect(EventPlayerDisconnect ev) {
+  public HookResult OnDisconnect(EventPlayerDisconnect ev, GameEventInfo _) {
     if (ev.Userid == null) return HookResult.Continue;
     _fakeAlivePlayers.Remove(ev.Userid);
     return HookResult.Continue;

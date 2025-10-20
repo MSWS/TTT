@@ -18,9 +18,11 @@ public static class CamoServiceCollection {
 }
 
 public class CamouflageItem(IServiceProvider provider) : BaseItem(provider) {
-  private readonly CamoConfig config =
-    provider.GetService<IStorage<CamoConfig>>()?.Load().GetAwaiter().GetResult()
-    ?? new CamoConfig();
+  private CamoConfig config
+    => Provider.GetService<IStorage<CamoConfig>>()
+    ?.Load()
+     .GetAwaiter()
+     .GetResult() ?? new CamoConfig();
 
   private readonly IPlayerConverter<CCSPlayerController> converter =
     provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();

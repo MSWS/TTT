@@ -24,8 +24,8 @@ public class PoisonShotsListener(IServiceProvider provider)
   : BaseListener(provider), IPluginModule {
   private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
 
-  private readonly PoisonShotsConfig config =
-    provider.GetService<IStorage<PoisonShotsConfig>>()
+  private PoisonShotsConfig config
+    => Provider.GetService<IStorage<PoisonShotsConfig>>()
     ?.Load()
      .GetAwaiter()
      .GetResult() ?? new PoisonShotsConfig();

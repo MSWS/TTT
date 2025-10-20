@@ -3,6 +3,7 @@ using TTT.API.Command;
 using TTT.API.Game;
 using TTT.API.Messages;
 using TTT.API.Player;
+using TTT.Game.lang;
 using TTT.Locale;
 
 namespace TTT.Game.Commands;

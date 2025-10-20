@@ -2,6 +2,7 @@ using Microsoft.Extensions.DependencyInjection;
 using TTT.API;
 using TTT.API.Command;
 using TTT.API.Player;
+using TTT.Game.lang;
 using TTT.Locale;
 
 namespace TTT.Game.Commands;

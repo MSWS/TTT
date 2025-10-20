@@ -18,8 +18,8 @@ public static class GlovesServiceCollection {
 
 public class GlovesItem(IServiceProvider provider)
   : RoleRestrictedItem<TraitorRole>(provider) {
-  private readonly GlovesConfig config =
-    provider.GetService<IStorage<GlovesConfig>>()
+  private GlovesConfig config
+    => Provider.GetService<IStorage<GlovesConfig>>()
     ?.Load()
      .GetAwaiter()
      .GetResult() ?? new GlovesConfig();
