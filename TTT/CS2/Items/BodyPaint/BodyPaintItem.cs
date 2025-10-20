@@ -17,11 +17,11 @@ public static class BodyPaintServicesCollection {
 
 public class BodyPaintItem(IServiceProvider provider)
   : RoleRestrictedItem<TraitorRole>(provider) {
-  private readonly BodyPaintConfig config = provider
-   .GetService<IStorage<BodyPaintConfig>>()
-  ?.Load()
-   .GetAwaiter()
-   .GetResult() ?? new BodyPaintConfig();
+  private BodyPaintConfig config
+    => Provider.GetService<IStorage<BodyPaintConfig>>()
+    ?.Load()
+     .GetAwaiter()
+     .GetResult() ?? new BodyPaintConfig();
 
   public override string Name => Locale[BodyPaintMsgs.SHOP_ITEM_BODY_PAINT];
 

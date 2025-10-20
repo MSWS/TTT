@@ -18,11 +18,11 @@ public static class PoisonShotServiceCollection {
 
 public class PoisonShotsItem(IServiceProvider provider)
   : RoleRestrictedItem<TraitorRole>(provider) {
-  private readonly PoisonShotsConfig config = provider
-   .GetService<IStorage<PoisonShotsConfig>>()
-  ?.Load()
-   .GetAwaiter()
-   .GetResult() ?? new PoisonShotsConfig();
+  private PoisonShotsConfig config
+    => Provider.GetService<IStorage<PoisonShotsConfig>>()
+    ?.Load()
+     .GetAwaiter()
+     .GetResult() ?? new PoisonShotsConfig();
 
   public override string Name => Locale[PoisonShotMsgs.SHOP_ITEM_POISON_SHOTS];
 

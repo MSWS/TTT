@@ -15,8 +15,8 @@ public static class HealthshotServiceCollection {
 }
 
 public class HealthshotItem(IServiceProvider provider) : BaseItem(provider) {
-  private readonly HealthshotConfig config =
-    provider.GetService<IStorage<HealthshotConfig>>()
+  private HealthshotConfig config
+    => Provider.GetService<IStorage<HealthshotConfig>>()
     ?.Load()
      .GetAwaiter()
      .GetResult() ?? new HealthshotConfig();

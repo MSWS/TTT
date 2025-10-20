@@ -25,8 +25,8 @@ namespace TTT.CS2.Items.PoisonSmoke;
 
 public class PoisonSmokeListener(IServiceProvider provider)
   : BaseListener(provider), IPluginModule {
-  private readonly PoisonSmokeConfig config =
-    provider.GetService<IStorage<PoisonSmokeConfig>>()
+  private PoisonSmokeConfig config
+    => Provider.GetService<IStorage<PoisonSmokeConfig>>()
     ?.Load()
      .GetAwaiter()
      .GetResult() ?? new PoisonSmokeConfig();

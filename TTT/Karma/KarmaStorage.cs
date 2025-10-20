@@ -19,8 +19,11 @@ public sealed class KarmaStorage(IServiceProvider provider) : IKarmaService {
   private const bool EnableCache = true;
   private readonly IEventBus _bus = provider.GetRequiredService<IEventBus>();
 
-  private readonly IStorage<KarmaConfig>? _configStorage =
-    provider.GetService<IStorage<KarmaConfig>>();
+  private KarmaConfig _configStorage
+    => provider.GetService<IStorage<KarmaConfig>>()
+    ?.Load()
+     .GetAwaiter()
+     .GetResult() ?? new KarmaConfig();
 
   private readonly SemaphoreSlim _flushGate = new(1, 1);
 
@@ -38,12 +41,6 @@ public sealed class KarmaStorage(IServiceProvider provider) : IKarmaService {
   public string Version => GitVersionInformation.FullSemVer;
 
   public void Start() {
-    // Load configuration first
-    if (_configStorage is not null)
-      // Synchronously wait here since IKarmaService.Start is sync
-      _config = _configStorage.Load().GetAwaiter().GetResult()
-        ?? new KarmaConfig();
-
     // Open a dedicated connection used only by this service
     _connection = new SqliteConnection(_config.DbString);
     _connection.Open();

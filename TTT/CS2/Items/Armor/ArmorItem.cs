@@ -16,11 +16,11 @@ public static class ArmorItemServicesCollection {
 }
 
 public class ArmorItem(IServiceProvider provider) : BaseItem(provider) {
-  private readonly ArmorConfig config = provider
-   .GetService<IStorage<ArmorConfig>>()
-  ?.Load()
-   .GetAwaiter()
-   .GetResult() ?? new ArmorConfig();
+  private ArmorConfig config
+    => Provider.GetService<IStorage<ArmorConfig>>()
+    ?.Load()
+     .GetAwaiter()
+     .GetResult() ?? new ArmorConfig();
 
   private readonly IPlayerConverter<CCSPlayerController> converter =
     provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();

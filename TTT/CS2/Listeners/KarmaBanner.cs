@@ -15,8 +15,8 @@ using TTT.Karma.lang;
 namespace TTT.CS2.Listeners;
 
 public class KarmaBanner(IServiceProvider provider) : BaseListener(provider) {
-  private readonly KarmaConfig config =
-    provider.GetService<IStorage<KarmaConfig>>()
+  private KarmaConfig config
+    => Provider.GetService<IStorage<KarmaConfig>>()
     ?.Load()
      .GetAwaiter()
      .GetResult() ?? new KarmaConfig();

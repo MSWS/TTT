@@ -18,8 +18,8 @@ using TTT.CS2.Utils;
 namespace TTT.CS2.Items.ClusterGrenade;
 
 public class ClusterGrenadeListener(IServiceProvider provider) : IPluginModule {
-  private readonly ClusterGrenadeConfig config =
-    provider.GetService<IStorage<ClusterGrenadeConfig>>()
+  private ClusterGrenadeConfig config
+    => provider.GetService<IStorage<ClusterGrenadeConfig>>()
     ?.Load()
      .GetAwaiter()
      .GetResult() ?? new ClusterGrenadeConfig();

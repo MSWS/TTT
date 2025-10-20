@@ -24,8 +24,8 @@ public static class SilentAWPServiceCollection {
 
 public class SilentAWPItem(IServiceProvider provider)
   : RoleRestrictedItem<TraitorRole>(provider), IPluginModule {
-  private readonly SilentAWPConfig config =
-    provider.GetService<IStorage<SilentAWPConfig>>()
+  private SilentAWPConfig config
+    => Provider.GetService<IStorage<SilentAWPConfig>>()
     ?.Load()
      .GetAwaiter()
      .GetResult() ?? new SilentAWPConfig();

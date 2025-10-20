@@ -13,8 +13,8 @@ namespace TTT.CS2.Items.OneHitKnife;
 
 public class OneHitKnifeListener(IServiceProvider provider)
   : BaseListener(provider) {
-  private readonly OneHitKnifeConfig config =
-    provider.GetService<IStorage<OneHitKnifeConfig>>()
+  private OneHitKnifeConfig config
+    => Provider.GetService<IStorage<OneHitKnifeConfig>>()
     ?.Load()
      .GetAwaiter()
      .GetResult() ?? new OneHitKnifeConfig();
