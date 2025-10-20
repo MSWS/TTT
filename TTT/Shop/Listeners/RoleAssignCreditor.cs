@@ -50,8 +50,8 @@ public class RoleAssignCreditor(IServiceProvider provider)
   }
 
   private float getKarmaScale(float percent) {
-    if (percent >= 0.9) return 1.1f;
-    if (percent >= 0.8f) return 1;
+    if (percent >= 0.9) return 1;
+    if (percent >= 0.8f) return 0.9f;
     if (percent >= 0.5) return 0.8f;
     if (percent >= 0.3) return 0.5f;
     return 0.25f;
