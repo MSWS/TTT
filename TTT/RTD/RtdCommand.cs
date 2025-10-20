@@ -12,7 +12,7 @@ using TTT.RTD.lang;
 namespace TTT.RTD;
 
 public class RTDCommand(IRewardGenerator generator, IPermissionManager perms,
-  IMsgLocalizer locale) : ICommand, IPluginModule {
+  IMsgLocalizer locale) : ICommand, IPluginModule, IListener {
   private bool inBetweenRounds = true;
 
   private Dictionary<string, IRtdReward> playerRewards = new();
