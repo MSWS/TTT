@@ -58,7 +58,8 @@ public class BodyPickupListener(IServiceProvider provider)
     if (ragdoll.IsValid) ragdoll.SetColor(primary.Color);
 
     var online = converter.GetPlayer(ev.Body.OfPlayer);
-    if (online is not { IsValid: true }) return;
+    if (online is not { IsValid: true } || online.Team == CsTeam.Spectator)
+      return;
 
     if (primary is InnocentRole) online.SwitchTeam(CsTeam.CounterTerrorist);
 

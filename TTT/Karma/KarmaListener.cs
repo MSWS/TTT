@@ -15,8 +15,8 @@ namespace TTT.Karma;
 public class KarmaListener(IServiceProvider provider) : BaseListener(provider) {
   private readonly Dictionary<string, int> badKills = new();
 
-  private readonly KarmaConfig config =
-    provider.GetService<IStorage<KarmaConfig>>()
+  private KarmaConfig config
+    => Provider.GetService<IStorage<KarmaConfig>>()
     ?.Load()
      .GetAwaiter()
      .GetResult() ?? new KarmaConfig();

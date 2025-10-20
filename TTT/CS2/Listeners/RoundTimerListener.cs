@@ -130,6 +130,7 @@ public class RoundTimerListener(IServiceProvider provider)
       var role = Roles.GetRoles(player).FirstOrDefault();
       if (role == null) continue;
       csPlayer.SetClan(role.Name, false);
+      if (csPlayer.Team == CsTeam.Spectator) continue;
       if (role is InnocentRole) csPlayer.SwitchTeam(CsTeam.CounterTerrorist);
     }
 
