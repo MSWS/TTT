@@ -28,12 +28,12 @@ namespace TTT.CS2.Items.Compass;
 /// </summary>
 public abstract class AbstractCompassItem<TRole> : RoleRestrictedItem<TRole>,
   IListener, IPluginModule where TRole : class, IRole {
-  protected readonly CompassConfig config;
+  protected CompassConfig _Config { get; }
   protected readonly IPlayerConverter<CCSPlayerController> Converter;
   protected readonly ISet<IPlayer> Owners = new HashSet<IPlayer>();
 
   protected AbstractCompassItem(IServiceProvider provider) : base(provider) {
-    config = provider.GetService<IStorage<CompassConfig>>()
+    _Config = provider.GetService<IStorage<CompassConfig>>()
     ?.Load()
      .GetAwaiter()
      .GetResult() ?? new CompassConfig();
@@ -42,7 +42,7 @@ public abstract class AbstractCompassItem<TRole> : RoleRestrictedItem<TRole>,
       provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
   }
 
-  public override ShopItemConfig Config => config;
+  public override ShopItemConfig Config => _Config;
 
   public void Start(BasePlugin? plugin) {
     base.Start();
@@ -95,7 +95,7 @@ public abstract class AbstractCompassItem<TRole> : RoleRestrictedItem<TRole>,
     if (targets.Count == 0) return;
 
     var (nearest, distance) = GetNearestVector(src, targets);
-    if (nearest == null || distance > config.MaxRange) return;
+    if (nearest == null || distance > _Config.MaxRange) return;
 
     var normalizedYaw = AdjustGameAngle(viewer.PlayerPawn.Value.EyeAngles.Y);
 
@@ -120,8 +120,8 @@ public abstract class AbstractCompassItem<TRole> : RoleRestrictedItem<TRole>,
   }
 
   private string GenerateCompass(float pointing, float target) {
-    return TextCompass.GenerateCompass(config.CompassFOV, config.CompassLength,
-      pointing, targetDir: target);
+    return TextCompass.GenerateCompass(_Config.CompassFOV,
+      _Config.CompassLength, pointing, targetDir: target);
   }
 
   private static string GetDistanceDescription(float distance) {

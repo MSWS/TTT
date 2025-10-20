@@ -37,6 +37,7 @@ public static class ShopServiceCollection {
     collection.AddModBehavior<IItemSorter, ShopCommand>();
     collection.AddModBehavior<BuyCommand>();
     collection.AddModBehavior<BalanceCommand>();
+    collection.AddModBehavior<ShopPurchaseLogger>();
 
     collection.AddArmorServices();
     collection.AddBodyCompassServices();

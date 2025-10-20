@@ -4,7 +4,7 @@ using TTT.API.Role;
 using TTT.Game.Roles;
 using TTT.Locale;
 
-namespace TTT.Game;
+namespace TTT.Game.lang;
 
 public static class GameMsgs {
   public static IMsg PREFIX => MsgFactory.Create(nameof(PREFIX));

@@ -2,10 +2,8 @@
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Memory;
 using CounterStrikeSharp.API.Modules.Utils;
-using TTT.CS2.RayTrace.Class;
-using Address = TTT.CS2.Utils.Address;
 
-namespace TTT.CS2.Items.ClusterGrenade;
+namespace TTT.CS2.Utils;
 
 public class GrenadeDataHelper {
   private static readonly CHEGrenadeProjectile_CreateDelegate

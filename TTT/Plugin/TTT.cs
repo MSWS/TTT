@@ -36,6 +36,8 @@ public class TTT(IServiceProvider provider) : BasePlugin {
       $"Found {pluginModules.Count} plugin modules, loading...");
 
     foreach (var module in pluginModules) {
+      Logger.LogInformation(
+        $"Registering {module.Version} {module.Id} {module.GetType().Namespace}");
       module.Start(this, hotReload);
       RegisterAllAttributes(module);
       loadedModules.Add(module);

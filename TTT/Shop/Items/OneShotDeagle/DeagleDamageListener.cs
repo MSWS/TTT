@@ -14,8 +14,8 @@ namespace TTT.Shop.Items;
 
 public class DeagleDamageListener(IServiceProvider provider)
   : BaseListener(provider) {
-  private readonly OneShotDeagleConfig config =
-    provider.GetService<IStorage<OneShotDeagleConfig>>()
+  private OneShotDeagleConfig config
+    => Provider.GetService<IStorage<OneShotDeagleConfig>>()
     ?.Load()
      .GetAwaiter()
      .GetResult() ?? new OneShotDeagleConfig();

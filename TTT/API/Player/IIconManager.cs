@@ -12,6 +12,7 @@ public interface IIconManager {
   void AddVisiblePlayer(int client, int player);
   void RemoveVisiblePlayer(int client, int player);
   void SetVisiblePlayers(IOnlinePlayer online, ulong playersBitmask);
+  void RevealToAll(IOnlinePlayer online);
 
   void ClearAllVisibility();
 }

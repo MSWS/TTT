@@ -15,8 +15,8 @@ public static class TaserServiceCollection {
 }
 
 public class TaserItem(IServiceProvider provider) : BaseItem(provider) {
-  private readonly TaserConfig config =
-    provider.GetService<IStorage<TaserConfig>>()
+  private TaserConfig config
+    => Provider.GetService<IStorage<TaserConfig>>()
     ?.Load()
      .GetAwaiter()
      .GetResult() ?? new TaserConfig();
