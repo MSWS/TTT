@@ -11,4 +11,7 @@ public class RtdMsgs {
 
   public static IMsg RTD_ROLLED(IRtdReward reward)
     => MsgFactory.Create(nameof(RTD_ROLLED), reward.Name, reward.Description);
+  
+  public static IMsg RTD_MUTED 
+    => MsgFactory.Create(nameof(RTD_MUTED));
 }

@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using CounterStrikeSharp.API.Core;
 using TTT.API;
 using TTT.CS2.Items.Armor;
 using TTT.CS2.Items.Camouflage;
@@ -11,7 +12,7 @@ using TTT.Shop.Items.Taser;
 namespace TTT.RTD;
 
 public class RewardGenerator(IServiceProvider provider)
-  : IRewardGenerator, ITerrorModule {
+  : IRewardGenerator, IPluginModule {
   private readonly List<(IRtdReward, float)> rewards = new();
 
   private const float PROB_LOTTERY = 1 / 5000f;
@@ -46,27 +47,35 @@ public class RewardGenerator(IServiceProvider provider)
 
   public void Start() {
     rewards.AddRange([
-      (new CreditReward(provider, -50), PROB_OFTEN),
-      (new CreditReward(provider, -10), PROB_OFTEN),
-      (new CreditReward(provider, -5), PROB_OFTEN),
       (new CreditReward(provider, 5), PROB_OFTEN),
+      (new CreditReward(provider, -5), PROB_OFTEN),
       (new WeaponReward(provider, "weapon_flashbang"), PROB_MEDIUM),
-      (new CreditReward(provider, 50), PROB_LOW),
-      (new CreditReward(provider, 100), PROB_VERY_LOW),
-      (new ShopItemReward<HealthStation>(provider), PROB_VERY_LOW),
+      (new CreditReward(provider, -10), PROB_LOW),
+      (new HealthReward(provider, 150), PROB_LOW),
+      (new CreditReward(provider, -50), PROB_VERY_LOW),
+      (new CreditReward(provider, 50), PROB_VERY_LOW),
+      (new HealthReward(provider, 50), PROB_VERY_LOW),
       (new ShopItemReward<CamouflageItem>(provider), PROB_VERY_LOW),
       (new ShopItemReward<ArmorItem>(provider), PROB_VERY_LOW),
       (new ShopItemReward<TaserItem>(provider), PROB_VERY_LOW),
       (new ShopItemReward<Stickers>(provider), PROB_VERY_LOW),
       (new ShopItemReward<OneShotDeagleItem>(provider), PROB_VERY_LOW),
       (new ProvenReward(provider), PROB_VERY_LOW),
-      (new HealthReward(provider, 150), PROB_VERY_LOW),
-      (new HealthReward(provider, 200), PROB_EXTREMELY_LOW),
-      (new HealthReward(provider, 50), PROB_EXTREMELY_LOW),
+      (new MuteReward(provider), PROB_VERY_LOW),
+      (new ShopItemReward<HealthStation>(provider), PROB_EXTREMELY_LOW),
       (new HealthReward(provider, 1), PROB_EXTREMELY_LOW),
+      (new CreditReward(provider, 100), PROB_EXTREMELY_LOW),
+      (new HealthReward(provider, 200), PROB_EXTREMELY_LOW),
     ]);
 
     rewards.ForEach(r => r.Item1.Start());
+  }
+
+  public void Start(BasePlugin? plugin) {
+    Start();
+    foreach (var (reward, _) in rewards) {
+      if (reward is IPluginModule module) { module.Start(plugin); }
+    }
   }
 
   public void Dispose() { }

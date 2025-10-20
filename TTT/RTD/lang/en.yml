@@ -2,3 +2,4 @@
 RTD_ALREADY_ROLLED: "%RTD_PREFIX%You already rolled {default}{0}{grey}."
 RTD_CANNOT_ROLL_YET: "%RTD_PREFIX%You must wait until death to roll the die."
 RTD_ROLLED: "%RTD_PREFIX%You rolled {default}{0}{grey}, {1}."
+RTD_MUTED: "%RTD_PREFIX%You cannot speak due to your dice roll."

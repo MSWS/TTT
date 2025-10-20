@@ -25,7 +25,9 @@ public class RTDCommand(IRewardGenerator generator, IPermissionManager perms,
     Execute(IOnlinePlayer? executor, ICommandInfo info) {
     if (executor == null) return Task.FromResult(CommandResult.PLAYER_ONLY);
     var bypass = perms.HasFlags(executor, "@css/root") && info.ArgCount == 2;
+#if DEBUG
     bypass = true;
+#endif
 
     if (!bypass && playerRewards.TryGetValue(executor.Id, out var existing)) {
       info.ReplySync(locale[RtdMsgs.RTD_ALREADY_ROLLED(existing)]);

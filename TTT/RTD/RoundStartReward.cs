@@ -23,7 +23,7 @@ public abstract class RoundStartReward(IServiceProvider provider)
 
   [UsedImplicitly]
   [EventHandler(Priority = Priority.LOW)]
-  public void OnRoundStart(GameStateUpdateEvent ev) {
+  public virtual void OnRoundStart(GameStateUpdateEvent ev) {
     if (ev.NewState != State.IN_PROGRESS) return;
 
     foreach (var player in givenPlayers) GiveOnRound(player);
