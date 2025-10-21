@@ -104,8 +104,7 @@ public class RoleIconsHandler(IServiceProvider provider)
 
   [UsedImplicitly]
   [EventHandler(IgnoreCanceled = true)]
-  public void OnRoundStart(GameStateUpdateEvent ev) {
-    if (ev.NewState != State.FINISHED) return;
+  public void OnRoundStart(GameInitEvent ev) {
     for (var i = 0; i < icons.Length; i++) removeIcon(i);
     ClearAllVisibility();
     traitorsThisRound.Clear();
