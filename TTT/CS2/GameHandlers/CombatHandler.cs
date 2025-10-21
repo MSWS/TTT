@@ -45,6 +45,7 @@ public class CombatHandler(IServiceProvider provider) : IPluginModule {
     if (games.ActiveGame is not { State: State.IN_PROGRESS })
       return HookResult.Continue;
 
+    if (ev.Attacker != null) ev.FireEventToClient(ev.Attacker);
     info.DontBroadcast = true;
     spoofer.SpoofAlive(player);
     Server.NextWorldUpdateAsync(() => bus.Dispatch(deathEvent));
@@ -73,7 +74,6 @@ public class CombatHandler(IServiceProvider provider) : IPluginModule {
         ev.Attacker.ActionTrackingServices.NumRoundKills--;
       Utilities.SetStateChanged(ev.Attacker, "CCSPlayerController",
         "m_pActionTrackingServices");
-      ev.FireEventToClient(ev.Attacker);
     }
 
     var assisterStats = ev.Assister?.ActionTrackingServices?.MatchStats;
