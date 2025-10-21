@@ -2,7 +2,7 @@ ROLE_SPECTATOR: "Spectator"
 TRAITOR_CHAT_FORMAT: "{darkred}[TRAITORS] {red}{0}: {default}{1}"
 TASER_SCANNED: "%PREFIX%You scanned {0}{grey}, they are %an% {1}{grey}!"
 DNA_PREFIX: "{darkblue}D{blue}N{lightblue}A{grey} | {grey}"
-AFK_WARNING: "%PREFIX%You will be moved to spectators in {yellow}{{0} second%s%{grey} for being AFK."
+AFK_WARNING: "%PREFIX%You will be moved to spectators in {yellow}{0} second%s%{grey} for being AFK."
 AFK_MOVED: "%PREFIX%You were moved to spectators for being AFK."
 
 DEAD_MUTE_REMINDER: "%PREFIX%You are dead and cannot be heard."
