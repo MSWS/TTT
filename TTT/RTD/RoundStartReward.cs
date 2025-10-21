@@ -5,6 +5,7 @@ using TTT.API.Events;
 using TTT.API.Game;
 using TTT.API.Player;
 using TTT.Game.Events.Game;
+using TTT.Locale;
 
 namespace TTT.RTD;
 
@@ -20,6 +21,9 @@ public abstract class RoundStartReward(IServiceProvider provider)
 
   public void GrantReward(IOnlinePlayer player) { givenPlayers.Add(player); }
   public abstract void GiveOnRound(IOnlinePlayer player);
+  
+  protected readonly IMsgLocalizer Locale =
+    provider.GetRequiredService<IMsgLocalizer>();
 
   [UsedImplicitly]
   [EventHandler(Priority = Priority.LOW)]
