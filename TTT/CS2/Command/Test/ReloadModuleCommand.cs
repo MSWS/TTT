@@ -7,7 +7,8 @@ using TTT.API.Player;
 
 namespace TTT.CS2.Command.Test;
 
-public class ReloadModuleCommand(IServiceProvider provider) : ICommand, IPluginModule {
+public class ReloadModuleCommand(IServiceProvider provider)
+  : ICommand, IPluginModule {
   public void Dispose() { }
   public void Start() { }
   private BasePlugin? plugin;
@@ -35,12 +36,12 @@ public class ReloadModuleCommand(IServiceProvider provider) : ICommand, IPluginM
       return Task.FromResult(CommandResult.INVALID_ARGS);
     }
 
-    info.ReplySync("Reloading module '{moduleName}'...");
+    info.ReplySync($"Reloading module '{moduleName}'...");
     module.Dispose();
 
-    info.ReplySync("Starting module '{moduleName}'...");
+    info.ReplySync($"Starting module '{moduleName}'...");
     module.Start();
-    info.ReplySync("Module '{moduleName}' reloaded successfully.");
+    info.ReplySync($"Module '{moduleName}' reloaded successfully.");
 
     if (plugin == null) {
       info.ReplySync("Plugin context not found; skipping hotload steps.");
