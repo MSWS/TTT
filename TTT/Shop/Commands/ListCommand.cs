@@ -113,6 +113,6 @@ public class ListCommand(IServiceProvider provider) : ICommand, IItemSorter {
 
   private string formatItem(IShopItem item, int index, bool canBuy) {
     return
-      $" {formatPrefix(item, index, canBuy)} {ChatColors.Grey} | {item.Description}";
+      $" {formatPrefix(item, index, canBuy)}";
   }
 }
