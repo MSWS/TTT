@@ -73,6 +73,7 @@ public static class CS2ServiceCollection {
     collection.AddModBehavior<TaserListenCanceler>();
 
     // Listeners
+    collection.AddModBehavior<AfkTimerListener>();
     collection.AddModBehavior<BodyPickupListener>();
     collection.AddModBehavior<IBodyTracker, BodyTracker>();
     collection.AddModBehavior<LateSpawnListener>();
@@ -83,9 +84,7 @@ public static class CS2ServiceCollection {
     collection.AddModBehavior<KarmaSyncer>();
 
     // Commands
-#if DEBUG
     collection.AddModBehavior<TestCommand>();
-#endif
 
     collection.AddScoped<IGameManager, CS2GameManager>();
     collection.AddScoped<IInventoryManager, CS2InventoryManager>();

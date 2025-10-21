@@ -1,9 +1,13 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using JetBrains.Annotations;
+using Microsoft.Extensions.DependencyInjection;
 using ShopAPI;
 using ShopAPI.Configs;
+using TTT.API.Events;
 using TTT.API.Extensions;
+using TTT.API.Game;
 using TTT.API.Player;
 using TTT.API.Storage;
+using TTT.Game.Events.Game;
 using TTT.Game.Roles;
 
 namespace TTT.Shop.Items.Healthshot;
@@ -14,7 +18,8 @@ public static class HealthshotServiceCollection {
   }
 }
 
-public class HealthshotItem(IServiceProvider provider) : BaseItem(provider) {
+public class HealthshotItem(IServiceProvider provider)
+  : BaseItem(provider), IListener {
   private HealthshotConfig config
     => Provider.GetService<IStorage<HealthshotConfig>>()
     ?.Load()
@@ -28,11 +33,27 @@ public class HealthshotItem(IServiceProvider provider) : BaseItem(provider) {
 
   public override ShopItemConfig Config => config;
 
+  private readonly Dictionary<string, int> purchaseCounts = new();
+
   public override void OnPurchase(IOnlinePlayer player) {
     Inventory.GiveWeapon(player, new BaseWeapon(config.Weapon));
+
+    purchaseCounts.TryGetValue(player.Id, out var purchases);
+    purchaseCounts[player.Id] = purchases + 1;
   }
 
   public override PurchaseResult CanPurchase(IOnlinePlayer player) {
-    return PurchaseResult.SUCCESS;
+    if (purchaseCounts.TryGetValue(player.Id, out var purchases))
+      return PurchaseResult.SUCCESS;
+    return purchases < config.MaxPurchases ?
+      PurchaseResult.SUCCESS :
+      PurchaseResult.ALREADY_OWNED;
+  }
+
+  [UsedImplicitly]
+  [EventHandler]
+  public void OnGameState(GameStateUpdateEvent ev) {
+    if (ev.NewState != State.FINISHED) return;
+    purchaseCounts.Clear();
   }
 }

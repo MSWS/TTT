@@ -22,17 +22,14 @@ namespace TTT.CS2.Listeners;
 
 public class RoundTimerListener(IServiceProvider provider)
   : BaseListener(provider) {
-  private readonly TTTConfig config = provider
-   .GetRequiredService<IStorage<TTTConfig>>()
-   .Load()
-   .GetAwaiter()
-   .GetResult() ?? new TTTConfig();
+  private TTTConfig config
+    => Provider.GetRequiredService<IStorage<TTTConfig>>()
+     .Load()
+     .GetAwaiter()
+     .GetResult() ?? new TTTConfig();
 
   private readonly IPlayerConverter<CCSPlayerController> converter =
     provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
-
-  private readonly IScheduler scheduler = provider
-   .GetRequiredService<IScheduler>();
 
   private IDisposable? endTimer;
 
@@ -73,7 +70,7 @@ public class RoundTimerListener(IServiceProvider provider)
       => RoundUtil.SetTimeRemaining((int)duration.TotalSeconds));
 
     endTimer?.Dispose();
-    endTimer = scheduler.Schedule(duration,
+    endTimer = Scheduler.Schedule(duration,
       () => {
         Server.NextWorldUpdate(()
           => ev.Game.EndGame(EndReason.TIMEOUT(new InnocentRole(Provider))));

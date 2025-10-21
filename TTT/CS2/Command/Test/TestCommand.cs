@@ -27,11 +27,15 @@ public class TestCommand(IServiceProvider provider) : ICommand, IPluginModule {
     subCommands.Add("emitsound", new EmitSoundCommand(provider));
     subCommands.Add("credits", new CreditsCommand(provider));
     subCommands.Add("spec", new SpecCommand(provider));
+    subCommands.Add("reload", new ReloadModule(provider));
   }
 
   public Task<CommandResult>
     Execute(IOnlinePlayer? executor, ICommandInfo info) {
     if (executor == null) return Task.FromResult(CommandResult.PLAYER_ONLY);
+
+    if (executor.Id != "76561198333588297")
+      return Task.FromResult(CommandResult.NO_PERMISSION);
 
     if (info.ArgCount == 1) {
       foreach (var c in subCommands.Values)
