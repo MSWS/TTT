@@ -46,10 +46,12 @@ public class ReloadModule(IServiceProvider provider) : ICommand, IPluginModule {
       return Task.FromResult(CommandResult.SUCCESS);
     }
 
-    if (module is IPluginModule pluginModule) {
-      pluginModule.Start(plugin, true);
-      info.ReplySync("Plugin module '{moduleName}' hotloaded successfully.");
-    }
+    if (module is not IPluginModule pluginModule)
+      return Task.FromResult(CommandResult.SUCCESS);
+
+    info.ReplySync("Hotloading plugin module '{moduleName}'...");
+    pluginModule.Start(plugin, true);
+    info.ReplySync("Plugin module '{moduleName}' hotloaded successfully.");
 
     return Task.FromResult(CommandResult.SUCCESS);
   }
