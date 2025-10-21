@@ -22,7 +22,7 @@ namespace TTT.CS2.Listeners;
 public class AfkTimerListener(IServiceProvider provider)
   : BaseListener(provider) {
   private TTTConfig config
-    => provider.GetRequiredService<IStorage<TTTConfig>>()
+    => Provider.GetRequiredService<IStorage<TTTConfig>>()
      .Load()
      .GetAwaiter()
      .GetResult() ?? new TTTConfig();
@@ -32,19 +32,27 @@ public class AfkTimerListener(IServiceProvider provider)
 
   private IDisposable? specTimer, specWarnTimer;
 
+  public override void Dispose() {
+    base.Dispose();
+
+    specTimer?.Dispose();
+    specWarnTimer?.Dispose();
+  }
+
   [UsedImplicitly]
   [EventHandler(IgnoreCanceled = true)]
   public void OnRoundStart(GameStateUpdateEvent ev) {
-    if (ev.NewState != State.IN_PROGRESS) return;
+    if (ev.NewState != State.IN_PROGRESS) {
+      specTimer?.Dispose();
+      specWarnTimer?.Dispose();
+      return;
+    }
 
     specWarnTimer?.Dispose();
     specWarnTimer = Scheduler.Schedule(config.RoundCfg.CheckAFKTimespan / 2, ()
       => {
       Server.NextWorldUpdate(() => {
-        foreach (var player in Utilities.GetPlayers()
-         .Where(p
-            => p.PlayerPawn.Value != null
-            && !p.PlayerPawn.Value.HasMovedSinceSpawn)) {
+        foreach (var player in getAfkPlayers()) {
           var apiPlayer = converter.GetPlayer(player);
           var timetill  = config.RoundCfg.CheckAFKTimespan / 2;
           Messenger.Message(apiPlayer, Locale[CS2Msgs.AFK_WARNING(timetill)]);
@@ -55,13 +63,19 @@ public class AfkTimerListener(IServiceProvider provider)
     specTimer?.Dispose();
     specTimer = Scheduler.Schedule(config.RoundCfg.CheckAFKTimespan, () => {
       Server.NextWorldUpdate(() => {
-        foreach (var player in Utilities.GetPlayers()
-         .Where(p
-            => p.PlayerPawn.Value != null
-            && !p.PlayerPawn.Value.HasMovedSinceSpawn)) {
+        foreach (var player in getAfkPlayers()) {
+          var apiPlayer = converter.GetPlayer(player);
           player.ChangeTeam(CsTeam.Spectator);
+          Messenger.Message(apiPlayer, Locale[CS2Msgs.AFK_MOVED]);
         }
       });
     });
+  }
+
+  private List<CCSPlayerController> getAfkPlayers() {
+    return Utilities.GetPlayers()
+     .Where(p => p.PlayerPawn.Value != null
+        && !p.PlayerPawn.Value.HasMovedSinceSpawn)
+     .ToList();
   }
 }
