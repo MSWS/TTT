@@ -49,6 +49,7 @@ public static class CS2ServiceCollection {
     collection
      .AddModBehavior<IStorage<PoisonSmokeConfig>, CS2PoisonSmokeConfig>();
     collection.AddModBehavior<IStorage<KarmaConfig>, CS2KarmaConfig>();
+    collection.AddModBehavior<IStorage<CamoConfig>, CS2CamoConfig>();
 
     // TTT - CS2 Specific optionals
     collection.AddScoped<ITextSpawner, TextSpawner>();
