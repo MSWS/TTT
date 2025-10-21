@@ -15,9 +15,11 @@ public static class M4A1ServiceCollection {
 }
 
 public class M4A1ShopItem(IServiceProvider provider) : BaseItem(provider) {
-  private readonly M4A1Config config =
-    provider.GetService<IStorage<M4A1Config>>()?.Load().GetAwaiter().GetResult()
-    ?? new M4A1Config();
+  private M4A1Config config
+    => Provider.GetService<IStorage<M4A1Config>>()
+    ?.Load()
+     .GetAwaiter()
+     .GetResult() ?? new M4A1Config();
 
   public override string Name => Locale[M4A1Msgs.SHOP_ITEM_M4A1];
   public override string Description => Locale[M4A1Msgs.SHOP_ITEM_M4A1_DESC];

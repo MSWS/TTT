@@ -90,9 +90,13 @@ public class PropMover(IServiceProvider provider) : IPluginModule {
     if (!released.HasFlag(PlayerButtons.Use)) return;
     playersPressingE.Remove(player);
     if (!heldItem.Ragdoll.IsValid) return;
-    heldItem.Ragdoll.AcceptInput("EnableMotion");
     if (heldItem.Beam != null && heldItem.Beam.IsValid)
       heldItem.Beam.AcceptInput("Kill");
+    // Check if any other players are still holding this ragdoll
+    foreach (var (_, info) in playersPressingE)
+      if (info.Ragdoll == heldItem.Ragdoll)
+        return;
+    heldItem.Ragdoll.AcceptInput("EnableMotion");
   }
 
   private void refreshHeld() {

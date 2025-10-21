@@ -17,8 +17,8 @@ public class BodyPaintListener(IServiceProvider provider)
   private readonly IBodyTracker bodies =
     provider.GetRequiredService<IBodyTracker>();
 
-  private readonly BodyPaintConfig config =
-    provider.GetService<IStorage<BodyPaintConfig>>()
+  private BodyPaintConfig config
+    => Provider.GetService<IStorage<BodyPaintConfig>>()
     ?.Load()
      .GetAwaiter()
      .GetResult() ?? new BodyPaintConfig();

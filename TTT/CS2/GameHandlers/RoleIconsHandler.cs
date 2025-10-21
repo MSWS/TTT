@@ -75,6 +75,12 @@ public class RoleIconsHandler(IServiceProvider provider)
     SetVisiblePlayers(gamePlayer.Slot, playersBitmask);
   }
 
+  public void RevealToAll(IOnlinePlayer online) {
+    var gamePlayer = players.GetPlayer(online);
+    if (gamePlayer == null || !gamePlayer.IsValid) return;
+    RevealToAll(gamePlayer.Slot);
+  }
+
   public void ClearAllVisibility() {
     Array.Clear(visibilities, 0, visibilities.Length);
   }

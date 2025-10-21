@@ -8,6 +8,7 @@ using TTT.API.Game;
 using TTT.API.Messages;
 using TTT.API.Player;
 using TTT.API.Role;
+using TTT.CS2.Extensions;
 using TTT.CS2.lang;
 using TTT.CS2.ThirdParties.eGO;
 using TTT.Game.Roles;
@@ -31,6 +32,8 @@ public class TraitorChatHandler(IServiceProvider provider) : IPluginModule {
   private readonly IRoleAssigner roles =
     provider.GetRequiredService<IRoleAssigner>();
 
+  private readonly IMuted? mutedPlayers = provider.GetService<IMuted>();
+
   private IActain? maulService;
 
   public void Start(BasePlugin? plugin) {
@@ -42,8 +45,10 @@ public class TraitorChatHandler(IServiceProvider provider) : IPluginModule {
       }
 
       plugin?.AddCommandListener("say_team", onSay);
+      plugin?.AddCommandListener("say", onSay);
     } catch (KeyNotFoundException) {
       plugin?.AddCommandListener("say_team", onSay);
+      plugin?.AddCommandListener("say", onSay);
     }
   }
 
@@ -57,6 +62,12 @@ public class TraitorChatHandler(IServiceProvider provider) : IPluginModule {
   private void OnChatShare(CCSPlayerController? player, CommandInfo info,
     ref bool canceled) {
     if (player == null) return;
+    if (mutedPlayers != null
+      && mutedPlayers.Contains(player.SteamID.ToString())) {
+      canceled = true;
+      return;
+    }
+
     if (!info.GetArg(0).Equals("say_team", StringComparison.OrdinalIgnoreCase))
       return;
     if (player.Team == CsTeam.CounterTerrorist) return;
@@ -68,10 +79,18 @@ public class TraitorChatHandler(IServiceProvider provider) : IPluginModule {
 
   private HookResult onSay(CCSPlayerController? player,
     CommandInfo commandInfo) {
+    if (mutedPlayers != null
+      && mutedPlayers.Contains(player?.SteamID.ToString() ?? ""))
+      return HookResult.Handled;
+
+    if (commandInfo.GetArg(0).Equals("say", StringComparison.OrdinalIgnoreCase))
+      return HookResult.Continue;
+
     if (player == null
       || game.ActiveGame is not { State: State.IN_PROGRESS or State.FINISHED }
       || converter.GetPlayer(player) is not IOnlinePlayer apiPlayer
-      || !roles.GetRoles(apiPlayer).Any(r => r is TraitorRole))
+      || !roles.GetRoles(apiPlayer).Any(r => r is TraitorRole)
+      || player.GetHealth() <= 0)
       return HookResult.Continue;
 
     var teammates = game.ActiveGame?.Players.Where(p

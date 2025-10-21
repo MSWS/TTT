@@ -10,6 +10,7 @@ using TTT.CS2.Events;
 using TTT.CS2.Extensions;
 using TTT.Game;
 using TTT.Game.Events.Body;
+using TTT.Game.lang;
 using TTT.Game.Listeners;
 using TTT.Game.Roles;
 
@@ -57,7 +58,8 @@ public class BodyPickupListener(IServiceProvider provider)
     if (ragdoll.IsValid) ragdoll.SetColor(primary.Color);
 
     var online = converter.GetPlayer(ev.Body.OfPlayer);
-    if (online is not { IsValid: true }) return;
+    if (online is not { IsValid: true } || online.Team == CsTeam.Spectator)
+      return;
 
     if (primary is InnocentRole) online.SwitchTeam(CsTeam.CounterTerrorist);
 

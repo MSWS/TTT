@@ -13,6 +13,7 @@ using TTT.API;
 using TTT.API.Player;
 using TTT.API.Role;
 using TTT.API.Storage;
+using TTT.CS2.Utils;
 
 namespace TTT.CS2.Items.ClusterGrenade;
 
