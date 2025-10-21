@@ -1,4 +1,5 @@
-﻿using CounterStrikeSharp.API.Core;
+﻿using CounterStrikeSharp.API;
+using CounterStrikeSharp.API.Core;
 using Microsoft.Extensions.DependencyInjection;
 using TTT.API;
 using TTT.API.Command;
@@ -49,9 +50,11 @@ public class ReloadModule(IServiceProvider provider) : ICommand, IPluginModule {
     if (module is not IPluginModule pluginModule)
       return Task.FromResult(CommandResult.SUCCESS);
 
-    info.ReplySync("Hotloading plugin module '{moduleName}'...");
-    pluginModule.Start(plugin, true);
-    info.ReplySync("Plugin module '{moduleName}' hotloaded successfully.");
+    Server.NextWorldUpdate(() => {
+      info.ReplySync($"Hotloading plugin module '{moduleName}'...");
+      pluginModule.Start(plugin, true);
+      info.ReplySync($"Plugin module '{moduleName}' hotloaded successfully.");
+    });
 
     return Task.FromResult(CommandResult.SUCCESS);
   }
