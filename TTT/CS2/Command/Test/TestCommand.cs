@@ -27,7 +27,7 @@ public class TestCommand(IServiceProvider provider) : ICommand, IPluginModule {
     subCommands.Add("emitsound", new EmitSoundCommand(provider));
     subCommands.Add("credits", new CreditsCommand(provider));
     subCommands.Add("spec", new SpecCommand(provider));
-    subCommands.Add("reload", new ReloadModule(provider));
+    subCommands.Add("reload", new ReloadModuleCommand(provider));
   }
 
   public Task<CommandResult>

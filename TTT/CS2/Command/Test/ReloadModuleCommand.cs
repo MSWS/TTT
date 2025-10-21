@@ -7,7 +7,7 @@ using TTT.API.Player;
 
 namespace TTT.CS2.Command.Test;
 
-public class ReloadModule(IServiceProvider provider) : ICommand, IPluginModule {
+public class ReloadModuleCommand(IServiceProvider provider) : ICommand, IPluginModule {
   public void Dispose() { }
   public void Start() { }
   private BasePlugin? plugin;
