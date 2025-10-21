@@ -19,6 +19,12 @@ public static class CS2Msgs {
       rolePrefix + scannedPlayer.Name, role.Name);
   }
 
+  public static IMsg AFK_WARNING(TimeSpan span) {
+    return MsgFactory.Create(nameof(AFK_WARNING), span.TotalSeconds);
+  }
+
+  public static IMsg AFK_MOVED => MsgFactory.Create(nameof(AFK_MOVED));
+
   public static IMsg TRAITOR_CHAT_FORMAT(IOnlinePlayer player, string msg) {
     return MsgFactory.Create(nameof(TRAITOR_CHAT_FORMAT), player.Name, msg);
   }

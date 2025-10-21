@@ -2,15 +2,17 @@
 using Microsoft.Extensions.DependencyInjection;
 using ShopAPI;
 using TTT.API.Player;
+using TTT.RTD.lang;
+using TTT.Shop;
 
 namespace TTT.RTD.Rewards;
 
 public class CreditReward(IServiceProvider provider, int amo)
   : RoundStartReward(provider) {
-  public override string Name => $"{amo} Credits";
+  public override string Name => Locale[RtdMsgs.CREDITS_REWARD(amo)];
 
   public override string Description
-    => $"you will receive {amo} {(amo == 1 ? "credit" : "credits")} next round";
+    => Locale[RtdMsgs.CREDITS_REWARD_DESC(amo)];
 
   private readonly IShop shop = provider.GetRequiredService<IShop>();
 

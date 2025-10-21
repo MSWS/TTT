@@ -13,7 +13,7 @@ public class BalanceCommand(IServiceProvider provider) : ICommand {
   private readonly IShop shop = provider.GetRequiredService<IShop>();
 
   public string Id => "balance";
-  public string[] Aliases => [Id, "bal", "credits", "money"];
+  public string[] Aliases => [Id, "bal", "credits", "money", "points"];
 
   public void Dispose() { }
   public void Start() { }

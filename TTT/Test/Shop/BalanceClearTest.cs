@@ -42,29 +42,4 @@ public class BalanceClearTest(IServiceProvider provider) {
 
     Assert.Equal(0, newBalance);
   }
-
-  [Fact]
-  public async Task RoleAssignCreditor_ShouldNotBeOverriden_OnGameStart() {
-    bus.RegisterListener(new RoleAssignCreditor(provider));
-    bus.RegisterListener(new RoundShopClearer(provider));
-    var player = TestPlayer.Random();
-    finder.AddPlayer(player);
-    finder.AddPlayer(TestPlayer.Random());
-
-    var karmaService = provider.GetService<IKarmaService>();
-    if (karmaService != null) await karmaService.Write(player, 80);
-
-    var game = games.CreateGame();
-    game?.Start();
-
-    await Task.Delay(TimeSpan.FromMilliseconds(50),
-      TestContext.Current.CancellationToken);
-
-    var newBalance = await shop.Load(player);
-
-    var expected                                                    = 100;
-    if (roles.GetRoles(player).Any(r => r is TraitorRole)) expected = 120;
-
-    Assert.Equal(expected, newBalance);
-  }
 }

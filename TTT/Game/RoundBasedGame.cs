@@ -16,11 +16,11 @@ using TTT.Locale;
 namespace TTT.Game;
 
 public class RoundBasedGame(IServiceProvider provider) : IGame {
-  private readonly TTTConfig config = provider
-   .GetRequiredService<IStorage<TTTConfig>>()
-   .Load()
-   .GetAwaiter()
-   .GetResult() ?? new TTTConfig();
+  private TTTConfig config
+    => provider.GetRequiredService<IStorage<TTTConfig>>()
+     .Load()
+     .GetAwaiter()
+     .GetResult() ?? new TTTConfig();
 
   protected readonly IMsgLocalizer Locale =
     provider.GetRequiredService<IMsgLocalizer>();

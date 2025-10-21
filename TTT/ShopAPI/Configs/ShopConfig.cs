@@ -34,7 +34,11 @@ public record ShopConfig(IRoleAssigner assigner) {
   public TimeSpan CreditRewardInterval { get; init; } =
     TimeSpan.FromSeconds(30);
 
-  public int IntervalRewardAmount { get; init; } = 8;
+  public TimeSpan PositionUpdateInterval { get; init; } =
+    TimeSpan.FromSeconds(5);
+
+  public int MaxRewardAmount { get; init; } = 15;
+  public int MinRewardAmount { get; init; } = 2;
 
   public virtual int CreditsForKill(IOnlinePlayer attacker,
     IOnlinePlayer victim) {

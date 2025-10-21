@@ -9,7 +9,9 @@ using TTT.API;
 using TTT.API.Events;
 using TTT.API.Game;
 using TTT.API.Player;
+using TTT.CS2.API;
 using TTT.CS2.Extensions;
+using TTT.Game;
 using TTT.Game.Events.Player;
 
 namespace TTT.CS2.GameHandlers;
@@ -23,6 +25,9 @@ public class TeamChangeHandler(IServiceProvider provider) : IPluginModule {
   private readonly IGameManager games =
     provider.GetRequiredService<IGameManager>();
 
+  private readonly IBodyTracker bodies =
+    provider.GetRequiredService<IBodyTracker>();
+
   public void Dispose() { }
   public void Start() { }
 
@@ -33,6 +38,8 @@ public class TeamChangeHandler(IServiceProvider provider) : IPluginModule {
   private HookResult onJoinTeam(CCSPlayerController? player,
     CommandInfo commandInfo) {
     CsTeam requestedTeam;
+
+    if (player == null) return HookResult.Continue;
 
     if (int.TryParse(commandInfo.GetArg(1), out var teamIndex))
       requestedTeam = (CsTeam)teamIndex;
@@ -45,14 +52,20 @@ public class TeamChangeHandler(IServiceProvider provider) : IPluginModule {
       };
 
     if (games.ActiveGame is not { State: State.IN_PROGRESS }) {
-      if (player != null && player.GetHealth() <= 0)
-        Server.NextWorldUpdate(player.Respawn);
+      if (player.GetHealth() <= 0) Server.NextWorldUpdate(player.Respawn);
       return HookResult.Continue;
     }
 
     if (requestedTeam is CsTeam.CounterTerrorist or CsTeam.Terrorist)
-      if (player != null && player.Team is CsTeam.Spectator or CsTeam.None)
+      if (player.Team is CsTeam.Spectator or CsTeam.None)
         return HookResult.Continue;
+
+    var apiPlayer = converter.GetPlayer(player);
+
+    // If the player is dead and already identified, let them move to spec
+    if (bodies.Bodies.Keys.Any(b
+      => b.OfPlayer.Id == apiPlayer.Id && b.IsIdentified))
+      return HookResult.Continue;
 
     return HookResult.Handled;
   }

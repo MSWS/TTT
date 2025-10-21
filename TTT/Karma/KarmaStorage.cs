@@ -19,12 +19,6 @@ public sealed class KarmaStorage(IServiceProvider provider) : IKarmaService {
   private const bool EnableCache = true;
   private readonly IEventBus _bus = provider.GetRequiredService<IEventBus>();
 
-  private KarmaConfig _configStorage
-    => provider.GetService<IStorage<KarmaConfig>>()
-    ?.Load()
-     .GetAwaiter()
-     .GetResult() ?? new KarmaConfig();
-
   private readonly SemaphoreSlim _flushGate = new(1, 1);
 
   // Cache keyed by stable player id to avoid relying on IPlayer equality

@@ -14,4 +14,10 @@ public class RtdMsgs {
   
   public static IMsg RTD_MUTED 
     => MsgFactory.Create(nameof(RTD_MUTED));
+  
+  public static IMsg CREDITS_REWARD(int amo) 
+    => MsgFactory.Create(nameof(CREDITS_REWARD), amo);
+  
+  public static IMsg CREDITS_REWARD_DESC(int amo) 
+    => MsgFactory.Create(nameof(CREDITS_REWARD_DESC), amo);
 }

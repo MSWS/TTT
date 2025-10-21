@@ -33,7 +33,7 @@ public class LateSpawnListener(IServiceProvider provider)
   [UsedImplicitly]
   [EventHandler]
   public void GameState(GameStateUpdateEvent ev) {
-    if (ev.NewState == State.FINISHED) return;
+    if (ev.NewState is State.FINISHED or State.WAITING) return;
 
     Server.NextWorldUpdate(() => {
       foreach (var player in Utilities.GetPlayers()

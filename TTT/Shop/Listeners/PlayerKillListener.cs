@@ -7,6 +7,7 @@ using TTT.API.Player;
 using TTT.Game.Events.Body;
 using TTT.Game.Events.Player;
 using TTT.Game.Listeners;
+using TTT.Game.Roles;
 
 namespace TTT.Shop.Listeners;
 
@@ -47,6 +48,7 @@ public class PlayerKillListener(IServiceProvider provider)
   }
 
   private bool isGoodKill(IPlayer attacker, IPlayer victim) {
-    return !Roles.GetRoles(attacker).Intersect(Roles.GetRoles(victim)).Any();
+    return Roles.GetRoles(attacker).OfType<TraitorRole>().Any()
+      != Roles.GetRoles(victim).OfType<TraitorRole>().Any();
   }
 }
