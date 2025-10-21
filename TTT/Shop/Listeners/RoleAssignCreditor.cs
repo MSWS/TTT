@@ -13,9 +13,11 @@ namespace TTT.Shop.Listeners;
 
 public class RoleAssignCreditor(IServiceProvider provider)
   : BaseListener(provider) {
-  private readonly ShopConfig config =
-    provider.GetService<IStorage<ShopConfig>>()?.Load().GetAwaiter().GetResult()
-    ?? new ShopConfig(provider);
+  private ShopConfig config
+    => Provider.GetService<IStorage<ShopConfig>>()
+    ?.Load()
+     .GetAwaiter()
+     .GetResult() ?? new ShopConfig(Provider);
 
   private KarmaConfig karmaConfig
     => Provider.GetService<IStorage<KarmaConfig>>()

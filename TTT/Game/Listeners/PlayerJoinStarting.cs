@@ -9,8 +9,8 @@ namespace TTT.Game.Listeners;
 
 public class PlayerJoinStarting(IServiceProvider provider)
   : BaseListener(provider) {
-  private readonly TTTConfig config =
-    provider.GetService<IStorage<TTTConfig>>()?.Load().GetAwaiter().GetResult()
+  private TTTConfig config =>
+    Provider.GetService<IStorage<TTTConfig>>()?.Load().GetAwaiter().GetResult()
     ?? new TTTConfig();
 
   [EventHandler]

@@ -21,10 +21,11 @@ public static class C4ServiceCollection {
 
 public class C4ShopItem(IServiceProvider provider)
   : RoleRestrictedItem<TraitorRole>(provider), IListener {
-  private readonly C4Config config = provider.GetService<IStorage<C4Config>>()
-  ?.Load()
-   .GetAwaiter()
-   .GetResult() ?? new C4Config();
+  private C4Config config
+    => Provider.GetService<IStorage<C4Config>>()
+    ?.Load()
+     .GetAwaiter()
+     .GetResult() ?? new C4Config();
 
   private readonly IPlayerFinder finder =
     provider.GetRequiredService<IPlayerFinder>();

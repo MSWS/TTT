@@ -80,6 +80,7 @@ public abstract class AbstractCompassItem<TRole> : RoleRestrictedItem<TRole>,
     foreach (var player in Owners.OfType<IOnlinePlayer>()) {
       var gamePlayer = Converter.GetPlayer(player);
       if (gamePlayer == null) continue;
+      if (!player.IsAlive) continue;
       ShowCompass(gamePlayer, player);
     }
   }
