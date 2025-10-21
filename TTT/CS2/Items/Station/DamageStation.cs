@@ -59,8 +59,12 @@ public class DamageStation(IServiceProvider provider)
         continue;
       }
 
+      if (!prop.IsValid || prop.AbsOrigin == null) {
+        toRemove.Add(prop);
+        continue;
+      }
+
       var propPos = prop.AbsOrigin;
-      if (propPos == null) continue;
 
       var playerMapping = players.Select(p
           => (ApiPlayer: p, GamePlayer: converter.GetPlayer(p)))

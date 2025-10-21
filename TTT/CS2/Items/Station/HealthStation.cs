@@ -36,8 +36,12 @@ public class HealthStation(IServiceProvider provider)
         continue;
       }
 
+      if (!prop.IsValid || prop.AbsOrigin == null) {
+        toRemove.Add(prop);
+        continue;
+      }
+
       var propPos = prop.AbsOrigin;
-      if (propPos == null) continue;
 
       var playerDists = players
        .Select(p => (Player: p, Pos: p.Pawn.Value?.AbsOrigin))
