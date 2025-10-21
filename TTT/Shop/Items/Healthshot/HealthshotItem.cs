@@ -43,11 +43,11 @@ public class HealthshotItem(IServiceProvider provider)
   }
 
   public override PurchaseResult CanPurchase(IOnlinePlayer player) {
-    if (purchaseCounts.TryGetValue(player.Id, out var purchases))
+    if (!purchaseCounts.TryGetValue(player.Id, out var purchases))
       return PurchaseResult.SUCCESS;
-    return purchases < config.MaxPurchases ?
-      PurchaseResult.SUCCESS :
-      PurchaseResult.ALREADY_OWNED;
+    return purchases < config.MaxPurchases
+      ? PurchaseResult.SUCCESS
+      : PurchaseResult.ALREADY_OWNED;
   }
 
   [UsedImplicitly]
