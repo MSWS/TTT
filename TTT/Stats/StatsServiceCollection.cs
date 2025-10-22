@@ -8,7 +8,7 @@ public static class StatsServiceCollection {
     var client = new HttpClient();
     client.BaseAddress = new Uri(StatsApi.API_URL!);
 
-    collection.AddScoped<HttpClient>(_ => client);
+    collection.AddSingleton<HttpClient>(_ => client);
     collection.AddModBehavior<PlayerCreationListener>();
     collection.AddModBehavior<IRoundTracker, RoundListener>();
     collection.AddModBehavior<ShopRegistrar>();
