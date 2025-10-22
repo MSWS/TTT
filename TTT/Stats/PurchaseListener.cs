@@ -9,12 +9,19 @@ public class PurchaseListener(IServiceProvider provider) : IListener {
   private readonly HttpClient client =
     provider.GetRequiredService<HttpClient>();
 
+  private readonly IRoundTracker? roundTracker =
+    provider.GetService<IRoundTracker>();
+
   public void Dispose() { }
 
   [UsedImplicitly]
   [EventHandler]
   public void OnPurchase(PlayerPurchaseItemEvent ev) {
-    var body = new { steam_id = ev.Player.Id, item_id = ev.Item.Id };
+    var body = new {
+      steam_id = ev.Player.Id,
+      item_id  = ev.Item.Id,
+      round_id = roundTracker?.CurrentRoundId
+    };
 
     var payload = new StringContent(
       System.Text.Json.JsonSerializer.Serialize(body),

@@ -16,7 +16,7 @@ public class ShopRegistrar(IServiceProvider provider) : ITerrorModule {
 
   public void Start() {
     Task.Run(async () => {
-      await Task.Delay(TimeSpan.FromSeconds(5));
+      await Task.Delay(TimeSpan.FromSeconds(1));
       List<Task> tasks = [];
 
       foreach (var item in shop.Items) {
@@ -25,10 +25,16 @@ public class ShopRegistrar(IServiceProvider provider) : ITerrorModule {
         };
 
         data = item switch {
-          RoleRestrictedItem<TraitorRole>   => data with { team_restriction = "traitor" },
-          RoleRestrictedItem<DetectiveRole> => data with { team_restriction = "detective" },
-          RoleRestrictedItem<InnocentRole>  => data with { team_restriction = "innocent" },
-          _                                 => data
+          RoleRestrictedItem<TraitorRole> => data with {
+            team_restriction = "traitor"
+          },
+          RoleRestrictedItem<DetectiveRole> => data with {
+            team_restriction = "detective"
+          },
+          RoleRestrictedItem<InnocentRole> => data with {
+            team_restriction = "innocent"
+          },
+          _ => data
         };
 
         var payload = new StringContent(
@@ -36,7 +42,7 @@ public class ShopRegistrar(IServiceProvider provider) : ITerrorModule {
           System.Text.Encoding.UTF8, "application/json");
 
         Console.WriteLine(
-          $"Registering shop item {item.Name} with stats api, data: {System.Text.Json.JsonSerializer.Serialize(data)}");
+          $"[Stats] Registering shop item '{item.Name}' at '{client.BaseAddress}item/{item.Id}'");
 
         tasks.Add(client.PutAsync("item/" + item.Id, payload));
       }

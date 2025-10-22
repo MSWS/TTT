@@ -27,13 +27,13 @@ public class PlayerCreationListener(IServiceProvider provider) : IListener {
 
   private async Task putPlayer(IPlayer player) {
     var client   = provider.GetRequiredService<HttpClient>();
-    var userJson = new { steam_id = player.Id, name = player.Name };
+    var userJson = new { name = player.Name };
 
     var content = new StringContent(
       System.Text.Json.JsonSerializer.Serialize(userJson),
       System.Text.Encoding.UTF8, "application/json");
 
-    var response = await client.PutAsync("user", content);
+    var response = await client.PutAsync("user/" + player.Id, content);
     response.EnsureSuccessStatusCode();
   }
 }

@@ -2,7 +2,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using TTT.API.Events;
 using TTT.API.Game;
-using TTT.API.Role;
 using TTT.Game.Events.Player;
 
 namespace Stats;
@@ -14,8 +13,8 @@ public class KillListener(IServiceProvider provider) : IListener {
   private readonly IGameManager game =
     provider.GetRequiredService<IGameManager>();
 
-  private readonly IRoleAssigner roles =
-    provider.GetRequiredService<IRoleAssigner>();
+  private readonly IRoundTracker? roundTracker =
+    provider.GetService<IRoundTracker>();
 
   public void Dispose() { }
 
@@ -25,16 +24,10 @@ public class KillListener(IServiceProvider provider) : IListener {
     if (game.ActiveGame is not { State: State.IN_PROGRESS }) return;
     if (ev.Killer == null) return;
 
-    var killerRole = roles.GetRoles(ev.Killer).FirstOrDefault();
-    if (killerRole == null) return;
-    var victimRole = roles.GetRoles(ev.Victim).FirstOrDefault();
-    if (victimRole == null) return;
-
     var data = new {
       killer_steam_id = ev.Killer.Id,
       victim_steam_id = ev.Victim.Id,
-      killer_role     = StatsApi.ApiNameForRole(killerRole),
-      victim_role     = StatsApi.ApiNameForRole(victimRole),
+      round_id        = roundTracker?.CurrentRoundId,
       weapon          = ev.Weapon
     };
 
@@ -42,6 +35,6 @@ public class KillListener(IServiceProvider provider) : IListener {
       System.Text.Json.JsonSerializer.Serialize(data),
       System.Text.Encoding.UTF8, "application/json");
 
-    Task.Run(async () => { await client.PostAsync("kill", payload); });
+    Task.Run(async () => await client.PostAsync("kill", payload));
   }
 }
