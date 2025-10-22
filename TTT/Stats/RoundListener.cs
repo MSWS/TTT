@@ -1,0 +1,192 @@
+﻿using System.Net;
+using CounterStrikeSharp.API;
+using CounterStrikeSharp.API.Core.Attributes;
+using JetBrains.Annotations;
+using Microsoft.Extensions.DependencyInjection;
+using TTT.API.Events;
+using TTT.API.Game;
+using TTT.API.Player;
+using TTT.API.Role;
+using TTT.Game.Events.Body;
+using TTT.Game.Events.Game;
+using TTT.Game.Events.Player;
+using TTT.Game.Roles;
+
+namespace Stats;
+
+public class RoundListener(IServiceProvider provider)
+  : IListener, IRoundTracker {
+  public void Dispose() {
+    provider.GetRequiredService<IEventBus>().UnregisterListener(this);
+  }
+
+  private readonly IRoleAssigner roles =
+    provider.GetRequiredService<IRoleAssigner>();
+
+  private Dictionary<string, (int, int, int)> kills = new();
+  private Dictionary<string, int> bodiesFound = new();
+  private HashSet<string> deaths = new();
+
+  [UsedImplicitly]
+  [EventHandler]
+  public void OnGameState(GameStateUpdateEvent ev) {
+    if (ev.NewState == State.IN_PROGRESS) {
+      kills.Clear();
+      bodiesFound.Clear();
+      Task.Run(async () => await onRoundStart(ev.Game));
+    }
+
+    if (ev.NewState == State.FINISHED)
+      Task.Run(async () => await onRoundEnd(ev.Game));
+  }
+
+  [UsedImplicitly]
+  [EventHandler]
+  public void OnDeath(PlayerDeathEvent ev) {
+    var killer = ev.Killer;
+    var victim = ev.Victim;
+
+    deaths.Add(victim.Id);
+
+    if (killer == null) return;
+
+    if (!kills.ContainsKey(killer.Id)) kills[killer.Id] = (0, 0, 0);
+
+    var (innoKills, traitorKills, detectiveKills) = kills[killer.Id];
+    var victimRoles = roles.GetRoles(victim);
+
+    if (victimRoles.Any(r => r is InnocentRole))
+      innoKills += 1;
+    else if (victimRoles.Any(r => r is TraitorRole))
+      traitorKills                                                    += 1;
+    else if (victimRoles.Any(r => r is DetectiveRole)) detectiveKills += 1;
+
+    kills[killer.Id] = (innoKills, traitorKills, detectiveKills);
+  }
+
+  [UsedImplicitly]
+  [EventHandler(Priority = Priority.MONITOR, IgnoreCanceled = true)]
+  public void OnIdentify(BodyIdentifyEvent ev) {
+    if (ev.Identifier == null) return;
+    var identifies = bodiesFound.GetValueOrDefault(ev.Identifier.Id, 0);
+    bodiesFound[ev.Identifier.Id] = identifies + 1;
+  }
+
+  private async Task onRoundStart(IGame game) {
+    Console.WriteLine("RoundListener: onRoundStart fired");
+    await Server.NextWorldUpdateAsync(() => {
+      var map_name  = Server.MapName;
+      var startedAt = DateTime.UtcNow;
+      Task.Run(async () => {
+        var data = new {
+          map_name, startedAt, participants = getParticipants(game)
+        };
+
+        var content = new StringContent(
+          System.Text.Json.JsonSerializer.Serialize(data),
+          System.Text.Encoding.UTF8, "application/json");
+
+        Console.WriteLine("json data: "
+          + System.Text.Json.JsonSerializer.Serialize(data));
+
+        var client = provider.GetRequiredService<HttpClient>();
+
+        Console.WriteLine("RoundListener: sending POST /round to "
+          + client.BaseAddress + "round");
+
+        var response = await provider.GetRequiredService<HttpClient>()
+         .PostAsync("round", content);
+
+        var json    = await response.Content.ReadAsStringAsync();
+        var jsonDoc = System.Text.Json.JsonDocument.Parse(json);
+        Console.WriteLine("response json: " + json);
+        CurrentRoundId = jsonDoc.RootElement.GetProperty("round_id").GetInt32();
+
+        if (response.StatusCode == HttpStatusCode.Conflict)
+          await client.DeleteAsync("round/" + CurrentRoundId);
+
+        // Retry
+        response = await client.PostAsync("round", content);
+        Console.WriteLine("response status: " + response.StatusCode);
+
+        jsonDoc = System.Text.Json.JsonDocument.Parse(
+          await response.Content.ReadAsStringAsync());
+        CurrentRoundId = jsonDoc.RootElement.GetProperty("round_id").GetInt32();
+      });
+    });
+  }
+
+  private async Task onRoundEnd(IGame game) {
+    Console.WriteLine("RoundListener: onRoundEnd fired");
+    if (CurrentRoundId == null) {
+      Console.WriteLine("RoundListener: currentRoundId is null, skipping");
+      return;
+    }
+
+    var finishedAt = DateTime.UtcNow;
+    await Task.Run(async () => {
+      var winningRole = game.WinningRole;
+      var data = new {
+        finishedAt,
+        winning_role =
+          winningRole != null ? StatsApi.ApiName(winningRole) : null,
+        participants = getParticipants(game)
+      };
+
+      var content = new StringContent(
+        System.Text.Json.JsonSerializer.Serialize(data),
+        System.Text.Encoding.UTF8, "application/json");
+
+      Console.WriteLine("json data: "
+        + System.Text.Json.JsonSerializer.Serialize(data));
+
+      var client = provider.GetRequiredService<HttpClient>();
+
+      Console.WriteLine("RoundListener: sending PATCH /round/" + CurrentRoundId
+        + " to " + client.BaseAddress + "round/" + CurrentRoundId);
+
+      var response = await client.PatchAsync(
+        "round/" + CurrentRoundId, content);
+
+      Console.WriteLine("response status: " + response.StatusCode);
+      CurrentRoundId = null;
+    });
+  }
+
+  private record Participant {
+    public string steam_id { get; init; }
+    public string role { get; init; }
+    public int? inno_kills { get; init; }
+    public int? traitor_kills { get; init; }
+    public int? detective_kills { get; init; }
+    public int? bodies_found { get; init; }
+    public bool? died { get; init; }
+  }
+
+  private List<Participant> getParticipants(IGame game) {
+    var list = new List<Participant>();
+
+    foreach (var player in game.Players) {
+      var playerRoles = roles.GetRoles(player);
+      if (playerRoles.Count == 0) continue;
+
+      var role = StatsApi.ApiName(playerRoles.First());
+      kills.TryGetValue(player.Id, out var killCounts);
+      bodiesFound.TryGetValue(player.Id, out var foundCount);
+
+      list.Add(new Participant {
+        steam_id        = player.Id,
+        role            = role,
+        inno_kills      = killCounts.Item1,
+        traitor_kills   = killCounts.Item2,
+        detective_kills = killCounts.Item3,
+        bodies_found    = foundCount,
+        died            = deaths.Contains(player.Id)
+      });
+    }
+
+    return list;
+  }
+
+  public int? CurrentRoundId { get; set; }
+}

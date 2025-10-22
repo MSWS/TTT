@@ -1,7 +1,9 @@
-﻿using JetBrains.Annotations;
+﻿using CounterStrikeSharp.API;
+using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using TTT.API.Events;
+using TTT.API.Player;
 using TTT.Game.Events.Player;
 
 namespace Stats;
@@ -11,34 +13,27 @@ public class PlayerCreationListener(IServiceProvider provider) : IListener {
     provider.GetRequiredService<IEventBus>().UnregisterListener(this);
   }
 
-  private readonly ILogger logger = provider.GetRequiredService<ILogger>();
-
   [UsedImplicitly]
   [EventHandler]
   public void OnJoin(PlayerJoinEvent ev) {
-    logger.LogInformation($"Player joined: {ev.Player.Name} ({ev.Player.Id})");
-    if (StatsApi.API_URL == null) {
-      Dispose();
-      return;
-    }
+    Task.Run(async () => await putPlayer(ev.Player));
+  }
 
-    logger.LogInformation("Sending player data to Stats API at {ApiUrl}",
-      StatsApi.API_URL);
+  [UsedImplicitly]
+  [EventHandler]
+  public void OnLeave(PlayerLeaveEvent ev) {
+    Task.Run(async () => await putPlayer(ev.Player));
+  }
 
-    Task.Run(async () => {
-      // Create PUT request to /players/{steamid64}
-      var url      = $"{StatsApi.API_URL}/user";
-      var client   = new HttpClient();
-      var userJson = new { steam_id = ev.Player.Id, name = ev.Player.Name };
+  private async Task putPlayer(IPlayer player) {
+    var client   = provider.GetRequiredService<HttpClient>();
+    var userJson = new { steam_id = player.Id, name = player.Name };
 
-      var content = new StringContent(
-        System.Text.Json.JsonSerializer.Serialize(userJson),
-        System.Text.Encoding.UTF8, "application/json");
+    var content = new StringContent(
+      System.Text.Json.JsonSerializer.Serialize(userJson),
+      System.Text.Encoding.UTF8, "application/json");
 
-      var response = await client.PutAsync(url, content);
-      logger.LogInformation("Stats API response status: {StatusCode}",
-        response.StatusCode);
-      response.EnsureSuccessStatusCode();
-    });
+    var response = await client.PutAsync("user", content);
+    response.EnsureSuccessStatusCode();
   }
 }

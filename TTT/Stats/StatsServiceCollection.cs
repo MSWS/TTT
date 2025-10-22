@@ -5,6 +5,15 @@ namespace Stats;
 
 public static class StatsServiceCollection {
   public static void AddStatsSerivces(this IServiceCollection collection) {
+    var client = new HttpClient();
+    client.BaseAddress = new Uri(StatsApi.API_URL!);
+
+    collection.AddScoped<HttpClient>(_ => client);
     collection.AddModBehavior<PlayerCreationListener>();
+    collection.AddModBehavior<IRoundTracker, RoundListener>();
+    collection.AddModBehavior<ShopRegistrar>();
+    collection.AddModBehavior<PurchaseListener>();
+    collection.AddModBehavior<LogsUploader>();
+    collection.AddModBehavior<KillListener>();
   }
 }
