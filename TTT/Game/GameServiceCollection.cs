@@ -5,6 +5,7 @@ using TTT.API.Role;
 using TTT.Game.Commands;
 using TTT.Game.Listeners;
 using TTT.Game.Listeners.Loggers;
+using TTT.Game.Listeners.Stats;
 using TTT.Game.Roles;
 
 namespace TTT.Game;
@@ -26,5 +27,9 @@ public static class GameServiceCollection {
     // Commands
     collection.AddModBehavior<TTTCommand>();
     collection.AddModBehavior<LogsCommand>();
+
+    if (Environment.GetEnvironmentVariable("TTT_STATS_API_URL") == null) return;
+    // StatsApi
+    collection.AddModBehavior<PlayerCreationListener>();
   }
 }
