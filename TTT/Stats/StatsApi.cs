@@ -7,7 +7,7 @@ public class StatsApi {
   public static string? API_URL
     => Environment.GetEnvironmentVariable("TTT_STATS_API_URL");
 
-  public static string ApiName(IRole role) {
+  public static string ApiNameForRole(IRole role) {
     return role switch {
       _ when role is TraitorRole   => "traitor",
       _ when role is DetectiveRole => "detective",
