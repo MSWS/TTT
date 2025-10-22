@@ -1,0 +1,2 @@
+﻿API_ROUND_START: "%PREFIX% Round {yellow}#{0} {grey}has started!"
+API_ROUND_END: "%PREFIX% Round end! Logs are available at {blue}http://localhost/rounds/{0}{grey}."

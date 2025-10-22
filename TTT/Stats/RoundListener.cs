@@ -3,14 +3,17 @@ using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core.Attributes;
 using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
+using Stats.lang;
 using TTT.API.Events;
 using TTT.API.Game;
+using TTT.API.Messages;
 using TTT.API.Player;
 using TTT.API.Role;
 using TTT.Game.Events.Body;
 using TTT.Game.Events.Game;
 using TTT.Game.Events.Player;
 using TTT.Game.Roles;
+using TTT.Locale;
 
 namespace Stats;
 
@@ -22,6 +25,12 @@ public class RoundListener(IServiceProvider provider)
 
   private readonly IRoleAssigner roles =
     provider.GetRequiredService<IRoleAssigner>();
+
+  private readonly IMessenger messenger =
+    provider.GetRequiredService<IMessenger>();
+
+  private readonly IMsgLocalizer localizer =
+    provider.GetRequiredService<IMsgLocalizer>();
 
   private Dictionary<string, (int, int, int)> kills = new();
   private Dictionary<string, int> bodiesFound = new();
@@ -77,43 +86,58 @@ public class RoundListener(IServiceProvider provider)
     await Server.NextWorldUpdateAsync(() => {
       var map_name  = Server.MapName;
       var startedAt = DateTime.UtcNow;
-      Task.Run(async () => {
-        var data = new {
-          map_name, startedAt, participants = getParticipants(game)
-        };
-
-        var content = new StringContent(
-          System.Text.Json.JsonSerializer.Serialize(data),
-          System.Text.Encoding.UTF8, "application/json");
-
-        Console.WriteLine("json data: "
-          + System.Text.Json.JsonSerializer.Serialize(data));
-
-        var client = provider.GetRequiredService<HttpClient>();
-
-        Console.WriteLine("RoundListener: sending POST /round to "
-          + client.BaseAddress + "round");
-
-        var response = await provider.GetRequiredService<HttpClient>()
-         .PostAsync("round", content);
-
-        var json    = await response.Content.ReadAsStringAsync();
-        var jsonDoc = System.Text.Json.JsonDocument.Parse(json);
-        Console.WriteLine("response json: " + json);
-        CurrentRoundId = jsonDoc.RootElement.GetProperty("round_id").GetInt32();
-
-        if (response.StatusCode == HttpStatusCode.Conflict)
-          await client.DeleteAsync("round/" + CurrentRoundId);
-
-        // Retry
-        response = await client.PostAsync("round", content);
-        Console.WriteLine("response status: " + response.StatusCode);
-
-        jsonDoc = System.Text.Json.JsonDocument.Parse(
-          await response.Content.ReadAsStringAsync());
-        CurrentRoundId = jsonDoc.RootElement.GetProperty("round_id").GetInt32();
-      });
+      Task.Run(async () => await createNewRound(game, map_name, startedAt));
     });
+  }
+
+  private async Task createNewRound(IGame game, string map_name,
+    DateTime startedAt) {
+    var data = new {
+      map_name, startedAt, participants = getParticipants(game)
+    };
+
+    var content = new StringContent(
+      System.Text.Json.JsonSerializer.Serialize(data),
+      System.Text.Encoding.UTF8, "application/json");
+
+    Console.WriteLine("json data: "
+      + System.Text.Json.JsonSerializer.Serialize(data));
+
+    var client = provider.GetRequiredService<HttpClient>();
+
+    Console.WriteLine("RoundListener: sending POST /round to "
+      + client.BaseAddress + "round");
+
+    var response = await provider.GetRequiredService<HttpClient>()
+     .PostAsync("round", content);
+
+    var json    = await response.Content.ReadAsStringAsync();
+    var jsonDoc = System.Text.Json.JsonDocument.Parse(json);
+    Console.WriteLine("response json: " + json);
+    CurrentRoundId = jsonDoc.RootElement.GetProperty("round_id").GetInt32();
+
+    if (response.StatusCode == HttpStatusCode.Created) {
+      await notifyNewRound(CurrentRoundId.Value);
+      return;
+    }
+
+    if (response.StatusCode == HttpStatusCode.Conflict)
+      await client.DeleteAsync("round/" + CurrentRoundId);
+
+    // Retry
+    response = await client.PostAsync("round", content);
+    Console.WriteLine("response status: " + response.StatusCode);
+
+    jsonDoc = System.Text.Json.JsonDocument.Parse(
+      await response.Content.ReadAsStringAsync());
+    CurrentRoundId = jsonDoc.RootElement.GetProperty("round_id").GetInt32();
+    if (response.StatusCode == HttpStatusCode.Created) {
+      await notifyNewRound(CurrentRoundId.Value);
+    }
+  }
+
+  private Task notifyNewRound(int id) {
+    return messenger.MessageAll(localizer[StatsMsgs.API_ROUND_START(id)]);
   }
 
   private async Task onRoundEnd(IGame game) {
@@ -149,13 +173,12 @@ public class RoundListener(IServiceProvider provider)
         "round/" + CurrentRoundId, content);
 
       Console.WriteLine("response status: " + response.StatusCode);
-      CurrentRoundId = null;
     });
   }
 
   private record Participant {
-    public string steam_id { get; init; }
-    public string role { get; init; }
+    public required string steam_id { get; init; }
+    public required string role { get; init; }
     public int? inno_kills { get; init; }
     public int? traitor_kills { get; init; }
     public int? detective_kills { get; init; }
