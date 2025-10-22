@@ -37,7 +37,7 @@ public class RoundListener(IServiceProvider provider)
   private HashSet<string> deaths = new();
 
   [UsedImplicitly]
-  [EventHandler]
+  [EventHandler(Priority = Priority.MONITOR, IgnoreCanceled = true)]
   public void OnGameState(GameStateUpdateEvent ev) {
     if (ev.NewState == State.IN_PROGRESS) {
       kills.Clear();
@@ -100,20 +100,12 @@ public class RoundListener(IServiceProvider provider)
       System.Text.Json.JsonSerializer.Serialize(data),
       System.Text.Encoding.UTF8, "application/json");
 
-    Console.WriteLine("json data: "
-      + System.Text.Json.JsonSerializer.Serialize(data));
-
     var client = provider.GetRequiredService<HttpClient>();
-
-    Console.WriteLine("RoundListener: sending POST /round to "
-      + client.BaseAddress + "round");
-
     var response = await provider.GetRequiredService<HttpClient>()
      .PostAsync("round", content);
 
     var json    = await response.Content.ReadAsStringAsync();
     var jsonDoc = System.Text.Json.JsonDocument.Parse(json);
-    Console.WriteLine("response json: " + json);
     CurrentRoundId = jsonDoc.RootElement.GetProperty("round_id").GetInt32();
 
     if (response.StatusCode == HttpStatusCode.Created) {
@@ -126,7 +118,6 @@ public class RoundListener(IServiceProvider provider)
 
     // Retry
     response = await client.PostAsync("round", content);
-    Console.WriteLine("response status: " + response.StatusCode);
 
     jsonDoc = System.Text.Json.JsonDocument.Parse(
       await response.Content.ReadAsStringAsync());
@@ -147,32 +138,21 @@ public class RoundListener(IServiceProvider provider)
       return;
     }
 
-    var finishedAt = DateTime.UtcNow;
+    var ended_at = DateTime.UtcNow;
+    var winning_role = game.WinningRole != null ?
+      StatsApi.ApiNameForRole(game.WinningRole) :
+      null;
+    var participants = getParticipants(game);
     await Task.Run(async () => {
-      var winningRole = game.WinningRole;
-      var data = new {
-        finishedAt,
-        winning_role =
-          winningRole != null ? StatsApi.ApiNameForRole(winningRole) : null,
-        participants = getParticipants(game)
-      };
+      var data = new { ended_at, winning_role, participants };
 
       var content = new StringContent(
         System.Text.Json.JsonSerializer.Serialize(data),
         System.Text.Encoding.UTF8, "application/json");
 
-      Console.WriteLine("json data: "
-        + System.Text.Json.JsonSerializer.Serialize(data));
-
       var client = provider.GetRequiredService<HttpClient>();
 
-      Console.WriteLine("RoundListener: sending PATCH /round/" + CurrentRoundId
-        + " to " + client.BaseAddress + "round/" + CurrentRoundId);
-
-      var response = await client.PatchAsync(
-        "round/" + CurrentRoundId, content);
-
-      Console.WriteLine("response status: " + response.StatusCode);
+      await client.PatchAsync("round/" + CurrentRoundId, content);
     });
   }
 

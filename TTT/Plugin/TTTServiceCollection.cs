@@ -22,6 +22,6 @@ public class TTTServiceCollection : IPluginServiceCollection<TTT> {
     serviceCollection.AddRtdServices();
 
     if (Environment.GetEnvironmentVariable("TTT_STATS_API_URL") == null) return;
-    serviceCollection.AddStatsSerivces();
+    serviceCollection.AddStatsServices();
   }
 }
