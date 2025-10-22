@@ -45,8 +45,9 @@ public class RoundListener(IServiceProvider provider)
       Task.Run(async () => await onRoundStart(ev.Game));
     }
 
+    var game = ev.Game;
     if (ev.NewState == State.FINISHED)
-      Task.Run(async () => await onRoundEnd(ev.Game));
+      Task.Run(async () => await onRoundEnd(game));
   }
 
   [UsedImplicitly]
