@@ -65,7 +65,9 @@ public class AfkTimerListener(IServiceProvider provider)
       Server.NextWorldUpdate(() => {
         foreach (var player in getAfkPlayers()) {
           var apiPlayer = converter.GetPlayer(player);
+#if !DEBUG
           player.ChangeTeam(CsTeam.Spectator);
+#endif
           Messenger.Message(apiPlayer, Locale[CS2Msgs.AFK_MOVED]);
         }
       });

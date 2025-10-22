@@ -148,10 +148,11 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
       case > 0 when nonTraitorsAlive == 0:
         winningTeam = traitorRole;
         return true;
+      case > 0 when nonTraitorsAlive == detectivesAlive:
+        winningTeam = detectiveRole;
+        return true;
       case 0 when nonTraitorsAlive > 0:
-        winningTeam = nonTraitorsAlive == detectivesAlive ?
-          detectiveRole :
-          innocentRole;
+        winningTeam = innocentRole;
         return true;
       default:
         winningTeam = null;

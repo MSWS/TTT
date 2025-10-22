@@ -61,6 +61,15 @@ public class SimpleLogger(IServiceProvider provider) : IActionLogger {
     msg.Value.BackgroundMsg(player, locale[GameMsgs.GAME_LOGS_FOOTER]);
   }
 
+  public string[] MakeLogs() {
+    List<string> logLines = [];
+    logLines.Add(locale[GameMsgs.GAME_LOGS_HEADER]);
+    foreach (var (time, action) in GetActions())
+      logLines.Add($"{formatTime(time)} {action.Format()}");
+    logLines.Add(locale[GameMsgs.GAME_LOGS_FOOTER]);
+    return logLines.ToArray();
+  }
+
   private string formatTime(DateTime time) {
     if (epoch == null) return time.ToString("o");
     var span = time - epoch.Value;

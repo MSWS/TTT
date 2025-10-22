@@ -10,6 +10,7 @@ namespace TTT.CS2.Player;
 public class CS2AliveSpoofer : IAliveSpoofer, IPluginModule {
   private readonly HashSet<CCSPlayerController> _fakeAlivePlayers = new();
   public ISet<CCSPlayerController> FakeAlivePlayers => _fakeAlivePlayers;
+  private BasePlugin? plugin = null;
 
   public void SpoofAlive(CCSPlayerController player) {
     if (player.IsBot) {
@@ -46,10 +47,17 @@ public class CS2AliveSpoofer : IAliveSpoofer, IPluginModule {
     FakeAlivePlayers.Remove(player);
   }
 
-  public void Dispose() { }
+  public void Dispose() {
+    _fakeAlivePlayers.Clear();
+    plugin?.RemoveListener<CounterStrikeSharp.API.Core.Listeners.OnTick>(
+      onTick);
+  }
+
   public void Start() { }
 
   public void Start(BasePlugin? plugin) {
+    if (plugin == null) return;
+    this.plugin = plugin;
     plugin?.RegisterListener<CounterStrikeSharp.API.Core.Listeners.OnTick>(
       onTick);
   }

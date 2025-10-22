@@ -18,4 +18,6 @@ public interface IActionLogger {
 
   void PrintLogs();
   void PrintLogs(IOnlinePlayer? player);
+  
+  string[] MakeLogs();
 }

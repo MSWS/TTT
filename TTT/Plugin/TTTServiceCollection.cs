@@ -1,6 +1,8 @@
 using System.Reactive.Concurrency;
 using CounterStrikeSharp.API.Core;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Stats;
 using TTT.CS2;
 using TTT.Game;
 using TTT.Karma;
@@ -18,5 +20,8 @@ public class TTTServiceCollection : IPluginServiceCollection<TTT> {
     serviceCollection.AddCS2Services();
     serviceCollection.AddShopServices();
     serviceCollection.AddRtdServices();
+
+    if (Environment.GetEnvironmentVariable("TTT_STATS_API_URL") == null) return;
+    serviceCollection.AddStatsServices();
   }
 }
