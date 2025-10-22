@@ -1,22 +1,29 @@
 ﻿using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using TTT.API.Events;
 using TTT.Game.Events.Player;
 
-namespace TTT.Game.Listeners.Stats;
+namespace Stats;
 
 public class PlayerCreationListener(IServiceProvider provider) : IListener {
   public void Dispose() {
     provider.GetRequiredService<IEventBus>().UnregisterListener(this);
   }
 
+  private readonly ILogger logger = provider.GetRequiredService<ILogger>();
+
   [UsedImplicitly]
   [EventHandler]
   public void OnJoin(PlayerJoinEvent ev) {
+    logger.LogInformation($"Player joined: {ev.Player.Name} ({ev.Player.Id})");
     if (StatsApi.API_URL == null) {
       Dispose();
       return;
     }
+
+    logger.LogInformation("Sending player data to Stats API at {ApiUrl}",
+      StatsApi.API_URL);
 
     Task.Run(async () => {
       // Create PUT request to /players/{steamid64}
@@ -29,6 +36,8 @@ public class PlayerCreationListener(IServiceProvider provider) : IListener {
         System.Text.Encoding.UTF8, "application/json");
 
       var response = await client.PutAsync(url, content);
+      logger.LogInformation("Stats API response status: {StatusCode}",
+        response.StatusCode);
       response.EnsureSuccessStatusCode();
     });
   }

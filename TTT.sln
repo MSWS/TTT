@@ -25,6 +25,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShopAPI", "TTT\ShopAPI\Shop
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RTD", "TTT\RTD\RTD.csproj", "{8A426E84-45DA-4558-A218-E042F1AC60B2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stats", "TTT\Stats\Stats.csproj", "{256473A2-6ACD-440C-83FA-6056147656C7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -78,6 +80,10 @@ Global
 		{8A426E84-45DA-4558-A218-E042F1AC60B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8A426E84-45DA-4558-A218-E042F1AC60B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8A426E84-45DA-4558-A218-E042F1AC60B2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{256473A2-6ACD-440C-83FA-6056147656C7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{256473A2-6ACD-440C-83FA-6056147656C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{256473A2-6ACD-440C-83FA-6056147656C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{256473A2-6ACD-440C-83FA-6056147656C7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 	EndGlobalSection

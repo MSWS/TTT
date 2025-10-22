@@ -1,4 +1,4 @@
-﻿namespace TTT.Game.Listeners.Stats;
+﻿namespace Stats;
 
 public class StatsApi {
   public static string? API_URL
