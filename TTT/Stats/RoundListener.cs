@@ -153,7 +153,7 @@ public class RoundListener(IServiceProvider provider)
       var data = new {
         finishedAt,
         winning_role =
-          winningRole != null ? StatsApi.ApiNameForRole(winningRole) : null,
+          winningRole != null ? StatsApi.ApiName(winningRole) : null,
         participants = getParticipants(game)
       };
 
@@ -193,7 +193,7 @@ public class RoundListener(IServiceProvider provider)
       var playerRoles = roles.GetRoles(player);
       if (playerRoles.Count == 0) continue;
 
-      var role = StatsApi.ApiNameForRole(playerRoles.First());
+      var role = StatsApi.ApiName(playerRoles.First());
       kills.TryGetValue(player.Id, out var killCounts);
       bodiesFound.TryGetValue(player.Id, out var foundCount);
 
