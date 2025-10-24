@@ -1,6 +1,5 @@
 ﻿using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
-using SpecialRound;
 using TTT.API;
 using TTT.API.Events;
 using TTT.Game.Events.Game;
