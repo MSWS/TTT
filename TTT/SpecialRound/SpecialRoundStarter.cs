@@ -1,0 +1,66 @@
+﻿using CounterStrikeSharp.API.Core;
+using JetBrains.Annotations;
+using Microsoft.Extensions.DependencyInjection;
+using SpecialRoundAPI;
+using TTT.API;
+using TTT.API.Events;
+using TTT.API.Game;
+using TTT.API.Storage;
+using TTT.Game.Events.Game;
+using TTT.Game.Listeners;
+
+namespace SpecialRound;
+
+public class SpecialRoundStarter(IServiceProvider provider)
+  : BaseListener(provider), IPluginModule, ISpecialRoundStarter {
+  private readonly ISpecialRoundTracker tracker =
+    provider.GetRequiredService<ISpecialRoundTracker>();
+
+  private SpecialRoundsConfig config
+    => Provider.GetService<IStorage<SpecialRoundsConfig>>()
+    ?.Load()
+     .GetAwaiter()
+     .GetResult() ?? new SpecialRoundsConfig();
+
+  private int roundsSinceMapChange = 0;
+
+  public void Start(BasePlugin? plugin) {
+    plugin?.RegisterListener<Listeners.OnMapStart>(onMapChange);
+  }
+
+  private void onMapChange(string mapName) { roundsSinceMapChange = 0; }
+
+  [UsedImplicitly]
+  [EventHandler]
+  public void OnRound(GameStateUpdateEvent ev) {
+    if (ev.NewState != State.IN_PROGRESS) return;
+
+    roundsSinceMapChange++;
+    tracker.RoundsSinceLastSpecial++;
+
+    if (tracker.RoundsSinceLastSpecial < config.MinRoundsBetweenSpecial) return;
+
+    if (ev.Game.Players.Count < config.MinPlayersForSpecial) return;
+    if (roundsSinceMapChange < config.MinRoundsAfterMapChange) return;
+    if (Random.Shared.NextSingle() > config.SpecialRoundChance) return;
+
+    var specialRound = getSpecialRound();
+    if (specialRound is null) return;
+
+    TryStartSpecialRound(specialRound);
+  }
+
+  private AbstractSpecialRound? getSpecialRound() {
+    return Provider.GetServices<AbstractSpecialRound>()
+     .OrderBy(_ => Random.Shared.Next())
+     .FirstOrDefault();
+  }
+
+  public AbstractSpecialRound?
+    TryStartSpecialRound(AbstractSpecialRound? round) {
+    round?.ApplyRoundEffects();
+    tracker.CurrentRound           = round;
+    tracker.RoundsSinceLastSpecial = 0;
+    return round;
+  }
+}
