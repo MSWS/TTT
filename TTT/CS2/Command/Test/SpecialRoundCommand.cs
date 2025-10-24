@@ -28,6 +28,7 @@ public class SpecialRoundCommand(IServiceProvider provider) : ICommand {
     var roundName = info.Args[1].ToLower();
     if (!rounds.TryGetValue(roundName, out var round)) {
       info.ReplySync($"No special round found with name '{roundName}'.");
+      foreach (var name in rounds.Keys) info.ReplySync($"- {name}");
       return Task.FromResult(CommandResult.INVALID_ARGS);
     }
 
