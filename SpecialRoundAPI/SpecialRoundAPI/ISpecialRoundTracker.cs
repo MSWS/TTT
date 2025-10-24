@@ -1,4 +1,6 @@
-﻿namespace SpecialRound;
+﻿using SpecialRoundAPI;
+
+namespace SpecialRound;
 
 public interface ISpecialRoundTracker {
   public AbstractSpecialRound? CurrentRound { get; set; }

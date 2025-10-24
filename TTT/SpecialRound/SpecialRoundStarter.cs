@@ -1,6 +1,7 @@
 ﻿using CounterStrikeSharp.API.Core;
 using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
+using SpecialRoundAPI;
 using TTT.API;
 using TTT.API.Events;
 using TTT.API.Game;

@@ -1,20 +1,20 @@
 ﻿using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
-using SpecialRoundAPI;
+using SpecialRound;
 using TTT.API;
 using TTT.API.Events;
-using TTT.API.Game;
 using TTT.Game.Events.Game;
 using TTT.Locale;
 
-namespace SpecialRound;
+namespace SpecialRoundAPI;
 
-public abstract class AbstractSpecialRound(IServiceProvider provider) : ITerrorModule, IListener {
+public abstract class AbstractSpecialRound(IServiceProvider provider)
+  : ITerrorModule, IListener {
   protected readonly IServiceProvider Provider = provider;
-  
+
   protected readonly ISpecialRoundTracker Tracker =
     provider.GetRequiredService<ISpecialRoundTracker>();
-  
+
   public void Dispose() { }
   public void Start() { }
 
