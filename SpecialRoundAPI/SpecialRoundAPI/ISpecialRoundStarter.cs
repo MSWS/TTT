@@ -1,6 +1,4 @@
-﻿using SpecialRoundAPI;
-
-namespace SpecialRound;
+﻿namespace SpecialRoundAPI;
 
 public interface ISpecialRoundStarter {
   /// <summary>
