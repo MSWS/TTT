@@ -1,0 +1,2 @@
+﻿SPECIAL_ROUND_STARTED: "%PREFIX%This round is a {purple}Special Round{grey}! This round is a: {yellow}{0}{grey} round!"
+SPECIAL_ROUND_EXPLANATION: "{grey}{0}"
