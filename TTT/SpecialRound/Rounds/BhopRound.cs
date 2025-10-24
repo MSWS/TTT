@@ -11,6 +11,7 @@ namespace SpecialRound.Rounds;
 
 public class BhopRound(IServiceProvider provider)
   : AbstractSpecialRound(provider) {
+  public override string Name => "BHop";
   public override IMsg Description => RoundMsgs.SPECIAL_ROUND_BHOP;
   public override SpecialRoundConfig Config => config;
 

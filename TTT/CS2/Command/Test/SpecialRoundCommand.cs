@@ -13,6 +13,8 @@ public class SpecialRoundCommand(IServiceProvider provider) : ICommand {
   public void Dispose() { }
   public void Start() { }
 
+  public string Id => "specialround";
+
   public Task<CommandResult>
     Execute(IOnlinePlayer? executor, ICommandInfo info) {
     if (info.ArgCount == 1) {

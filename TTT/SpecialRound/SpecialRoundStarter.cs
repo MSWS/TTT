@@ -1,6 +1,7 @@
 ﻿using CounterStrikeSharp.API.Core;
 using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
+using SpecialRound.lang;
 using SpecialRoundAPI;
 using TTT.API;
 using TTT.API.Events;
@@ -45,19 +46,21 @@ public class SpecialRoundStarter(IServiceProvider provider)
     if (Random.Shared.NextSingle() > config.SpecialRoundChance) return;
 
     var specialRound = getSpecialRound();
-    if (specialRound is null) return;
 
     TryStartSpecialRound(specialRound);
   }
 
-  private AbstractSpecialRound? getSpecialRound() {
+  private AbstractSpecialRound getSpecialRound() {
     return Provider.GetServices<AbstractSpecialRound>()
      .OrderBy(_ => Random.Shared.Next())
-     .FirstOrDefault();
+     .First();
   }
 
   public AbstractSpecialRound?
     TryStartSpecialRound(AbstractSpecialRound? round) {
+    round ??= getSpecialRound();
+    Messenger.MessageAll(Locale[RoundMsgs.SPECIAL_ROUND_STARTED(round)]);
+
     round?.ApplyRoundEffects();
     tracker.CurrentRound           = round;
     tracker.RoundsSinceLastSpecial = 0;

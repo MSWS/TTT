@@ -28,6 +28,7 @@ public class SpeedRound(IServiceProvider provider)
   private readonly IRoleAssigner roles =
     provider.GetRequiredService<IRoleAssigner>();
 
+  public override string Name => "Speed";
   public override IMsg Description => RoundMsgs.SPECIAL_ROUND_SPEED;
 
   public override SpecialRoundConfig Config => config;

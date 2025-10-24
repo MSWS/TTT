@@ -17,6 +17,7 @@ public abstract class AbstractSpecialRound(IServiceProvider provider)
   public void Dispose() { }
   public void Start() { }
 
+  public abstract string Name { get; }
   public abstract IMsg Description { get; }
   public abstract SpecialRoundConfig Config { get; }
 
