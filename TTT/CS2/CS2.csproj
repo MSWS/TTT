@@ -13,6 +13,7 @@
     <ProjectReference Include="..\Game\Game.csproj"/>
     <ProjectReference Include="..\Karma\Karma.csproj"/>
     <ProjectReference Include="..\ShopAPI\ShopAPI.csproj"/>
+    <ProjectReference Include="..\SpecialRound\SpecialRound.csproj"/>
   </ItemGroup>
 
   <ItemGroup>

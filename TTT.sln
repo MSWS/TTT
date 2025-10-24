@@ -29,6 +29,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stats", "TTT\Stats\Stats.cs
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpecialRound", "TTT\SpecialRound\SpecialRound.csproj", "{5092069A-3CFA-41C8-B685-341040AB435C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpecialRoundAPI", "SpecialRoundAPI\SpecialRoundAPI\SpecialRoundAPI.csproj", "{360FEF16-54DA-42EE-995A-3D31C699287D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -90,6 +92,10 @@ Global
 		{5092069A-3CFA-41C8-B685-341040AB435C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5092069A-3CFA-41C8-B685-341040AB435C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5092069A-3CFA-41C8-B685-341040AB435C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{360FEF16-54DA-42EE-995A-3D31C699287D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{360FEF16-54DA-42EE-995A-3D31C699287D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{360FEF16-54DA-42EE-995A-3D31C699287D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{360FEF16-54DA-42EE-995A-3D31C699287D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 	EndGlobalSection

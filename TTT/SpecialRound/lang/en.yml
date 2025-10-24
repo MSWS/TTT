@@ -1,2 +1,3 @@
 ﻿SPECIAL_ROUND_STARTED: "%PREFIX%This round is a {purple}Special Round{grey}! This round is a: {yellow}{0}{grey} round!"
-SPECIAL_ROUND_EXPLANATION: "{grey}{0}"
+SPECIAL_ROUND_SPEED: " {yellow}SPEED{grey}: The round is faster than usual! {red}Traitors{grey} must kill to gain more time."
+SPECIAL_ROUND_BHOP: " {Yellow}BHOP{grey}: Bunny hopping is enabled! Hold jump to move faster!"
