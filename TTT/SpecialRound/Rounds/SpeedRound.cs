@@ -44,7 +44,8 @@ public class SpeedRound(IServiceProvider provider)
   public override void ApplyRoundEffects() {
     Provider.GetService<RoundTimerListener>()?.EndTimer?.Dispose();
 
-    setTime(config.InitialSeconds);
+    Server.RunOnTick(Server.TickCount + 2,
+      () => setTime(config.InitialSeconds));
   }
 
   private void addTime(TimeSpan span) {
