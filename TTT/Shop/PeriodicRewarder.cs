@@ -98,7 +98,7 @@ public class PeriodicRewarder(IServiceProvider provider) : ITerrorModule {
     if (positions.Count < 2) return 0f;
     var totalDistance = 0f;
     for (var i = 1; i < positions.Count; i++)
-      totalDistance += positions[i].Distance(positions[i - 1]);
+      totalDistance += positions[i].DistanceSquared(positions[i - 1]);
 
 
     return totalDistance;
