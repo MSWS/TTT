@@ -10,7 +10,7 @@ namespace TTT.CS2.Configs;
 
 public class CS2ShopConfig : IStorage<ShopConfig>, IPluginModule {
   public static readonly FakeConVar<int> CV_STARTING_INNOCENT_CREDITS = new(
-    "css_ttt_shop_start_innocent", "Starting credits for Innocents", 80,
+    "css_ttt_shop_start_innocent", "Starting credits for Innocents", 60,
     ConVarFlags.FCVAR_NONE, new RangeValidator<int>(0, 10000));
 
   public static readonly FakeConVar<int> CV_STARTING_TRAITOR_CREDITS = new(
