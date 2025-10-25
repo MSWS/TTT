@@ -12,6 +12,8 @@ using TTT.API.Player;
 using TTT.CS2.Command;
 using TTT.CS2.ThirdParties.eGO;
 using TTT.Game.Events.Game;
+using TTT.Locale;
+using TTT.RTD.lang;
 
 namespace TTT.RTD;
 
@@ -24,6 +26,11 @@ public class AutoRTDCommand(IServiceProvider provider) : ICommand {
 
   private readonly ICommandManager commands =
     provider.GetRequiredService<ICommandManager>();
+
+  private readonly IMsgLocalizer localizer =
+    provider.GetRequiredService<IMsgLocalizer>();
+
+  public bool MustBeOnMainThread => true;
 
   public void Dispose() { }
 
@@ -57,10 +64,10 @@ public class AutoRTDCommand(IServiceProvider provider) : ICommand {
     var value = await autoRtdCookie.Get(executorId);
     if (value == "1") {
       await autoRtdCookie.Set(executorId, "0");
-      info.ReplySync("AutoRTD has been disabled.");
+      info.ReplySync(localizer[RtdMsgs.COMMAND_AUTORTD_DISABLED]);
     } else {
       await autoRtdCookie.Set(executorId, "1");
-      info.ReplySync("AutoRTD has been enabled.");
+      info.ReplySync(localizer[RtdMsgs.COMMAND_AUTORTD_ENABLED]);
     }
 
     playerStatuses[executor.Id] = value != "1";

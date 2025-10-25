@@ -42,7 +42,7 @@ public class RTDCommand(IRewardGenerator generator, IPermissionManager perms,
     }
 
     var reward = generator.GetReward();
-    if (bypass) {
+    if (bypass && info.ArgCount == 2) {
       if (!int.TryParse(info.Args[1], out var slot)) {
         info.ReplySync("Invalid parameter: must be an integer.");
         return Task.FromResult(CommandResult.SUCCESS);
