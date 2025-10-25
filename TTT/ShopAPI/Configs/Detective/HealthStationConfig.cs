@@ -3,7 +3,7 @@
 namespace ShopAPI.Configs.Detective;
 
 public record HealthStationConfig : StationConfig {
-  public override string UseSound { get; init; } = "sounds/buttons/blip1";
+  public virtual string UseSound { get; init; } = "sounds/buttons/blip1";
 
   public override int Price { get; init; } = 50;
 

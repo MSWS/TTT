@@ -6,7 +6,7 @@ public record DamageStationConfig : StationConfig {
   public override int HealthIncrements { get; init; } = -25;
   public override int TotalHealthGiven { get; init; } = -3000;
 
-  public override string UseSound { get; init; } = "sounds/buttons/blip2";
+  public virtual string UseSound { get; init; } = "sounds/buttons/blip2";
 
   public override int Price { get; init; } = 65;
 
