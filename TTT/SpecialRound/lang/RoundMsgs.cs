@@ -13,4 +13,6 @@ public class RoundMsgs {
 
   public static IMsg SPECIAL_ROUND_BHOP
     => MsgFactory.Create(nameof(SPECIAL_ROUND_BHOP));
-}
+  
+  public static IMsg SPECIAL_ROUND_VANILLA
+    => MsgFactory.Create(nameof(SPECIAL_ROUND_VANILLA)); }

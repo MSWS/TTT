@@ -22,14 +22,18 @@ public class BhopRound(IServiceProvider provider)
      .GetResult() ?? new BhopRoundConfig();
 
   public override void ApplyRoundEffects() {
-    Server.ExecuteCommand("sv_enablebunnyhopping 1");
-    Server.ExecuteCommand("sv_autobunnyhopping 1");
+    Server.NextWorldUpdate(() => {
+      Server.ExecuteCommand("sv_enablebunnyhopping 1");
+      Server.ExecuteCommand("sv_autobunnyhopping 1");
+    });
   }
 
   public override void OnGameState(GameStateUpdateEvent ev) {
     if (ev.NewState != State.FINISHED) return;
 
-    Server.ExecuteCommand("sv_enablebunnyhopping 0");
-    Server.ExecuteCommand("sv_autobunnyhopping 0");
+    Server.NextWorldUpdate(() => {
+      Server.ExecuteCommand("sv_enablebunnyhopping 0");
+      Server.ExecuteCommand("sv_autobunnyhopping 0");
+    });
   }
 }

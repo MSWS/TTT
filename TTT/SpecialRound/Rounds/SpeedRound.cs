@@ -67,7 +67,11 @@ public class SpeedRound(IServiceProvider provider)
         EndReason.TIMEOUT(new InnocentRole(Provider)))));
   }
 
-  public override void OnGameState(GameStateUpdateEvent ev) { }
+  public override void OnGameState(GameStateUpdateEvent ev) {
+    if (ev.NewState != State.FINISHED) return;
+
+    endTimer?.Dispose();
+  }
 
   [UsedImplicitly]
   [EventHandler]
