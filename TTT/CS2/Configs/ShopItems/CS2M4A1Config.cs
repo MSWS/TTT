@@ -11,7 +11,7 @@ namespace TTT.CS2.Configs.ShopItems;
 
 public class CS2M4A1Config : IStorage<M4A1Config>, IPluginModule {
   public static readonly FakeConVar<int> CV_PRICE = new(
-    "css_ttt_shop_m4a1_price", "Price of the M4A1 item", 75,
+    "css_ttt_shop_m4a1_price", "Price of the M4A1 item", 50,
     ConVarFlags.FCVAR_NONE, new RangeValidator<int>(0, 10000));
 
   public static readonly FakeConVar<string> CV_CLEAR_SLOTS = new(
