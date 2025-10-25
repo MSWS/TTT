@@ -31,7 +31,7 @@ public class RoundTimerListener(IServiceProvider provider)
   private readonly IPlayerConverter<CCSPlayerController> converter =
     provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
 
-  private IDisposable? endTimer;
+  public IDisposable? EndTimer;
 
   [UsedImplicitly]
   [EventHandler(IgnoreCanceled = true)]
@@ -63,14 +63,14 @@ public class RoundTimerListener(IServiceProvider provider)
           player.Respawn();
       });
 
-    if (ev.NewState == State.FINISHED) endTimer?.Dispose();
+    if (ev.NewState == State.FINISHED) EndTimer?.Dispose();
     if (ev.NewState != State.IN_PROGRESS) return;
     var duration = config.RoundCfg.RoundDuration(ev.Game.Players.Count);
     Server.NextWorldUpdate(()
       => RoundUtil.SetTimeRemaining((int)duration.TotalSeconds));
 
-    endTimer?.Dispose();
-    endTimer = Scheduler.Schedule(duration,
+    EndTimer?.Dispose();
+    EndTimer = Scheduler.Schedule(duration,
       () => {
         Server.NextWorldUpdate(()
           => ev.Game.EndGame(EndReason.TIMEOUT(new InnocentRole(Provider))));
@@ -137,6 +137,6 @@ public class RoundTimerListener(IServiceProvider provider)
   public override void Dispose() {
     base.Dispose();
 
-    endTimer?.Dispose();
+    EndTimer?.Dispose();
   }
 }

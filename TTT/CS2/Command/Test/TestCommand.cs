@@ -28,6 +28,7 @@ public class TestCommand(IServiceProvider provider) : ICommand, IPluginModule {
     subCommands.Add("credits", new CreditsCommand(provider));
     subCommands.Add("spec", new SpecCommand(provider));
     subCommands.Add("reload", new ReloadModuleCommand(provider));
+    subCommands.Add("specialround", new SpecialRoundCommand(provider));
   }
 
   public Task<CommandResult>

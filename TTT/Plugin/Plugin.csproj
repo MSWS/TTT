@@ -14,6 +14,7 @@
     <ProjectReference Include="..\Shop\Shop.csproj"/>
     <ProjectReference Include="..\RTD\RTD.csproj"/>
     <ProjectReference Include="..\Stats\Stats.csproj"/>
+    <ProjectReference Include="..\SpecialRound\SpecialRound.csproj"/>
   </ItemGroup>
 
   <ItemGroup>
