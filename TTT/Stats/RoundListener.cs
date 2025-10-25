@@ -133,11 +133,7 @@ public class RoundListener(IServiceProvider provider)
   }
 
   private async Task onRoundEnd(IGame game) {
-    Console.WriteLine("RoundListener: onRoundEnd fired");
-    if (CurrentRoundId == null) {
-      Console.WriteLine("RoundListener: currentRoundId is null, skipping");
-      return;
-    }
+    if (CurrentRoundId == null) return;
 
     var ended_at = DateTime.UtcNow;
     var winning_role = game.WinningRole != null ?

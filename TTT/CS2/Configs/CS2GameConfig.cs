@@ -24,7 +24,7 @@ public class CS2GameConfig : IStorage<TTTConfig>, IPluginModule {
 
   public static readonly FakeConVar<int> CV_ROUND_DURATION_PER_PLAYER = new(
     "css_ttt_round_duration_per_player",
-    "Additional round duration per player in seconds", 10,
+    "Additional round duration per player in seconds", 15,
     ConVarFlags.FCVAR_NONE, new RangeValidator<int>(0, 60));
 
   public static readonly FakeConVar<int> CV_ROUND_DURATION_MAX = new(

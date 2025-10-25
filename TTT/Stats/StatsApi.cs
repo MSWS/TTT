@@ -9,10 +9,10 @@ public class StatsApi {
 
   public static string ApiNameForRole(IRole role) {
     return role switch {
-      _ when role is TraitorRole   => "traitor",
-      _ when role is DetectiveRole => "detective",
-      _ when role is InnocentRole  => "innocent",
-      _                            => "unknown"
+      TraitorRole   => "traitor",
+      DetectiveRole => "detective",
+      InnocentRole  => "innocent",
+      _             => "unknown"
     };
   }
 }
