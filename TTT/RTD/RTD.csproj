@@ -15,4 +15,10 @@
     <ProjectReference Include="..\Shop\Shop.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="MAULActainShared">
+      <HintPath>..\CS2\ThirdParties\Binaries\MAULActainShared.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>
