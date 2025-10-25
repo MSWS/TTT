@@ -9,6 +9,7 @@ public static class RtdServiceExtensions {
     services.AddModBehavior<IRewardGenerator, RewardGenerator>();
     services.AddModBehavior<RtdStatsCommand>();
     services.AddModBehavior<RTDCommand>();
+    services.AddModBehavior<AutoRTDCommand>();
     services.AddSingleton<IMuted, Muted>();
   }
 }
