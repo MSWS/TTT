@@ -8,6 +8,7 @@ using TTT.API;
 using TTT.API.Command;
 using TTT.API.Events;
 using TTT.API.Game;
+using TTT.API.Messages;
 using TTT.API.Player;
 using TTT.CS2.Command;
 using TTT.CS2.ThirdParties.eGO;
@@ -76,9 +77,8 @@ public class AutoRTDCommand(IServiceProvider provider) : ICommand, IListener {
 
   [UsedImplicitly]
   [EventHandler]
-  public void OnRoundStart(GameStateUpdateEvent ev) {
-    if (ev.NewState != State.WAITING) return;
-
+  public void OnRoundStart(GameInitEvent ev) {
+    var messenger = provider.GetRequiredService<IMessenger>();
     Task.Run(async () => {
       foreach (var player in finder.GetOnline()) {
         if (!playerStatuses.TryGetValue(player.Id, out var status)) {
@@ -88,10 +88,11 @@ public class AutoRTDCommand(IServiceProvider provider) : ICommand, IListener {
 
         if (!status) continue;
 
-        var info = new CS2CommandInfo(provider, player, 0, "css_rtd");
-        info.CallingContext = CommandCallingContext.Chat;
+        var info = new CS2CommandInfo(provider, player, 0, "css_rtd") {
+          CallingContext = CommandCallingContext.Chat
+        };
 
-        await commands.ProcessCommand(info);
+        await Server.NextWorldUpdateAsync(() => commands.ProcessCommand(info));
       }
     });
   }
