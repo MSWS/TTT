@@ -8,14 +8,17 @@ using TTT.API;
 using TTT.API.Command;
 using TTT.API.Events;
 using TTT.API.Game;
+using TTT.API.Messages;
 using TTT.API.Player;
 using TTT.CS2.Command;
 using TTT.CS2.ThirdParties.eGO;
 using TTT.Game.Events.Game;
+using TTT.Locale;
+using TTT.RTD.lang;
 
 namespace TTT.RTD;
 
-public class AutoRTDCommand(IServiceProvider provider) : ICommand {
+public class AutoRTDCommand(IServiceProvider provider) : ICommand, IListener {
   public string Id => "autortd";
   private ICookie? autoRtdCookie;
 
@@ -24,6 +27,11 @@ public class AutoRTDCommand(IServiceProvider provider) : ICommand {
 
   private readonly ICommandManager commands =
     provider.GetRequiredService<ICommandManager>();
+
+  private readonly IMsgLocalizer localizer =
+    provider.GetRequiredService<IMsgLocalizer>();
+
+  public bool MustBeOnMainThread => true;
 
   public void Dispose() { }
 
@@ -57,10 +65,10 @@ public class AutoRTDCommand(IServiceProvider provider) : ICommand {
     var value = await autoRtdCookie.Get(executorId);
     if (value == "1") {
       await autoRtdCookie.Set(executorId, "0");
-      info.ReplySync("AutoRTD has been disabled.");
+      info.ReplySync(localizer[RtdMsgs.COMMAND_AUTORTD_DISABLED]);
     } else {
       await autoRtdCookie.Set(executorId, "1");
-      info.ReplySync("AutoRTD has been enabled.");
+      info.ReplySync(localizer[RtdMsgs.COMMAND_AUTORTD_ENABLED]);
     }
 
     playerStatuses[executor.Id] = value != "1";
@@ -69,9 +77,8 @@ public class AutoRTDCommand(IServiceProvider provider) : ICommand {
 
   [UsedImplicitly]
   [EventHandler]
-  public void OnRoundStart(GameStateUpdateEvent ev) {
-    if (ev.NewState != State.WAITING) return;
-
+  public void OnRoundStart(GameInitEvent ev) {
+    var messenger = provider.GetRequiredService<IMessenger>();
     Task.Run(async () => {
       foreach (var player in finder.GetOnline()) {
         if (!playerStatuses.TryGetValue(player.Id, out var status)) {
@@ -81,10 +88,11 @@ public class AutoRTDCommand(IServiceProvider provider) : ICommand {
 
         if (!status) continue;
 
-        var info = new CS2CommandInfo(provider, player, 0, "css_rtd");
-        info.CallingContext = CommandCallingContext.Chat;
+        var info = new CS2CommandInfo(provider, player, 0, "css_rtd") {
+          CallingContext = CommandCallingContext.Chat
+        };
 
-        await commands.ProcessCommand(info);
+        await Server.NextWorldUpdateAsync(() => commands.ProcessCommand(info));
       }
     });
   }
