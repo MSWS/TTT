@@ -26,7 +26,7 @@ public class RTDCommand(IRewardGenerator generator, IPermissionManager perms,
     if (executor == null) return Task.FromResult(CommandResult.PLAYER_ONLY);
     var bypass = perms.HasFlags(executor, "@css/root") && info.ArgCount == 2;
 #if DEBUG
-    bypass = true;
+    bypass = info.ArgCount == 2;
 #endif
 
     if (!bypass && playerRewards.TryGetValue(executor.Id, out var existing)) {

@@ -20,4 +20,10 @@ public class RtdMsgs {
   
   public static IMsg CREDITS_REWARD_DESC(int amo) 
     => MsgFactory.Create(nameof(CREDITS_REWARD_DESC), amo);
+  
+  public static IMsg COMMAND_AUTORTD_ENABLED 
+    => MsgFactory.Create(nameof(COMMAND_AUTORTD_ENABLED));
+  
+  public static IMsg COMMAND_AUTORTD_DISABLED 
+    => MsgFactory.Create(nameof(COMMAND_AUTORTD_DISABLED));
 }
