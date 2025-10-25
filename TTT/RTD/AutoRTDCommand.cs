@@ -17,7 +17,7 @@ using TTT.RTD.lang;
 
 namespace TTT.RTD;
 
-public class AutoRTDCommand(IServiceProvider provider) : ICommand {
+public class AutoRTDCommand(IServiceProvider provider) : ICommand, IListener {
   public string Id => "autortd";
   private ICookie? autoRtdCookie;
 
