@@ -14,6 +14,8 @@ public class MapChangeCausesEndListener(IServiceProvider provider)
 
   public void Dispose() { }
   public void Start() { }
+  public void Start(BasePlugin? plugin) {
+  }
 
   [UsedImplicitly]
   [GameEventHandler]
