@@ -60,7 +60,11 @@ public class CS2AliveSpoofer : IAliveSpoofer, IPluginModule {
     this.plugin = plugin;
     plugin?.RegisterListener<CounterStrikeSharp.API.Core.Listeners.OnTick>(
       onTick);
+    plugin?.RegisterListener<CounterStrikeSharp.API.Core.Listeners.OnMapStart>(
+      onMapStart);
   }
+
+  private void onMapStart(string mapName) { _fakeAlivePlayers.Clear(); }
 
   [UsedImplicitly]
   [GameEventHandler]

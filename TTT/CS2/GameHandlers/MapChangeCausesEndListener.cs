@@ -14,13 +14,13 @@ public class MapChangeCausesEndListener(IServiceProvider provider)
 
   public void Dispose() { }
   public void Start() { }
+
   public void Start(BasePlugin? plugin) {
+    plugin?.RegisterListener<CounterStrikeSharp.API.Core.Listeners.OnMapStart>(
+      onMapChange);
   }
 
-  [UsedImplicitly]
-  [GameEventHandler]
-  public HookResult OnMapChange(EventMapTransition ev, GameEventInfo _) {
+  private void onMapChange(string mapName) {
     games.ActiveGame?.EndGame(new EndReason("Map Change"));
-    return HookResult.Continue;
   }
 }
