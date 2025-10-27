@@ -77,7 +77,8 @@ public class AfkTimerListener(IServiceProvider provider)
   private List<CCSPlayerController> getAfkPlayers() {
     return Utilities.GetPlayers()
      .Where(p => p.PlayerPawn.Value != null
-        && !p.PlayerPawn.Value.HasMovedSinceSpawn)
+        && p is { Team: CsTeam.CounterTerrorist or CsTeam.Terrorist }
+        && p.GetHealth() >= 0 && !p.PlayerPawn.Value.HasMovedSinceSpawn)
      .ToList();
   }
 }
