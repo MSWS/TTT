@@ -20,10 +20,10 @@ public class EntityTargetHandlers(IServiceProvider provider) : IPluginModule {
   private HookResult handler(CEntityIOOutput output, string name,
     CEntityInstance activator, CEntityInstance caller, CVariant value,
     float delay) {
-    messenger.DebugAnnounce("Entity Output Triggered: " + name);
-    messenger.DebugAnnounce("Activator: " + activator.DesignerName);
-    messenger.DebugAnnounce("Caller: " + caller.DesignerName);
-    messenger.DebugAnnounce("Value: " + value);
+    messenger.Debug("Entity Output Triggered: " + name);
+    messenger.Debug("Activator: " + activator.DesignerName);
+    messenger.Debug("Caller: " + caller.DesignerName);
+    messenger.Debug("Value: " + value);
     if (caller.DesignerName == "prop_dynamic") return HookResult.Continue;
     if (caller.DesignerName != "filter_activator_name")
       return HookResult.Continue;

@@ -50,7 +50,8 @@ public static class RoundUtil {
 
   public static void EndRound(RoundEndReason reason) {
     var gameRules = ServerUtil.GameRulesProxy;
-    if (gameRules == null || gameRules.GameRules == null) return;
+    if (gameRules == null || gameRules.GameRules == null || !gameRules.IsValid)
+      return;
     // TODO: Figure out what these params do
     // TerminateRoundFunc.Invoke(gameRules.GameRules.Handle, 5f, reason, 0, 0);
     VirtualFunctions.TerminateRoundFunc.Invoke(gameRules.GameRules.Handle,
