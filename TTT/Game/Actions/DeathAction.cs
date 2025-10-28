@@ -10,7 +10,7 @@ public class DeathAction(IRoleAssigner roles, IPlayer victim, IPlayer? killer)
   : IAction {
   public DeathAction(IRoleAssigner roles, PlayerDeathEvent ev) : this(roles,
     ev.Player, ev.Killer) {
-    Details = $"using {ev.Weapon}";
+    if (!string.IsNullOrWhiteSpace(ev.Weapon)) Details = $"using {ev.Weapon}";
   }
 
   public IPlayer Player { get; } = victim;

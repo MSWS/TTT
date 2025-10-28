@@ -11,6 +11,7 @@ public interface IAction {
   string Id { get; }
   string Verb { get; }
   string Details { get; }
+  string Prefix => "";
 
   public string Format() {
     var pRole = PlayerRole != null ?
