@@ -13,5 +13,5 @@ public class RoleAssignedAction(IPlayer player, IRole role) : IAction {
   public string Verb => "was assigned";
 
   public string Details { get; } =
-    role.Name.Where(char.IsAsciiLetterOrDigit).ToString() ?? "?";
+    new(role.Name.Where(char.IsAsciiLetter).ToArray());
 }
