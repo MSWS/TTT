@@ -26,7 +26,7 @@ SHOP_ITEM_TASER: "Taser"
 SHOP_ITEM_TASER_DESC: "A taser that allows you to identify the roles of players you hit."
 
 SHOP_ITEM_HEALTHSHOT: "Healthshot"
-SHOP_ITEM_HEALTHSHOT_DESC: "A healthshot that instantly heals you for 50 health."
+SHOP_ITEM_HEALTHSHOT_DESC: "A healthshot that heals you gradually for 50 health."
 
 SHOP_INSUFFICIENT_BALANCE: "%SHOP_PREFIX%You cannot afford {white}{0}{grey}, it costs {yellow}{1}{grey} %CREDITS_NAME%%s%, and you have {yellow}{2}{grey}."
 SHOP_CANNOT_PURCHASE: "%SHOP_PREFIX%You cannot purchase this item."
