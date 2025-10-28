@@ -1,4 +1,5 @@
-﻿using CounterStrikeSharp.API.Core;
+﻿using CounterStrikeSharp.API;
+using CounterStrikeSharp.API.Core;
 using Microsoft.Extensions.DependencyInjection;
 using TTT.API.Command;
 using TTT.API.Player;
@@ -12,15 +13,25 @@ public class SetTargetCommand(IServiceProvider provider) : ICommand {
   public void Dispose() { }
   public void Start() { }
 
+  public string Id => "settarget";
+
   public Task<CommandResult>
     Execute(IOnlinePlayer? executor, ICommandInfo info) {
     if (executor == null) return Task.FromResult(CommandResult.PLAYER_ONLY);
-    var gamePlayer = converter.GetPlayer(executor);
-    if (gamePlayer == null) return Task.FromResult(CommandResult.ERROR);
 
-    info.ReplySync("Target: " + gamePlayer.Target);
-    gamePlayer.Target = "traitor";
-    info.ReplySync("New Target: " + gamePlayer.Target);
+    Server.NextWorldUpdate(() => {
+      var gamePlayer = converter.GetPlayer(executor);
+      if (gamePlayer == null) return;
+
+      info.ReplySync("Target: " + gamePlayer.Target);
+      gamePlayer.Target = "TRAITOR";
+      info.ReplySync("New Target: " + gamePlayer.Target);
+      if (gamePlayer.Pawn.Value != null)
+        gamePlayer.Pawn.Value.Globalname = "TRAITOR";
+      info.ReplySync("New Globalname: " + gamePlayer.Pawn.Value?.Globalname);
+      gamePlayer.AcceptInput("targetname", null, null, "TRAITOR");
+      gamePlayer.AddEntityIOEvent("targetname", null, null, "TRAITOR");
+    });
     return Task.FromResult(CommandResult.SUCCESS);
   }
 }
