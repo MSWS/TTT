@@ -40,9 +40,10 @@ public class DeathAction(IRoleAssigner roles, IPlayer victim, IPlayer? killer)
   }
 
   public string Prefix
-    => PlayerRole is TraitorRole != OtherRole is TraitorRole ?
-      "" :
-      "[BAD ACTION] ";
+    => PlayerRole != null && OtherRole != null
+      && PlayerRole is TraitorRole != OtherRole is TraitorRole ?
+        "" :
+        "[BAD ACTION] ";
 
   #region ConstructorAliases
 
