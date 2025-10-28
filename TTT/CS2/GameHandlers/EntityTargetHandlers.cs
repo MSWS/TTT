@@ -22,24 +22,24 @@ public class EntityTargetHandlers(IServiceProvider provider) : IPluginModule {
     float delay) {
     if (caller.DesignerName == "prop_dynamic") return HookResult.Continue;
     messenger.Debug("Entity Output Triggered: " + name);
-    if (activator.IsValid) {
-      messenger.Debug("Activator: " + activator.DesignerName);
-      activator.AcceptInput("OnPass");
-    }
-
-    if (caller.IsValid) {
-      messenger.Debug("Caller: " + caller.DesignerName);
-      caller.AcceptInput("OnPass");
-    }
-
-    if (value.IsValid)
-      messenger.Debug("Value: " + value + " " + value.GetType());
-    if (!caller.IsValid || !caller.DesignerName.StartsWith("filter_"))
+    messenger.Debug("Activator: " + activator.DesignerName);
+    messenger.Debug("Caller: " + caller.DesignerName);
+    messenger.Debug("Value: " + value + " " + value.GetType());
+    caller.AcceptInput("OnPass");
+    activator.AcceptInput("OnPass");
+    if (caller.DesignerName != "filter_activator_name")
       return HookResult.Continue;
-    var csPlayer = Utilities.GetPlayerFromIndex((int)activator.Index);
+    var csPlayer =
+      Utilities.GetPlayerFromIndex((int)activator.EntityHandle.Index);
     if (csPlayer != null && csPlayer.IsValid) {
       messenger.DebugAnnounce(
-        $"{caller.DesignerName} triggered by player: {csPlayer.PlayerName} {(int)csPlayer.Index}");
+        $"Filter Activator Name triggered by player: {csPlayer.PlayerName} {(int)csPlayer.Index}");
+    }
+
+    var ptrPlayer = new CCSPlayerController(activator.Handle);
+    if (ptrPlayer.IsValid) {
+      messenger.DebugAnnounce(
+        $"Filter Activator Name triggered by player controller: {ptrPlayer.PlayerName} {(int)ptrPlayer.Index}");
     }
 
     messenger.DebugAnnounce(output + " - " + output.Description);
@@ -47,6 +47,7 @@ public class EntityTargetHandlers(IServiceProvider provider) : IPluginModule {
     var connections = output.Connections;
     if (connections != null) debugConnection(connections);
 
+    caller.AcceptInput("OnPass");
     return HookResult.Continue;
   }
 
