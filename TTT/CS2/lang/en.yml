@@ -50,3 +50,6 @@ SHOP_ITEM_SILENT_AWP_DESC: "Receive a silenced AWP with limited ammo."
 
 SHOP_ITEM_CLUSTER_GRENADE: "Cluster Grenade"
 SHOP_ITEM_CLUSTER_GRENADE_DESC: "A grenade that splits into multiple smaller grenades."
+
+SHOP_ITEM_TELEPORT_DECOY: "Teleport Decoy"
+SHOP_ITEM_TELEPORT_DECOY_DESC: "A decoy that teleports you to it upon explosion."

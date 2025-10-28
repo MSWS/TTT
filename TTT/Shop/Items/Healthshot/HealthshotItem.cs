@@ -13,7 +13,7 @@ using TTT.Game.Roles;
 namespace TTT.Shop.Items.Healthshot;
 
 public static class HealthshotServiceCollection {
-  public static void AddHealthshot(this IServiceCollection services) {
+  public static void AddHealthshotServices(this IServiceCollection services) {
     services.AddModBehavior<HealthshotItem>();
   }
 }
