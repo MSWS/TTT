@@ -34,7 +34,7 @@
       "linux": "55 4C 89 C1 48 89 E5 41 57 49 89 D7"
     }
   },
-  "CEntityIdentity_SetEntityName": {
+  "CEntityIdentity_SetEntityNameFunc": {
     "signatures": {
       "library": "server",
       "windows": "48 89 5C 24 10 57 48 83 EC 20 48 8B D9 4C 8B C2",

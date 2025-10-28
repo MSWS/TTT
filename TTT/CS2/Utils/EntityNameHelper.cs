@@ -1,12 +1,15 @@
 ﻿using System.Runtime.InteropServices;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Memory;
+using CounterStrikeSharp.API.Modules.Memory.DynamicFunctions;
 
 namespace TTT.CS2.Utils;
 
 public class EntityNameHelper {
   private static readonly CEntityIdentity_SetEntityName
     CEntityIdentity_SetEntityNameFunc;
+  // private static MemoryFunctionVoid<CEntityIdentity, string>
+  //   CEntityIdentity_SetEntityNameFunc;
 
   static EntityNameHelper() {
     var setEntityNameSignature = NativeAPI.FindSignature(Addresses.ServerPath,

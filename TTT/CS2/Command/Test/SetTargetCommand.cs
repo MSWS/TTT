@@ -21,20 +21,21 @@ public class SetTargetCommand(IServiceProvider provider) : ICommand {
     Execute(IOnlinePlayer? executor, ICommandInfo info) {
     if (executor == null) return Task.FromResult(CommandResult.PLAYER_ONLY);
 
+    var name = "TRAITOR";
+
+    if (info.ArgCount == 2) name = info.Args[1];
+
     Server.NextWorldUpdate(() => {
       var gamePlayer = converter.GetPlayer(executor);
       if (gamePlayer == null) return;
 
       if (gamePlayer.Entity != null) {
-        // gamePlayer.Entity.Name = "TRAITOR";
-        // Utilities.SetStateChanged(gamePlayer, "CEntityIdentity", "m_name");
-
-        EntityNameHelper.SetEntityName(gamePlayer.Entity, "TRAITOR");
-
+        info.ReplySync("Current entity name: " + gamePlayer.Entity.Name);
+        EntityNameHelper.SetEntityName(gamePlayer.Entity, name);
         info.ReplySync("Set entity name to " + gamePlayer.Entity.Name);
       }
 
-      info.ReplySync("Set target name to TRAITOR");
+      info.ReplySync("Set target name to " + name);
     });
     return Task.FromResult(CommandResult.SUCCESS);
   }
