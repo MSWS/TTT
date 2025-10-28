@@ -3,6 +3,7 @@ using TTT.API.Game;
 using TTT.API.Player;
 using TTT.API.Role;
 using TTT.Game.Events.Player;
+using TTT.Game.Roles;
 
 namespace TTT.Game.Actions;
 
@@ -37,6 +38,11 @@ public class DeathAction(IRoleAssigner roles, IPlayer victim, IPlayer? killer)
       $"{Other}{oRole} {Verb} {Player}{pRole} {Details}" :
       $"{Player}{pRole} {Verb} {Details}";
   }
+
+  public string Prefix
+    => PlayerRole is TraitorRole != OtherRole is TraitorRole ?
+      "" :
+      "[BAD ACTION] ";
 
   #region ConstructorAliases
 

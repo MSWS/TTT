@@ -28,7 +28,7 @@ public class DamagedAction(IRoleAssigner roles, IPlayer victim,
   public string Prefix
     => PlayerRole is TraitorRole != OtherRole is TraitorRole ?
       "" :
-      "[BAD ACTION]";
+      "[BAD ACTION] ";
 
   #region ConstructorAliases
 
