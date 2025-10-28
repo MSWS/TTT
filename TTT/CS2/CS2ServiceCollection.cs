@@ -60,6 +60,10 @@ public static class CS2ServiceCollection {
      .AddModBehavior<IStorage<HealthStationConfig>, CS2HealthStationConfig>();
     collection
      .AddModBehavior<IStorage<ClusterGrenadeConfig>, CS2ClusterGrenadeConfig>();
+    collection.AddModBehavior<IStorage<GlovesConfig>, CS2GlovesConfig>();
+    collection
+     .AddModBehavior<IStorage<OneHitKnifeConfig>, CS2OneHitKnifeConfig>();
+    collection.AddModBehavior<IStorage<SilentAWPConfig>, CS2SilentAWPConfig>();
 
     // TTT - CS2 Specific optionals
     collection.AddScoped<ITextSpawner, TextSpawner>();
