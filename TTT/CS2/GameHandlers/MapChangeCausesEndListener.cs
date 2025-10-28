@@ -1,6 +1,5 @@
-﻿using CounterStrikeSharp.API.Core;
-using CounterStrikeSharp.API.Core.Attributes.Registration;
-using JetBrains.Annotations;
+﻿using CounterStrikeSharp.API;
+using CounterStrikeSharp.API.Core;
 using Microsoft.Extensions.DependencyInjection;
 using TTT.API;
 using TTT.API.Game;
@@ -22,5 +21,6 @@ public class MapChangeCausesEndListener(IServiceProvider provider)
 
   private void onMapChange(string mapName) {
     games.ActiveGame?.EndGame(new EndReason("Map Change"));
+    Server.PrintToConsole("Detected map change, ending active game.");
   }
 }

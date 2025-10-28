@@ -9,7 +9,7 @@ using TTT.Game.Roles;
 namespace TTT.Shop.Items.Taser;
 
 public static class TaserServiceCollection {
-  public static void AddTaserItem(this IServiceCollection collection) {
+  public static void AddTaserServices(this IServiceCollection collection) {
     collection.AddModBehavior<TaserItem>();
   }
 }

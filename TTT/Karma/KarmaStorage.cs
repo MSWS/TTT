@@ -35,14 +35,18 @@ public sealed class KarmaStorage(IServiceProvider provider) : IKarmaService {
     return karmaElement.GetInt32();
   }
 
-  public Task Write(IPlayer key, int newData) {
-    var data = new { steam_id = key.Id, karma = newData };
+  public async Task Write(IPlayer key, int newData) {
+    var oldKarma         = await Load(key);
+    var karmaUpdateEvent = new KarmaUpdateEvent(key, oldKarma, newData);
+    provider.GetService<IEventBus>()?.Dispatch(karmaUpdateEvent);
+    if (karmaUpdateEvent.IsCanceled) return;
 
+    var data = new { steam_id = key.Id, karma = karmaUpdateEvent.Karma };
     var payload = new StringContent(
       System.Text.Json.JsonSerializer.Serialize(data),
       System.Text.Encoding.UTF8, "application/json");
 
-    return client.PatchAsync("user/" + key.Id, payload);
+    await client.PatchAsync("user/" + key.Id, payload);
   }
 
   public void Dispose() { }

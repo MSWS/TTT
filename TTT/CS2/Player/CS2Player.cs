@@ -47,10 +47,6 @@ public class CS2Player : IOnlinePlayer, IEquatable<CS2Player> {
     }
   }
 
-  private int namePadding
-    => Math.Min(Utilities.GetPlayers().Select(p => p.PlayerName.Length).Max(),
-      24);
-
   public bool Equals(CS2Player? other) {
     if (other is null) return false;
     return Id == other.Id;
@@ -118,9 +114,7 @@ public class CS2Player : IOnlinePlayer, IEquatable<CS2Player> {
 
   // Goal: Pad the name to a fixed width for better alignment in logs
   // Left-align ID, right-align name
-  private string createPaddedName() {
-    return CreatePaddedName(Id, Name, namePadding + 8);
-  }
+  private string createPaddedName() { return CreatePaddedName(Id, Name, 24); }
 
   public static string CreatePaddedName(string id, string name, int len) {
     var suffix = id.Length > 5 ? id[^5..] : id.PadLeft(5, '0');

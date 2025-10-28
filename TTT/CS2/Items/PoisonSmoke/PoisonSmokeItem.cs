@@ -10,7 +10,7 @@ using TTT.Game.Roles;
 namespace TTT.CS2.Items.PoisonSmoke;
 
 public static class PoisonSmokeServiceCollection {
-  public static void AddPoisonSmoke(this IServiceCollection services) {
+  public static void AddPoisonSmokeServices(this IServiceCollection services) {
     services.AddModBehavior<PoisonSmokeItem>();
     services.AddModBehavior<PoisonSmokeListener>();
   }

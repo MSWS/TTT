@@ -1,6 +1,8 @@
+using System.Runtime.CompilerServices;
 using CounterStrikeSharp.API.Core;
 using Microsoft.Extensions.DependencyInjection;
 using ShopAPI.Configs;
+using ShopAPI.Configs.Detective;
 using ShopAPI.Configs.Traitor;
 using TTT.API.Command;
 using TTT.API.Extensions;
@@ -50,6 +52,18 @@ public static class CS2ServiceCollection {
      .AddModBehavior<IStorage<PoisonSmokeConfig>, CS2PoisonSmokeConfig>();
     collection.AddModBehavior<IStorage<KarmaConfig>, CS2KarmaConfig>();
     collection.AddModBehavior<IStorage<CamoConfig>, CS2CamoConfig>();
+    collection.AddModBehavior<IStorage<StickersConfig>, CS2StickersConfig>();
+    collection.AddModBehavior<IStorage<BodyPaintConfig>, CS2BodyPaintConfig>();
+    collection
+     .AddModBehavior<IStorage<DnaScannerConfig>, CS2DnaScannerConfig>();
+    collection
+     .AddModBehavior<IStorage<HealthStationConfig>, CS2HealthStationConfig>();
+    collection
+     .AddModBehavior<IStorage<ClusterGrenadeConfig>, CS2ClusterGrenadeConfig>();
+    collection.AddModBehavior<IStorage<GlovesConfig>, CS2GlovesConfig>();
+    collection
+     .AddModBehavior<IStorage<OneHitKnifeConfig>, CS2OneHitKnifeConfig>();
+    collection.AddModBehavior<IStorage<SilentAWPConfig>, CS2SilentAWPConfig>();
 
     // TTT - CS2 Specific optionals
     collection.AddScoped<ITextSpawner, TextSpawner>();
@@ -68,6 +82,7 @@ public static class CS2ServiceCollection {
     collection.AddModBehavior<TraitorChatHandler>();
     collection.AddModBehavior<PlayerMuter>();
     collection.AddModBehavior<MapChangeCausesEndListener>();
+    // collection.AddModBehavior<EntityTargetHandlers>();
 
     // Damage Cancelers
     collection.AddModBehavior<OutOfRoundCanceler>();
@@ -83,6 +98,7 @@ public static class CS2ServiceCollection {
     collection.AddModBehavior<ScreenColorApplier>();
     collection.AddModBehavior<KarmaBanner>();
     collection.AddModBehavior<KarmaSyncer>();
+    collection.AddModBehavior<MapHookListener>();
 
     // Commands
     collection.AddModBehavior<TestCommand>();

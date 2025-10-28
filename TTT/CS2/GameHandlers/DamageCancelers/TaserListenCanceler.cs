@@ -1,5 +1,7 @@
-﻿using TTT.API.Events;
+﻿using JetBrains.Annotations;
+using TTT.API.Events;
 using TTT.API.Game;
+using TTT.CS2.Actions;
 using TTT.CS2.lang;
 using TTT.Game.Events.Player;
 using TTT.Game.Listeners;
@@ -8,6 +10,7 @@ namespace TTT.CS2.GameHandlers.DamageCancelers;
 
 public class TaserListenCanceler(IServiceProvider provider)
   : BaseListener(provider) {
+  [UsedImplicitly]
   [EventHandler]
   public void OnHurt(PlayerDamagedEvent ev) {
     if (Games.ActiveGame is not { State: State.IN_PROGRESS }) return;
@@ -23,5 +26,6 @@ public class TaserListenCanceler(IServiceProvider provider)
 
     Messenger.Message(attacker,
       Locale[CS2Msgs.TASER_SCANNED(victim, Roles.GetRoles(victim).First())]);
+    Games.ActiveGame.Logger.LogAction(new TaserAction(Roles, victim, attacker));
   }
 }

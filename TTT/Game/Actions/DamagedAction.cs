@@ -3,6 +3,7 @@ using TTT.API.Game;
 using TTT.API.Player;
 using TTT.API.Role;
 using TTT.Game.Events.Player;
+using TTT.Game.Roles;
 
 namespace TTT.Game.Actions;
 
@@ -23,6 +24,12 @@ public class DamagedAction(IRoleAssigner roles, IPlayer victim,
   public string Id => "basegame.action.attack";
   public string Verb => "damaged";
   public string Details => $"for {Damage} damage with {Weapon}";
+
+  public string Prefix
+    => PlayerRole != null && OtherRole != null
+      && PlayerRole is TraitorRole != OtherRole is TraitorRole ?
+        "" :
+        "[BAD] ";
 
   #region ConstructorAliases
 

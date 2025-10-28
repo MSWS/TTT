@@ -3,6 +3,7 @@ using TTT.API.Game;
 using TTT.API.Player;
 using TTT.API.Role;
 using TTT.Game.Events.Player;
+using TTT.Game.Roles;
 
 namespace TTT.Game.Actions;
 
@@ -10,7 +11,7 @@ public class DeathAction(IRoleAssigner roles, IPlayer victim, IPlayer? killer)
   : IAction {
   public DeathAction(IRoleAssigner roles, PlayerDeathEvent ev) : this(roles,
     ev.Player, ev.Killer) {
-    Details = $"using {ev.Weapon}";
+    if (!string.IsNullOrWhiteSpace(ev.Weapon)) Details = $"using {ev.Weapon}";
   }
 
   public IPlayer Player { get; } = victim;
@@ -34,9 +35,15 @@ public class DeathAction(IRoleAssigner roles, IPlayer victim, IPlayer? killer)
       $" [{OtherRole.Name.First(char.IsAsciiLetter)}]" :
       "";
     return Other is not null ?
-      $"{Other}{oRole} {Verb} {Player}{pRole} {Details}" :
-      $"{Player}{pRole} {Verb} {Details}";
+      $"{Prefix}{Other}{oRole} {Verb} {Player}{pRole} {Details}" :
+      $"{Prefix}{Player}{pRole} {Verb} {Details}";
   }
+
+  public string Prefix
+    => PlayerRole != null && OtherRole != null
+      && PlayerRole is TraitorRole != OtherRole is TraitorRole ?
+        "" :
+        "[BAD] ";
 
   #region ConstructorAliases
 

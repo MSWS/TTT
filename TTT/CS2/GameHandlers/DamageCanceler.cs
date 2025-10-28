@@ -30,6 +30,10 @@ public class DamageCanceler(IServiceProvider provider) : IPluginModule {
   }
 
   private HookResult onTakeDamage(DynamicHook hook) {
+    var playerPawn = hook.GetParam<CCSPlayerPawn>(0);
+    var player     = playerPawn.Controller.Value?.As<CCSPlayerController>();
+    if (player == null || !player.IsValid) return HookResult.Continue;
+
     var damagedEvent = new PlayerDamagedEvent(converter, hook);
 
     bus.Dispatch(damagedEvent);

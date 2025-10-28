@@ -7,7 +7,7 @@ using TTT.API;
 using TTT.API.Storage;
 using TTT.CS2.Validators;
 
-namespace TTT.CS2.Configs;
+namespace TTT.CS2.Configs.ShopItems;
 
 public class CS2TaserConfig : IStorage<TaserConfig>, IPluginModule {
   public static readonly FakeConVar<int> CV_PRICE = new(

@@ -52,10 +52,19 @@ public class SpecialRoundStarter(IServiceProvider provider)
   }
 
   private AbstractSpecialRound getSpecialRound() {
-    return Provider.GetServices<ITerrorModule>()
+    var rounds = Provider.GetServices<ITerrorModule>()
      .OfType<AbstractSpecialRound>()
-     .OrderBy(_ => Random.Shared.Next())
-     .First();
+     .Where(r => r.Config.Weight > 0)
+     .ToList();
+    var totalWeight = rounds.Sum(r => r.Config.Weight);
+    var roll        = Random.Shared.NextDouble() * totalWeight;
+    foreach (var round in rounds) {
+      roll -= round.Config.Weight;
+      if (roll <= 0) return round;
+    }
+
+    throw new InvalidOperationException(
+      "Failed to select a special round. This should never happen.");
   }
 
   public AbstractSpecialRound?

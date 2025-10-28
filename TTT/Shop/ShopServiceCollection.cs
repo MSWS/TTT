@@ -12,6 +12,7 @@ using TTT.CS2.Items.PoisonShots;
 using TTT.CS2.Items.PoisonSmoke;
 using TTT.CS2.Items.SilentAWP;
 using TTT.CS2.Items.Station;
+using TTT.CS2.Items.TeleportDecoy;
 using TTT.Shop.Commands;
 using TTT.Shop.Items;
 using TTT.Shop.Items.Detective.Stickers;
@@ -49,15 +50,16 @@ public static class ShopServiceCollection {
     collection.AddDeagleServices();
     collection.AddDnaScannerServices();
     collection.AddGlovesServices();
-    collection.AddHealthStation();
-    collection.AddHealthshot();
+    collection.AddHealthStationServices();
+    collection.AddHealthshotServices();
     collection.AddInnoCompassServices();
     collection.AddM4A1Services();
     collection.AddOneHitKnifeService();
-    collection.AddPoisonShots();
-    collection.AddPoisonSmoke();
+    collection.AddPoisonShotsServices();
+    collection.AddPoisonSmokeServices();
     collection.AddSilentAWPServices();
     collection.AddStickerServices();
-    collection.AddTaserItem();
+    collection.AddTaserServices();
+    collection.AddTeleportDecoyServices();
   }
 }

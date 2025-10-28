@@ -1,4 +1,5 @@
-﻿using CounterStrikeSharp.API.Core;
+﻿using CounterStrikeSharp.API;
+using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Core.Attributes.Registration;
 using CounterStrikeSharp.API.Modules.Commands;
 using JetBrains.Annotations;
@@ -29,9 +30,9 @@ public class BuyMenuHandler(IServiceProvider provider) : IPluginModule {
     { "weapon_usp_silencer", "M4A1" },
     { "weapon_sg556", "M4A1" },
     { "weapon_mp5sd", "M4A1" },
-    { "weapon_decoy", "healthshot" },
     { "weapon_awp", "AWP" },
-    { "weapon_hegrenade", "Cluster" }
+    { "weapon_hegrenade", "Cluster" },
+    { "weapon_decoy", "Teleport Decoy" },
   };
 
   public void Dispose() { }
@@ -49,6 +50,14 @@ public class BuyMenuHandler(IServiceProvider provider) : IPluginModule {
     }
 
     inventory.RemoveWeapon(player, new BaseWeapon(ev.Weapon));
+    switch (ev.Weapon) {
+      case "weapon_m4a1_silencer":
+        inventory.RemoveWeaponInSlot(player, 0);
+        break;
+      case "weapon_revolver":
+        inventory.RemoveWeaponInSlot(player, 1);
+        break;
+    }
 
     if (!shopAliases.TryGetValue(ev.Weapon, out var alias))
       return HookResult.Continue;
