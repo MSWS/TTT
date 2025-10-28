@@ -25,11 +25,9 @@ public class SetTargetCommand(IServiceProvider provider) : ICommand {
     Execute(IOnlinePlayer? executor, ICommandInfo info) {
     if (executor == null) return Task.FromResult(CommandResult.PLAYER_ONLY);
 
-    Server.NextWorldUpdate(() => {
-      var csPlayer = converter.GetPlayer(executor);
-      if (csPlayer == null) return;
-      EntityNameHelper.SetEntityName(csPlayer, EntityNameHelper.Role.Traitor);
-    });
+    var csPlayer = converter.GetPlayer(executor);
+    if (csPlayer == null) return Task.FromResult(CommandResult.PLAYER_ONLY);
+    EntityNameHelper.SetEntityName(csPlayer, EntityNameHelper.Role.Traitor);
     return Task.FromResult(CommandResult.SUCCESS);
   }
 }

@@ -40,21 +40,11 @@ public class EntityNameHelper {
         _              => "ttt_innocent_assigner"
       };
 
-      var entities =
-        Utilities.FindAllEntitiesByDesignerName<CLogicRelay>("logic_relay");
-
-      foreach (var ent in entities) {
-        Server.PrintToChatAll($"Entity: {ent.Entity?.Name} at {ent.AbsOrigin}");
-      }
-
       var entity = Utilities
        .FindAllEntitiesByDesignerName<CLogicRelay>("logic_relay")
        .FirstOrDefault(e
           => e.Entity?.Name == name
           && e.AbsOrigin.DistanceSquared(RELAY_POSITION) < 100);
-
-      Server.PrintToChatAll(
-        $"Using entity: {entity?.Entity?.Name} at {entity?.AbsOrigin}");
 
       entity?.AcceptInput("Trigger", player, player);
     });

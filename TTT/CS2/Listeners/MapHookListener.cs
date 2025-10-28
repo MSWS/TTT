@@ -19,9 +19,6 @@ public class MapHookListener(IServiceProvider provider)
   public void OnRoleAssign(PlayerRoleAssignEvent ev) {
     var player = converter.GetPlayer(ev.Player);
     if (player == null) return;
-    Messenger.DebugAnnounce($"Setting entity name for role {ev.Role.Name}");
     EntityNameHelper.SetEntityName(player, ev.Role);
-    Messenger.DebugAnnounce(
-      $"Set entity name for role {ev.Role.Name} on player {ev.Player.Name}");
   }
 }
