@@ -4,6 +4,7 @@ using CounterStrikeSharp.API.Modules.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using TTT.API.Command;
 using TTT.API.Player;
+using TTT.CS2.Utils;
 
 namespace TTT.CS2.Command.Test;
 
@@ -24,18 +25,16 @@ public class SetTargetCommand(IServiceProvider provider) : ICommand {
       var gamePlayer = converter.GetPlayer(executor);
       if (gamePlayer == null) return;
 
-      gamePlayer.AcceptInput("AddContext", null, null, "TRAITOR:1");
+      if (gamePlayer.Entity != null) {
+        // gamePlayer.Entity.Name = "TRAITOR";
+        // Utilities.SetStateChanged(gamePlayer, "CEntityIdentity", "m_name");
 
-      info.ReplySync("Target: " + gamePlayer.Target);
-      gamePlayer.Target = "TRAITOR";
-      info.ReplySync("New Target: " + gamePlayer.Target);
-      if (gamePlayer.Pawn.Value != null)
-        gamePlayer.Pawn.Value.Globalname = "TRAITOR";
-      info.ReplySync("New Globalname: " + gamePlayer.Pawn.Value?.Globalname);
-      gamePlayer.AcceptInput("name", null, null, "TRAITOR");
-      gamePlayer.AcceptInput("targetname", null, null, "TRAITOR");
-      gamePlayer.AddEntityIOEvent("targetname", null, null, "TRAITOR");
-      gamePlayer.Globalname = "TRAITOR";
+        EntityNameHelper.SetEntityName(gamePlayer.Entity, "TRAITOR");
+
+        info.ReplySync("Set entity name to " + gamePlayer.Entity.Name);
+      }
+
+      info.ReplySync("Set target name to TRAITOR");
     });
     return Task.FromResult(CommandResult.SUCCESS);
   }
