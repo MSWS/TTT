@@ -17,6 +17,19 @@ public class EntityNameHelper {
 
   private static readonly Vector RELAY_POSITION = new(69, 420, -60);
 
+  private static readonly CEntityIdentity_SetEntityName
+    CEntityIdentity_SetEntityNameFunc;
+
+  static EntityNameHelper() {
+    var setEntityNameSignature = NativeAPI.FindSignature(Addresses.ServerPath,
+      GameData.GetSignature("CEntityIdentity_SetEntityNameFunc"));
+    CEntityIdentity_SetEntityNameFunc =
+      Marshal.GetDelegateForFunctionPointer<CEntityIdentity_SetEntityName>(
+        setEntityNameSignature);
+  }
+
+  private delegate void CEntityIdentity_SetEntityName(IntPtr ptr, string name);
+
   public static void SetEntityName(CCSPlayerController player, IRole role) {
     switch (role) {
       case InnocentRole:
@@ -57,6 +70,11 @@ public class EntityNameHelper {
         $"Using entity: {entity?.Entity?.Name} at {entity?.AbsOrigin}");
 
       entity?.AcceptInput("Trigger", player, player);
+
+      if (player.Entity != null) {
+        CEntityIdentity_SetEntityNameFunc(player.Entity.Handle, "TRAITOR");
+        player.PrintToChat($"Set your name to {player.Entity.Name}");
+      }
     });
   }
 }
