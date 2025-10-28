@@ -21,7 +21,7 @@ public interface IAction {
       $" [{OtherRole.Name.First(char.IsAsciiLetter)}]" :
       "";
     return Other is not null ?
-      $"{Player}{pRole} {Verb} {Other}{oRole} {Details}" :
-      $"{Player}{pRole} {Verb} {Details}";
+      $"{Prefix}{Player}{pRole} {Verb} {Other}{oRole} {Details}" :
+      $"{Prefix}{Player}{pRole} {Verb} {Details}";
   }
 }
