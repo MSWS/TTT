@@ -35,8 +35,8 @@ public class DeathAction(IRoleAssigner roles, IPlayer victim, IPlayer? killer)
       $" [{OtherRole.Name.First(char.IsAsciiLetter)}]" :
       "";
     return Other is not null ?
-      $"{Other}{oRole} {Verb} {Player}{pRole} {Details}" :
-      $"{Player}{pRole} {Verb} {Details}";
+      $"{Prefix}{Other}{oRole} {Verb} {Player}{pRole} {Details}" :
+      $"{Prefix}{Player}{pRole} {Verb} {Details}";
   }
 
   public string Prefix

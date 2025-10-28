@@ -11,5 +11,7 @@ public class RoleAssignedAction(IPlayer player, IRole role) : IAction {
   public IRole? OtherRole { get; } = null;
   public string Id => "basegame.action.roleassigned";
   public string Verb => "was assigned";
-  public string Details { get; } = role.Name;
+
+  public string Details { get; } =
+    role.Name.Where(char.IsAsciiLetterOrDigit).ToString() ?? "?";
 }
