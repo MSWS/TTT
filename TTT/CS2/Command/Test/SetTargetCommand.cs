@@ -20,8 +20,6 @@ public class SetTargetCommand(IServiceProvider provider) : ICommand {
 
   public string Id => "settarget";
 
-  private static readonly Vector RELAY_POSITION = new(69, 420, -60);
-
   public Task<CommandResult>
     Execute(IOnlinePlayer? executor, ICommandInfo info) {
     if (executor == null) return Task.FromResult(CommandResult.PLAYER_ONLY);

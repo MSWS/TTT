@@ -1,8 +1,10 @@
-﻿using CounterStrikeSharp.API.Core;
+﻿using CounterStrikeSharp.API;
+using CounterStrikeSharp.API.Core;
 using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using TTT.API.Events;
 using TTT.API.Player;
+using TTT.Game.Events.Game;
 using TTT.Game.Events.Player;
 using TTT.Game.Listeners;
 using TTT.Game.Roles;
@@ -17,8 +19,6 @@ public class MapHookListener(IServiceProvider provider)
   [UsedImplicitly]
   [EventHandler(Priority = Priority.MONITOR, IgnoreCanceled = true)]
   public void OnRoleAssign(PlayerRoleAssignEvent ev) {
-    Messenger.DebugAnnounce("Setting role");
-
     var player = converter.GetPlayer(ev.Player);
     if (player == null) return;
 
@@ -32,6 +32,17 @@ public class MapHookListener(IServiceProvider provider)
       case InnocentRole:
         player.Pawn.Value?.AcceptInput("AddContext", null, null, "INNOCENT:1");
         break;
+    }
+  }
+
+  [UsedImplicitly]
+  [EventHandler]
+  public void OnRoundEnd(GameInitEvent ev) {
+    foreach (var player in Utilities.GetPlayers()) {
+      if (player.Pawn.Value == null) continue;
+      player.Pawn.Value.AcceptInput("RemoveContext", null, null, "TRAITOR");
+      player.Pawn.Value.AcceptInput("RemoveContext", null, null, "DETECTIVE");
+      player.Pawn.Value.AcceptInput("RemoveContext", null, null, "INNOCENT");
     }
   }
 }
