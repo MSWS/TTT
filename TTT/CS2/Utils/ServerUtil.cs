@@ -11,7 +11,9 @@ public static class ServerUtil {
          .FindAllEntitiesByDesignerName<CCSGameRulesProxy>("cs_gamerules")
          .FirstOrDefault();
 
-      return GameRulesProxy?.GameRules;
+      if (GameRulesProxy == null || !GameRulesProxy.IsValid) return null;
+
+      return GameRulesProxy.GameRules;
     }
   }
 
