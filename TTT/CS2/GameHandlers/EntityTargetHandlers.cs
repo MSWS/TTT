@@ -35,7 +35,7 @@ public class EntityTargetHandlers(IServiceProvider provider) : IPluginModule {
       messenger.DebugAnnounce(
         $"Filter Activator Name triggered by player: {csPlayer.PlayerName} {(int)csPlayer.Index}");
     }
-    
+
     var ptrPlayer = new CCSPlayerController(activator.Handle);
     if (ptrPlayer.IsValid) {
       messenger.DebugAnnounce(

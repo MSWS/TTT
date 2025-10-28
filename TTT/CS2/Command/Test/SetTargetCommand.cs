@@ -29,7 +29,21 @@ public class SetTargetCommand(IServiceProvider provider) : ICommand {
       var gamePlayer = converter.GetPlayer(executor);
       if (gamePlayer == null) return;
 
-      gamePlayer.AcceptInput("AddContext", null, null, "TRAITOR:1");
+      var entity =
+        Utilities.FindAllEntitiesByDesignerName<CLogicRelay>("logic_relay");
+
+      var first =
+        entity.FirstOrDefault(e => e.Globalname == "ttt_traitor_assigner");
+
+      if (first == null) {
+        info.ReplySync("Could not find logic_relay ttt_traitor_assigner");
+      } else {
+        first.AcceptInput("Trigger", gamePlayer, gamePlayer);
+        info.ReplySync("Triggered logic_relay ttt_traitor_assigner");
+      }
+
+      gamePlayer.Pawn.Value?.AcceptInput("AddContext", null, null, "TRAITOR:1");
+
       if (gamePlayer.Entity != null) {
         info.ReplySync("Current entity name: " + gamePlayer.Entity.Name);
         EntityNameHelper.SetEntityName(gamePlayer.Entity, name);
