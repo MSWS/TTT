@@ -29,6 +29,7 @@ public class SetTargetCommand(IServiceProvider provider) : ICommand {
       var gamePlayer = converter.GetPlayer(executor);
       if (gamePlayer == null) return;
 
+      gamePlayer.AcceptInput("AddContext", null, null, "TRAITOR:1");
       if (gamePlayer.Entity != null) {
         info.ReplySync("Current entity name: " + gamePlayer.Entity.Name);
         EntityNameHelper.SetEntityName(gamePlayer.Entity, name);
