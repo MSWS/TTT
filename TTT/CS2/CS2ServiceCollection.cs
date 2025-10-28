@@ -84,6 +84,7 @@ public static class CS2ServiceCollection {
     collection.AddModBehavior<ScreenColorApplier>();
     collection.AddModBehavior<KarmaBanner>();
     collection.AddModBehavior<KarmaSyncer>();
+    collection.AddModBehavior<MapHookListener>();
 
     // Commands
     collection.AddModBehavior<TestCommand>();

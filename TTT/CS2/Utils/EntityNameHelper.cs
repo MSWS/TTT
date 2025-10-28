@@ -21,7 +21,9 @@ public class EntityNameHelper {
 
   private delegate void CEntityIdentity_SetEntityName(IntPtr ptr, string name);
 
-  public static void SetEntityName(CEntityIdentity identity, string name) {
-    CEntityIdentity_SetEntityNameFunc(identity.Handle, name);
+  public static void SetEntityName(CCSPlayerController player, string name) {
+    if (player.Pawn.Value == null) return;
+    if (player.Pawn.Value.Entity != null)
+      CEntityIdentity_SetEntityNameFunc(player.Pawn.Value.Entity.Handle, name);
   }
 }
