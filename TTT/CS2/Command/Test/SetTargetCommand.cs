@@ -24,10 +24,6 @@ public class SetTargetCommand(IServiceProvider provider) : ICommand {
     Execute(IOnlinePlayer? executor, ICommandInfo info) {
     if (executor == null) return Task.FromResult(CommandResult.PLAYER_ONLY);
 
-    var name = "TRAITOR";
-
-    if (info.ArgCount == 2) name = info.Args[1];
-
     Server.NextWorldUpdate(() => {
       var gamePlayer = converter.GetPlayer(executor);
       if (gamePlayer == null) return;
