@@ -20,8 +20,14 @@ public class PlayerStatsTracker(IServiceProvider provider) : IListener {
 
   private readonly ISet<int> revealedDeaths = new HashSet<int>();
 
-  private readonly IDictionary<int, (int, int)> roundKillsAndAssists =
-    new Dictionary<int, (int, int)>();
+  private readonly IDictionary<int, RoundData> roundStats =
+    new Dictionary<int, RoundData>();
+
+  record RoundData {
+    public int Kills;
+    public int Assists;
+    public int Damage;
+  }
 
   public void Dispose() { }
 
@@ -50,16 +56,31 @@ public class PlayerStatsTracker(IServiceProvider provider) : IListener {
       ev.Assister == null ? null : converter.GetPlayer(ev.Assister);
 
     if (killer != null) {
-      roundKillsAndAssists.TryGetValue(killer.Slot, out var def);
-      def.Item1++;
-      roundKillsAndAssists[killer.Slot] = def;
+      roundStats.TryGetValue(killer.Slot, out var def);
+      def ??= new RoundData();
+      def.Kills++;
+      roundStats[killer.Slot] = def;
     }
 
     if (assister != null && assister != killer) {
-      roundKillsAndAssists.TryGetValue(assister.Slot, out var def);
-      def.Item2++;
-      roundKillsAndAssists[assister.Slot] = def;
+      roundStats.TryGetValue(assister.Slot, out var def);
+      def ??= new RoundData();
+      def.Assists++;
+      roundStats[assister.Slot] = def;
     }
+  }
+
+  [UsedImplicitly]
+  [EventHandler(Priority = Priority.HIGH)]
+  public void OnDamage(PlayerDamagedEvent ev) {
+    var attacker =
+      ev.Attacker == null ? null : converter.GetPlayer(ev.Attacker);
+    if (attacker == null) return;
+
+    roundStats.TryGetValue(attacker.Slot, out var def);
+    def                       ??= new RoundData();
+    def.Damage                +=  ev.DmgDealt;
+    roundStats[attacker.Slot] =   def;
   }
 
   [UsedImplicitly]
@@ -67,7 +88,7 @@ public class PlayerStatsTracker(IServiceProvider provider) : IListener {
   public void OnRoundEnd(GameStateUpdateEvent ev) {
     if (ev.NewState == State.IN_PROGRESS) {
       revealedDeaths.Clear();
-      roundKillsAndAssists.Clear();
+      roundStats.Clear();
       return;
     }
 
@@ -100,15 +121,16 @@ public class PlayerStatsTracker(IServiceProvider provider) : IListener {
     var online = finder.GetOnline()
      .Select(p => converter.GetPlayer(p))
      .OfType<CCSPlayerController>()
-     .Where(p => p.IsValid && roundKillsAndAssists.ContainsKey(p.Slot));
+     .Where(p => p.IsValid && roundStats.ContainsKey(p.Slot));
 
     foreach (var player in online) {
       var stats = player.ActionTrackingServices?.MatchStats;
       if (stats == null) continue;
 
-      var (kills, assists) =  roundKillsAndAssists[player.Slot];
-      stats.Kills          += kills;
-      stats.Assists        += assists;
+      if (!roundStats.TryGetValue(player.Slot, out var data)) continue;
+
+      stats.Kills   += data.Kills;
+      stats.Assists += data.Assists;
       Utilities.SetStateChanged(player, "CCSPlayerController",
         "m_pActionTrackingServices");
     }

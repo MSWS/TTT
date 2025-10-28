@@ -52,6 +52,17 @@ public class CombatHandler(IServiceProvider provider) : IPluginModule {
     return HookResult.Continue;
   }
 
+  [UsedImplicitly]
+  [GameEventHandler(HookMode.Pre)]
+  public HookResult OnPlayerDamage(EventPlayerHurt ev, GameEventInfo info) {
+    var player = ev.Userid;
+    if (player == null) return HookResult.Continue;
+
+    hideAndTrackStats(ev);
+
+    return HookResult.Continue;
+  }
+
   private void hideAndTrackStats(EventPlayerDeath ev,
     CCSPlayerController player) {
     var victimStats = player.ActionTrackingServices?.MatchStats;
@@ -87,6 +98,16 @@ public class CombatHandler(IServiceProvider provider) : IPluginModule {
     if (ev.Assister != null)
       Utilities.SetStateChanged(ev.Assister, "CCSPlayerController",
         "m_pActionTrackingServices");
+  }
+
+  private void hideAndTrackStats(EventPlayerHurt ev) {
+    var attackerStats = ev.Attacker?.ActionTrackingServices?.MatchStats;
+
+    if (attackerStats == null) return;
+    if (ev.Attacker == null) return;
+    attackerStats.Damage -= ev.DmgHealth;
+    Utilities.SetStateChanged(ev.Attacker, "CCSPlayerController",
+      "m_pActionTrackingServices");
   }
 
   [UsedImplicitly]
