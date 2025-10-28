@@ -29,7 +29,6 @@ public class SetTargetCommand(IServiceProvider provider) : ICommand {
       var csPlayer = converter.GetPlayer(executor);
       if (csPlayer == null) return;
       EntityNameHelper.SetEntityName(csPlayer, EntityNameHelper.Role.Traitor);
-      info.ReplySync($"Set entity name for player {executor.Name}");
     });
     return Task.FromResult(CommandResult.SUCCESS);
   }
