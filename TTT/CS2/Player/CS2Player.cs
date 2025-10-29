@@ -14,23 +14,23 @@ public class CS2Player : IOnlinePlayer, IEquatable<CS2Player> {
   private CCSPlayerController? cachePlayer;
 
   protected CS2Player(string id, string name) {
-    Id   = id;
-    Name = name;
+    Id         = id;
+    cachedName = name;
   }
 
   public CS2Player(ulong steam) {
-    Id   = steam.ToString();
-    Name = Player?.PlayerName ?? Id;
+    Id         = steam.ToString();
+    cachedName = Player?.PlayerName ?? Id;
   }
 
   public CS2Player(int index) {
-    Id   = index.ToString();
-    Name = Player?.PlayerName ?? Id;
+    Id         = index.ToString();
+    cachedName = Player?.PlayerName ?? Id;
   }
 
   public CS2Player(CCSPlayerController player) {
-    Id   = GetKey(player);
-    Name = player.PlayerName;
+    Id         = GetKey(player);
+    cachedName = player.PlayerName;
   }
 
   private CCSPlayerController? Player {
@@ -52,8 +52,11 @@ public class CS2Player : IOnlinePlayer, IEquatable<CS2Player> {
     return Id == other.Id;
   }
 
+
+  private string cachedName { get; }
   public string Id { get; }
-  public string Name { get; }
+
+  public string Name => Player?.PlayerName ?? cachedName;
 
   public int Health {
     get => Player?.Pawn.Value != null ? Player.Pawn.Value.Health : 0;
