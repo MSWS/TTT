@@ -10,7 +10,8 @@ using TTT.Game.Roles;
 namespace TTT.CS2.Items.Station;
 
 public static class HealthStationCollection {
-  public static void AddHealthStationServices(this IServiceCollection collection) {
+  public static void
+    AddHealthStationServices(this IServiceCollection collection) {
     collection.AddModBehavior<HealthStation>();
   }
 }
@@ -60,7 +61,7 @@ public class HealthStation(IServiceProvider provider)
         player.SetHealth(newHealth);
         info.HealthGiven += healthGiven;
 
-        if (healthGiven > 0) player.EmitSound("HealthShot.Pickup", null, 0.1f);
+        if (healthGiven > 0) player.EmitSound("HealthShot.Pickup", 0.3f, 0.1f);
       }
     }
 
