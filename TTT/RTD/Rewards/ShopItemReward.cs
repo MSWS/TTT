@@ -12,7 +12,7 @@ public class ShopItemReward<TItem>(IServiceProvider provider)
     => shop.Items.OfType<TItem>().FirstOrDefault()?.Name ?? typeof(TItem).Name;
 
   public override string Description
-    => $"you will receive {("aeiou".Contains(Name.ToLower()[0]) ? "an" : "a")} {typeof(TItem).Name} item next round";
+    => $"you will receive {("aeiou".Contains(Name.ToLower()[0]) ? "an" : "a")} {Name} item next round";
 
   public override void GiveOnRound(IOnlinePlayer player) {
     var instance = shop.Items.OfType<TItem>().FirstOrDefault();
