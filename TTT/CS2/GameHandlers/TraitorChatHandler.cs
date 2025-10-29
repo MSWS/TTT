@@ -79,7 +79,7 @@ public class TraitorChatHandler(IServiceProvider provider) : IPluginModule {
 
   private HookResult onSay(CCSPlayerController? player,
     CommandInfo commandInfo) {
-    if (mutedPlayers != null && player != null && player.GetHealth() > 0
+    if (mutedPlayers != null
       && mutedPlayers.Contains(player?.SteamID.ToString() ?? ""))
       return HookResult.Handled;
 
