@@ -4,6 +4,7 @@ using ShopAPI.Events;
 using SpecialRound.lang;
 using SpecialRoundAPI;
 using TTT.API.Events;
+using TTT.API.Messages;
 using TTT.API.Storage;
 using TTT.Game.Events.Game;
 using TTT.Locale;
@@ -14,6 +15,12 @@ public class VanillaRound(IServiceProvider provider)
   : AbstractSpecialRound(provider) {
   public override string Name => "Vanilla";
   public override IMsg Description => RoundMsgs.SPECIAL_ROUND_VANILLA;
+
+  private readonly IMessenger messenger =
+    provider.GetRequiredService<IMessenger>();
+
+  private readonly IMsgLocalizer locale =
+    provider.GetRequiredService<IMsgLocalizer>();
 
   private VanillaRoundConfig config
     => Provider.GetService<IStorage<VanillaRoundConfig>>()
@@ -32,5 +39,7 @@ public class VanillaRound(IServiceProvider provider)
   public void OnPurchase(PlayerPurchaseItemEvent ev) {
     if (Tracker.CurrentRound != this) return;
     ev.IsCanceled = true;
+
+    messenger.Message(ev.Player, locale[RoundMsgs.VANILLA_ROUND_REMINDER]);
   }
 }
