@@ -10,7 +10,7 @@ public class TestPlayer(string id, string name) : IOnlinePlayer {
   // public ICollection<IRole> Roles { get; } = [];
 
   public string Id { get; } = id;
-  public string Name { get; } = name;
+  public string Name { get; set; } = name;
 
   public int Health { get; set; } = 100;
   public int MaxHealth { get; set; } = 100;

@@ -8,8 +8,8 @@ using TTT.Game.Events.Player;
 namespace TTT.Game.Roles;
 
 public class RoleAssigner(IServiceProvider provider) : IRoleAssigner {
-  private readonly IDictionary<IPlayer, ICollection<IRole>> assignedRoles =
-    new Dictionary<IPlayer, ICollection<IRole>>();
+  private readonly IDictionary<string, ICollection<IRole>> assignedRoles =
+    new Dictionary<string, ICollection<IRole>>();
 
   private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
 
@@ -24,12 +24,12 @@ public class RoleAssigner(IServiceProvider provider) : IRoleAssigner {
   }
 
   public Task<ICollection<IRole>?> Load(IPlayer key) {
-    assignedRoles.TryGetValue(key, out var roles);
+    assignedRoles.TryGetValue(key.Id, out var roles);
     return Task.FromResult(roles);
   }
 
   public Task Write(IPlayer key, ICollection<IRole> newData) {
-    assignedRoles[key] = newData;
+    assignedRoles[key.Id] = newData;
     return Task.CompletedTask;
   }
 
@@ -44,9 +44,9 @@ public class RoleAssigner(IServiceProvider provider) : IRoleAssigner {
 
       if (ev.IsCanceled) continue;
 
-      if (!assignedRoles.ContainsKey(player))
-        assignedRoles[player] = new List<IRole>();
-      assignedRoles[player].Add(ev.Role);
+      if (!assignedRoles.ContainsKey(player.Id))
+        assignedRoles[player.Id] = new List<IRole>();
+      assignedRoles[player.Id].Add(ev.Role);
       ev.Role.OnAssign(player);
 
       onlineMessenger?.Debug(

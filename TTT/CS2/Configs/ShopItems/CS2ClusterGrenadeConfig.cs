@@ -12,7 +12,7 @@ public class CS2ClusterGrenadeConfig : IStorage<ClusterGrenadeConfig>,
   IPluginModule {
   public static readonly FakeConVar<int> CV_PRICE = new(
     "css_ttt_shop_clustergrenade_price",
-    "Price of the Cluster Grenade item (Traitor)", 90, ConVarFlags.FCVAR_NONE,
+    "Price of the Cluster Grenade item (Traitor)", 100, ConVarFlags.FCVAR_NONE,
     new RangeValidator<int>(0, 10000));
 
   public static readonly FakeConVar<int> CV_GRENADE_COUNT = new(
