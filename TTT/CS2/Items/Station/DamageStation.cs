@@ -71,7 +71,6 @@ public class DamageStation(IServiceProvider provider)
        .Where(m => m.GamePlayer != null);
 
       var playerDists = playerMapping
-       .Where(t => !roles.GetRoles(t.ApiPlayer).OfType<TraitorRole>().Any())
        .Select(t => (t.ApiPlayer, Origin: t.GamePlayer!.Pawn.Value?.AbsOrigin,
           t.GamePlayer))
        .Where(t => t is { Origin: not null, ApiPlayer.IsAlive: true })
@@ -81,6 +80,9 @@ public class DamageStation(IServiceProvider provider)
        .ToList();
 
       foreach (var (player, dist, gamePlayer) in playerDists) {
+        gamePlayer.EmitSound("Player.DamageFall", null, 0.2f);
+        if (Roles.GetRoles(player).Any(r => r is TraitorRole)) continue;
+
         var healthScale = 1.0 - dist / _Config.MaxRange;
         var damageAmount =
           (int)Math.Floor(_Config.HealthIncrements * healthScale);
@@ -102,8 +104,6 @@ public class DamageStation(IServiceProvider provider)
 
         player.Health    += damageAmount;
         info.HealthGiven += damageAmount;
-
-        gamePlayer.EmitSound("Player.DamageFall", null, 0.2f);
       }
     }
 
