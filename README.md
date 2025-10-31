@@ -16,7 +16,9 @@ survive while eliminating the traitors among them.
     - [X] Innocents
 - [X] Shop
 - [X] Karma
-- [ ] Statistics
+- [X] Statistics
+- [X] Map Integrations
+- [X] Special Rounds
 
 ## Versioning
 
