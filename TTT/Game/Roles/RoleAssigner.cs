@@ -16,9 +16,11 @@ public class RoleAssigner(IServiceProvider provider) : IRoleAssigner {
   private readonly IMessenger? onlineMessenger =
     provider.GetService<IMessenger>();
 
+  private static readonly Random rng = new();
+
   public void AssignRoles(ISet<IOnlinePlayer> players, IList<IRole> roles) {
     assignedRoles.Clear();
-    var  shuffled = players.OrderBy(_ => Guid.NewGuid()).ToHashSet();
+    var  shuffled = players.OrderBy(_ => rng.NextDouble()).ToHashSet();
     bool roleAssigned;
     do { roleAssigned = tryAssignRole(shuffled, roles); } while (roleAssigned);
   }
