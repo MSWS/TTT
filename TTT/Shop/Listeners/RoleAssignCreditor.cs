@@ -13,6 +13,11 @@ namespace TTT.Shop.Listeners;
 
 public class RoleAssignCreditor(IServiceProvider provider)
   : BaseListener(provider) {
+  private readonly IKarmaService? karmaService =
+    provider.GetService<IKarmaService>();
+
+  private readonly IShop shop = provider.GetRequiredService<IShop>();
+
   private ShopConfig config
     => Provider.GetService<IStorage<ShopConfig>>()
     ?.Load()
@@ -24,11 +29,6 @@ public class RoleAssignCreditor(IServiceProvider provider)
     ?.Load()
      .GetAwaiter()
      .GetResult() ?? new KarmaConfig();
-
-  private readonly IKarmaService? karmaService =
-    provider.GetService<IKarmaService>();
-
-  private readonly IShop shop = provider.GetRequiredService<IShop>();
 
   [UsedImplicitly]
   [EventHandler]

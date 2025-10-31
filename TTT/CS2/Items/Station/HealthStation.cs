@@ -10,7 +10,8 @@ using TTT.Game.Roles;
 namespace TTT.CS2.Items.Station;
 
 public static class HealthStationCollection {
-  public static void AddHealthStationServices(this IServiceCollection collection) {
+  public static void
+    AddHealthStationServices(this IServiceCollection collection) {
     collection.AddModBehavior<HealthStation>();
   }
 }

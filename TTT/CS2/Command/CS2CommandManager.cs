@@ -6,7 +6,6 @@ using TTT.API;
 using TTT.API.Command;
 using TTT.API.Messages;
 using TTT.API.Player;
-using TTT.Game;
 using TTT.Game.Commands;
 using TTT.Game.lang;
 

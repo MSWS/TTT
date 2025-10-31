@@ -13,9 +13,8 @@ namespace TTT.RTD;
 
 public class RTDCommand(IRewardGenerator generator, IPermissionManager perms,
   IMsgLocalizer locale) : ICommand, IPluginModule, IListener {
+  private readonly Dictionary<string, IRtdReward> playerRewards = new();
   private bool inBetweenRounds = true;
-
-  private Dictionary<string, IRtdReward> playerRewards = new();
 
   public bool MustBeOnMainThread => true;
 
@@ -34,12 +33,11 @@ public class RTDCommand(IRewardGenerator generator, IPermissionManager perms,
       return Task.FromResult(CommandResult.SUCCESS);
     }
 
-    if (!bypass) {
+    if (!bypass)
       if (!inBetweenRounds && !RoundUtil.IsWarmup() && executor.IsAlive) {
         info.ReplySync(locale[RtdMsgs.RTD_CANNOT_ROLL_YET]);
         return Task.FromResult(CommandResult.SUCCESS);
       }
-    }
 
     var reward = generator.GetReward();
     if (bypass) {
@@ -67,6 +65,9 @@ public class RTDCommand(IRewardGenerator generator, IPermissionManager perms,
     return Task.FromResult(CommandResult.SUCCESS);
   }
 
+  public void Dispose() { }
+  public void Start() { }
+
   [UsedImplicitly]
   [EventHandler]
   public void OnGameState(GameStateUpdateEvent ev) {
@@ -80,7 +81,4 @@ public class RTDCommand(IRewardGenerator generator, IPermissionManager perms,
         break;
     }
   }
-
-  public void Dispose() { }
-  public void Start() { }
 }

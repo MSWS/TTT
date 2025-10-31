@@ -19,14 +19,16 @@ namespace SpecialRound.Rounds;
 
 public class SpeedRound(IServiceProvider provider)
   : AbstractSpecialRound(provider) {
-  private readonly IScheduler scheduler =
-    provider.GetRequiredService<IScheduler>();
-
   private readonly IGameManager games =
     provider.GetRequiredService<IGameManager>();
 
   private readonly IRoleAssigner roles =
     provider.GetRequiredService<IRoleAssigner>();
+
+  private readonly IScheduler scheduler =
+    provider.GetRequiredService<IScheduler>();
+
+  private IDisposable? endTimer;
 
   public override string Name => "Speed";
   public override IMsg Description => RoundMsgs.SPECIAL_ROUND_SPEED;
@@ -38,8 +40,6 @@ public class SpeedRound(IServiceProvider provider)
     ?.Load()
      .GetAwaiter()
      .GetResult() ?? new SpeedRoundConfig();
-
-  private IDisposable? endTimer;
 
   public override void ApplyRoundEffects() {
     Provider.GetService<RoundTimerListener>()?.EndTimer?.Dispose();

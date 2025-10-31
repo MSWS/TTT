@@ -19,7 +19,7 @@ public class CS2SilentAWPConfig : IStorage<SilentAWPConfig>, IPluginModule {
 
   public static readonly FakeConVar<string> CV_WEAPON_ID = new(
     "css_ttt_shop_silentawp_weapon", "Weapon entity ID for the Silent AWP",
-    "weapon_awp", ConVarFlags.FCVAR_NONE);
+    "weapon_awp");
 
   public static readonly FakeConVar<int> CV_RESERVE_AMMO = new(
     "css_ttt_shop_silentawp_reserve_ammo",

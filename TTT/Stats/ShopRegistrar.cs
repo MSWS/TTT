@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using System.Text;
+using System.Text.Json;
 using Microsoft.Extensions.DependencyInjection;
 using ShopAPI;
 using TTT.API;
@@ -37,9 +38,8 @@ public class ShopRegistrar(IServiceProvider provider) : ITerrorModule {
           _ => data
         };
 
-        var payload = new StringContent(
-          System.Text.Json.JsonSerializer.Serialize(data),
-          System.Text.Encoding.UTF8, "application/json");
+        var payload = new StringContent(JsonSerializer.Serialize(data),
+          Encoding.UTF8, "application/json");
 
         Console.WriteLine(
           $"[Stats] Registering shop item '{item.Name}' at '{client.BaseAddress}item/{item.Id}'");

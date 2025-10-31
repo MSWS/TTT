@@ -12,17 +12,17 @@ namespace TTT.CS2.GameHandlers;
 
 public class RoundStart_GameStartHandler(IServiceProvider provider)
   : IPluginModule {
-  private TTTConfig config
-    => provider.GetService<IStorage<TTTConfig>>()
-    ?.Load()
-     .GetAwaiter()
-     .GetResult() ?? new TTTConfig();
-
   private readonly IPlayerFinder finder =
     provider.GetRequiredService<IPlayerFinder>();
 
   private readonly IGameManager games =
     provider.GetRequiredService<IGameManager>();
+
+  private TTTConfig config
+    => provider.GetService<IStorage<TTTConfig>>()
+    ?.Load()
+     .GetAwaiter()
+     .GetResult() ?? new TTTConfig();
 
   public void Dispose() { }
 

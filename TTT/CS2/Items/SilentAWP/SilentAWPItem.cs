@@ -24,17 +24,17 @@ public static class SilentAWPServiceCollection {
 
 public class SilentAWPItem(IServiceProvider provider)
   : RoleRestrictedItem<TraitorRole>(provider), IPluginModule {
-  private SilentAWPConfig config
-    => Provider.GetService<IStorage<SilentAWPConfig>>()
-    ?.Load()
-     .GetAwaiter()
-     .GetResult() ?? new SilentAWPConfig();
-
   private readonly IPlayerConverter<CCSPlayerController> playerConverter =
     provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
 
   private readonly IDictionary<string, int> silentShots =
     new Dictionary<string, int>();
+
+  private SilentAWPConfig config
+    => Provider.GetService<IStorage<SilentAWPConfig>>()
+    ?.Load()
+     .GetAwaiter()
+     .GetResult() ?? new SilentAWPConfig();
 
   public override string Name => Locale[SilentAWPMsgs.SHOP_ITEM_SILENT_AWP];
 

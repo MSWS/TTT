@@ -1,13 +1,10 @@
 ﻿using CounterStrikeSharp.API;
-using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Commands;
 using JetBrains.Annotations;
 using MAULActainShared.plugin.models;
 using Microsoft.Extensions.DependencyInjection;
-using TTT.API;
 using TTT.API.Command;
 using TTT.API.Events;
-using TTT.API.Game;
 using TTT.API.Messages;
 using TTT.API.Player;
 using TTT.CS2.Command;
@@ -19,17 +16,18 @@ using TTT.RTD.lang;
 namespace TTT.RTD;
 
 public class AutoRTDCommand(IServiceProvider provider) : ICommand, IListener {
-  public string Id => "autortd";
-  private ICookie? autoRtdCookie;
+  private readonly ICommandManager commands =
+    provider.GetRequiredService<ICommandManager>();
 
   private readonly IPlayerFinder finder =
     provider.GetRequiredService<IPlayerFinder>();
 
-  private readonly ICommandManager commands =
-    provider.GetRequiredService<ICommandManager>();
-
   private readonly IMsgLocalizer localizer =
     provider.GetRequiredService<IMsgLocalizer>();
+
+  private readonly Dictionary<string, bool> playerStatuses = new();
+  private ICookie? autoRtdCookie;
+  public string Id => "autortd";
 
   public bool MustBeOnMainThread => true;
 
@@ -47,7 +45,6 @@ public class AutoRTDCommand(IServiceProvider provider) : ICommand, IListener {
   }
 
   public string[] RequiredFlags => ["@ttt/autortd"];
-  private Dictionary<string, bool> playerStatuses = new();
 
   public async Task<CommandResult> Execute(IOnlinePlayer? executor,
     ICommandInfo info) {

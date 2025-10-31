@@ -1,5 +1,4 @@
-﻿using CounterStrikeSharp.API;
-using CounterStrikeSharp.API.Core;
+﻿using CounterStrikeSharp.API.Core;
 using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using ShopAPI.Configs.Traitor;
@@ -7,10 +6,8 @@ using TTT.API.Events;
 using TTT.API.Extensions;
 using TTT.API.Game;
 using TTT.API.Player;
-using TTT.API.Role;
 using TTT.API.Storage;
 using TTT.CS2.Extensions;
-using TTT.CS2.Utils;
 using TTT.Game.Events.Body;
 using TTT.Game.Events.Game;
 using TTT.Game.Events.Player;
@@ -38,16 +35,12 @@ public class DamageStation(IServiceProvider provider)
   private readonly IPlayerFinder finder =
     provider.GetRequiredService<IPlayerFinder>();
 
-  private readonly IRoleAssigner roles =
-    provider.GetRequiredService<IRoleAssigner>();
+  private readonly Dictionary<string, StationInfo> killedWithStation = new();
 
   public override string Name => Locale[StationMsgs.SHOP_ITEM_STATION_HURT];
 
   public override string Description
     => Locale[StationMsgs.SHOP_ITEM_STATION_HURT_DESC];
-
-  private Dictionary<string, StationInfo> killedWithStation =
-    new Dictionary<string, StationInfo>();
 
   override protected void onInterval() {
     var players  = finder.GetOnline();
@@ -71,7 +64,6 @@ public class DamageStation(IServiceProvider provider)
        .Where(m => m.GamePlayer != null);
 
       var playerDists = playerMapping
-       .Where(t => !roles.GetRoles(t.ApiPlayer).OfType<TraitorRole>().Any())
        .Select(t => (t.ApiPlayer, Origin: t.GamePlayer!.Pawn.Value?.AbsOrigin,
           t.GamePlayer))
        .Where(t => t is { Origin: not null, ApiPlayer.IsAlive: true })
@@ -81,6 +73,9 @@ public class DamageStation(IServiceProvider provider)
        .ToList();
 
       foreach (var (player, dist, gamePlayer) in playerDists) {
+        gamePlayer.EmitSound("Player.DamageFall", null, 0.2f);
+        if (Roles.GetRoles(player).Any(r => r is TraitorRole)) continue;
+
         var healthScale = 1.0 - dist / _Config.MaxRange;
         var damageAmount =
           (int)Math.Floor(_Config.HealthIncrements * healthScale);
@@ -102,8 +97,6 @@ public class DamageStation(IServiceProvider provider)
 
         player.Health    += damageAmount;
         info.HealthGiven += damageAmount;
-
-        gamePlayer.EmitSound("Player.DamageFall", null, 0.2f);
       }
     }
 

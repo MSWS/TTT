@@ -1,5 +1,4 @@
-﻿using CounterStrikeSharp.API;
-using CounterStrikeSharp.API.Core;
+﻿using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Core.Attributes.Registration;
 using CounterStrikeSharp.API.Modules.Commands;
 using JetBrains.Annotations;
@@ -32,7 +31,7 @@ public class BuyMenuHandler(IServiceProvider provider) : IPluginModule {
     { "weapon_mp5sd", "M4A1" },
     { "weapon_awp", "AWP" },
     { "weapon_hegrenade", "Cluster" },
-    { "weapon_decoy", "Teleport Decoy" },
+    { "weapon_decoy", "Teleport Decoy" }
   };
 
   public void Dispose() { }

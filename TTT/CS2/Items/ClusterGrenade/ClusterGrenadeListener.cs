@@ -1,9 +1,6 @@
-﻿using System.Reactive.Concurrency;
-using CounterStrikeSharp.API;
+﻿using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Core.Attributes.Registration;
-using CounterStrikeSharp.API.Modules.Memory;
-using CounterStrikeSharp.API.Modules.Memory.DynamicFunctions;
 using CounterStrikeSharp.API.Modules.Utils;
 using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,23 +8,25 @@ using ShopAPI;
 using ShopAPI.Configs.Traitor;
 using TTT.API;
 using TTT.API.Player;
-using TTT.API.Role;
 using TTT.API.Storage;
 using TTT.CS2.Utils;
 
 namespace TTT.CS2.Items.ClusterGrenade;
 
 public class ClusterGrenadeListener(IServiceProvider provider) : IPluginModule {
+  private readonly IPlayerConverter<CCSPlayerController> converter =
+    provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
+
+  private readonly IShop shop = provider.GetRequiredService<IShop>();
+
   private ClusterGrenadeConfig config
     => provider.GetService<IStorage<ClusterGrenadeConfig>>()
     ?.Load()
      .GetAwaiter()
      .GetResult() ?? new ClusterGrenadeConfig();
 
-  private readonly IPlayerConverter<CCSPlayerController> converter =
-    provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
-
-  private readonly IShop shop = provider.GetRequiredService<IShop>();
+  public void Dispose() { }
+  public void Start() { }
 
   [UsedImplicitly]
   [GameEventHandler]
@@ -60,7 +59,4 @@ public class ClusterGrenadeListener(IServiceProvider provider) : IPluginModule {
 
     return HookResult.Continue;
   }
-
-  public void Dispose() { }
-  public void Start() { }
 }

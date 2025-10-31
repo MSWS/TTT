@@ -16,7 +16,8 @@ public static class StatsServiceCollection {
     collection.AddModBehavior<LogsUploader>();
     collection.AddModBehavior<KillListener>();
     collection.AddModBehavior<StatsCommand>();
-    
-    Console.WriteLine($"[Stats] Stats services registered with API URL: {client.BaseAddress.ToString()}");
+
+    Console.WriteLine(
+      $"[Stats] Stats services registered with API URL: {client.BaseAddress.ToString()}");
   }
 }

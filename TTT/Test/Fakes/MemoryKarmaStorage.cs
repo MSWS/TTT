@@ -2,7 +2,6 @@ using TTT.API.Events;
 using TTT.API.Player;
 using TTT.Karma;
 using TTT.Karma.Events;
-using Xunit.Internal;
 
 namespace TTT.Test.Fakes;
 

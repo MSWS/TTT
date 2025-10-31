@@ -16,18 +16,18 @@ using TTT.Locale;
 namespace TTT.Game;
 
 public class RoundBasedGame(IServiceProvider provider) : IGame {
-  private TTTConfig config
-    => provider.GetRequiredService<IStorage<TTTConfig>>()
-     .Load()
-     .GetAwaiter()
-     .GetResult() ?? new TTTConfig();
-
   protected readonly IMsgLocalizer Locale =
     provider.GetRequiredService<IMsgLocalizer>();
 
   private readonly List<IPlayer> players = [];
 
   protected State state = State.WAITING;
+
+  private TTTConfig config
+    => provider.GetRequiredService<IStorage<TTTConfig>>()
+     .Load()
+     .GetAwaiter()
+     .GetResult() ?? new TTTConfig();
 
   public virtual IList<IRole> Roles { get; } = [
     new InnocentRole(provider), new TraitorRole(provider),

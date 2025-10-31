@@ -2,7 +2,6 @@
 using CounterStrikeSharp.API.Core;
 using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
-using TTT.API;
 using TTT.API.Events;
 using TTT.API.Player;
 using TTT.Game.Events.Game;
@@ -17,8 +16,7 @@ public class NameUpdater(IServiceProvider provider) : BaseListener(provider) {
   [UsedImplicitly]
   [EventHandler]
   public void OnGameInit(GameInitEvent ev) {
-    foreach (var player in Utilities.GetPlayers()) {
+    foreach (var player in Utilities.GetPlayers())
       converter.GetPlayer(player).Name = player.PlayerName;
-    }
   }
 }

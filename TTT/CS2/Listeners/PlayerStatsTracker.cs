@@ -23,12 +23,6 @@ public class PlayerStatsTracker(IServiceProvider provider) : IListener {
   private readonly IDictionary<int, RoundData> roundStats =
     new Dictionary<int, RoundData>();
 
-  record RoundData {
-    public int Kills;
-    public int Assists;
-    public int Damage;
-  }
-
   public void Dispose() { }
 
   [UsedImplicitly]
@@ -134,5 +128,11 @@ public class PlayerStatsTracker(IServiceProvider provider) : IListener {
       Utilities.SetStateChanged(player, "CCSPlayerController",
         "m_pActionTrackingServices");
     }
+  }
+
+  private record RoundData {
+    public int Assists;
+    public int Damage;
+    public int Kills;
   }
 }

@@ -23,7 +23,7 @@ public abstract class StationItem<T>(IServiceProvider provider,
   protected readonly IPlayerConverter<CCSPlayerController> Converter =
     provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
 
-  private readonly long PROP_SIZE_SQUARED = 500;
+  private readonly long PROP_SIZE_SQUARED = 700;
 
   protected readonly Dictionary<CPhysicsPropMultiplayer, StationInfo> props =
     new();
@@ -105,8 +105,8 @@ public abstract class StationItem<T>(IServiceProvider provider,
       "weapon_deagle"                              => 40,
       _ when Tag.PISTOLS.Contains(designerWeapon)  => 10,
       _ when Tag.SMGS.Contains(designerWeapon)     => 15,
-      _ when Tag.SHOTGUNS.Contains(designerWeapon) => 25,
-      _ when Tag.RIFLES.Contains(designerWeapon)   => 45,
+      _ when Tag.SHOTGUNS.Contains(designerWeapon) => 15,
+      _ when Tag.RIFLES.Contains(designerWeapon)   => 35,
       _                                            => 5
     };
   }

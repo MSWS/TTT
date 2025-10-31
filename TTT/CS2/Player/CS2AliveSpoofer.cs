@@ -9,8 +9,8 @@ namespace TTT.CS2.Player;
 
 public class CS2AliveSpoofer : IAliveSpoofer, IPluginModule {
   private readonly HashSet<CCSPlayerController> _fakeAlivePlayers = new();
+  private BasePlugin? plugin;
   public ISet<CCSPlayerController> FakeAlivePlayers => _fakeAlivePlayers;
-  private BasePlugin? plugin = null;
 
   public void SpoofAlive(CCSPlayerController player) {
     if (player.IsBot) {

@@ -6,7 +6,6 @@ using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using TTT.API;
 using TTT.API.Events;
-using TTT.API.Game;
 using TTT.API.Player;
 using TTT.API.Role;
 using TTT.CS2.Extensions;

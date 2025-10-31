@@ -1,4 +1,6 @@
-﻿using JetBrains.Annotations;
+﻿using System.Text;
+using System.Text.Json;
+using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using ShopAPI.Events;
 using TTT.API.Events;
@@ -23,9 +25,8 @@ public class PurchaseListener(IServiceProvider provider) : IListener {
       round_id = roundTracker?.CurrentRoundId
     };
 
-    var payload = new StringContent(
-      System.Text.Json.JsonSerializer.Serialize(body),
-      System.Text.Encoding.UTF8, "application/json");
+    var payload = new StringContent(JsonSerializer.Serialize(body),
+      Encoding.UTF8, "application/json");
 
     Task.Run(async () => await client.PostAsync("purchase", payload));
   }

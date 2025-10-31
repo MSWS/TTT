@@ -22,16 +22,16 @@ namespace TTT.CS2.Listeners;
 
 public class RoundTimerListener(IServiceProvider provider)
   : BaseListener(provider) {
+  private readonly IPlayerConverter<CCSPlayerController> converter =
+    provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
+
+  public IDisposable? EndTimer;
+
   private TTTConfig config
     => Provider.GetRequiredService<IStorage<TTTConfig>>()
      .Load()
      .GetAwaiter()
      .GetResult() ?? new TTTConfig();
-
-  private readonly IPlayerConverter<CCSPlayerController> converter =
-    provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
-
-  public IDisposable? EndTimer;
 
   [UsedImplicitly]
   [EventHandler(IgnoreCanceled = true)]

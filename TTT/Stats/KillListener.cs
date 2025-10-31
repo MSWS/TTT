@@ -1,4 +1,6 @@
-﻿using JetBrains.Annotations;
+﻿using System.Text;
+using System.Text.Json;
+using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using TTT.API.Events;
 using TTT.API.Game;
@@ -31,9 +33,8 @@ public class KillListener(IServiceProvider provider) : IListener {
       weapon          = ev.Weapon
     };
 
-    var payload = new StringContent(
-      System.Text.Json.JsonSerializer.Serialize(data),
-      System.Text.Encoding.UTF8, "application/json");
+    var payload = new StringContent(JsonSerializer.Serialize(data),
+      Encoding.UTF8, "application/json");
 
     Task.Run(async () => await client.PostAsync("kill", payload));
   }

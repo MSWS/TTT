@@ -17,15 +17,15 @@ public class BodyPaintListener(IServiceProvider provider)
   private readonly IBodyTracker bodies =
     provider.GetRequiredService<IBodyTracker>();
 
+  private readonly IShop shop = provider.GetRequiredService<IShop>();
+
+  private readonly Dictionary<IPlayer, int> uses = new();
+
   private BodyPaintConfig config
     => Provider.GetService<IStorage<BodyPaintConfig>>()
     ?.Load()
      .GetAwaiter()
      .GetResult() ?? new BodyPaintConfig();
-
-  private readonly IShop shop = provider.GetRequiredService<IShop>();
-
-  private readonly Dictionary<IPlayer, int> uses = new();
 
   [UsedImplicitly]
   [EventHandler(Priority = Priority.HIGH)]

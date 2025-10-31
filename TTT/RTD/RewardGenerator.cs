@@ -13,8 +13,6 @@ namespace TTT.RTD;
 
 public class RewardGenerator(IServiceProvider provider)
   : IRewardGenerator, IPluginModule {
-  private readonly List<(IRtdReward, float)> rewards = new();
-
   private const float PROB_LOTTERY = 1 / 5000f;
   private const float PROB_EXTREMELY_LOW = 1 / 800f;
   private const float PROB_VERY_LOW = 1 / 100f;
@@ -22,28 +20,7 @@ public class RewardGenerator(IServiceProvider provider)
   private const float PROB_MEDIUM = 1 / 10f;
   private const float PROB_OFTEN = 1 / 5f;
   private const float PROB_VERY_OFTEN = 1 / 2f;
-
-  public IEnumerator<(IRtdReward, float)> GetEnumerator() {
-    return rewards.GetEnumerator();
-  }
-
-  IEnumerator IEnumerable.GetEnumerator() { return GetEnumerator(); }
-  public int Count => rewards.Count;
-
-  public IRtdReward GetReward() {
-    var totalWeight = 0f;
-    foreach (var (_, weight) in rewards) { totalWeight += weight; }
-
-    var randomValue      = Random.Shared.NextSingle() * totalWeight;
-    var cumulativeWeight = 0f;
-
-    foreach (var (reward, weight) in rewards) {
-      cumulativeWeight += weight;
-      if (randomValue <= cumulativeWeight) { return reward; }
-    }
-
-    return rewards[^1].Item1;
-  }
+  private readonly List<(IRtdReward, float)> rewards = new();
 
   public void Start() {
     rewards.AddRange([
@@ -65,7 +42,7 @@ public class RewardGenerator(IServiceProvider provider)
       (new ShopItemReward<HealthStation>(provider), PROB_EXTREMELY_LOW),
       (new HealthReward(provider, 1), PROB_EXTREMELY_LOW),
       (new CreditReward(provider, 100), PROB_EXTREMELY_LOW),
-      (new HealthReward(provider, 200), PROB_EXTREMELY_LOW),
+      (new HealthReward(provider, 200), PROB_EXTREMELY_LOW)
     ]);
 
     rewards.ForEach(r => r.Item1.Start());
@@ -73,10 +50,32 @@ public class RewardGenerator(IServiceProvider provider)
 
   public void Start(BasePlugin? plugin) {
     Start();
-    foreach (var (reward, _) in rewards) {
-      if (reward is IPluginModule module) { module.Start(plugin); }
-    }
+    foreach (var (reward, _) in rewards)
+      if (reward is IPluginModule module)
+        module.Start(plugin);
   }
 
   public void Dispose() { }
+
+  public IEnumerator<(IRtdReward, float)> GetEnumerator() {
+    return rewards.GetEnumerator();
+  }
+
+  IEnumerator IEnumerable.GetEnumerator() { return GetEnumerator(); }
+  public int Count => rewards.Count;
+
+  public IRtdReward GetReward() {
+    var totalWeight                                  = 0f;
+    foreach (var (_, weight) in rewards) totalWeight += weight;
+
+    var randomValue      = Random.Shared.NextSingle() * totalWeight;
+    var cumulativeWeight = 0f;
+
+    foreach (var (reward, weight) in rewards) {
+      cumulativeWeight += weight;
+      if (randomValue <= cumulativeWeight) return reward;
+    }
+
+    return rewards[^1].Item1;
+  }
 }

@@ -1,5 +1,4 @@
-﻿using System.Drawing;
-using System.Reactive.Concurrency;
+﻿using System.Reactive.Concurrency;
 using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Utils;
@@ -11,26 +10,24 @@ using TTT.API.Player;
 using TTT.API.Storage;
 using TTT.CS2.Extensions;
 using TTT.CS2.lang;
-using TTT.CS2.Utils;
 using TTT.Game;
 using TTT.Game.Events.Game;
 using TTT.Game.Listeners;
-using TTT.Game.Roles;
 
 namespace TTT.CS2.Listeners;
 
 public class AfkTimerListener(IServiceProvider provider)
   : BaseListener(provider) {
+  private readonly IPlayerConverter<CCSPlayerController> converter =
+    provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
+
+  private IDisposable? specTimer, specWarnTimer;
+
   private TTTConfig config
     => Provider.GetRequiredService<IStorage<TTTConfig>>()
      .Load()
      .GetAwaiter()
      .GetResult() ?? new TTTConfig();
-
-  private readonly IPlayerConverter<CCSPlayerController> converter =
-    provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
-
-  private IDisposable? specTimer, specWarnTimer;
 
   public override void Dispose() {
     base.Dispose();
