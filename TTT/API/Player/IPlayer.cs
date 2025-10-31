@@ -7,7 +7,7 @@ public interface IPlayer : IEquatable<IPlayer> {
   /// </summary>
   string Id { get; }
 
-  string Name { get; }
+  string Name { get; set; }
 
   bool IEquatable<IPlayer>.Equals(IPlayer? other) {
     if (other is null) return false;

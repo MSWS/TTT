@@ -53,7 +53,7 @@ public class CS2Player : IOnlinePlayer, IEquatable<CS2Player> {
   }
 
   public string Id { get; }
-  public string Name { get; }
+  public string Name { get; set; }
 
   public int Health {
     get => Player?.Pawn.Value != null ? Player.Pawn.Value.Health : 0;
