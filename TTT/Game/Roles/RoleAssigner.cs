@@ -8,6 +8,8 @@ using TTT.Game.Events.Player;
 namespace TTT.Game.Roles;
 
 public class RoleAssigner(IServiceProvider provider) : IRoleAssigner {
+  private static readonly Random rng = new();
+
   private readonly IDictionary<string, ICollection<IRole>> assignedRoles =
     new Dictionary<string, ICollection<IRole>>();
 
@@ -15,8 +17,6 @@ public class RoleAssigner(IServiceProvider provider) : IRoleAssigner {
 
   private readonly IMessenger? onlineMessenger =
     provider.GetService<IMessenger>();
-
-  private static readonly Random rng = new();
 
   public void AssignRoles(ISet<IOnlinePlayer> players, IList<IRole> roles) {
     assignedRoles.Clear();

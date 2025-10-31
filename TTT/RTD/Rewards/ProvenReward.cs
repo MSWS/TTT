@@ -7,11 +7,11 @@ namespace TTT.RTD.Rewards;
 
 public class ProvenReward(IServiceProvider provider)
   : RoundStartReward(provider) {
-  private readonly IRoleAssigner roles =
-    provider.GetRequiredService<IRoleAssigner>();
-
   private readonly IIconManager icons =
     provider.GetRequiredService<IIconManager>();
+
+  private readonly IRoleAssigner roles =
+    provider.GetRequiredService<IRoleAssigner>();
 
   public override string Name => "Proven If Inno";
 

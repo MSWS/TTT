@@ -1,7 +1,7 @@
-﻿using CounterStrikeSharp.API;
+﻿using System.Text;
+using System.Text.Json;
 using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using TTT.API.Events;
 using TTT.API.Player;
 using TTT.Game.Events.Player;
@@ -29,9 +29,8 @@ public class PlayerCreationListener(IServiceProvider provider) : IListener {
     var client   = provider.GetRequiredService<HttpClient>();
     var userJson = new { name = player.Name };
 
-    var content = new StringContent(
-      System.Text.Json.JsonSerializer.Serialize(userJson),
-      System.Text.Encoding.UTF8, "application/json");
+    var content = new StringContent(JsonSerializer.Serialize(userJson),
+      Encoding.UTF8, "application/json");
 
     var response = await client.PutAsync("user/" + player.Id, content);
     response.EnsureSuccessStatusCode();

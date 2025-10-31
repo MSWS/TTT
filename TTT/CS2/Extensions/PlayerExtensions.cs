@@ -119,8 +119,11 @@ public static class PlayerExtensions {
       SELF(player.Slot), 0.2f, 1);
   }
 
-  private static RecipientFilter SELF(int slot) => new(slot);
+  private static RecipientFilter SELF(int slot) {
+    return new RecipientFilter(slot);
+  }
 
-  private static RecipientFilter OTHERS(int slot)
-    => new(ulong.MaxValue & ~(1ul << slot));
+  private static RecipientFilter OTHERS(int slot) {
+    return new RecipientFilter(ulong.MaxValue & ~(1ul << slot));
+  }
 }

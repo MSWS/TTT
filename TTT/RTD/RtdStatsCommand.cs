@@ -18,7 +18,7 @@ public class RtdStatsCommand(IRewardGenerator generator) : ICommand {
 
     var index = 0;
     foreach (var (reward, prob) in rewards) {
-      var percent = (prob / total) * 100;
+      var percent = prob / total * 100;
       info.ReplySync(
         $" {ChatColors.Orange}{index}. {ChatColors.Default}{reward.Name}{ChatColors.Grey}: {ChatColors.Yellow}{percent:0.00}%");
       index++;

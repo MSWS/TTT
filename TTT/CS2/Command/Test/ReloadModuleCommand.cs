@@ -9,16 +9,11 @@ namespace TTT.CS2.Command.Test;
 
 public class ReloadModuleCommand(IServiceProvider provider)
   : ICommand, IPluginModule {
+  private BasePlugin? plugin;
   public void Dispose() { }
   public void Start() { }
-  private BasePlugin? plugin;
 
   public string Id => "reload";
-
-  public void Start(BasePlugin? plugin) {
-    if (plugin == null) return;
-    this.plugin = plugin;
-  }
 
   public string[] Usage => ["<module>"];
 
@@ -58,5 +53,10 @@ public class ReloadModuleCommand(IServiceProvider provider)
     });
 
     return Task.FromResult(CommandResult.SUCCESS);
+  }
+
+  public void Start(BasePlugin? plugin) {
+    if (plugin == null) return;
+    this.plugin = plugin;
   }
 }

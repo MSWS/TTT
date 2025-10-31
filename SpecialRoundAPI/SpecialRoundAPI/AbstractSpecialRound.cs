@@ -14,12 +14,12 @@ public abstract class AbstractSpecialRound(IServiceProvider provider)
   protected readonly ISpecialRoundTracker Tracker =
     provider.GetRequiredService<ISpecialRoundTracker>();
 
-  public void Dispose() { }
-  public void Start() { }
-
   public abstract string Name { get; }
   public abstract IMsg Description { get; }
   public abstract SpecialRoundConfig Config { get; }
+
+  public void Dispose() { }
+  public void Start() { }
 
   public abstract void ApplyRoundEffects();
 

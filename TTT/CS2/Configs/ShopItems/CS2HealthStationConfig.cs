@@ -17,8 +17,7 @@ public class CS2HealthStationConfig : IStorage<HealthStationConfig>,
 
   public static readonly FakeConVar<string> CV_USE_SOUND = new(
     "css_ttt_shop_healthstation_use_sound",
-    "Sound played when using the Health Station", "sounds/buttons/blip1",
-    ConVarFlags.FCVAR_NONE);
+    "Sound played when using the Health Station", "sounds/buttons/blip1");
 
   public static readonly FakeConVar<int> CV_HEALTH_INCREMENTS = new(
     "css_ttt_shop_healthstation_increments",

@@ -1,7 +1,6 @@
 using System.Reactive.Concurrency;
 using CounterStrikeSharp.API.Core;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using SpecialRound;
 using Stats;
 using TTT.CS2;

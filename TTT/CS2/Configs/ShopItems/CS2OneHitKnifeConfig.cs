@@ -16,8 +16,7 @@ public class CS2OneHitKnifeConfig : IStorage<OneHitKnifeConfig>, IPluginModule {
 
   public static readonly FakeConVar<bool> CV_FRIENDLY_FIRE = new(
     "css_ttt_shop_onehitknife_friendly_fire",
-    "Whether the One-Hit Knife can damage teammates", false,
-    ConVarFlags.FCVAR_NONE);
+    "Whether the One-Hit Knife can damage teammates");
 
   public void Dispose() { }
 

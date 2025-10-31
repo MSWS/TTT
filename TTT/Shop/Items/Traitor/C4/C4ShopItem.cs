@@ -21,16 +21,17 @@ public static class C4ServiceCollection {
 
 public class C4ShopItem(IServiceProvider provider)
   : RoleRestrictedItem<TraitorRole>(provider), IListener {
+  private readonly IPlayerFinder finder =
+    provider.GetRequiredService<IPlayerFinder>();
+
+  private int c4sBought;
+
   private C4Config config
     => Provider.GetService<IStorage<C4Config>>()
     ?.Load()
      .GetAwaiter()
      .GetResult() ?? new C4Config();
 
-  private readonly IPlayerFinder finder =
-    provider.GetRequiredService<IPlayerFinder>();
-
-  private int c4sBought;
   public override string Name => Locale[C4Msgs.SHOP_ITEM_C4];
   public override string Description => Locale[C4Msgs.SHOP_ITEM_C4_DESC];
 

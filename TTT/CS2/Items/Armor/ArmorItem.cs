@@ -16,14 +16,14 @@ public static class ArmorItemServicesCollection {
 }
 
 public class ArmorItem(IServiceProvider provider) : BaseItem(provider) {
+  private readonly IPlayerConverter<CCSPlayerController> converter =
+    provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
+
   private ArmorConfig config
     => Provider.GetService<IStorage<ArmorConfig>>()
     ?.Load()
      .GetAwaiter()
      .GetResult() ?? new ArmorConfig();
-
-  private readonly IPlayerConverter<CCSPlayerController> converter =
-    provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
 
   public override string Name => Locale[ArmorMsgs.SHOP_ITEM_ARMOR];
   public override string Description => Locale[ArmorMsgs.SHOP_ITEM_ARMOR_DESC];

@@ -13,14 +13,14 @@ namespace SpecialRound.Rounds;
 
 public class VanillaRound(IServiceProvider provider)
   : AbstractSpecialRound(provider) {
-  public override string Name => "Vanilla";
-  public override IMsg Description => RoundMsgs.SPECIAL_ROUND_VANILLA;
+  private readonly IMsgLocalizer locale =
+    provider.GetRequiredService<IMsgLocalizer>();
 
   private readonly IMessenger messenger =
     provider.GetRequiredService<IMessenger>();
 
-  private readonly IMsgLocalizer locale =
-    provider.GetRequiredService<IMsgLocalizer>();
+  public override string Name => "Vanilla";
+  public override IMsg Description => RoundMsgs.SPECIAL_ROUND_VANILLA;
 
   private VanillaRoundConfig config
     => Provider.GetService<IStorage<VanillaRoundConfig>>()

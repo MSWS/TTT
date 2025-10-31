@@ -1,7 +1,4 @@
-﻿using System.Net;
-using System.Numerics;
-using System.Runtime.InteropServices;
-using CounterStrikeSharp.API;
+﻿using System.Runtime.InteropServices;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Memory;
 using Vector = CounterStrikeSharp.API.Modules.Utils.Vector;

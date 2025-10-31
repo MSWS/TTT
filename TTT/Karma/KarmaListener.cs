@@ -15,12 +15,6 @@ namespace TTT.Karma;
 public class KarmaListener(IServiceProvider provider) : BaseListener(provider) {
   private readonly Dictionary<string, int> badKills = new();
 
-  private KarmaConfig config
-    => Provider.GetService<IStorage<KarmaConfig>>()
-    ?.Load()
-     .GetAwaiter()
-     .GetResult() ?? new KarmaConfig();
-
   private readonly IGameManager games =
     provider.GetRequiredService<IGameManager>();
 
@@ -33,6 +27,12 @@ public class KarmaListener(IServiceProvider provider) : BaseListener(provider) {
     provider.GetRequiredService<IRoleAssigner>();
 
   public bool GiveKarmaOnRoundEnd = true;
+
+  private KarmaConfig config
+    => Provider.GetService<IStorage<KarmaConfig>>()
+    ?.Load()
+     .GetAwaiter()
+     .GetResult() ?? new KarmaConfig();
 
   [EventHandler]
   [UsedImplicitly]

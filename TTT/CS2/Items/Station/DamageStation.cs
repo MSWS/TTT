@@ -1,5 +1,4 @@
-﻿using CounterStrikeSharp.API;
-using CounterStrikeSharp.API.Core;
+﻿using CounterStrikeSharp.API.Core;
 using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using ShopAPI.Configs.Traitor;
@@ -7,10 +6,8 @@ using TTT.API.Events;
 using TTT.API.Extensions;
 using TTT.API.Game;
 using TTT.API.Player;
-using TTT.API.Role;
 using TTT.API.Storage;
 using TTT.CS2.Extensions;
-using TTT.CS2.Utils;
 using TTT.Game.Events.Body;
 using TTT.Game.Events.Game;
 using TTT.Game.Events.Player;
@@ -38,16 +35,12 @@ public class DamageStation(IServiceProvider provider)
   private readonly IPlayerFinder finder =
     provider.GetRequiredService<IPlayerFinder>();
 
-  private readonly IRoleAssigner roles =
-    provider.GetRequiredService<IRoleAssigner>();
+  private readonly Dictionary<string, StationInfo> killedWithStation = new();
 
   public override string Name => Locale[StationMsgs.SHOP_ITEM_STATION_HURT];
 
   public override string Description
     => Locale[StationMsgs.SHOP_ITEM_STATION_HURT_DESC];
-
-  private Dictionary<string, StationInfo> killedWithStation =
-    new Dictionary<string, StationInfo>();
 
   override protected void onInterval() {
     var players  = finder.GetOnline();

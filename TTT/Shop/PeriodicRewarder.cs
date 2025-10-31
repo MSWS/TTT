@@ -14,11 +14,8 @@ using TTT.CS2.Extensions;
 namespace TTT.Shop;
 
 public class PeriodicRewarder(IServiceProvider provider) : ITerrorModule {
-  private ShopConfig config
-    => provider.GetService<IStorage<ShopConfig>>()
-    ?.Load()
-     .GetAwaiter()
-     .GetResult() ?? new ShopConfig(provider);
+  private readonly IPlayerConverter<CCSPlayerController> converter =
+    provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
 
   private readonly IPlayerFinder finder =
     provider.GetRequiredService<IPlayerFinder>();
@@ -26,22 +23,25 @@ public class PeriodicRewarder(IServiceProvider provider) : ITerrorModule {
   private readonly IGameManager games =
     provider.GetRequiredService<IGameManager>();
 
+  private readonly Dictionary<string, List<Vector>> playerPositions = new();
+
   private readonly IScheduler scheduler =
     provider.GetRequiredService<IScheduler>();
 
   private readonly IShop shop = provider.GetRequiredService<IShop>();
 
-  private readonly IPlayerConverter<CCSPlayerController> converter =
-    provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
-
   private IDisposable? rewardTimer, updateTimer;
+
+  private ShopConfig config
+    => provider.GetService<IStorage<ShopConfig>>()
+    ?.Load()
+     .GetAwaiter()
+     .GetResult() ?? new ShopConfig(provider);
 
   public void Dispose() {
     rewardTimer?.Dispose();
     updateTimer?.Dispose();
   }
-
-  private readonly Dictionary<string, List<Vector>> playerPositions = new();
 
   public void Start() {
     rewardTimer = scheduler.SchedulePeriodic(config.CreditRewardInterval,
@@ -105,8 +105,8 @@ public class PeriodicRewarder(IServiceProvider provider) : ITerrorModule {
   }
 
   /// <summary>
-  /// Scales a reward amount between min and max based on position (0-1).
-  /// 0 = min, 1 = max.
+  ///   Scales a reward amount between min and max based on position (0-1).
+  ///   0 = min, 1 = max.
   /// </summary>
   /// <param name="position"></param>
   /// <param name="min"></param>

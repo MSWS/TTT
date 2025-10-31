@@ -1,4 +1,4 @@
-﻿using System.Net.Http.Json;
+﻿using System.Text.Json;
 using CounterStrikeSharp.API.Modules.Utils;
 using Microsoft.Extensions.DependencyInjection;
 using TTT.API.Command;
@@ -25,8 +25,7 @@ public class StatsCommand(IServiceProvider provider) : ICommand {
 
     var body = await response.Content.ReadAsStringAsync();
 
-    var statsInfo =
-      System.Text.Json.JsonSerializer.Deserialize<StatsResponse>(body);
+    var statsInfo = JsonSerializer.Deserialize<StatsResponse>(body);
 
     if (statsInfo == null) return CommandResult.ERROR;
 
@@ -68,7 +67,7 @@ public class StatsCommand(IServiceProvider provider) : ICommand {
       + ChatColors.Yellow + dict.GetValueOrDefault("detective", 0));
   }
 
-  record StatsResponse {
+  private record StatsResponse {
     public required string steam_id { get; init; }
     public required string name { get; init; }
     public float kdr { get; init; }

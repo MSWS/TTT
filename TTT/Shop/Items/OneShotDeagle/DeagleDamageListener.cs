@@ -4,7 +4,6 @@ using ShopAPI;
 using ShopAPI.Configs;
 using TTT.API.Events;
 using TTT.API.Game;
-using TTT.API.Player;
 using TTT.API.Storage;
 using TTT.Game.Events.Player;
 using TTT.Game.Listeners;
@@ -14,13 +13,13 @@ namespace TTT.Shop.Items;
 
 public class DeagleDamageListener(IServiceProvider provider)
   : BaseListener(provider) {
+  private readonly IShop shop = provider.GetRequiredService<IShop>();
+
   private OneShotDeagleConfig config
     => Provider.GetService<IStorage<OneShotDeagleConfig>>()
     ?.Load()
      .GetAwaiter()
      .GetResult() ?? new OneShotDeagleConfig();
-
-  private readonly IShop shop = provider.GetRequiredService<IShop>();
 
   [UsedImplicitly]
   [EventHandler]

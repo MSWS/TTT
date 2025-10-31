@@ -22,8 +22,7 @@ public class CS2ClusterGrenadeConfig : IStorage<ClusterGrenadeConfig>,
 
   public static readonly FakeConVar<string> CV_WEAPON_ID = new(
     "css_ttt_shop_clustergrenade_weapon",
-    "Weapon entity ID used for the Cluster Grenade", "weapon_hegrenade",
-    ConVarFlags.FCVAR_NONE);
+    "Weapon entity ID used for the Cluster Grenade", "weapon_hegrenade");
 
   public static readonly FakeConVar<float> CV_UP_FORCE = new(
     "css_ttt_shop_clustergrenade_up_force",

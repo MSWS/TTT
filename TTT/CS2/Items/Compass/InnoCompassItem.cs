@@ -23,11 +23,11 @@ public class InnoCompassItem(IServiceProvider provider)
     => Locale[CompassMsgs.SHOP_ITEM_COMPASS_PLAYER_DESC];
 
   /// <summary>
-  /// For innocents: point to nearest traitor.
-  /// For traitors: point to nearest non-traitor (ally list in original code).
-  /// Returns target world positions as vectors.
+  ///   For innocents: point to nearest traitor.
+  ///   For traitors: point to nearest non-traitor (ally list in original code).
+  ///   Returns target world positions as vectors.
   /// </summary>
-  protected override IList<Vector> GetTargets(IOnlinePlayer requester) {
+  override protected IList<Vector> GetTargets(IOnlinePlayer requester) {
     if (Games.ActiveGame is not { State: State.IN_PROGRESS or State.FINISHED })
       return Array.Empty<Vector>();
 

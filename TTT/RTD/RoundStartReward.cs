@@ -1,5 +1,4 @@
-﻿using CounterStrikeSharp.API;
-using JetBrains.Annotations;
+﻿using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using TTT.API.Events;
 using TTT.API.Game;
@@ -13,10 +12,13 @@ namespace TTT.RTD;
 
 public abstract class RoundStartReward(IServiceProvider provider)
   : IRtdReward, IListener {
+  private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
+
   private readonly ISet<IOnlinePlayer> givenPlayers =
     new HashSet<IOnlinePlayer>();
 
-  private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
+  protected readonly IMsgLocalizer Locale =
+    provider.GetRequiredService<IMsgLocalizer>();
 
   private readonly IRoleAssigner roles =
     provider.GetRequiredService<IRoleAssigner>();
@@ -25,10 +27,11 @@ public abstract class RoundStartReward(IServiceProvider provider)
   public abstract string Description { get; }
 
   public void GrantReward(IOnlinePlayer player) { givenPlayers.Add(player); }
-  public abstract void GiveOnRound(IOnlinePlayer player);
 
-  protected readonly IMsgLocalizer Locale =
-    provider.GetRequiredService<IMsgLocalizer>();
+  public void Start() { bus.RegisterListener(this); }
+
+  public void Dispose() { bus.UnregisterListener(this); }
+  public abstract void GiveOnRound(IOnlinePlayer player);
 
   [UsedImplicitly]
   [EventHandler(Priority = Priority.LOW)]
@@ -42,8 +45,4 @@ public abstract class RoundStartReward(IServiceProvider provider)
 
     givenPlayers.Clear();
   }
-
-  public void Start() { bus.RegisterListener(this); }
-
-  public void Dispose() { bus.UnregisterListener(this); }
 }

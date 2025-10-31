@@ -1,5 +1,4 @@
 ﻿using CounterStrikeSharp.API.Core;
-using CounterStrikeSharp.API.Modules.Utils;
 using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using SpecialRound.lang;
@@ -18,16 +17,28 @@ public class SpecialRoundStarter(IServiceProvider provider)
   private readonly ISpecialRoundTracker tracker =
     provider.GetRequiredService<ISpecialRoundTracker>();
 
+  private int roundsSinceMapChange;
+
   private SpecialRoundsConfig config
     => Provider.GetService<IStorage<SpecialRoundsConfig>>()
     ?.Load()
      .GetAwaiter()
      .GetResult() ?? new SpecialRoundsConfig();
 
-  private int roundsSinceMapChange = 0;
-
   public void Start(BasePlugin? plugin) {
     plugin?.RegisterListener<Listeners.OnMapStart>(onMapChange);
+  }
+
+  public AbstractSpecialRound?
+    TryStartSpecialRound(AbstractSpecialRound? round) {
+    round ??= getSpecialRound();
+    Messenger.MessageAll(Locale[RoundMsgs.SPECIAL_ROUND_STARTED(round)]);
+    Messenger.MessageAll(Locale[round.Description]);
+
+    round?.ApplyRoundEffects();
+    tracker.CurrentRound           = round;
+    tracker.RoundsSinceLastSpecial = 0;
+    return round;
   }
 
   private void onMapChange(string mapName) { roundsSinceMapChange = 0; }
@@ -65,17 +76,5 @@ public class SpecialRoundStarter(IServiceProvider provider)
 
     throw new InvalidOperationException(
       "Failed to select a special round. This should never happen.");
-  }
-
-  public AbstractSpecialRound?
-    TryStartSpecialRound(AbstractSpecialRound? round) {
-    round ??= getSpecialRound();
-    Messenger.MessageAll(Locale[RoundMsgs.SPECIAL_ROUND_STARTED(round)]);
-    Messenger.MessageAll(Locale[round.Description]);
-
-    round?.ApplyRoundEffects();
-    tracker.CurrentRound           = round;
-    tracker.RoundsSinceLastSpecial = 0;
-    return round;
   }
 }

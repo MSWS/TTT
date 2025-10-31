@@ -15,12 +15,6 @@ using TTT.Karma.lang;
 namespace TTT.CS2.Listeners;
 
 public class KarmaBanner(IServiceProvider provider) : BaseListener(provider) {
-  private KarmaConfig config
-    => Provider.GetService<IStorage<KarmaConfig>>()
-    ?.Load()
-     .GetAwaiter()
-     .GetResult() ?? new KarmaConfig();
-
   private readonly IPlayerConverter<CCSPlayerController> converter =
     provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
 
@@ -30,6 +24,12 @@ public class KarmaBanner(IServiceProvider provider) : BaseListener(provider) {
     provider.GetRequiredService<IKarmaService>();
 
   private readonly Dictionary<IPlayer, DateTime> lastWarned = new();
+
+  private KarmaConfig config
+    => Provider.GetService<IStorage<KarmaConfig>>()
+    ?.Load()
+     .GetAwaiter()
+     .GetResult() ?? new KarmaConfig();
 
   [UsedImplicitly]
   [EventHandler(Priority = Priority.MONITOR, IgnoreCanceled = true)]

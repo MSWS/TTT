@@ -4,8 +4,6 @@ using TTT.API.Events;
 using TTT.API.Game;
 using TTT.API.Player;
 using TTT.API.Role;
-using TTT.Game.Roles;
-using TTT.Karma;
 using TTT.Shop.Listeners;
 using Xunit;
 

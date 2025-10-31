@@ -12,7 +12,6 @@ using TTT.API;
 using TTT.API.Events;
 using TTT.API.Game;
 using TTT.API.Player;
-using TTT.API.Role;
 using TTT.API.Storage;
 using TTT.CS2.Extensions;
 using TTT.Game.Events.Body;
@@ -25,20 +24,20 @@ namespace TTT.CS2.Items.PoisonSmoke;
 
 public class PoisonSmokeListener(IServiceProvider provider)
   : BaseListener(provider), IPluginModule {
-  private PoisonSmokeConfig config
-    => Provider.GetService<IStorage<PoisonSmokeConfig>>()
-    ?.Load()
-     .GetAwaiter()
-     .GetResult() ?? new PoisonSmokeConfig();
-
   private readonly IPlayerConverter<CCSPlayerController> converter =
     provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
+
+  private readonly ISet<string> killedWithPoison = new HashSet<string>();
 
   private readonly List<IDisposable> poisonSmokes = [];
 
   private readonly IShop shop = provider.GetRequiredService<IShop>();
 
-  private readonly ISet<string> killedWithPoison = new HashSet<string>();
+  private PoisonSmokeConfig config
+    => Provider.GetService<IStorage<PoisonSmokeConfig>>()
+    ?.Load()
+     .GetAwaiter()
+     .GetResult() ?? new PoisonSmokeConfig();
 
   public override void Dispose() {
     base.Dispose();
@@ -129,15 +128,6 @@ public class PoisonSmokeListener(IServiceProvider provider)
     return effect.DamageGiven < config.PoisonConfig.TotalDamage;
   }
 
-  private class PoisonEffect(CSmokeGrenadeProjectile projectile,
-    IOnlinePlayer attacker) {
-    public int Ticks { get; set; }
-    public int DamageGiven { get; set; }
-    public Vector Origin { get; } = projectile.AbsOrigin.Clone()!;
-    public CSmokeGrenadeProjectile Projectile { get; } = projectile;
-    public IPlayer Attacker { get; } = attacker;
-  }
-
   [UsedImplicitly]
   [EventHandler]
   public void OnGameEnd(GameStateUpdateEvent ev) {
@@ -152,5 +142,14 @@ public class PoisonSmokeListener(IServiceProvider provider)
     if (!killedWithPoison.Contains(ev.Body.OfPlayer.Id)) return;
     if (ev.Body.Killer == null || ev.Body.Killer.Id == ev.Body.OfPlayer.Id)
       ev.IsCanceled = true;
+  }
+
+  private class PoisonEffect(CSmokeGrenadeProjectile projectile,
+    IOnlinePlayer attacker) {
+    public int Ticks { get; set; }
+    public int DamageGiven { get; set; }
+    public Vector Origin { get; } = projectile.AbsOrigin.Clone()!;
+    public CSmokeGrenadeProjectile Projectile { get; } = projectile;
+    public IPlayer Attacker { get; } = attacker;
   }
 }

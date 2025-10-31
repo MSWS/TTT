@@ -11,7 +11,7 @@ namespace TTT.Game.Listeners;
 
 public class GameRestartListener(IServiceProvider provider)
   : BaseListener(provider) {
-  private TTTConfig config =
+  private readonly TTTConfig config =
     provider.GetService<IStorage<TTTConfig>>()?.Load().GetAwaiter().GetResult()
     ?? new TTTConfig();
 

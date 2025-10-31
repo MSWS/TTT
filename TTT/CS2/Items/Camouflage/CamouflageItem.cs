@@ -18,14 +18,14 @@ public static class CamoServiceCollection {
 }
 
 public class CamouflageItem(IServiceProvider provider) : BaseItem(provider) {
+  private readonly IPlayerConverter<CCSPlayerController> converter =
+    provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
+
   private CamoConfig config
     => Provider.GetService<IStorage<CamoConfig>>()
     ?.Load()
      .GetAwaiter()
      .GetResult() ?? new CamoConfig();
-
-  private readonly IPlayerConverter<CCSPlayerController> converter =
-    provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
 
   public override string Name => Locale[CamoMsgs.SHOP_ITEM_CAMO];
   public override string Description => Locale[CamoMsgs.SHOP_ITEM_CAMO_DESC];

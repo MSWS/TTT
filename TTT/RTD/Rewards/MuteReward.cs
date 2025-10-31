@@ -3,7 +3,6 @@ using CounterStrikeSharp.API.Core;
 using Microsoft.Extensions.DependencyInjection;
 using TTT.API;
 using TTT.API.Game;
-using TTT.API.Messages;
 using TTT.API.Player;
 using TTT.Game.Events.Game;
 using TTT.Locale;
@@ -13,22 +12,21 @@ namespace TTT.RTD.Rewards;
 
 public class MuteReward(IServiceProvider provider)
   : RoundStartReward(provider), IPluginModule {
+  private readonly IMsgLocalizer locale =
+    provider.GetRequiredService<IMsgLocalizer>();
+
+  private readonly IMuted mutedPlayers = provider.GetRequiredService<IMuted>();
   public override string Name => "Mute";
 
   public override string Description
     => "you will not be able to communicate next round";
 
-  private readonly IMuted mutedPlayers = provider.GetRequiredService<IMuted>();
-
-  private readonly IMsgLocalizer locale =
-    provider.GetRequiredService<IMsgLocalizer>();
+  public void Start(BasePlugin? plugin) {
+    plugin?.RegisterListener<Listeners.OnClientVoice>(onVoice);
+  }
 
   public override void GiveOnRound(IOnlinePlayer player) {
     mutedPlayers.Add(player.Id);
-  }
-
-  public void Start(BasePlugin? plugin) {
-    plugin?.RegisterListener<Listeners.OnClientVoice>(onVoice);
   }
 
   private void onVoice(int playerSlot) {

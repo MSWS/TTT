@@ -24,14 +24,10 @@ public class PoisonShotsListener(IServiceProvider provider)
   : BaseListener(provider), IPluginModule {
   private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
 
-  private PoisonShotsConfig config
-    => Provider.GetService<IStorage<PoisonShotsConfig>>()
-    ?.Load()
-     .GetAwaiter()
-     .GetResult() ?? new PoisonShotsConfig();
-
   private readonly IPlayerConverter<CCSPlayerController> converter =
     provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
+
+  private readonly Dictionary<string, IPlayer> killedWithPoison = new();
 
   private readonly Dictionary<IPlayer, int> poisonShots = new();
 
@@ -42,7 +38,11 @@ public class PoisonShotsListener(IServiceProvider provider)
 
   private readonly IShop shop = provider.GetRequiredService<IShop>();
 
-  private readonly Dictionary<string, IPlayer> killedWithPoison = new();
+  private PoisonShotsConfig config
+    => Provider.GetService<IStorage<PoisonShotsConfig>>()
+    ?.Load()
+     .GetAwaiter()
+     .GetResult() ?? new PoisonShotsConfig();
 
   public override void Dispose() {
     base.Dispose();
@@ -156,13 +156,6 @@ public class PoisonShotsListener(IServiceProvider provider)
     return 0;
   }
 
-  private class PoisonEffect(IPlayer player, IPlayer shooter) {
-    public IPlayer Player { get; } = player;
-    public IPlayer Shooter { get; } = shooter;
-    public int Ticks { get; set; }
-    public int DamageGiven { get; set; }
-  }
-
 
   [UsedImplicitly]
   [EventHandler]
@@ -172,5 +165,12 @@ public class PoisonShotsListener(IServiceProvider provider)
     if (ev.Body.Killer != null && ev.Body.Killer.Id != ev.Body.OfPlayer.Id)
       return;
     ev.Body.Killer = shooter as IOnlinePlayer;
+  }
+
+  private class PoisonEffect(IPlayer player, IPlayer shooter) {
+    public IPlayer Player { get; } = player;
+    public IPlayer Shooter { get; } = shooter;
+    public int Ticks { get; set; }
+    public int DamageGiven { get; set; }
   }
 }

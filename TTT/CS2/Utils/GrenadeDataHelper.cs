@@ -18,13 +18,13 @@ public class GrenadeDataHelper {
           heGrenadeSignature);
   }
 
-  private delegate int CHEGrenadeProjectile_CreateDelegate(IntPtr position,
-    IntPtr angle, IntPtr velocity, IntPtr velocityAngle, IntPtr thrower,
-    int weaponId, byte team);
-
   public static int CreateGrenade(Vector position, QAngle angle,
     Vector velocity, Vector velocityAngle, IntPtr thrower, CsTeam team) {
     return CHEGrenadeProjectile_CreateFunc(position.Handle, angle.Handle,
       velocity.Handle, velocityAngle.Handle, thrower, 44, (byte)team);
   }
+
+  private delegate int CHEGrenadeProjectile_CreateDelegate(IntPtr position,
+    IntPtr angle, IntPtr velocity, IntPtr velocityAngle, IntPtr thrower,
+    int weaponId, byte team);
 }

@@ -10,12 +10,6 @@ using TTT.Locale;
 namespace TTT.Game.Roles;
 
 public abstract class BaseRole(IServiceProvider provider) : IRole {
-  protected TTTConfig Config
-    => Provider.GetRequiredService<IStorage<TTTConfig>>()
-     .Load()
-     .GetAwaiter()
-     .GetResult() ?? new TTTConfig();
-
   protected readonly IInventoryManager Inventory =
     provider.GetRequiredService<IInventoryManager>();
 
@@ -28,6 +22,12 @@ public abstract class BaseRole(IServiceProvider provider) : IRole {
 
   protected readonly IRoleAssigner Roles =
     provider.GetRequiredService<IRoleAssigner>();
+
+  protected TTTConfig Config
+    => Provider.GetRequiredService<IStorage<TTTConfig>>()
+     .Load()
+     .GetAwaiter()
+     .GetResult() ?? new TTTConfig();
 
   public abstract string Id { get; }
   public abstract string Name { get; }

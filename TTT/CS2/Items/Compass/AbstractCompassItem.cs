@@ -1,5 +1,3 @@
-using System.Linq;
-using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Timers;
 using CounterStrikeSharp.API.Modules.Utils;
@@ -10,7 +8,6 @@ using ShopAPI.Configs;
 using ShopAPI.Configs.Traitor;
 using TTT.API;
 using TTT.API.Events;
-using TTT.API.Extensions;
 using TTT.API.Game;
 using TTT.API.Player;
 using TTT.API.Role;
@@ -18,17 +15,15 @@ using TTT.API.Storage;
 using TTT.CS2.Extensions;
 using TTT.CS2.Utils;
 using TTT.Game.Events.Game;
-using TTT.Game.Roles;
 
 namespace TTT.CS2.Items.Compass;
 
 /// <summary>
-/// Base compass that renders a heading toward the nearest target returned by GetTargets.
-/// Child classes decide which targets to expose and who owns the item.
+///   Base compass that renders a heading toward the nearest target returned by GetTargets.
+///   Child classes decide which targets to expose and who owns the item.
 /// </summary>
 public abstract class AbstractCompassItem<TRole> : RoleRestrictedItem<TRole>,
   IListener, IPluginModule where TRole : class, IRole {
-  protected CompassConfig _Config { get; }
   protected readonly IPlayerConverter<CCSPlayerController> Converter;
   protected readonly ISet<IPlayer> Owners = new HashSet<IPlayer>();
 
@@ -41,6 +36,8 @@ public abstract class AbstractCompassItem<TRole> : RoleRestrictedItem<TRole>,
     Converter =
       provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
   }
+
+  protected CompassConfig _Config { get; }
 
   public override ShopItemConfig Config => _Config;
 
@@ -56,14 +53,14 @@ public abstract class AbstractCompassItem<TRole> : RoleRestrictedItem<TRole>,
   }
 
   /// <summary>
-  /// Return world positions to point at for this player.
+  ///   Return world positions to point at for this player.
   /// </summary>
-  protected abstract IList<Vector> GetTargets(IOnlinePlayer requester);
+  abstract protected IList<Vector> GetTargets(IOnlinePlayer requester);
 
   /// <summary>
-  /// Whether this player currently owns/has this compass effect.
+  ///   Whether this player currently owns/has this compass effect.
   /// </summary>
-  protected abstract bool OwnsItem(IOnlinePlayer player);
+  abstract protected bool OwnsItem(IOnlinePlayer player);
 
   public override void OnPurchase(IOnlinePlayer player) { Owners.Add(player); }
 

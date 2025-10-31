@@ -18,14 +18,14 @@ public class PlayerMuter(IServiceProvider provider) : IPluginModule {
   private readonly IPlayerConverter<CCSPlayerController> converter =
     provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
 
+  private readonly IGameManager game =
+    provider.GetRequiredService<IGameManager>();
+
   private readonly IMsgLocalizer locale =
     provider.GetRequiredService<IMsgLocalizer>();
 
   private readonly IMessenger messenger =
     provider.GetRequiredService<IMessenger>();
-
-  private readonly IGameManager game =
-    provider.GetRequiredService<IGameManager>();
 
   public void Dispose() { }
   public void Start() { }
@@ -66,8 +66,6 @@ public class PlayerMuter(IServiceProvider provider) : IPluginModule {
   public void OnGameEvent(GameStateUpdateEvent ev) {
     if (ev.NewState != State.FINISHED) return;
 
-    foreach (var p in Utilities.GetPlayers()) {
-      p.VoiceFlags &= ~VoiceFlags.Muted;
-    }
+    foreach (var p in Utilities.GetPlayers()) p.VoiceFlags &= ~VoiceFlags.Muted;
   }
 }

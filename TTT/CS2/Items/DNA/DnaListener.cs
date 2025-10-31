@@ -28,14 +28,14 @@ public class DnaListener(IServiceProvider provider) : BaseListener(provider) {
   private readonly IBodyTracker bodies =
     provider.GetRequiredService<IBodyTracker>();
 
+  private readonly Dictionary<string, DateTime> lastMessages = new();
+  private readonly IShop shop = provider.GetRequiredService<IShop>();
+
   private DnaScannerConfig config
     => Provider.GetService<IStorage<DnaScannerConfig>>()
     ?.Load()
      .GetAwaiter()
      .GetResult() ?? new DnaScannerConfig();
-
-  private readonly Dictionary<string, DateTime> lastMessages = new();
-  private readonly IShop shop = provider.GetRequiredService<IShop>();
 
   // Low priority to allow body identification to happen first
   [UsedImplicitly]

@@ -1,4 +1,3 @@
-using System.Runtime.CompilerServices;
 using CounterStrikeSharp.API.Core;
 using Microsoft.Extensions.DependencyInjection;
 using ShopAPI.Configs;

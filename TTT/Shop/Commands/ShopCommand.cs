@@ -3,7 +3,6 @@ using Microsoft.Extensions.DependencyInjection;
 using ShopAPI;
 using TTT.API.Command;
 using TTT.API.Player;
-using TTT.Game;
 using TTT.Game.lang;
 using TTT.Locale;
 

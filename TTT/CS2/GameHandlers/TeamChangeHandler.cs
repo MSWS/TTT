@@ -11,12 +11,14 @@ using TTT.API.Game;
 using TTT.API.Player;
 using TTT.CS2.API;
 using TTT.CS2.Extensions;
-using TTT.Game;
 using TTT.Game.Events.Player;
 
 namespace TTT.CS2.GameHandlers;
 
 public class TeamChangeHandler(IServiceProvider provider) : IPluginModule {
+  private readonly IBodyTracker bodies =
+    provider.GetRequiredService<IBodyTracker>();
+
   private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
 
   private readonly IPlayerConverter<CCSPlayerController> converter =
@@ -24,9 +26,6 @@ public class TeamChangeHandler(IServiceProvider provider) : IPluginModule {
 
   private readonly IGameManager games =
     provider.GetRequiredService<IGameManager>();
-
-  private readonly IBodyTracker bodies =
-    provider.GetRequiredService<IBodyTracker>();
 
   public void Dispose() { }
   public void Start() { }

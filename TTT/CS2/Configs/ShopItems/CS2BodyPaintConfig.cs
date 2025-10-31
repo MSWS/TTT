@@ -22,7 +22,7 @@ public class CS2BodyPaintConfig : IStorage<BodyPaintConfig>, IPluginModule {
   public static readonly FakeConVar<string> CV_COLOR = new(
     "css_ttt_shop_bodypaint_color",
     "Color to apply to the player's body (HTML hex or known color name)",
-    "GreenYellow", ConVarFlags.FCVAR_NONE);
+    "GreenYellow");
 
   public void Dispose() { }
 

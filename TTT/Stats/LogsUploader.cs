@@ -1,4 +1,6 @@
-﻿using JetBrains.Annotations;
+﻿using System.Text;
+using System.Text.Json;
+using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using Stats.lang;
 using TTT.API.Events;
@@ -13,14 +15,14 @@ public class LogsUploader(IServiceProvider provider) : IListener {
   private readonly HttpClient client =
     provider.GetRequiredService<HttpClient>();
 
-  private readonly IRoundTracker roundTracker =
-    provider.GetRequiredService<IRoundTracker>();
-
   private readonly IMsgLocalizer localizer =
     provider.GetRequiredService<IMsgLocalizer>();
 
   private readonly IMessenger messenger =
     provider.GetRequiredService<IMessenger>();
+
+  private readonly IRoundTracker roundTracker =
+    provider.GetRequiredService<IRoundTracker>();
 
   public void Dispose() { }
 
@@ -33,9 +35,8 @@ public class LogsUploader(IServiceProvider provider) : IListener {
 
     var data = new { logs };
 
-    var payload = new StringContent(
-      System.Text.Json.JsonSerializer.Serialize(data),
-      System.Text.Encoding.UTF8, "application/json");
+    var payload = new StringContent(JsonSerializer.Serialize(data),
+      Encoding.UTF8, "application/json");
 
     Task.Run(async () => {
       var id = roundTracker.CurrentRoundId;

@@ -1,13 +1,13 @@
 ﻿using System.Net;
+using System.Text;
+using System.Text.Json;
 using CounterStrikeSharp.API;
-using CounterStrikeSharp.API.Core.Attributes;
 using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using Stats.lang;
 using TTT.API.Events;
 using TTT.API.Game;
 using TTT.API.Messages;
-using TTT.API.Player;
 using TTT.API.Role;
 using TTT.Game.Events.Body;
 using TTT.Game.Events.Game;
@@ -19,22 +19,25 @@ namespace Stats;
 
 public class RoundListener(IServiceProvider provider)
   : IListener, IRoundTracker {
-  public void Dispose() {
-    provider.GetRequiredService<IEventBus>().UnregisterListener(this);
-  }
+  private readonly Dictionary<string, int> bodiesFound = new();
+  private readonly HashSet<string> deaths = new();
 
-  private readonly IRoleAssigner roles =
-    provider.GetRequiredService<IRoleAssigner>();
-
-  private readonly IMessenger messenger =
-    provider.GetRequiredService<IMessenger>();
+  private readonly Dictionary<string, (int, int, int)> kills = new();
 
   private readonly IMsgLocalizer localizer =
     provider.GetRequiredService<IMsgLocalizer>();
 
-  private Dictionary<string, (int, int, int)> kills = new();
-  private Dictionary<string, int> bodiesFound = new();
-  private HashSet<string> deaths = new();
+  private readonly IMessenger messenger =
+    provider.GetRequiredService<IMessenger>();
+
+  private readonly IRoleAssigner roles =
+    provider.GetRequiredService<IRoleAssigner>();
+
+  public void Dispose() {
+    provider.GetRequiredService<IEventBus>().UnregisterListener(this);
+  }
+
+  public int? CurrentRoundId { get; set; }
 
   [UsedImplicitly]
   [EventHandler(Priority = Priority.MONITOR, IgnoreCanceled = true)]
@@ -97,16 +100,15 @@ public class RoundListener(IServiceProvider provider)
       map_name, startedAt, participants = getParticipants(game)
     };
 
-    var content = new StringContent(
-      System.Text.Json.JsonSerializer.Serialize(data),
-      System.Text.Encoding.UTF8, "application/json");
+    var content = new StringContent(JsonSerializer.Serialize(data),
+      Encoding.UTF8, "application/json");
 
     var client = provider.GetRequiredService<HttpClient>();
     var response = await provider.GetRequiredService<HttpClient>()
      .PostAsync("round", content);
 
     var json    = await response.Content.ReadAsStringAsync();
-    var jsonDoc = System.Text.Json.JsonDocument.Parse(json);
+    var jsonDoc = JsonDocument.Parse(json);
     CurrentRoundId = jsonDoc.RootElement.GetProperty("round_id").GetInt32();
 
     if (response.StatusCode == HttpStatusCode.Created) {
@@ -120,12 +122,10 @@ public class RoundListener(IServiceProvider provider)
     // Retry
     response = await client.PostAsync("round", content);
 
-    jsonDoc = System.Text.Json.JsonDocument.Parse(
-      await response.Content.ReadAsStringAsync());
+    jsonDoc = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
     CurrentRoundId = jsonDoc.RootElement.GetProperty("round_id").GetInt32();
-    if (response.StatusCode == HttpStatusCode.Created) {
+    if (response.StatusCode == HttpStatusCode.Created)
       await notifyNewRound(CurrentRoundId.Value);
-    }
   }
 
   private Task notifyNewRound(int id) {
@@ -143,24 +143,13 @@ public class RoundListener(IServiceProvider provider)
     await Task.Run(async () => {
       var data = new { ended_at, winning_role, participants };
 
-      var content = new StringContent(
-        System.Text.Json.JsonSerializer.Serialize(data),
-        System.Text.Encoding.UTF8, "application/json");
+      var content = new StringContent(JsonSerializer.Serialize(data),
+        Encoding.UTF8, "application/json");
 
       var client = provider.GetRequiredService<HttpClient>();
 
       await client.PatchAsync("round/" + CurrentRoundId, content);
     });
-  }
-
-  private record Participant {
-    public required string steam_id { get; init; }
-    public required string role { get; init; }
-    public int? inno_kills { get; init; }
-    public int? traitor_kills { get; init; }
-    public int? detective_kills { get; init; }
-    public int? bodies_found { get; init; }
-    public bool? died { get; init; }
   }
 
   private List<Participant> getParticipants(IGame game) {
@@ -188,5 +177,13 @@ public class RoundListener(IServiceProvider provider)
     return list;
   }
 
-  public int? CurrentRoundId { get; set; }
+  private record Participant {
+    public required string steam_id { get; init; }
+    public required string role { get; init; }
+    public int? inno_kills { get; init; }
+    public int? traitor_kills { get; init; }
+    public int? detective_kills { get; init; }
+    public int? bodies_found { get; init; }
+    public bool? died { get; init; }
+  }
 }

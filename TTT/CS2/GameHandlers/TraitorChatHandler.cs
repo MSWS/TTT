@@ -29,10 +29,10 @@ public class TraitorChatHandler(IServiceProvider provider) : IPluginModule {
   private readonly IMessenger messenger =
     provider.GetRequiredService<IMessenger>();
 
+  private readonly IMuted? mutedPlayers = provider.GetService<IMuted>();
+
   private readonly IRoleAssigner roles =
     provider.GetRequiredService<IRoleAssigner>();
-
-  private readonly IMuted? mutedPlayers = provider.GetService<IMuted>();
 
   private IActain? maulService;
 
