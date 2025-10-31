@@ -1,5 +1,6 @@
 using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
+using CounterStrikeSharp.API.Modules.Utils;
 using TTT.API.Player;
 
 namespace TTT.CS2.Player;
@@ -96,7 +97,11 @@ public class CS2Player : IOnlinePlayer, IEquatable<CS2Player> {
   }
 
   public bool IsAlive {
-    get => Player != null && Player.Pawn.Value is { Health: > 0 };
+    get
+      => Player != null && Player is {
+        Team             : CsTeam.CounterTerrorist or CsTeam.Terrorist,
+        Pawn.Value.Health: > 0
+      };
 
     set
       => throw new NotSupportedException(

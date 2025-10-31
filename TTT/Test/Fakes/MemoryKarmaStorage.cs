@@ -25,6 +25,6 @@ public class MemoryKarmaStorage(IEventBus bus)
   }
 
   public override Task<int> Load(IPlayer key) {
-    return Task.FromResult(data.AddOrGet(key, () => config.DefaultKarma));
+    return Task.FromResult(data.GetOrAdd(key, config.DefaultKarma));
   }
 }
