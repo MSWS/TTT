@@ -20,7 +20,7 @@ public class CS2HealthshotConfig : IStorage<HealthshotConfig>, IPluginModule {
 
   public static readonly FakeConVar<string> CV_WEAPON = new(
     "css_ttt_shop_healthshot_weapon", "Weapon entity name for the Healthshot",
-    "weapon_healthshot", ConVarFlags.FCVAR_NONE);
+    "weapon_healthshot");
 
   public void Dispose() { }
 
