@@ -13,5 +13,6 @@ public static class SpecialRoundCollection {
     services.AddModBehavior<SpeedRound>();
     services.AddModBehavior<BhopRound>();
     services.AddModBehavior<VanillaRound>();
+    services.AddModBehavior<SuppressedRound>();
   }
 }

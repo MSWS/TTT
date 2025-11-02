@@ -5,4 +5,5 @@ namespace ShopAPI;
 public interface IItemSorter {
   List<IShopItem> GetSortedItems(IOnlinePlayer? player, bool refresh = false);
   DateTime? GetLastUpdate(IOnlinePlayer? player);
+  void InvalidateOrder(IOnlinePlayer? player);
 }

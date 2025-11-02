@@ -1,4 +1,4 @@
-﻿namespace SpecialRoundAPI;
+﻿namespace SpecialRoundAPI.Configs;
 
 public record SpeedRoundConfig : SpecialRoundConfig {
   public override float Weight { get; init; } = 0.6f;
