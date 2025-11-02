@@ -63,21 +63,19 @@ public class CS2GameConfig : IStorage<TTTConfig>, IPluginModule {
 
   public static readonly FakeConVar<string> CV_TRAITOR_WEAPONS = new(
     "css_ttt_roleweapons_traitor",
-    "Weapons available to traitors at start of round",
-    "weapon_knife,weapon_glock", ConVarFlags.FCVAR_NONE,
-    new ItemValidator(allowMultiple: true));
+    "Weapons available to traitors at start of round", "",
+    ConVarFlags.FCVAR_NONE, new ItemValidator(allowMultiple: true));
 
   public static readonly FakeConVar<string> CV_DETECTIVE_WEAPONS = new(
     "css_ttt_roleweapons_detective",
     "Weapons available to detectives at start of round",
-    "weapon_knife,weapon_taser,weapon_m4a1,weapon_revolver",
-    ConVarFlags.FCVAR_NONE, new ItemValidator(allowMultiple: true));
+    "weapon_taser,weapon_m4a1_silencer,weapon_revolver", ConVarFlags.FCVAR_NONE,
+    new ItemValidator(allowMultiple: true));
 
   public static readonly FakeConVar<string> CV_INNOCENT_WEAPONS = new(
     "css_ttt_roleweapons_innocent",
-    "Weapons available to innocents at start of round",
-    "weapon_knife,weapon_glock", ConVarFlags.FCVAR_NONE,
-    new ItemValidator(allowMultiple: true));
+    "Weapons available to innocents at start of round", "",
+    ConVarFlags.FCVAR_NONE, new ItemValidator(allowMultiple: true));
 
   public static readonly FakeConVar<int> CV_TIME_BETWEEN_ROUNDS = new(
     "css_ttt_time_between_rounds", "Time to wait between rounds in seconds", 1,
