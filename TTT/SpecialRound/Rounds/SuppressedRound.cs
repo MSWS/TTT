@@ -1,4 +1,5 @@
-﻿using CounterStrikeSharp.API.Core;
+﻿using CounterStrikeSharp.API;
+using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.UserMessages;
 using Microsoft.Extensions.DependencyInjection;
 using SpecialRound.lang;
@@ -31,8 +32,25 @@ public class SuppressedRound(IServiceProvider provider)
     plugin?.HookUserMessage(452, onWeaponSound);
   }
 
-  private HookResult onWeaponSound(UserMessage native) {
-    native.Recipients.Clear();
+  private static readonly HashSet<uint> silencedWeapons = new() {
+    1,  // deagle
+    2,  // dual berettas
+    3,  // five seven
+    30, // tec9
+    32, // p2000
+    36, // p250
+    4,  // glock
+    61, // usp-s
+    63, // cz75 auto
+    64  // r8 revolver
+  };
+
+  private HookResult onWeaponSound(UserMessage msg) {
+    var defIndex = msg.ReadUInt("item_def_index");
+
+    if (!silencedWeapons.Contains(defIndex)) return HookResult.Continue;
+
+    msg.Recipients.Clear();
     return HookResult.Handled;
   }
 

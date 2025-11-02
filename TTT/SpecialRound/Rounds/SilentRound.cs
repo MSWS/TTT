@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using CounterStrikeSharp.API;
+using Microsoft.Extensions.DependencyInjection;
 using SpecialRound.lang;
 using SpecialRoundAPI;
 using SpecialRoundAPI.Configs;
@@ -20,7 +21,10 @@ public class SilentRound(IServiceProvider provider)
      .GetAwaiter()
      .GetResult() ?? new SilentRoundConfig();
 
-  public override void ApplyRoundEffects() { }
+  public override void ApplyRoundEffects() {
+    foreach (var player in Utilities.GetPlayers())
+      player.VoiceFlags |= VoiceFlags.Muted;
+  }
 
   public override void OnGameState(GameStateUpdateEvent ev) { }
 }
