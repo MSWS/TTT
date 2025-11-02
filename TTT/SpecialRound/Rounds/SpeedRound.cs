@@ -58,6 +58,8 @@ public class SpeedRound(IServiceProvider provider)
   }
 
   private void setTime(TimeSpan span) {
+    span = TimeSpan.FromSeconds(Math.Min(span.TotalSeconds,
+      config.MaxTimeEver.TotalSeconds));
     Server.NextWorldUpdate(() => {
       RoundUtil.SetTimeRemaining((int)span.TotalSeconds);
     });
