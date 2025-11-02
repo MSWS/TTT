@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using CounterStrikeSharp.API;
+using Microsoft.Extensions.DependencyInjection;
 using SpecialRoundAPI;
 using TTT.API;
 using TTT.API.Command;
@@ -25,7 +26,7 @@ public class SpecialRoundCommand(IServiceProvider provider) : ICommand {
 
     var rounds = provider.GetServices<ITerrorModule>()
      .OfType<AbstractSpecialRound>()
-     .ToDictionary(r => r.GetType().Name.ToLower(), r => r);
+     .ToDictionary(r => r.Name.ToLower(), r => r);
 
     var roundName = info.Args[1].ToLower();
     if (!rounds.TryGetValue(roundName, out var round)) {
@@ -34,8 +35,10 @@ public class SpecialRoundCommand(IServiceProvider provider) : ICommand {
       return Task.FromResult(CommandResult.INVALID_ARGS);
     }
 
-    tracker.TryStartSpecialRound(round);
-    info.ReplySync($"Started special round '{roundName}'.");
+    Server.NextWorldUpdate(() => {
+      tracker.TryStartSpecialRound(round);
+      info.ReplySync($"Started special round '{roundName}'.");
+    });
     return Task.FromResult(CommandResult.SUCCESS);
   }
 }

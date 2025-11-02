@@ -4,6 +4,7 @@ using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using SpecialRound.lang;
 using SpecialRoundAPI;
+using SpecialRoundAPI.Configs;
 using TTT.API.Events;
 using TTT.API.Game;
 using TTT.API.Role;
@@ -58,6 +59,8 @@ public class SpeedRound(IServiceProvider provider)
   }
 
   private void setTime(TimeSpan span) {
+    span = TimeSpan.FromSeconds(Math.Min(span.TotalSeconds,
+      config.MaxTimeEver.TotalSeconds));
     Server.NextWorldUpdate(() => {
       RoundUtil.SetTimeRemaining((int)span.TotalSeconds);
     });

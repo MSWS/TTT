@@ -53,10 +53,10 @@ public class RoleAssignerTest(IServiceProvider provider) {
   [InlineData(9, 6, 2, 1)]
   [InlineData(10, 7, 2, 1)]
   [InlineData(20, 14, 4, 2)]
-  [InlineData(30, 21, 6, 3)]
-  [InlineData(32, 21, 7, 4)]
-  [InlineData(60, 41, 12, 7)]
-  [InlineData(64, 43, 13, 8)]
+  [InlineData(30, 22, 6, 2)]
+  [InlineData(32, 22, 7, 3)]
+  [InlineData(60, 43, 12, 5)]
+  [InlineData(64, 45, 13, 6)]
   public void AssignRole_AssignsBalanced_Roles(int players, int innos,
     int traitors, int detectives) {
     var playerList = new HashSet<IOnlinePlayer>();

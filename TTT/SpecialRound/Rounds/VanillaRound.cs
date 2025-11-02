@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using ShopAPI.Events;
 using SpecialRound.lang;
 using SpecialRoundAPI;
+using SpecialRoundAPI.Configs;
 using TTT.API.Events;
 using TTT.API.Messages;
 using TTT.API.Storage;
