@@ -19,24 +19,20 @@ public class MapHookListener(IServiceProvider provider)
   [UsedImplicitly]
   [EventHandler(Priority = Priority.MONITOR, IgnoreCanceled = true)]
   public void OnRoleAssign(PlayerRoleAssignEvent ev) {
-    Server.NextWorldUpdate(() => {
-      var player = converter.GetPlayer(ev.Player);
-      if (player == null) return;
+    var player = converter.GetPlayer(ev.Player);
+    if (player == null) return;
 
-      switch (ev.Role) {
-        case TraitorRole:
-          player.Pawn.Value?.AcceptInput("AddContext", null, null, "TRAITOR:1");
-          break;
-        case DetectiveRole:
-          player.Pawn.Value?.AcceptInput("AddContext", null, null,
-            "DETECTIVE:1");
-          break;
-        case InnocentRole:
-          player.Pawn.Value?.AcceptInput("AddContext", null, null,
-            "INNOCENT:1");
-          break;
-      }
-    });
+    switch (ev.Role) {
+      case TraitorRole:
+        player.Pawn.Value?.AcceptInput("AddContext", null, null, "TRAITOR:1");
+        break;
+      case DetectiveRole:
+        player.Pawn.Value?.AcceptInput("AddContext", null, null, "DETECTIVE:1");
+        break;
+      case InnocentRole:
+        player.Pawn.Value?.AcceptInput("AddContext", null, null, "INNOCENT:1");
+        break;
+    }
   }
 
   [UsedImplicitly]
