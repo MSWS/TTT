@@ -11,7 +11,7 @@ namespace TTT.CS2.Configs.ShopItems;
 
 public class CS2BodyPaintConfig : IStorage<BodyPaintConfig>, IPluginModule {
   public static readonly FakeConVar<int> CV_PRICE = new(
-    "css_ttt_shop_bodypaint_price", "Price of the Body Paint item", 40,
+    "css_ttt_shop_bodypaint_price", "Price of the Body Paint item", 30,
     ConVarFlags.FCVAR_NONE, new RangeValidator<int>(0, 10000));
 
   public static readonly FakeConVar<int> CV_MAX_USES = new(

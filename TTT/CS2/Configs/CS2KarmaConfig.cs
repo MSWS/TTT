@@ -74,13 +74,13 @@ public class CS2KarmaConfig : IStorage<KarmaConfig>, IPluginModule {
 
   public static readonly FakeConVar<int> CV_KARMA_PER_ROUND = new(
     "css_ttt_karma_per_round",
-    "Amount of karma a player will gain at the end of each round", 2,
+    "Amount of karma a player will gain at the end of each round", 1,
     ConVarFlags.FCVAR_NONE, new RangeValidator<int>(0, 50));
 
   public static readonly FakeConVar<int> CV_KARMA_PER_ROUND_WIN = new(
     "css_ttt_karma_per_round_win",
     "Amount of karma a player will gain at the end of each round if their team won",
-    4, ConVarFlags.FCVAR_NONE, new RangeValidator<int>(0, 50));
+    1, ConVarFlags.FCVAR_NONE, new RangeValidator<int>(0, 50));
 
   public void Dispose() { }
 

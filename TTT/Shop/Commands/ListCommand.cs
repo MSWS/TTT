@@ -77,6 +77,7 @@ public class ListCommand(IServiceProvider provider) : ICommand, IItemSorter {
   public void InvalidateOrder(IOnlinePlayer? player) {
     if (player == null) return;
     cache.Remove(player.Id);
+    lastUpdate.Remove(player.Id);
   }
 
   private List<IShopItem> calculateSortedItems(IOnlinePlayer? player) {
