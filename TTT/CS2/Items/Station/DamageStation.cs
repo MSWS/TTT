@@ -1,4 +1,5 @@
-﻿using CounterStrikeSharp.API.Core;
+﻿using CounterStrikeSharp.API;
+using CounterStrikeSharp.API.Core;
 using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using ShopAPI.Configs.Traitor;
@@ -73,8 +74,10 @@ public class DamageStation(IServiceProvider provider)
        .ToList();
 
       foreach (var (player, dist, gamePlayer) in playerDists) {
-        gamePlayer.EmitSound("Player.DamageFall", null, 0.2f);
-        if (Roles.GetRoles(player).Any(r => r is TraitorRole)) continue;
+        if ((gamePlayer.Buttons & PlayerButtons.Walk) != PlayerButtons.Walk) {
+          gamePlayer.EmitSound("Player.DamageFall", null, 0.2f);
+          if (Roles.GetRoles(player).Any(r => r is TraitorRole)) continue;
+        }
 
         var healthScale = 1.0 - dist / _Config.MaxRange;
         var damageAmount =

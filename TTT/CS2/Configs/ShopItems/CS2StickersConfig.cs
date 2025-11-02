@@ -10,7 +10,7 @@ namespace TTT.CS2.Configs.ShopItems;
 
 public class CS2StickersConfig : IStorage<StickersConfig>, IPluginModule {
   public static readonly FakeConVar<int> CV_PRICE = new(
-    "css_ttt_shop_stickers_price", "Price of the Stickers item (Detective)", 35,
+    "css_ttt_shop_stickers_price", "Price of the Stickers item (Detective)", 45,
     ConVarFlags.FCVAR_NONE, new RangeValidator<int>(0, 10000));
 
   public void Dispose() { }

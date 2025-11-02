@@ -16,6 +16,12 @@ public class RoundMsgs {
   public static IMsg VANILLA_ROUND_REMINDER
     => MsgFactory.Create(nameof(VANILLA_ROUND_REMINDER));
 
+  public static IMsg SPECIAL_ROUND_SUPPRESSED
+    => MsgFactory.Create(nameof(SPECIAL_ROUND_SUPPRESSED));
+
+  public static IMsg SPECIAL_ROUND_SILENT
+    => MsgFactory.Create(nameof(SPECIAL_ROUND_SILENT));
+
   public static IMsg SPECIAL_ROUND_STARTED(AbstractSpecialRound round) {
     return MsgFactory.Create(nameof(SPECIAL_ROUND_STARTED), round.Name);
   }

@@ -34,6 +34,8 @@ public class BodyPickupListener(IServiceProvider provider)
     if (ev.Player is not IOnlinePlayer online)
       throw new InvalidOperationException("Player is not an online player.");
 
+    if (ev.Player.Id == body.OfPlayer.Id) return;
+
     var identifyEvent = new BodyIdentifyEvent(body, online);
 
     Bus.Dispatch(identifyEvent);

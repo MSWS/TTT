@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using SpecialRound.lang;
 using SpecialRoundAPI;
+using SpecialRoundAPI.Configs;
 using TTT.API.Game;
 using TTT.API.Storage;
 using TTT.Game.Events.Game;

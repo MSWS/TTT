@@ -1,5 +1,6 @@
 using CounterStrikeSharp.API.Core;
 using Microsoft.Extensions.DependencyInjection;
+using ShopAPI;
 using ShopAPI.Configs;
 using ShopAPI.Configs.Detective;
 using ShopAPI.Configs.Traitor;
@@ -63,6 +64,8 @@ public static class CS2ServiceCollection {
     collection
      .AddModBehavior<IStorage<OneHitKnifeConfig>, CS2OneHitKnifeConfig>();
     collection.AddModBehavior<IStorage<SilentAWPConfig>, CS2SilentAWPConfig>();
+    collection
+     .AddModBehavior<IStorage<HealthshotConfig>, CS2HealthshotConfig>();
 
     // TTT - CS2 Specific optionals
     collection.AddScoped<ITextSpawner, TextSpawner>();

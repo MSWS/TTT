@@ -9,11 +9,12 @@ public record TTTConfig {
     public Func<int, int> TraitorCount { get; init; } =
       p => (int)Math.Ceiling((p - 1) / 5f);
 
-    public Func<int, int> DetectiveCount { get; init; } =
-      p => (int)Math.Floor(p / 8f);
+    public Func<int, int> DetectiveCount { get; init; } = p
+      => (int)Math.Ceiling(Math.Floor(p / 8f) / 1.5f);
 
     public Func<int, int> InnocentCount { get; init; } = p
-      => p - (int)Math.Ceiling((p - 1) / 5f) - (int)Math.Floor(p / 8f);
+      => p - (int)Math.Ceiling((p - 1) / 5f)
+      - (int)Math.Ceiling(Math.Floor(p / 8f) / 1.5f);
   }
 
   public record RoleConfig {

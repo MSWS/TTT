@@ -51,7 +51,9 @@ public class PropMover(IServiceProvider provider) : IPluginModule {
       return;
     }
 
-    if (!pressed.HasFlag(PlayerButtons.Use)) return;
+    if (!pressed.HasFlag(PlayerButtons.Use)
+      && !pressed.HasFlag(PlayerButtons.Inspect))
+      return;
 
     onStartUse(player);
   }

@@ -41,15 +41,15 @@ public class PlayerPingShopAlias(IServiceProvider provider) : IPluginModule {
 
   private void onButton(CCSPlayerController? player, int index) {
     if (player == null) return;
-    if (converter.GetPlayer(player) is not IOnlinePlayer gamePlayer) return;
+    if (converter.GetPlayer(player) is not IOnlinePlayer apiPlayer) return;
 
-    var lastUpdated = itemSorter.GetLastUpdate(gamePlayer);
+    var lastUpdated = itemSorter.GetLastUpdate(apiPlayer);
     if (lastUpdated == null
       || DateTime.Now - lastUpdated > TimeSpan.FromSeconds(20))
       return;
-    var cmdInfo = new CS2CommandInfo(provider, gamePlayer, 0, "css_shop", "buy",
-      (index - 1).ToString());
-    cmdInfo.CallingContext = CommandCallingContext.Chat;
+    var cmdInfo = new CS2CommandInfo(provider, apiPlayer, 0, "css_shop", "buy",
+      (index - 1).ToString()) { CallingContext = CommandCallingContext.Chat };
     provider.GetRequiredService<ICommandManager>().ProcessCommand(cmdInfo);
+    itemSorter.InvalidateOrder(apiPlayer);
   }
 }

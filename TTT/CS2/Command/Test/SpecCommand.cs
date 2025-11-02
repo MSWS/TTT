@@ -11,6 +11,8 @@ public class SpecCommand(IServiceProvider provider) : ICommand {
   public void Dispose() { }
   public void Start() { }
 
+  public string Id => "spec";
+
   public Task<CommandResult>
     Execute(IOnlinePlayer? executor, ICommandInfo info) {
     var target = executor;

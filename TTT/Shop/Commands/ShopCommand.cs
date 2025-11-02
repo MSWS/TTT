@@ -72,4 +72,8 @@ public class ShopCommand(IServiceProvider provider) : ICommand, IItemSorter {
   public DateTime? GetLastUpdate(IOnlinePlayer? player) {
     return listCmd.GetLastUpdate(player);
   }
+
+  public void InvalidateOrder(IOnlinePlayer? player) {
+    listCmd.InvalidateOrder(player);
+  }
 }
