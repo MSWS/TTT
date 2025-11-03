@@ -14,7 +14,8 @@ namespace TTT.CS2.Listeners;
 
 public class WardenTagAssigner(IServiceProvider provider)
   : BaseListener(provider) {
-  private Dictionary<string, string> oldTags = new();
+  private Dictionary<string, (string, char)> oldTags =
+    new Dictionary<string, (string, char)>();
 
   private readonly IPlayerConverter<CCSPlayerController> converter =
     provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
@@ -29,9 +30,12 @@ public class WardenTagAssigner(IServiceProvider provider)
       if (gamePlayer == null) return;
 
       Task.Run(async () => {
-        if (ev.Role is DetectiveRole)
-          oldTags[ev.Player.Id] =
-            await maul.getTagService().GetTag(gamePlayer.SteamID);
+        if (ev.Role is DetectiveRole) {
+          var oldTag = await maul.getTagService().GetTag(gamePlayer.SteamID);
+          var oldTagColor =
+            await maul.getTagService().GetTagColor(gamePlayer.SteamID);
+          oldTags[ev.Player.Id] = (oldTag, oldTagColor);
+        }
 
         await Server.NextWorldUpdateAsync(() => {
           if (ev.Role is DetectiveRole) {
@@ -39,9 +43,8 @@ public class WardenTagAssigner(IServiceProvider provider)
             maul.getTagService()
              .SetTagColor(gamePlayer, ChatColors.LightBlue, false);
           } else if (oldTags.TryGetValue(ev.Player.Id, out var oldTag)) {
-            maul.getTagService().SetTag(gamePlayer, oldTag, false);
-            maul.getTagService()
-             .SetTagColor(gamePlayer, ChatColors.White, false);
+            maul.getTagService().SetTag(gamePlayer, oldTag.Item1, false);
+            maul.getTagService().SetTagColor(gamePlayer, oldTag.Item2, false);
 
             oldTags.Remove(ev.Player.Id);
           }
