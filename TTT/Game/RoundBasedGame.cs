@@ -177,14 +177,6 @@ public class RoundBasedGame(IServiceProvider provider) : IGame {
       => RoleAssigner.GetRoles(p)
        .Any(r => r is TraitorRole or DetectiveRole or InnocentRole)));
 
-    if (players.Count < config.RoundCfg.MinimumPlayers) {
-      Messenger?.MessageAll(
-        Locale[GameMsgs.NOT_ENOUGH_PLAYERS(config.RoundCfg.MinimumPlayers)]);
-      State = State.WAITING;
-      players.Clear();
-      return;
-    }
-
     State = State.IN_PROGRESS;
 
     var traitors    = ((IGame)this).GetAlive(typeof(TraitorRole)).Count;
