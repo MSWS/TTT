@@ -54,5 +54,6 @@ public class DeagleDamageListener(IServiceProvider provider)
     }
 
     ev.HpLeft = -100;
+    Messenger.Message(victim, Locale[DeagleMsgs.SHOP_ITEM_DEAGLE_VICTIM]);
   }
 }

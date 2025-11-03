@@ -11,4 +11,7 @@ public class DeagleMsgs {
 
   public static IMsg SHOP_ITEM_DEAGLE_HIT_FF
     => MsgFactory.Create(nameof(SHOP_ITEM_DEAGLE_HIT_FF));
+
+  public static IMsg SHOP_ITEM_DEAGLE_VICTIM
+    => MsgFactory.Create(nameof(SHOP_ITEM_DEAGLE_VICTIM));
 }
