@@ -41,7 +41,7 @@ public class WardenTagAssigner(IServiceProvider provider)
           if (ev.Role is DetectiveRole) {
             maul.getTagService().SetTag(gamePlayer, "[DETECTIVE]", false);
             maul.getTagService()
-             .SetTagColor(gamePlayer, ChatColors.LightBlue, false);
+             .SetTagColor(gamePlayer, ChatColors.DarkBlue, false);
           } else if (oldTags.TryGetValue(ev.Player.Id, out var oldTag)) {
             maul.getTagService().SetTag(gamePlayer, oldTag.Item1, false);
             maul.getTagService().SetTagColor(gamePlayer, oldTag.Item2, false);
