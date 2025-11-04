@@ -1,5 +1,6 @@
 ﻿using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
+using CounterStrikeSharp.API.Modules.Utils;
 using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using ShopAPI.Configs.Traitor;
@@ -46,6 +47,13 @@ public class DamageStation(IServiceProvider provider)
   override protected void onInterval() {
     var players  = finder.GetOnline();
     var toRemove = new List<CPhysicsPropMultiplayer>();
+    var playerMapping = players
+     .Select(p => (ApiPlayer: p, GamePlayer: converter.GetPlayer(p)))
+     .Where(m
+        => m.GamePlayer != null
+        && !Roles.GetRoles(m.ApiPlayer).Any(r => r is TraitorRole))
+     .ToList();
+
     foreach (var (prop, info) in props) {
       if (_Config.TotalHealthGiven != 0 && Math.Abs(info.HealthGiven)
         > Math.Abs(_Config.TotalHealthGiven)) {
@@ -60,10 +68,6 @@ public class DamageStation(IServiceProvider provider)
 
       var propPos = prop.AbsOrigin;
 
-      var playerMapping = players.Select(p
-          => (ApiPlayer: p, GamePlayer: converter.GetPlayer(p)))
-       .Where(m => m.GamePlayer != null);
-
       var playerDists = playerMapping
        .Select(t => (t.ApiPlayer, Origin: t.GamePlayer!.Pawn.Value?.AbsOrigin,
           t.GamePlayer))
@@ -74,11 +78,6 @@ public class DamageStation(IServiceProvider provider)
        .ToList();
 
       foreach (var (player, dist, gamePlayer) in playerDists) {
-        if ((gamePlayer.Buttons & PlayerButtons.Walk) != PlayerButtons.Walk) {
-          gamePlayer.EmitSound("Player.DamageFall", null, 0.2f);
-          if (Roles.GetRoles(player).Any(r => r is TraitorRole)) continue;
-        }
-
         var healthScale = 1.0 - dist / _Config.MaxRange;
         var damageAmount =
           (int)Math.Floor(_Config.HealthIncrements * healthScale);
@@ -98,12 +97,17 @@ public class DamageStation(IServiceProvider provider)
           bus.Dispatch(playerDeath);
         }
 
+        gamePlayer.EmitSound("Player.DamageFall", SELF(gamePlayer.Slot), 0.2f);
         player.Health    += damageAmount;
         info.HealthGiven += damageAmount;
       }
     }
 
     foreach (var prop in toRemove) props.Remove(prop);
+  }
+
+  private static RecipientFilter SELF(int slot) {
+    return new RecipientFilter(slot);
   }
 
   [UsedImplicitly]

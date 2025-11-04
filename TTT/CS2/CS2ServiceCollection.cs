@@ -72,20 +72,19 @@ public static class CS2ServiceCollection {
 
     // GameHandlers
     collection.AddModBehavior<BodySpawner>();
+    collection.AddModBehavior<BombPlantSuppressor>();
+    collection.AddModBehavior<BuyMenuHandler>();
     collection.AddModBehavior<CombatHandler>();
     collection.AddModBehavior<DamageCanceler>();
+    collection.AddModBehavior<MapChangeCausesEndListener>();
+    collection.AddModBehavior<MapZoneRemover>();
+    collection.AddModBehavior<NameUpdater>();
     collection.AddModBehavior<PlayerConnectionsHandler>();
+    collection.AddModBehavior<PlayerMuter>();
     collection.AddModBehavior<PropMover>();
     collection.AddModBehavior<RoundStart_GameStartHandler>();
-    collection.AddModBehavior<BombPlantSuppressor>();
-    collection.AddModBehavior<MapZoneRemover>();
-    collection.AddModBehavior<BuyMenuHandler>();
     collection.AddModBehavior<TeamChangeHandler>();
     collection.AddModBehavior<TraitorChatHandler>();
-    collection.AddModBehavior<PlayerMuter>();
-    collection.AddModBehavior<MapChangeCausesEndListener>();
-    collection.AddModBehavior<NameUpdater>();
-    // collection.AddModBehavior<EntityTargetHandlers>();
 
     // Damage Cancelers
     collection.AddModBehavior<OutOfRoundCanceler>();
@@ -95,13 +94,14 @@ public static class CS2ServiceCollection {
     collection.AddModBehavior<AfkTimerListener>();
     collection.AddModBehavior<BodyPickupListener>();
     collection.AddModBehavior<IBodyTracker, BodyTracker>();
+    collection.AddModBehavior<KarmaBanner>();
+    collection.AddModBehavior<KarmaSyncer>();
     collection.AddModBehavior<LateSpawnListener>();
+    collection.AddModBehavior<MapHookListener>();
     collection.AddModBehavior<PlayerStatsTracker>();
     collection.AddModBehavior<RoundTimerListener>();
     collection.AddModBehavior<ScreenColorApplier>();
-    collection.AddModBehavior<KarmaBanner>();
-    collection.AddModBehavior<KarmaSyncer>();
-    collection.AddModBehavior<MapHookListener>();
+    collection.AddModBehavior<WardenTagAssigner>();
 
     // Commands
     collection.AddModBehavior<TestCommand>();

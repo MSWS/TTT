@@ -7,8 +7,10 @@ using TTT.API;
 using TTT.API.Events;
 using TTT.API.Game;
 using TTT.API.Player;
+using TTT.API.Role;
 using TTT.CS2.API;
 using TTT.Game.Events.Player;
+using TTT.Game.Roles;
 
 namespace TTT.CS2.GameHandlers;
 
@@ -23,6 +25,9 @@ public class CombatHandler(IServiceProvider provider) : IPluginModule {
 
   private readonly IAliveSpoofer spoofer =
     provider.GetRequiredService<IAliveSpoofer>();
+
+  private readonly IRoleAssigner roles =
+    provider.GetRequiredService<IRoleAssigner>();
 
   public void Start() { }
 
@@ -45,7 +50,19 @@ public class CombatHandler(IServiceProvider provider) : IPluginModule {
     if (games.ActiveGame is not { State: State.IN_PROGRESS })
       return HookResult.Continue;
 
-    if (ev.Attacker != null) ev.FireEventToClient(ev.Attacker);
+    if (ev.Attacker != null) {
+      ev.FireEventToClient(ev.Attacker);
+      var apiPlayer = converter.GetPlayer(ev.Attacker);
+      var role      = roles.GetRoles(apiPlayer);
+      if (role.Any(r => r is TraitorRole))
+        foreach (var p in Utilities.GetPlayers()) {
+          var apiP = converter.GetPlayer(p);
+          if (apiP.Id == apiPlayer.Id) continue;
+          var r = roles.GetRoles(converter.GetPlayer(p));
+          if (role.Intersect(r).Any()) ev.FireEventToClient(p);
+        }
+    }
+
     info.DontBroadcast = true;
     spoofer.SpoofAlive(player);
     Server.NextWorldUpdateAsync(() => bus.Dispatch(deathEvent));
