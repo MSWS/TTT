@@ -27,7 +27,7 @@ public class PistolRound(IServiceProvider provider)
      .GetAwaiter()
      .GetResult() ?? new PistolRoundConfig();
 
-  private IInventoryManager inventory = provider
+  private readonly IInventoryManager inventory = provider
    .GetRequiredService<IInventoryManager>();
 
   public override SpecialRoundConfig Config => config;
