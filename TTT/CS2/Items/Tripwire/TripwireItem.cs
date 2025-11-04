@@ -64,37 +64,6 @@ public class TripwireItem(IServiceProvider provider)
       "models/generic/conveyor_control_panel_01/conveyor_button_02.vmdl");
   }
 
-  public override PurchaseResult CanPurchase(IOnlinePlayer player) {
-    PurchaseResult result = base.CanPurchase(player);
-    if (result != PurchaseResult.SUCCESS) return result;
-    Server.NextWorldUpdateAsync(() => {
-        var gamePlayer = converter.GetPlayer(player);
-        if (gamePlayer == null) {
-          result = PurchaseResult.UNKNOWN_ERROR;
-          return;
-        }
-
-        var trace = gamePlayer.GetGameTraceByEyePosition(TraceMask.MaskSolid,
-          Contents.NoDraw, gamePlayer);
-        if (trace == null) {
-          result = PurchaseResult.TRIPWIRE_TOO_FAR;
-          return;
-        }
-
-        var endPos = trace.Value.EndPos;
-        var distance = gamePlayer.GetEyePosition()
-         .DistanceSquared(endPos.toVector());
-        if (distance > 2500) {
-          result = PurchaseResult.TRIPWIRE_TOO_FAR;
-          return;
-        }
-      })
-     .GetAwaiter()
-     .GetResult();
-
-    return result;
-  }
-
   public override void OnPurchase(IOnlinePlayer player) {
     Server.NextWorldUpdate(() => {
       var gamePlayer = converter.GetPlayer(player);

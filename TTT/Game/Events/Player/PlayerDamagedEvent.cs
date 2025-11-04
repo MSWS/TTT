@@ -8,7 +8,7 @@ namespace TTT.Game.Events.Player;
 public class PlayerDamagedEvent(IOnlinePlayer player, IOnlinePlayer? attacker,
   int originalHp, int hpLeft) : PlayerEvent(player), ICancelableEvent {
   public PlayerDamagedEvent(IOnlinePlayer player, IOnlinePlayer? attacker,
-    int damageDealt) : this(player, attacker, player.Health - damageDealt,
+    int damageDealt) : this(player, attacker, player.Health + damageDealt,
     player.Health) { }
 
   public PlayerDamagedEvent(IPlayerConverter<CCSPlayerController> converter,
