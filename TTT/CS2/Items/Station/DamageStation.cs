@@ -80,14 +80,14 @@ public class DamageStation(IServiceProvider provider)
       foreach (var (player, dist, gamePlayer) in playerDists) {
         var healthScale = 1.0 - dist / _Config.MaxRange;
         var damageAmount =
-          (int)Math.Floor(_Config.HealthIncrements * healthScale);
+          Math.Abs((int)Math.Floor(_Config.HealthIncrements * healthScale));
 
         var dmgEvent = new PlayerDamagedEvent(player,
           info.Owner as IOnlinePlayer, damageAmount) { Weapon = $"[{Name}]" };
 
         bus.Dispatch(dmgEvent);
 
-        damageAmount = -dmgEvent.DmgDealt;
+        damageAmount = dmgEvent.DmgDealt;
 
         if (player.Health + damageAmount <= 0) {
           killedWithStation[player.Id] = info;
@@ -98,7 +98,7 @@ public class DamageStation(IServiceProvider provider)
         }
 
         gamePlayer.EmitSound("Player.DamageFall", SELF(gamePlayer.Slot), 0.2f);
-        player.Health    += damageAmount;
+        player.Health    -= damageAmount;
         info.HealthGiven += damageAmount;
       }
     }
