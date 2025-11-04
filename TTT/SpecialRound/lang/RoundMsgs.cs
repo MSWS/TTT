@@ -22,6 +22,9 @@ public class RoundMsgs {
   public static IMsg SPECIAL_ROUND_SILENT
     => MsgFactory.Create(nameof(SPECIAL_ROUND_SILENT));
 
+  public static IMsg SPECIAL_ROUND_PISTOL
+    => MsgFactory.Create(nameof(SPECIAL_ROUND_PISTOL));
+
   public static IMsg SPECIAL_ROUND_STARTED(AbstractSpecialRound round) {
     return MsgFactory.Create(nameof(SPECIAL_ROUND_STARTED), round.Name);
   }

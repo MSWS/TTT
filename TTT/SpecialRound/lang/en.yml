@@ -4,4 +4,5 @@ SPECIAL_ROUND_BHOP: " {Yellow}BHOP{grey}: Bunny hopping is enabled! Hold jump to
 SPECIAL_ROUND_VANILLA: " {green}VANILLA{grey}: The shop has been disabled!"
 SPECIAL_ROUND_SUPPRESSED: " {grey}SUPPRESSED{grey}: All pistols are silent!"
 SPECIAL_ROUND_SILENT: " {grey}SILENT{grey}: All players are muted!"
+SPECIAL_ROUND_PISTOL: " {blue}PISTOL{grey}: You can only use pistols this round!"
 VANILLA_ROUND_REMINDER: "%SHOP_PREFIX%This is a {purple}Vanilla{grey} round. The shop is disabled."
