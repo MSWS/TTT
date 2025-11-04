@@ -40,7 +40,12 @@ public enum PurchaseResult {
   /// <summary>
   ///   The item cannot be purchased multiple times, and the player already owns it.
   /// </summary>
-  ALREADY_OWNED
+  ALREADY_OWNED,
+
+  /// <summary>
+  ///  The tripwire placement is too far from the player.
+  /// </summary>
+  TRIPWIRE_TOO_FAR
 }
 
 public static class PurchaseResultExtensions {
@@ -58,7 +63,9 @@ public static class PurchaseResultExtensions {
       PurchaseResult.WRONG_ROLE =>
         "You do not have the required role to purchase this item",
       PurchaseResult.ALREADY_OWNED =>
-        "You already own this item and cannot purchase it again",
+        "You have purchased the maximum amount of this item",
+      PurchaseResult.TRIPWIRE_TOO_FAR =>
+        "The tripwire placement is too far from you",
       _ => "An unexpected error occurred"
     };
   }

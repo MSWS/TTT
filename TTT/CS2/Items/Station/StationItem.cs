@@ -20,7 +20,7 @@ public abstract class StationItem<T>(IServiceProvider provider,
   : RoleRestrictedItem<T>(provider), IPluginModule where T : IRole {
   protected readonly StationConfig _Config = config;
 
-  protected readonly IPlayerConverter<CCSPlayerController> Converter =
+  protected readonly IPlayerConverter<CCSPlayerController> converter =
     provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
 
   private readonly long PROP_SIZE_SQUARED = 700;
@@ -124,7 +124,7 @@ public abstract class StationItem<T>(IServiceProvider provider,
       prop.SetModel("models/props/cs_office/microwave.vmdl");
       prop.DispatchSpawn();
 
-      var gamePlayer = Converter.GetPlayer(player);
+      var gamePlayer = converter.GetPlayer(player);
       if (gamePlayer == null || !gamePlayer.Pawn.IsValid
         || gamePlayer.Pawn.Value == null)
         return;
