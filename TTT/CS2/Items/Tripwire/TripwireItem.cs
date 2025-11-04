@@ -77,8 +77,8 @@ public class TripwireItem(IServiceProvider provider)
 
       var angles = vectorToAngle(originTrace.Value.Normal.toVector());
 
-      var endTrace = TraceRay.TraceShape(origin, angles, TraceMask.MaskSolid,
-        Contents.NoDraw, gamePlayer);
+      var endTrace = TraceRay.TraceShape(originTrace.Value.EndPos.toVector(),
+        angles, TraceMask.MaskSolid, Contents.NoDraw, gamePlayer);
 
       var tripwire = Utilities.CreateEntityByName<CDynamicProp>("prop_dynamic");
       if (tripwire == null) return;
