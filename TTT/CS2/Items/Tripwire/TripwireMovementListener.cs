@@ -92,7 +92,7 @@ public class TripwireMovementListener(IServiceProvider provider)
     }
   }
 
-  private static readonly float fallofDelay = 0.01f;
+  private static readonly float fallofDelay = 0.02f;
 
   private float getDamage(float distance) {
     return 1000.0f * MathF.Pow(MathF.E, -distance * fallofDelay);
