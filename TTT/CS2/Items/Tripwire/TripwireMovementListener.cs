@@ -1,7 +1,5 @@
-﻿using CounterStrikeSharp.API;
-using CounterStrikeSharp.API.Core;
+﻿using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Timers;
-using CounterStrikeSharp.API.Modules.Utils;
 using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using ShopAPI.Configs.Traitor;
@@ -14,7 +12,6 @@ using TTT.API.Storage;
 using TTT.CS2.Extensions;
 using TTT.CS2.RayTrace.Class;
 using TTT.CS2.RayTrace.Enum;
-using TTT.CS2.Utils;
 using TTT.Game.Events.Body;
 using TTT.Game.Events.Game;
 using TTT.Game.Events.Player;
@@ -24,24 +21,27 @@ namespace TTT.CS2.Items.Tripwire;
 
 public class TripwireMovementListener(IServiceProvider provider)
   : IPluginModule, IListener {
-  private readonly TripwireItem? item = provider.GetService<TripwireItem>();
+  private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
 
-  private readonly IRoleAssigner roles =
-    provider.GetRequiredService<IRoleAssigner>();
+  private readonly IPlayerConverter<CCSPlayerController> converter =
+    provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
 
   private readonly IPlayerFinder finder =
     provider.GetRequiredService<IPlayerFinder>();
 
-  private readonly IPlayerConverter<CCSPlayerController> converter =
-    provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
+  private readonly TripwireItem? item = provider.GetService<TripwireItem>();
+
+  private readonly Dictionary<string, TripwireItem.TripwireInstance>
+    killedWithTripwire = new();
+
+  private readonly IRoleAssigner roles =
+    provider.GetRequiredService<IRoleAssigner>();
 
   private TripwireConfig config
     => provider.GetService<IStorage<TripwireConfig>>()
     ?.Load()
      .GetAwaiter()
      .GetResult() ?? new TripwireConfig();
-
-  private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
 
   public void Dispose() { }
   public void Start() { }
@@ -50,9 +50,6 @@ public class TripwireMovementListener(IServiceProvider provider)
     if (item == null) return;
     plugin?.AddTimer(0.1f, checkTripwires, TimerFlags.REPEAT);
   }
-
-  private readonly Dictionary<string, TripwireItem.TripwireInstance>
-    killedWithTripwire = new();
 
   private void checkTripwires() {
     if (item == null) return;

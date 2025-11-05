@@ -27,29 +27,25 @@ public static class TripwireServiceCollection {
 
 public class TripwireItem(IServiceProvider provider)
   : RoleRestrictedItem<TraitorRole>(provider), IPluginModule {
-  public override string Name => Locale[TripwireMsgs.SHOP_ITEM_TRIPWIRE];
-
-  private readonly IScheduler scheduler =
-    provider.GetRequiredService<IScheduler>();
-
-  protected readonly IPlayerConverter<CCSPlayerController> converter =
-    provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
-
-  public record TripwireInstance(IOnlinePlayer owner, CEnvBeam Beam,
-    CDynamicProp TripwireProp, Vector StartPos, Vector EndPos);
-
-  private TripwireConfig config = provider
+  private readonly TripwireConfig config = provider
    .GetService<IStorage<TripwireConfig>>()
   ?.Load()
    .GetAwaiter()
    .GetResult() ?? new TripwireConfig();
 
+  protected readonly IPlayerConverter<CCSPlayerController> converter =
+    provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
+
+  private readonly IScheduler scheduler =
+    provider.GetRequiredService<IScheduler>();
+
+  public List<TripwireInstance> ActiveTripwires = new();
+  public override string Name => Locale[TripwireMsgs.SHOP_ITEM_TRIPWIRE];
+
   public override string Description
     => Locale[TripwireMsgs.SHOP_ITEM_TRIPWIRE_DESC];
 
   public override ShopItemConfig Config => config;
-
-  public List<TripwireInstance> ActiveTripwires = new();
 
   public void Start(BasePlugin? plugin) {
     Start();
@@ -130,4 +126,7 @@ public class TripwireItem(IServiceProvider provider)
     beam.Teleport(start);
     return beam;
   }
+
+  public record TripwireInstance(IOnlinePlayer owner, CEnvBeam Beam,
+    CDynamicProp TripwireProp, Vector StartPos, Vector EndPos);
 }

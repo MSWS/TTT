@@ -30,8 +30,7 @@ public class CS2TripwireConfig : IStorage<TripwireConfig>, IPluginModule {
 
   public static readonly FakeConVar<bool> CV_FF_TRIGGERS = new(
     "css_ttt_shop_tripwire_friendlyfire_triggers",
-    "Whether Tripwires can be triggered by teammates", true,
-    ConVarFlags.FCVAR_NONE);
+    "Whether Tripwires can be triggered by teammates", true);
 
   public void Dispose() { }
 

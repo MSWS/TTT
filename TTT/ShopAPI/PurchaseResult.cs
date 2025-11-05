@@ -43,7 +43,7 @@ public enum PurchaseResult {
   ALREADY_OWNED,
 
   /// <summary>
-  ///  The tripwire placement is too far from the player.
+  ///   The tripwire placement is too far from the player.
   /// </summary>
   TRIPWIRE_TOO_FAR
 }
