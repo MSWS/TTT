@@ -4,31 +4,37 @@ using System.Reactive.Concurrency;
 using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Utils;
+using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using ShopAPI;
 using ShopAPI.Configs;
 using ShopAPI.Configs.Traitor;
 using TTT.API;
+using TTT.API.Events;
 using TTT.API.Extensions;
+using TTT.API.Game;
 using TTT.API.Player;
 using TTT.API.Storage;
+using TTT.CS2.API.Items;
 using TTT.CS2.Extensions;
 using TTT.CS2.RayTrace.Class;
 using TTT.CS2.RayTrace.Enum;
 using TTT.CS2.RayTrace.Struct;
+using TTT.Game.Events.Game;
 using TTT.Game.Roles;
 
 namespace TTT.CS2.Items.Tripwire;
 
 public static class TripwireServiceCollection {
   public static void AddTripwireServices(this IServiceCollection services) {
-    services.AddModBehavior<TripwireItem>();
-    services.AddModBehavior<TripwireMovementListener>();
+    services.AddModBehavior<ITripwireTracker, TripwireItem>();
+    services.AddModBehavior<ITripwireActivator, TripwireMovementListener>();
+    services.AddModBehavior<TripwireDamageListener>();
   }
 }
 
 public class TripwireItem(IServiceProvider provider)
-  : RoleRestrictedItem<TraitorRole>(provider), IPluginModule {
+  : RoleRestrictedItem<TraitorRole>(provider), IPluginModule, ITripwireTracker {
   private TripwireConfig config
     => Provider.GetService<IStorage<TripwireConfig>>()
     ?.Load()
@@ -41,7 +47,8 @@ public class TripwireItem(IServiceProvider provider)
   private readonly IScheduler scheduler =
     provider.GetRequiredService<IScheduler>();
 
-  public readonly List<TripwireInstance> ActiveTripwires = [];
+  public List<TripwireInstance> ActiveTripwires { get; } = [];
+
   public override string Name => Locale[TripwireMsgs.SHOP_ITEM_TRIPWIRE];
 
   public override string Description
@@ -60,6 +67,13 @@ public class TripwireItem(IServiceProvider provider)
   private void onPrecache(ResourceManifest manifest) {
     manifest.AddResource(
       "models/generic/conveyor_control_panel_01/conveyor_button_02.vmdl");
+  }
+
+  [UsedImplicitly]
+  [EventHandler]
+  public void OnGameEvent(GameStateUpdateEvent ev) {
+    if (ev.NewState != State.FINISHED) return;
+    ActiveTripwires.Clear();
   }
 
   public override void OnPurchase(IOnlinePlayer player) {
@@ -102,7 +116,7 @@ public class TripwireItem(IServiceProvider provider)
       return false;
     }
 
-    var angles = vectorToAngle(originTrace.Value.Normal.toVector());
+    var angles = originTrace.Value.Normal.toVector().toAngle();
 
     endTrace = TraceRay.TraceShape(originTrace.Value.EndPos.toVector(), angles,
       TraceMask.MaskSolid, Contents.NoDraw, gamePlayer);
@@ -115,7 +129,7 @@ public class TripwireItem(IServiceProvider provider)
     tripwire.DispatchSpawn();
 
     tripwire.Teleport(originTrace.Value.EndPos.toVector(),
-      vectorToAngle(originTrace.Value.Normal.toVector()));
+      originTrace.Value.Normal.toVector().toAngle());
     tripwire.EmitSound("Weapon_ELITE.Clipout");
     return true;
   }
@@ -130,26 +144,16 @@ public class TripwireItem(IServiceProvider provider)
     ActiveTripwires.Add(instance);
   }
 
-  private QAngle vectorToAngle(Vector vec) {
-    var pitch = (float)(Math.Atan2(-vec.Z,
-      Math.Sqrt(vec.X * vec.X + vec.Y * vec.Y)) * (180.0 / Math.PI));
-    var yaw = (float)(Math.Atan2(vec.Y, vec.X) * (180.0 / Math.PI));
-    return new QAngle(pitch, yaw, 0);
-  }
-
   private CEnvBeam? createBeamEnt(Vector start, Vector end) {
     var beam = Utilities.CreateEntityByName<CEnvBeam>("env_beam");
     if (beam == null) return null;
     beam.RenderMode = RenderMode_t.kRenderTransAlpha;
-    beam.Width      = 0.5f;
-    beam.Render     = Color.FromArgb(128, Color.Red);
+    beam.Width      = config.TripwireThickness;
+    beam.Render     = config.TripwireColor;
     beam.EndPos.X   = end.X;
     beam.EndPos.Y   = end.Y;
     beam.EndPos.Z   = end.Z;
     beam.Teleport(start);
     return beam;
   }
-
-  public record TripwireInstance(IOnlinePlayer owner, CEnvBeam Beam,
-    CDynamicProp TripwireProp, Vector StartPos, Vector EndPos);
 }

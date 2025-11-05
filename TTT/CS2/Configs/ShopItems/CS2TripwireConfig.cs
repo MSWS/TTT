@@ -1,4 +1,5 @@
-﻿using CounterStrikeSharp.API;
+﻿using System.Drawing;
+using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Cvars;
 using CounterStrikeSharp.API.Modules.Cvars.Validators;
@@ -10,7 +11,7 @@ namespace TTT.CS2.Configs.ShopItems;
 
 public class CS2TripwireConfig : IStorage<TripwireConfig>, IPluginModule {
   public static readonly FakeConVar<int> CV_PRICE = new(
-    "css_ttt_shop_tripwire_price", "Price of the Tripwire item (Traitor)", 50,
+    "css_ttt_shop_tripwire_price", "Price of the Tripwire item (Traitor)", 45,
     ConVarFlags.FCVAR_NONE, new RangeValidator<int>(0, 10000));
 
   public static readonly FakeConVar<int> CV_EXPLOSION_POWER = new(
@@ -20,7 +21,7 @@ public class CS2TripwireConfig : IStorage<TripwireConfig>, IPluginModule {
 
   public static readonly FakeConVar<float> CV_FALLOFF_DELAY = new(
     "css_ttt_shop_tripwire_falloff_delay",
-    "Damage falloff, higher means faster falloff", 0.15f,
+    "Damage falloff of tripwire explosion, higher = quicker falloff", 0.015f,
     ConVarFlags.FCVAR_NONE, new RangeValidator<float>(0f, 1f));
 
   public static readonly FakeConVar<float> CV_FF_MULTIPLIER = new(
@@ -28,19 +29,49 @@ public class CS2TripwireConfig : IStorage<TripwireConfig>, IPluginModule {
     "Damage multiplier applied to friendly fire from Tripwire", 0.5f,
     ConVarFlags.FCVAR_NONE, new RangeValidator<float>(0f, 1f));
 
+  public static readonly FakeConVar<float> CV_OOLOS_MULTIPLIER = new(
+    "css_ttt_shop_tripwire_outoflineofsight_multiplier",
+    "Damage multiplier for players out of line of sight", 0.3f,
+    ConVarFlags.FCVAR_NONE, new RangeValidator<float>(0f, 1f));
+
   public static readonly FakeConVar<bool> CV_FF_TRIGGERS = new(
     "css_ttt_shop_tripwire_friendlyfire_triggers",
     "Whether Tripwires can be triggered by teammates", true);
 
-  public static readonly FakeConVar<float> CV_MAX_PLACEMENT_DISTANCE_SQUARED =
-    new("css_ttt_shop_tripwire_max_placement_distance_squared",
-      "Maximum distance squared from player to place Tripwire", 400f * 400f,
-      ConVarFlags.FCVAR_NONE, new RangeValidator<float>(100f, 100000f));
+  public static readonly FakeConVar<float> CV_MAX_DISTANCE_SQUARED = new(
+    "css_ttt_shop_tripwire_max_distance_squared",
+    "Maximum placement distance squared for Tripwire", 400f * 400f,
+    ConVarFlags.FCVAR_NONE, new RangeValidator<float>(0f, 1000000f));
 
-  public static readonly FakeConVar<int> CV_INITIATION_TIME_MS = new(
-    "css_ttt_shop_tripwire_initiation_time_ms",
-    "Time in milliseconds to initiate Tripwire placement", 2000,
-    ConVarFlags.FCVAR_NONE, new RangeValidator<int>(0, 10000));
+  public static readonly FakeConVar<float> CV_INITIATION_TIME = new(
+    "css_ttt_shop_tripwire_initiation_time",
+    "Seconds before Tripwire becomes active", 2f, ConVarFlags.FCVAR_NONE,
+    new RangeValidator<float>(0f, 10f));
+
+  public static readonly FakeConVar<float> CV_SIZE_SQUARED = new(
+    "css_ttt_shop_tripwire_size_squared",
+    "Size of tripwire for the purposes of bullet-detection", 500f,
+    ConVarFlags.FCVAR_NONE, new RangeValidator<float>(1f, 100000f));
+
+  public static readonly FakeConVar<int> CV_COLOR_R = new(
+    "css_ttt_shop_tripwire_color_r", "Tripwire color red channel (0–255)", 255,
+    ConVarFlags.FCVAR_NONE, new RangeValidator<int>(0, 255));
+
+  public static readonly FakeConVar<int> CV_COLOR_G = new(
+    "css_ttt_shop_tripwire_color_g", "Tripwire color green channel (0–255)", 0,
+    ConVarFlags.FCVAR_NONE, new RangeValidator<int>(0, 255));
+
+  public static readonly FakeConVar<int> CV_COLOR_B = new(
+    "css_ttt_shop_tripwire_color_b", "Tripwire color blue channel (0–255)", 0,
+    ConVarFlags.FCVAR_NONE, new RangeValidator<int>(0, 255));
+
+  public static readonly FakeConVar<int> CV_COLOR_A = new(
+    "css_ttt_shop_tripwire_color_a", "Tripwire color alpha (0–255)", 64,
+    ConVarFlags.FCVAR_NONE, new RangeValidator<int>(0, 255));
+
+  public static readonly FakeConVar<float> CV_THICKNESS = new(
+    "css_ttt_shop_tripwire_thickness", "Visual thickness of the Tripwire beam",
+    0.5f, ConVarFlags.FCVAR_NONE, new RangeValidator<float>(0.01f, 5f));
 
   public void Dispose() { }
 
@@ -53,14 +84,19 @@ public class CS2TripwireConfig : IStorage<TripwireConfig>, IPluginModule {
 
   public Task<TripwireConfig?> Load() {
     var cfg = new TripwireConfig {
-      Price                       = CV_PRICE.Value,
-      ExplosionPower              = CV_EXPLOSION_POWER.Value,
-      FalloffDelay                = CV_FALLOFF_DELAY.Value,
-      FriendlyFireMultiplier      = CV_FF_MULTIPLIER.Value,
-      FriendlyFireTriggers        = CV_FF_TRIGGERS.Value,
-      MaxPlacementDistanceSquared = CV_MAX_PLACEMENT_DISTANCE_SQUARED.Value,
-      TripwireInitiationTime =
-        TimeSpan.FromMilliseconds(CV_INITIATION_TIME_MS.Value)
+      Price = CV_PRICE.Value,
+      ExplosionPower = CV_EXPLOSION_POWER.Value,
+      FalloffDelay = CV_FALLOFF_DELAY.Value,
+      FriendlyFireMultiplier = CV_FF_MULTIPLIER.Value,
+      OutOfLineOfSightMultiplier = CV_OOLOS_MULTIPLIER.Value,
+      FriendlyFireTriggers = CV_FF_TRIGGERS.Value,
+      MaxPlacementDistanceSquared = CV_MAX_DISTANCE_SQUARED.Value,
+      TripwireInitiationTime = TimeSpan.FromSeconds(CV_INITIATION_TIME.Value),
+      TripwireSizeSquared = CV_SIZE_SQUARED.Value,
+      TripwireColor =
+        Color.FromArgb(CV_COLOR_A.Value, CV_COLOR_R.Value, CV_COLOR_G.Value,
+          CV_COLOR_B.Value),
+      TripwireThickness = CV_THICKNESS.Value
     };
 
     return Task.FromResult<TripwireConfig?>(cfg);

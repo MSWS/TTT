@@ -1,5 +1,7 @@
-﻿using CounterStrikeSharp.API.Core;
+﻿using System.Diagnostics.CodeAnalysis;
+using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Timers;
+using CounterStrikeSharp.API.Modules.Utils;
 using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using ShopAPI.Configs.Traitor;
@@ -7,115 +9,93 @@ using TTT.API;
 using TTT.API.Events;
 using TTT.API.Game;
 using TTT.API.Player;
-using TTT.API.Role;
 using TTT.API.Storage;
+using TTT.CS2.API.Items;
 using TTT.CS2.Extensions;
 using TTT.CS2.RayTrace.Class;
 using TTT.CS2.RayTrace.Enum;
 using TTT.Game.Events.Body;
 using TTT.Game.Events.Game;
 using TTT.Game.Events.Player;
+using TTT.Game.Listeners;
 using TTT.Game.Roles;
 
 namespace TTT.CS2.Items.Tripwire;
 
 public class TripwireMovementListener(IServiceProvider provider)
-  : IPluginModule, IListener {
-  private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
-
+  : BaseListener(provider), IPluginModule, ITripwireActivator {
   private readonly IPlayerConverter<CCSPlayerController> converter =
     provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
 
-  private readonly IPlayerFinder finder =
-    provider.GetRequiredService<IPlayerFinder>();
+  private readonly ITripwireTracker? tripwireTracker =
+    provider.GetService<ITripwireTracker>();
 
-  private readonly TripwireItem? item = provider.GetService<TripwireItem>();
-
-  private readonly Dictionary<string, TripwireItem.TripwireInstance>
-    killedWithTripwire = new();
-
-  private readonly IRoleAssigner roles =
-    provider.GetRequiredService<IRoleAssigner>();
+  private readonly Dictionary<string, TripwireInstance> killedWithTripwire =
+    new();
 
   private TripwireConfig config
-    => provider.GetService<IStorage<TripwireConfig>>()
+    => Provider.GetService<IStorage<TripwireConfig>>()
     ?.Load()
      .GetAwaiter()
      .GetResult() ?? new TripwireConfig();
 
-  public void Dispose() { }
-  public void Start() { }
-
   public void Start(BasePlugin? plugin) {
-    if (item == null) return;
-    plugin?.AddTimer(0.1f, checkTripwires, TimerFlags.REPEAT);
+    if (tripwireTracker == null) return;
+    plugin?.AddTimer(0.2f, checkTripwires, TimerFlags.REPEAT);
   }
 
   private void checkTripwires() {
-    if (item == null) return;
-    var toRemove = new List<TripwireItem.TripwireInstance>();
-    foreach (var wire in item.ActiveTripwires) {
+    if (tripwireTracker == null) return;
+    foreach (var wire in new List<TripwireInstance>(tripwireTracker
+     .ActiveTripwires)) {
       var ray = TraceRay.TraceShape(wire.StartPos, wire.EndPos, Contents.Player,
         wire.TripwireProp.Handle);
       if (!ray.DidHit() || !ray.HitPlayer(out var player)) continue;
 
       if (!config.FriendlyFireTriggers && player != null) {
         var apiPlayer = converter.GetPlayer(player);
-        var role      = roles.GetRoles(apiPlayer);
+        var role      = Roles.GetRoles(apiPlayer);
         if (role.Any(r => r is TraitorRole)) continue;
       }
 
-      toRemove.Add(wire);
-
-      wire.TripwireProp.EmitSound("Flashbang.ExplodeDistant");
-      doExplosion(wire);
-    }
-
-    foreach (var wire in toRemove) {
-      item.ActiveTripwires.Remove(wire);
-      wire.Beam.Remove();
-      wire.TripwireProp.Remove();
+      ActivateTripwire(wire);
     }
   }
 
-  private void doExplosion(TripwireItem.TripwireInstance instance) {
-    foreach (var player in finder.GetOnline()) {
-      if (!player.IsAlive) continue;
-
-      var gamePlayer = converter.GetPlayer(player);
-      if (gamePlayer == null || gamePlayer.Pawn.Value == null) continue;
-      if (gamePlayer.Pawn.Value.AbsOrigin == null) continue;
-
-      var distance =
-        instance.StartPos.Distance(gamePlayer.Pawn.Value.AbsOrigin);
-      var damage = (int)Math.Round(getDamage(distance));
-
-      if (roles.GetRoles(player).Any(r => r is TraitorRole))
-        damage = (int)(damage * config.FriendlyFireMultiplier);
-
-      if (damage < 1) continue;
-
-      if (player.Health - damage <= 0) {
-        killedWithTripwire[player.Id] = instance;
-        var death = new PlayerDeathEvent(player).WithKiller(instance.owner)
-         .WithWeapon("[Tripwire]");
-        bus.Dispatch(death);
-      } else {
-        var damaged =
-          new PlayerDamagedEvent(player, instance.owner, damage) {
-            Weapon = "[Tripwire]"
-          };
-        bus.Dispatch(damaged);
-      }
-
-      player.Health -= damage;
-      gamePlayer.EmitSound("Player.BurnDamage");
-    }
+  private void removeTripwire(TripwireInstance wire) {
+    tripwireTracker?.ActiveTripwires.Remove(wire);
+    wire.Beam.Remove();
+    wire.TripwireProp.Remove();
   }
 
   private float getDamage(float distance) {
     return config.ExplosionPower
       * MathF.Pow(MathF.E, -distance * config.FalloffDelay);
+  }
+
+  private int getDamage(CCSPlayerController gamePlayer, IOnlinePlayer player,
+    Vector tripwire) {
+    var origin = gamePlayer.Pawn.Value?.AbsOrigin;
+    if (origin == null) return 0;
+    var distance = tripwire.Distance(origin);
+    var damage   = getDamage(distance);
+    Messenger.DebugAnnounce($"Base damage: {damage} at distance {distance}");
+    if (Roles.GetRoles(player).Any(r => r is TraitorRole)) {
+      damage *= config.FriendlyFireMultiplier;
+      Messenger.DebugAnnounce($"Applied friendly fire multiplier: {damage}");
+    }
+
+    var angleToPlayer = (origin - tripwire).Normalized().toAngle();
+    var losRay = TraceRay.TraceShape(tripwire, angleToPlayer, Contents.Player,
+      gamePlayer);
+    var los = losRay.HitPlayer(out _);
+    if (!los) {
+      damage *= config.OutOfLineOfSightMultiplier;
+      Messenger.DebugAnnounce(
+        $"Applied out of line of sight multiplier: {damage}");
+    }
+
+    return (int)damage;
   }
 
   [UsedImplicitly]
@@ -133,5 +113,44 @@ public class TripwireMovementListener(IServiceProvider provider)
     if (ev.Body.Killer != null && ev.Body.Killer.Id != ev.Body.OfPlayer.Id)
       return;
     ev.Body.Killer = info.owner;
+  }
+
+  public void ActivateTripwire(TripwireInstance instance) {
+    removeTripwire(instance);
+    instance.TripwireProp.EmitSound("Flashbang.ExplodeDistant");
+
+    foreach (var player in Finder.GetOnline()) {
+      if (dealTripwireDamage(instance, player, out var gamePlayer)) continue;
+      gamePlayer?.EmitSound("Player.BurnDamage");
+    }
+  }
+
+  private bool dealTripwireDamage(TripwireInstance instance,
+    IOnlinePlayer player,
+    [NotNullWhen(true)] out CCSPlayerController? gamePlayer) {
+    gamePlayer = null;
+    if (!player.IsAlive) return false;
+
+    gamePlayer = converter.GetPlayer(player);
+    if (gamePlayer == null) return false;
+    var damage = getDamage(gamePlayer, player, instance.StartPos);
+
+    if (damage < 1) return false;
+
+    Event ev;
+    if (player.Health - damage <= 0) {
+      killedWithTripwire[player.Id] = instance;
+      ev = new PlayerDeathEvent(player).WithKiller(instance.owner)
+       .WithWeapon("[Tripwire]");
+    } else {
+      ev = new PlayerDamagedEvent(player, instance.owner, damage) {
+        Weapon = "[Tripwire]"
+      };
+    }
+
+    Bus.Dispatch(ev);
+
+    player.Health -= damage;
+    return true;
   }
 }
