@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Drawing;
 using System.Reactive.Concurrency;
 using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
@@ -14,6 +15,7 @@ using TTT.API.Storage;
 using TTT.CS2.Extensions;
 using TTT.CS2.RayTrace.Class;
 using TTT.CS2.RayTrace.Enum;
+using TTT.CS2.RayTrace.Struct;
 using TTT.Game.Roles;
 
 namespace TTT.CS2.Items.Tripwire;
@@ -27,19 +29,19 @@ public static class TripwireServiceCollection {
 
 public class TripwireItem(IServiceProvider provider)
   : RoleRestrictedItem<TraitorRole>(provider), IPluginModule {
-  private readonly TripwireConfig config = provider
-   .GetService<IStorage<TripwireConfig>>()
-  ?.Load()
-   .GetAwaiter()
-   .GetResult() ?? new TripwireConfig();
+  private TripwireConfig config
+    => Provider.GetService<IStorage<TripwireConfig>>()
+    ?.Load()
+     .GetAwaiter()
+     .GetResult() ?? new TripwireConfig();
 
-  protected readonly IPlayerConverter<CCSPlayerController> converter =
+  private readonly IPlayerConverter<CCSPlayerController> converter =
     provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
 
   private readonly IScheduler scheduler =
     provider.GetRequiredService<IScheduler>();
 
-  public List<TripwireInstance> ActiveTripwires = new();
+  public readonly List<TripwireInstance> ActiveTripwires = [];
   public override string Name => Locale[TripwireMsgs.SHOP_ITEM_TRIPWIRE];
 
   public override string Description
@@ -62,43 +64,64 @@ public class TripwireItem(IServiceProvider provider)
 
   public override void OnPurchase(IOnlinePlayer player) {
     Server.NextWorldUpdate(() => {
-      var gamePlayer = converter.GetPlayer(player);
-      var playerPawn = gamePlayer?.PlayerPawn.Value;
-      if (gamePlayer == null || playerPawn == null) return;
-      var originTrace =
-        gamePlayer.GetGameTraceByEyePosition(TraceMask.MaskSolid,
-          Contents.NoDraw, gamePlayer);
-      var origin = gamePlayer.GetEyePosition();
-      if (origin == null || originTrace == null) return;
+      if (!placeTripwire(player, out var originTrace, out var endTrace,
+        out var tripwire))
+        return;
 
-      var angles = vectorToAngle(originTrace.Value.Normal.toVector());
-
-      var endTrace = TraceRay.TraceShape(originTrace.Value.EndPos.toVector(),
-        angles, TraceMask.MaskSolid, Contents.NoDraw, gamePlayer);
-
-      var tripwire = Utilities.CreateEntityByName<CDynamicProp>("prop_dynamic");
-      if (tripwire == null) return;
-
-      tripwire.SetModel(
-        "models/generic/conveyor_control_panel_01/conveyor_button_02.vmdl");
-      tripwire.DispatchSpawn();
-
-      tripwire.Teleport(originTrace.Value.EndPos.toVector(),
-        vectorToAngle(originTrace.Value.Normal.toVector()));
-      tripwire.EmitSound("Weapon_ELITE.Clipout");
-
-      scheduler.Schedule(TimeSpan.FromSeconds(2), () => {
-        Server.NextWorldUpdate(() => {
-          if (!gamePlayer.IsValid) return;
-          createBeam(player, tripwire, originTrace.Value.EndPos.toVector(),
-            endTrace.EndPos.toVector());
+      scheduler.Schedule(config.TripwireInitiationTime,
+        () => {
+          Server.NextWorldUpdate(() => {
+            createTripwireBeam(player, tripwire,
+              originTrace.Value.EndPos.toVector(),
+              endTrace.Value.EndPos.toVector());
+          });
         });
-      });
     });
   }
 
-  private void createBeam(IOnlinePlayer owner, CDynamicProp prop, Vector start,
-    Vector end) {
+  private bool placeTripwire(IOnlinePlayer player,
+    [NotNullWhen(true)] out CGameTrace? originTrace,
+    [NotNullWhen(true)] out CGameTrace? endTrace,
+    [NotNullWhen(true)] out CDynamicProp? tripwire) {
+    tripwire    = null;
+    originTrace = null;
+    endTrace    = null;
+    var gamePlayer = converter.GetPlayer(player);
+    var playerPawn = gamePlayer?.PlayerPawn.Value;
+    if (gamePlayer == null || playerPawn == null) return false;
+
+    originTrace = gamePlayer.GetGameTraceByEyePosition(TraceMask.MaskSolid,
+      Contents.NoDraw, gamePlayer);
+    var origin = gamePlayer.GetEyePosition();
+    if (origin == null || originTrace == null) return false;
+
+    if (origin.DistanceSquared(originTrace.Value.EndPos.toVector())
+      > config.MaxPlacementDistanceSquared) {
+      Shop.AddBalance(player, config.Price, "Refund");
+      Messenger.Message(player, Locale[TripwireMsgs.SHOP_ITEM_TRIPWIRE_TOOFAR]);
+      return false;
+    }
+
+    var angles = vectorToAngle(originTrace.Value.Normal.toVector());
+
+    endTrace = TraceRay.TraceShape(originTrace.Value.EndPos.toVector(), angles,
+      TraceMask.MaskSolid, Contents.NoDraw, gamePlayer);
+
+    tripwire = Utilities.CreateEntityByName<CDynamicProp>("prop_dynamic");
+    if (tripwire == null) return false;
+
+    tripwire.SetModel(
+      "models/generic/conveyor_control_panel_01/conveyor_button_02.vmdl");
+    tripwire.DispatchSpawn();
+
+    tripwire.Teleport(originTrace.Value.EndPos.toVector(),
+      vectorToAngle(originTrace.Value.Normal.toVector()));
+    tripwire.EmitSound("Weapon_ELITE.Clipout");
+    return true;
+  }
+
+  private void createTripwireBeam(IOnlinePlayer owner, CDynamicProp prop,
+    Vector start, Vector end) {
     prop.EmitSound("C4.ExplodeTriggerTrip");
     var beam = createBeamEnt(start, end);
     if (beam == null) return;
