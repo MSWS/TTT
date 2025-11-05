@@ -8,8 +8,8 @@ using TTT.API.Player;
 namespace TTT.CS2.Command.Test;
 
 public class SpecialRoundCommand(IServiceProvider provider) : ICommand {
-  private readonly ISpecialRoundStarter tracker =
-    provider.GetRequiredService<ISpecialRoundStarter>();
+  private readonly ISpecialRoundStarter? tracker =
+    provider.GetService<ISpecialRoundStarter>();
 
   public void Dispose() { }
   public void Start() { }
@@ -18,6 +18,11 @@ public class SpecialRoundCommand(IServiceProvider provider) : ICommand {
 
   public Task<CommandResult>
     Execute(IOnlinePlayer? executor, ICommandInfo info) {
+    if (tracker == null) {
+      info.ReplySync("Special round tracker is not available.");
+      return Task.FromResult(CommandResult.ERROR);
+    }
+
     if (info.ArgCount == 1) {
       tracker.TryStartSpecialRound(null);
       info.ReplySync("Started a random special round.");

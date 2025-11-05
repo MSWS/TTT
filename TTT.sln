@@ -29,7 +29,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stats", "TTT\Stats\Stats.cs
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpecialRound", "TTT\SpecialRound\SpecialRound.csproj", "{5092069A-3CFA-41C8-B685-341040AB435C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpecialRoundAPI", "SpecialRoundAPI\SpecialRoundAPI\SpecialRoundAPI.csproj", "{360FEF16-54DA-42EE-995A-3D31C699287D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpecialRoundAPI", "TTT\SpecialRoundAPI\SpecialRoundAPI.csproj", "{360FEF16-54DA-42EE-995A-3D31C699287D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
