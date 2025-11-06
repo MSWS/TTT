@@ -57,7 +57,7 @@ public class TripwireDefuserListener(IServiceProvider provider)
 
   private TripwireInstance? getTargetTripwire(CCSPlayerController player) {
     var raytrace =
-      player.GetGameTraceByEyePosition(TraceMask.MaskSolid, Contents.Player,
+      player.GetGameTraceByEyePosition(TraceMask.MaskSolid, Contents.NoDraw,
         player);
 
     if (raytrace == null) return null;
