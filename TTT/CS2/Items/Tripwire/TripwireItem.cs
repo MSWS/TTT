@@ -30,6 +30,7 @@ public static class TripwireServiceCollection {
     services.AddModBehavior<ITripwireTracker, TripwireItem>();
     services.AddModBehavior<ITripwireActivator, TripwireMovementListener>();
     services.AddModBehavior<TripwireDamageListener>();
+    services.AddModBehavior<TripwireDefuserListener>();
   }
 }
 
@@ -48,6 +49,12 @@ public class TripwireItem(IServiceProvider provider)
     provider.GetRequiredService<IScheduler>();
 
   public List<TripwireInstance> ActiveTripwires { get; } = [];
+
+  public void RemoveTripwire(TripwireInstance instance) {
+    instance.Beam.Remove();
+    instance.TripwireProp.Remove();
+    ActiveTripwires.Remove(instance);
+  }
 
   public override string Name => Locale[TripwireMsgs.SHOP_ITEM_TRIPWIRE];
 

@@ -57,3 +57,5 @@ SHOP_ITEM_TELEPORT_DECOY_DESC: "A decoy that teleports you to it upon explosion.
 SHOP_ITEM_TRIPWIRE: "Tripwire"
 SHOP_ITEM_TRIPWIRE_DESC: "A tripwire that explodes when triggered."
 SHOP_ITEM_TRIPWIRE_TOOFAR: "%PREFIX%You are too far away to place the tripwire."
+SHOP_ITEM_TRIPWIRE_DEFUSING: "%PREFIX%Defusing tripwire... ({0}%, {1} second%s% left)."
+SHOP_ITEM_TRIPWIRE_DEFUSING_CANCELED: "%PREFIX%You stopped defusing tripwire."

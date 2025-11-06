@@ -62,12 +62,6 @@ public class TripwireMovementListener(IServiceProvider provider)
     }
   }
 
-  private void removeTripwire(TripwireInstance wire) {
-    tripwireTracker?.ActiveTripwires.Remove(wire);
-    wire.Beam.Remove();
-    wire.TripwireProp.Remove();
-  }
-
   private float getDamage(float distance) {
     return config.ExplosionPower
       * MathF.Pow(MathF.E, -distance * config.FalloffDelay);
@@ -79,23 +73,10 @@ public class TripwireMovementListener(IServiceProvider provider)
     if (origin == null) return 0;
     var distance = tripwire.Distance(origin);
     var damage   = getDamage(distance);
-    Messenger.DebugAnnounce($"Base damage: {damage} at distance {distance}");
-    if (Roles.GetRoles(player).Any(r => r is TraitorRole)) {
+    if (Roles.GetRoles(player).Any(r => r is TraitorRole))
       damage *= config.FriendlyFireMultiplier;
-      Messenger.DebugAnnounce($"Applied friendly fire multiplier: {damage}");
-    }
 
-    var angleToPlayer = (origin - tripwire).Normalized().toAngle();
-    var losRay = TraceRay.TraceShape(tripwire, angleToPlayer, Contents.Player,
-      gamePlayer);
-    var los = losRay.HitPlayer(out _);
-    if (!los) {
-      damage *= config.OutOfLineOfSightMultiplier;
-      Messenger.DebugAnnounce(
-        $"Applied out of line of sight multiplier: {damage}");
-    }
-
-    return (int)damage;
+    return (int)Math.Floor(damage);
   }
 
   [UsedImplicitly]
@@ -116,7 +97,7 @@ public class TripwireMovementListener(IServiceProvider provider)
   }
 
   public void ActivateTripwire(TripwireInstance instance) {
-    removeTripwire(instance);
+    tripwireTracker?.RemoveTripwire(instance);
     instance.TripwireProp.EmitSound("Flashbang.ExplodeDistant");
 
     foreach (var player in Finder.GetOnline()) {
