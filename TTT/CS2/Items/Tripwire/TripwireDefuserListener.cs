@@ -7,6 +7,7 @@ using TTT.API.Messages;
 using TTT.API.Player;
 using TTT.API.Storage;
 using TTT.CS2.API.Items;
+using TTT.CS2.Extensions;
 using TTT.CS2.RayTrace.Class;
 using TTT.CS2.RayTrace.Enum;
 using TTT.Locale;
@@ -56,20 +57,24 @@ public class TripwireDefuserListener(IServiceProvider provider)
   }
 
   private TripwireInstance? getTargetTripwire(CCSPlayerController player) {
+    if (tripwireTracker == null) return null;
     var raytrace =
       player.GetGameTraceByEyePosition(TraceMask.MaskSolid, Contents.NoDraw,
         player);
 
-    if (raytrace == null) return null;
+    if (raytrace == null || tripwireTracker.ActiveTripwires.Count == 0)
+      return null;
+    var raytracePos = raytrace.Value.EndPos.toVector();
 
-    if (!raytrace.Value.HitEntityByDesignerName<CDynamicProp>(out var prop,
-      "prop_dynamic"))
+    var closest =
+      tripwireTracker?.ActiveTripwires.MinBy(i
+        => i.StartPos.DistanceSquared(raytracePos));
+
+    if (closest == null || closest.StartPos.DistanceSquared(raytracePos)
+      > config.TripwireSizeSquared)
       return null;
 
-    var instance =
-      tripwireTracker?.ActiveTripwires.FirstOrDefault(r
-        => r.TripwireProp == prop);
-    return instance;
+    return closest;
   }
 
   private void startDefuseTimer(CCSPlayerController player,
@@ -80,18 +85,23 @@ public class TripwireDefuserListener(IServiceProvider provider)
   private void tickDefuse(CCSPlayerController player, TripwireInstance instance,
     DateTime startTime) {
     if (!player.IsValid) return;
-    if ((player.Buttons & PlayerButtons.Use) != PlayerButtons.Use) return;
+    var apiPlayer = converter.GetPlayer(player);
+
+    if ((player.Buttons & PlayerButtons.Use) != PlayerButtons.Use) {
+      messenger.Message(apiPlayer,
+        locale[TripwireMsgs.SHOP_ITEM_TRIPWIRE_DEFUSING_CANCELED]);
+      return;
+    }
 
     var progress = (DateTime.Now - startTime) / config.DefuseTime;
-    var timeLeft = config.DefuseTime * progress;
+    var timeLeft = config.DefuseTime - (config.DefuseTime * progress);
 
     if (progress >= 1) {
       tripwireTracker?.RemoveTripwire(instance);
       return;
     }
 
-    var apiPlayer = converter.GetPlayer(player);
-    var target    = getTargetTripwire(player);
+    var target = getTargetTripwire(player);
     if (target != instance) {
       messenger.Message(apiPlayer,
         locale[TripwireMsgs.SHOP_ITEM_TRIPWIRE_DEFUSING_CANCELED]);

@@ -15,7 +15,7 @@ public class TripwireMsgs {
   public static IMsg
     SHOP_ITEM_TRIPWIRE_DEFUSING(double progress, TimeSpan time) {
     return MsgFactory.Create(nameof(SHOP_ITEM_TRIPWIRE_DEFUSING),
-      progress.ToString("P"), time.TotalSeconds);
+      progress.ToString("P0"), time.TotalSeconds.ToString("F1"));
   }
 
   public static IMsg SHOP_ITEM_TRIPWIRE_DEFUSING_CANCELED
