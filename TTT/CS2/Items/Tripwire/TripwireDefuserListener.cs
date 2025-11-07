@@ -74,6 +74,11 @@ public class TripwireDefuserListener(IServiceProvider provider)
       > config.TripwireSizeSquared)
       return null;
 
+    if (player.Pawn.Value?.AbsOrigin == null
+      || closest.StartPos.DistanceSquared(player.Pawn.Value.AbsOrigin)
+      > config.MaxPlacementDistanceSquared)
+      return null;
+
     return closest;
   }
 
@@ -97,6 +102,7 @@ public class TripwireDefuserListener(IServiceProvider provider)
     var timeLeft = config.DefuseTime - (config.DefuseTime * progress);
 
     if (progress >= 1) {
+      instance.TripwireProp.EmitSound("c4.disarmfinish", null, 0.2f, 1.5f);
       tripwireTracker?.RemoveTripwire(instance);
       return;
     }
@@ -110,6 +116,8 @@ public class TripwireDefuserListener(IServiceProvider provider)
 
     player.PrintToCenter(
       locale[TripwireMsgs.SHOP_ITEM_TRIPWIRE_DEFUSING(progress, timeLeft)]);
+    var pitch = 1.5f - (float)progress;
+    player.EmitSound("c4.keypressquiet", pitch: pitch);
     var ticksDelay = (int)Math.Round(64 * config.DefuseRate.TotalSeconds);
     Server.RunOnTick(Server.TickCount + ticksDelay,
       () => tickDefuse(player, instance, startTime));

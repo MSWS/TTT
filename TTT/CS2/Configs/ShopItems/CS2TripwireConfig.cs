@@ -35,7 +35,7 @@ public class CS2TripwireConfig : IStorage<TripwireConfig>, IPluginModule {
 
   public static readonly FakeConVar<float> CV_MAX_DISTANCE_SQUARED = new(
     "css_ttt_shop_tripwire_max_distance_squared",
-    "Maximum placement distance squared for Tripwire", 400f * 400f,
+    "Maximum placement distance squared for Tripwire", 50000f,
     ConVarFlags.FCVAR_NONE, new RangeValidator<float>(0f, 1000000f));
 
   public static readonly FakeConVar<float> CV_INITIATION_TIME = new(
@@ -45,7 +45,7 @@ public class CS2TripwireConfig : IStorage<TripwireConfig>, IPluginModule {
 
   public static readonly FakeConVar<float> CV_SIZE_SQUARED = new(
     "css_ttt_shop_tripwire_size_squared",
-    "Size of tripwire for the purposes of bullet-detection", 300f,
+    "Size of tripwire for the purposes of bullet/defuse-detection", 10f,
     ConVarFlags.FCVAR_NONE, new RangeValidator<float>(1f, 100000f));
 
   public static readonly FakeConVar<int> CV_COLOR_R = new(
@@ -70,7 +70,7 @@ public class CS2TripwireConfig : IStorage<TripwireConfig>, IPluginModule {
 
   public static readonly FakeConVar<float> CV_DEFUSE_TIME = new(
     "css_ttt_shop_tripwire_defuse_time",
-    "Time required to fully defuse the Tripwire (in seconds)", 5f,
+    "Time required to fully defuse the Tripwire (in seconds)", 6f,
     ConVarFlags.FCVAR_NONE, new RangeValidator<float>(0f, 30f));
 
   public static readonly FakeConVar<float> CV_DEFUSE_RATE = new(
