@@ -8,4 +8,16 @@ public class TripwireMsgs {
 
   public static IMsg SHOP_ITEM_TRIPWIRE_DESC
     => MsgFactory.Create(nameof(SHOP_ITEM_TRIPWIRE_DESC));
+
+  public static IMsg SHOP_ITEM_TRIPWIRE_TOOFAR
+    => MsgFactory.Create(nameof(SHOP_ITEM_TRIPWIRE_TOOFAR));
+
+  public static IMsg
+    SHOP_ITEM_TRIPWIRE_DEFUSING(double progress, TimeSpan time) {
+    return MsgFactory.Create(nameof(SHOP_ITEM_TRIPWIRE_DEFUSING),
+      progress.ToString("P0"), time.TotalSeconds.ToString("F1"));
+  }
+
+  public static IMsg SHOP_ITEM_TRIPWIRE_DEFUSING_CANCELED
+    => MsgFactory.Create(nameof(SHOP_ITEM_TRIPWIRE_DEFUSING_CANCELED));
 }

@@ -23,11 +23,11 @@ public class CombatHandler(IServiceProvider provider) : IPluginModule {
   private readonly IGameManager games =
     provider.GetRequiredService<IGameManager>();
 
-  private readonly IAliveSpoofer spoofer =
-    provider.GetRequiredService<IAliveSpoofer>();
-
   private readonly IRoleAssigner roles =
     provider.GetRequiredService<IRoleAssigner>();
+
+  private readonly IAliveSpoofer spoofer =
+    provider.GetRequiredService<IAliveSpoofer>();
 
   public void Start() { }
 

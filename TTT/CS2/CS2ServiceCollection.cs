@@ -66,6 +66,7 @@ public static class CS2ServiceCollection {
     collection.AddModBehavior<IStorage<SilentAWPConfig>, CS2SilentAWPConfig>();
     collection
      .AddModBehavior<IStorage<HealthshotConfig>, CS2HealthshotConfig>();
+    collection.AddModBehavior<IStorage<TripwireConfig>, CS2TripwireConfig>();
 
     // TTT - CS2 Specific optionals
     collection.AddScoped<ITextSpawner, TextSpawner>();

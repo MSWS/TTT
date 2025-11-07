@@ -20,7 +20,8 @@ public class MapChangeCausesEndListener(IServiceProvider provider)
   }
 
   private void onMapChange(string mapName) {
+    if (games.ActiveGame is not { State: State.IN_PROGRESS or State.COUNTDOWN })
+      return;
     games.ActiveGame?.EndGame(new EndReason("Map Change"));
-    Server.PrintToConsole("Detected map change, ending active game.");
   }
 }

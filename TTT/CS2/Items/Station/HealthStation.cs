@@ -30,7 +30,7 @@ public class HealthStation(IServiceProvider provider)
   override protected void onInterval() {
     var players  = Utilities.GetPlayers();
     var toRemove = new List<CPhysicsPropMultiplayer>();
-    foreach (var (prop, info) in props) {
+    foreach (var (prop, info) in Props) {
       if (_Config.TotalHealthGiven != 0
         && Math.Abs(info.HealthGiven) > _Config.TotalHealthGiven) {
         toRemove.Add(prop);
@@ -65,6 +65,6 @@ public class HealthStation(IServiceProvider provider)
       }
     }
 
-    foreach (var prop in toRemove) props.Remove(prop);
+    foreach (var prop in toRemove) Props.Remove(prop);
   }
 }

@@ -14,11 +14,10 @@ namespace TTT.CS2.Listeners;
 
 public class WardenTagAssigner(IServiceProvider provider)
   : BaseListener(provider) {
-  private Dictionary<string, (string, char)> oldTags =
-    new Dictionary<string, (string, char)>();
-
   private readonly IPlayerConverter<CCSPlayerController> converter =
     provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
+
+  private readonly Dictionary<string, (string, char)> oldTags = new();
 
   [UsedImplicitly]
   [EventHandler]

@@ -20,12 +20,12 @@ public abstract class StationItem<T>(IServiceProvider provider,
   : RoleRestrictedItem<T>(provider), IPluginModule where T : IRole {
   protected readonly StationConfig _Config = config;
 
-  protected readonly IPlayerConverter<CCSPlayerController> converter =
+  protected readonly IPlayerConverter<CCSPlayerController> Converter =
     provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
 
   private readonly long PROP_SIZE_SQUARED = 700;
 
-  protected readonly Dictionary<CPhysicsPropMultiplayer, StationInfo> props =
+  protected readonly Dictionary<CPhysicsPropMultiplayer, StationInfo> Props =
     new();
 
   private readonly IScheduler scheduler =
@@ -60,7 +60,7 @@ public abstract class StationItem<T>(IServiceProvider provider,
   public HookResult OnBulletImpact(EventBulletImpact ev, GameEventInfo info) {
     var hitVec = new Vector(ev.X, ev.Y, ev.Z);
 
-    var nearest = props
+    var nearest = Props
      .Select(kv => (kv.Key, kv.Value,
         Distance: kv.Key.AbsOrigin!.DistanceSquared(hitVec)))
      .Where(t => t.Key is { IsValid: true, AbsOrigin: not null })
@@ -76,7 +76,7 @@ public abstract class StationItem<T>(IServiceProvider provider,
 
     if (nearest.Value.Health <= 0) {
       nearest.Key.AcceptInput("Kill");
-      props.Remove(nearest.Key);
+      Props.Remove(nearest.Key);
       return HookResult.Continue;
     }
 
@@ -119,12 +119,12 @@ public abstract class StationItem<T>(IServiceProvider provider,
 
       if (prop == null) return;
 
-      props[prop] = new StationInfo(prop, _Config.StationHealth, player);
+      Props[prop] = new StationInfo(prop, _Config.StationHealth, player);
 
       prop.SetModel("models/props/cs_office/microwave.vmdl");
       prop.DispatchSpawn();
 
-      var gamePlayer = converter.GetPlayer(player);
+      var gamePlayer = Converter.GetPlayer(player);
       if (gamePlayer == null || !gamePlayer.Pawn.IsValid
         || gamePlayer.Pawn.Value == null)
         return;

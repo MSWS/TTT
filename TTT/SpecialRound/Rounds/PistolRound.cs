@@ -17,18 +17,18 @@ namespace SpecialRound.Rounds;
 
 public class PistolRound(IServiceProvider provider)
   : AbstractSpecialRound(provider), IPluginModule {
+  private readonly IInventoryManager inventory = provider
+   .GetRequiredService<IInventoryManager>();
+
+  private BasePlugin? plugin;
   public override string Name => "Pistol";
   public override IMsg Description => RoundMsgs.SPECIAL_ROUND_PISTOL;
-  private BasePlugin? plugin;
 
   private PistolRoundConfig config
     => Provider.GetService<IStorage<PistolRoundConfig>>()
     ?.Load()
      .GetAwaiter()
      .GetResult() ?? new PistolRoundConfig();
-
-  private readonly IInventoryManager inventory = provider
-   .GetRequiredService<IInventoryManager>();
 
   public override SpecialRoundConfig Config => config;
 

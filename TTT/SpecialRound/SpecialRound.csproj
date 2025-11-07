@@ -11,6 +11,7 @@
     <ProjectReference Include="..\API\API.csproj"/>
     <ProjectReference Include="..\CS2\CS2.csproj"/>
     <ProjectReference Include="..\Game\Game.csproj"/>
+    <ProjectReference Include="..\SpecialRoundAPI\SpecialRoundAPI.csproj" />
   </ItemGroup>
 
 </Project>

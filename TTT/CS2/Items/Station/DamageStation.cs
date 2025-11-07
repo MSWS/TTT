@@ -1,5 +1,4 @@
-﻿using CounterStrikeSharp.API;
-using CounterStrikeSharp.API.Core;
+﻿using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Utils;
 using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
@@ -31,9 +30,6 @@ public class DamageStation(IServiceProvider provider)
      .GetResult() ?? new DamageStationConfig()), IListener {
   private readonly IEventBus bus = provider.GetRequiredService<IEventBus>();
 
-  private readonly IPlayerConverter<CCSPlayerController> converter =
-    provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
-
   private readonly IPlayerFinder finder =
     provider.GetRequiredService<IPlayerFinder>();
 
@@ -48,13 +44,13 @@ public class DamageStation(IServiceProvider provider)
     var players  = finder.GetOnline();
     var toRemove = new List<CPhysicsPropMultiplayer>();
     var playerMapping = players
-     .Select(p => (ApiPlayer: p, GamePlayer: converter.GetPlayer(p)))
+     .Select(p => (ApiPlayer: p, GamePlayer: Converter.GetPlayer(p)))
      .Where(m
         => m.GamePlayer != null
         && !Roles.GetRoles(m.ApiPlayer).Any(r => r is TraitorRole))
      .ToList();
 
-    foreach (var (prop, info) in props) {
+    foreach (var (prop, info) in Props) {
       if (_Config.TotalHealthGiven != 0 && Math.Abs(info.HealthGiven)
         > Math.Abs(_Config.TotalHealthGiven)) {
         toRemove.Add(prop);
@@ -103,7 +99,7 @@ public class DamageStation(IServiceProvider provider)
       }
     }
 
-    foreach (var prop in toRemove) props.Remove(prop);
+    foreach (var prop in toRemove) Props.Remove(prop);
   }
 
   private static RecipientFilter SELF(int slot) {

@@ -1,5 +1,4 @@
-﻿using CounterStrikeSharp.API;
-using CounterStrikeSharp.API.Core;
+﻿using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.UserMessages;
 using Microsoft.Extensions.DependencyInjection;
 using SpecialRound.lang;
@@ -15,23 +14,6 @@ namespace SpecialRound.Rounds;
 
 public class SuppressedRound(IServiceProvider provider)
   : AbstractSpecialRound(provider), IPluginModule {
-  public override string Name => "Suppressed";
-  public override IMsg Description => RoundMsgs.SPECIAL_ROUND_SUPPRESSED;
-  public override SpecialRoundConfig Config => config;
-  private BasePlugin? plugin;
-
-  private SuppressedRoundConfig config
-    => Provider.GetService<IStorage<SuppressedRoundConfig>>()
-    ?.Load()
-     .GetAwaiter()
-     .GetResult() ?? new SuppressedRoundConfig();
-
-  public void Start(BasePlugin? newPlugin) { plugin ??= newPlugin; }
-
-  public override void ApplyRoundEffects() {
-    plugin?.HookUserMessage(452, onWeaponSound);
-  }
-
   private static readonly HashSet<uint> silencedWeapons = new() {
     1,  // deagle
     2,  // dual berettas
@@ -44,6 +26,23 @@ public class SuppressedRound(IServiceProvider provider)
     63, // cz75 auto
     64  // r8 revolver
   };
+
+  private BasePlugin? plugin;
+  public override string Name => "Suppressed";
+  public override IMsg Description => RoundMsgs.SPECIAL_ROUND_SUPPRESSED;
+  public override SpecialRoundConfig Config => config;
+
+  private SuppressedRoundConfig config
+    => Provider.GetService<IStorage<SuppressedRoundConfig>>()
+    ?.Load()
+     .GetAwaiter()
+     .GetResult() ?? new SuppressedRoundConfig();
+
+  public void Start(BasePlugin? newPlugin) { plugin ??= newPlugin; }
+
+  public override void ApplyRoundEffects() {
+    plugin?.HookUserMessage(452, onWeaponSound);
+  }
 
   private HookResult onWeaponSound(UserMessage msg) {
     var defIndex = msg.ReadUInt("item_def_index");
