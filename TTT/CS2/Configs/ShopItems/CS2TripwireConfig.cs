@@ -78,6 +78,11 @@ public class CS2TripwireConfig : IStorage<TripwireConfig>, IPluginModule {
     "Rate at which Tripwire defuses are processed (in seconds)", 0.5f,
     ConVarFlags.FCVAR_NONE, new RangeValidator<float>(0.01f, 5f));
 
+  public static readonly FakeConVar<int> CV_DEFUSE_REWARD = new(
+    "css_ttt_shop_tripwire_defuse_reward",
+    "Amount of money rewarded to a player for successfully defusing a tripwire",
+    20, ConVarFlags.FCVAR_NONE, new RangeValidator<int>(0, 10000));
+
   public void Dispose() { }
 
   public void Start() { }
@@ -102,7 +107,8 @@ public class CS2TripwireConfig : IStorage<TripwireConfig>, IPluginModule {
           CV_COLOR_B.Value),
       TripwireThickness = CV_THICKNESS.Value,
       DefuseTime        = TimeSpan.FromSeconds(CV_DEFUSE_TIME.Value),
-      DefuseRate        = TimeSpan.FromSeconds(CV_DEFUSE_RATE.Value)
+      DefuseRate        = TimeSpan.FromSeconds(CV_DEFUSE_RATE.Value),
+      DefuseReward      = CV_DEFUSE_REWARD.Value
     };
 
     return Task.FromResult<TripwireConfig?>(cfg);
