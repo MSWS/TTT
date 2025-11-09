@@ -101,8 +101,8 @@ public class TripwireMovementListener(IServiceProvider provider)
     instance.TripwireProp.EmitSound("Flashbang.ExplodeDistant");
 
     foreach (var player in Finder.GetOnline()) {
-      if (dealTripwireDamage(instance, player, out var gamePlayer)) continue;
-      gamePlayer?.EmitSound("Player.BurnDamage");
+      if (!dealTripwireDamage(instance, player, out var gamePlayer)) continue;
+      gamePlayer.EmitSound("Player.BurnDamage");
     }
   }
 
