@@ -58,9 +58,9 @@ public class WardenTagAssigner(IServiceProvider provider)
 
     foreach (var (playerId, (oldTag, oldTagColor)) in oldTags) {
       var apiPlayer = Finder.GetPlayerById(playerId);
-      if (apiPlayer == null) return;
+      if (apiPlayer == null) continue;
       var csPlayer = converter.GetPlayer(apiPlayer);
-      if (csPlayer == null || !csPlayer.IsValid) return;
+      if (csPlayer == null || !csPlayer.IsValid) continue;
       maul.getTagService().SetTag(csPlayer, oldTag, false);
       maul.getTagService().SetTagColor(csPlayer, oldTagColor, false);
     }
