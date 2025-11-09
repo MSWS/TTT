@@ -56,19 +56,15 @@ public class WardenTagAssigner(IServiceProvider provider)
     var maul = EgoApi.MAUL.Get();
     if (maul == null) return;
 
-    Task.Run(async () => {
-      foreach (var (playerId, (oldTag, oldTagColor)) in oldTags) {
-        await Server.NextWorldUpdateAsync(() => {
-          var apiPlayer = Finder.GetPlayerById(playerId);
-          if (apiPlayer == null) return;
-          var csPlayer = converter.GetPlayer(apiPlayer);
-          if (csPlayer == null || !csPlayer.IsValid) return;
-          maul.getTagService().SetTag(csPlayer, oldTag, false);
-          maul.getTagService().SetTagColor(csPlayer, oldTagColor, false);
-        });
-      }
+    foreach (var (playerId, (oldTag, oldTagColor)) in oldTags) {
+      var apiPlayer = Finder.GetPlayerById(playerId);
+      if (apiPlayer == null) return;
+      var csPlayer = converter.GetPlayer(apiPlayer);
+      if (csPlayer == null || !csPlayer.IsValid) return;
+      maul.getTagService().SetTag(csPlayer, oldTag, false);
+      maul.getTagService().SetTagColor(csPlayer, oldTagColor, false);
+    }
 
-      oldTags.Clear();
-    });
+    oldTags.Clear();
   }
 }
