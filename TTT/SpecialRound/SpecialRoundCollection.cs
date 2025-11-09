@@ -9,6 +9,7 @@ public static class SpecialRoundCollection {
   public static void AddSpecialRounds(this IServiceCollection services) {
     services.AddModBehavior<ISpecialRoundStarter, SpecialRoundStarter>();
     services.AddModBehavior<ISpecialRoundTracker, SpecialRoundTracker>();
+    services.AddModBehavior<SpecialRoundSoundNotifier>();
 
     services.AddModBehavior<SpeedRound>();
     services.AddModBehavior<BhopRound>();
