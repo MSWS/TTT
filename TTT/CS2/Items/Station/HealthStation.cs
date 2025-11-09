@@ -122,7 +122,7 @@ public class HealthStation(IServiceProvider provider)
 
       var potentials = contribs.Select(c => c.potential).ToList();
       var allocations =
-        AllocateProportionalInteger(totalHealAvailable, potentials);
+        allocateProportionalInteger(totalHealAvailable, potentials);
 
       // safety clamp: never allocate more than a station's potential
       for (int i = 0; i < allocations.Count; i++)
@@ -169,7 +169,7 @@ public class HealthStation(IServiceProvider provider)
   /// Returns a list of allocations with same length as potentials.
   /// </summary>
   private List<int>
-    AllocateProportionalInteger(int total, List<int> potentials) {
+    allocateProportionalInteger(int total, List<int> potentials) {
     var allocations    = new List<int>(new int[potentials.Count]);
     var remainders     = new List<(int idx, double rem)>();
     var sumBase        = 0;
@@ -177,7 +177,7 @@ public class HealthStation(IServiceProvider provider)
 
     if (totalPotential <= 0) return allocations;
 
-    for (int i = 0; i < potentials.Count; i++) {
+    for (var i = 0; i < potentials.Count; i++) {
       var potential = potentials[i];
       var share     = (double)potential / totalPotential * total;
       var baseAlloc = (int)Math.Floor(share);
