@@ -19,4 +19,6 @@ public record TripwireConfig : ShopItemConfig {
 
   public TimeSpan DefuseTime { get; init; } = TimeSpan.FromSeconds(5);
   public TimeSpan DefuseRate { get; init; } = TimeSpan.FromMilliseconds(500);
+  
+  public int DefuseReward { get; init; } = 20;
 }

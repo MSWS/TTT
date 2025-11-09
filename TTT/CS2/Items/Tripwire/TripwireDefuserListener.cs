@@ -1,6 +1,7 @@
 ﻿using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using Microsoft.Extensions.DependencyInjection;
+using ShopAPI;
 using ShopAPI.Configs.Traitor;
 using TTT.API;
 using TTT.API.Messages;
@@ -99,11 +100,14 @@ public class TripwireDefuserListener(IServiceProvider provider)
     }
 
     var progress = (DateTime.Now - startTime) / config.DefuseTime;
-    var timeLeft = config.DefuseTime - (config.DefuseTime * progress);
+    var timeLeft = config.DefuseTime - config.DefuseTime * progress;
 
     if (progress >= 1) {
       instance.TripwireProp.EmitSound("c4.disarmfinish", null, 0.2f, 1.5f);
       tripwireTracker?.RemoveTripwire(instance);
+      if (apiPlayer is IOnlinePlayer online)
+        provider.GetService<IShop>()
+        ?.AddBalance(online, config.DefuseReward, "Tripwire Defusal");
       return;
     }
 
