@@ -26,25 +26,21 @@ public class WardenTagAssigner(IServiceProvider provider)
   public void OnRoleAssign(PlayerRoleAssignEvent ev) {
     var maul = EgoApi.MAUL.Get();
     if (maul == null) return;
-    if (!(ev.Role is DetectiveRole)) return;
+    if (ev.Role is not DetectiveRole) return;
     var gamePlayer = converter.GetPlayer(ev.Player);
     if (gamePlayer == null) return;
 
     Task.Run(async () => {
-      if (ev.Role is DetectiveRole) {
-        var oldTag = await maul.getTagService().GetTag(gamePlayer.SteamID);
-        var oldTagColor =
-          await maul.getTagService().GetTagColor(gamePlayer.SteamID);
-        if (oldTag != "[DETECTIVE]")
-          oldTags[ev.Player.Id] = (oldTag, oldTagColor);
-      }
+      var oldTag = await maul.getTagService().GetTag(gamePlayer.SteamID);
+      var oldTagColor =
+        await maul.getTagService().GetTagColor(gamePlayer.SteamID);
+      if (oldTag != "[DETECTIVE]")
+        oldTags[ev.Player.Id] = (oldTag, oldTagColor);
 
       await Server.NextWorldUpdateAsync(() => {
-        if (ev.Role is DetectiveRole) {
-          maul.getTagService().SetTag(gamePlayer, "[DETECTIVE]", false);
-          maul.getTagService()
-           .SetTagColor(gamePlayer, ChatColors.DarkBlue, false);
-        }
+        maul.getTagService().SetTag(gamePlayer, "[DETECTIVE]", false);
+        maul.getTagService()
+         .SetTagColor(gamePlayer, ChatColors.DarkBlue, false);
       });
     });
   }
