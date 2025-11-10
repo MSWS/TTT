@@ -2,6 +2,7 @@ using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Utils;
 using TTT.API.Player;
+using TTT.CS2.Extensions;
 
 namespace TTT.CS2.Player;
 
@@ -87,18 +88,17 @@ public class CS2Player : IOnlinePlayer, IEquatable<CS2Player> {
   }
 
   public int Armor {
-    get => Player?.PawnArmor ?? 0;
+    get => Player != null && Player.IsValid ? Player.GetArmor().Item1 : 0;
 
     set {
-      if (Player == null) return;
-      Player.PawnArmor = value;
-      Utilities.SetStateChanged(Player, "CCSPlayerController", "m_iPawnArmor");
+      if (Player == null || !Player.IsValid) return;
+      Player.SetArmor(value);
     }
   }
 
   public bool IsAlive {
     get
-      => Player != null && Player is {
+      => Player != null && Player.IsValid && Player is {
         Team             : CsTeam.CounterTerrorist or CsTeam.Terrorist,
         Pawn.Value.Health: > 0
       };

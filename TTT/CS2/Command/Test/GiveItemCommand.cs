@@ -1,9 +1,7 @@
 ﻿using CounterStrikeSharp.API;
 using Microsoft.Extensions.DependencyInjection;
 using ShopAPI;
-using ShopAPI.Events;
 using TTT.API.Command;
-using TTT.API.Events;
 using TTT.API.Player;
 
 namespace TTT.CS2.Command.Test;

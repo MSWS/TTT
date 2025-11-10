@@ -17,17 +17,17 @@ namespace TTT.CS2.Items.Tripwire;
 
 public class TripwireDefuserListener(IServiceProvider provider)
   : IPluginModule {
-  private readonly ITripwireTracker? tripwireTracker =
-    provider.GetService<ITripwireTracker>();
-
   private readonly IPlayerConverter<CCSPlayerController> converter =
     provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
+
+  private readonly IMsgLocalizer locale =
+    provider.GetRequiredService<IMsgLocalizer>();
 
   private readonly IMessenger messenger =
     provider.GetRequiredService<IMessenger>();
 
-  private readonly IMsgLocalizer locale =
-    provider.GetRequiredService<IMsgLocalizer>();
+  private readonly ITripwireTracker? tripwireTracker =
+    provider.GetService<ITripwireTracker>();
 
   private TripwireConfig config
     => provider.GetService<IStorage<TripwireConfig>>()

@@ -48,17 +48,17 @@ public class CS2GameConfig : IStorage<TTTConfig>, IPluginModule {
 
   public static readonly FakeConVar<int> CV_TRAITOR_ARMOR = new(
     "css_ttt_rolearmor_traitor",
-    "Amount of armor to give to traitors at start of round", 100,
+    "Amount of armor to give to traitors at start of round", 0,
     ConVarFlags.FCVAR_NONE, new RangeValidator<int>(0, 1000));
 
   public static readonly FakeConVar<int> CV_DETECTIVE_ARMOR = new(
     "css_ttt_rolearmor_detective",
-    "Amount of armor to give to detectives at start of round", 100,
+    "Amount of armor to give to detectives at start of round", 0,
     ConVarFlags.FCVAR_NONE, new RangeValidator<int>(0, 1000));
 
   public static readonly FakeConVar<int> CV_INNOCENT_ARMOR = new(
     "css_ttt_rolearmor_innocent",
-    "Amount of armor to give to innocents at start of round", 100,
+    "Amount of armor to give to innocents at start of round", 0,
     ConVarFlags.FCVAR_NONE, new RangeValidator<int>(0, 1000));
 
   public static readonly FakeConVar<string> CV_TRAITOR_WEAPONS = new(

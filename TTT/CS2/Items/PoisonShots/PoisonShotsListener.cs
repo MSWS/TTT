@@ -16,7 +16,6 @@ using TTT.API.Game;
 using TTT.API.Player;
 using TTT.API.Storage;
 using TTT.CS2.Extensions;
-using TTT.CS2.Items.SilentAWP;
 using TTT.CS2.RayTrace.Class;
 using TTT.Game.Events.Body;
 using TTT.Game.Events.Game;

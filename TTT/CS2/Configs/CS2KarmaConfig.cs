@@ -64,8 +64,8 @@ public class CS2KarmaConfig : IStorage<KarmaConfig>, IPluginModule {
 
   public static readonly FakeConVar<int> CV_TRAITOR_ON_TRAITOR = new(
     "css_ttt_karma_traitor_on_traitor",
-    "Karma lost when Traitor kills another Traitor", -12, ConVarFlags.FCVAR_NONE,
-    new RangeValidator<int>(-50, 50));
+    "Karma lost when Traitor kills another Traitor", -12,
+    ConVarFlags.FCVAR_NONE, new RangeValidator<int>(-50, 50));
 
   public static readonly FakeConVar<int> CV_INNO_ON_DETECTIVE = new(
     "css_ttt_karma_inno_on_detective",

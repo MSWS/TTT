@@ -13,11 +13,11 @@ namespace Stats;
 
 public class SpecialRoundListener(IServiceProvider provider)
   : BaseListener(provider) {
-  private readonly IRoundTracker tracker =
-    provider.GetRequiredService<IRoundTracker>();
-
   private readonly HttpClient client =
     provider.GetRequiredService<HttpClient>();
+
+  private readonly IRoundTracker tracker =
+    provider.GetRequiredService<IRoundTracker>();
 
   private AbstractSpecialRound? round;
 

@@ -7,9 +7,9 @@ public record SpecialRoundsConfig {
   public float SpecialRoundChance { get; init; } = 0.2f;
 
   /// <summary>
-  /// If a special round is started, the chance that another special round
-  /// will start in conjunction with it. This check is run until it fails,
-  /// or we run out of special rounds to start.
+  ///   If a special round is started, the chance that another special round
+  ///   will start in conjunction with it. This check is run until it fails,
+  ///   or we run out of special rounds to start.
   /// </summary>
   public float MultiRoundChance { get; init; } = 0.33f;
 }

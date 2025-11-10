@@ -44,9 +44,8 @@ public class SetRoleCommand(IServiceProvider provider) : ICommand {
           break;
       }
 
-    if (info.ArgCount == 3) {
+    if (info.ArgCount == 3)
       targets = finder.GetMulti(info.Args[2], out targetName, executor);
-    }
 
     Server.NextWorldUpdate(() => {
       foreach (var player in targets) {

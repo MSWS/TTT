@@ -47,11 +47,10 @@ public class C4ShopItem(IServiceProvider provider)
       if (c4sBought > config.MaxC4PerRound)
         return PurchaseResult.ITEM_NOT_PURCHASABLE;
 
-    if (config.MaxC4AtOnce > 0) {
+    if (config.MaxC4AtOnce > 0)
       if (finder.GetOnline().Count(p => Shop.HasItem<C4ShopItem>(p))
         > config.MaxC4AtOnce)
         return PurchaseResult.ITEM_NOT_PURCHASABLE;
-    }
 
     return base.CanPurchase(player);
   }

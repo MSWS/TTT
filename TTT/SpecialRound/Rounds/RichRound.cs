@@ -1,7 +1,5 @@
-using CounterStrikeSharp.API.Modules.Utils;
 using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
-using ShopAPI;
 using ShopAPI.Events;
 using SpecialRound.lang;
 using SpecialRoundAPI;

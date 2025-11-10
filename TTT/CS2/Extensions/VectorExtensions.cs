@@ -97,7 +97,7 @@ public static class VectorExtensions {
   public static Vector toVector(this Vector3 vec) {
     return new Vector(vec.X, vec.Y, vec.Z);
   }
-  
+
   public static QAngle toAngle(this Vector vec) {
     var pitch = (float)(Math.Atan2(-vec.Z,
       Math.Sqrt(vec.X * vec.X + vec.Y * vec.Y)) * (180.0 / Math.PI));

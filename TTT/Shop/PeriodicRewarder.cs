@@ -24,15 +24,15 @@ public class PeriodicRewarder(IServiceProvider provider) : ITerrorModule {
   private readonly IGameManager games =
     provider.GetRequiredService<IGameManager>();
 
+  private readonly IMsgLocalizer localizer =
+    provider.GetRequiredService<IMsgLocalizer>();
+
   private readonly Dictionary<string, List<Vector>> playerPositions = new();
 
   private readonly IScheduler scheduler =
     provider.GetRequiredService<IScheduler>();
 
   private readonly IShop shop = provider.GetRequiredService<IShop>();
-
-  private readonly IMsgLocalizer localizer =
-    provider.GetRequiredService<IMsgLocalizer>();
 
   private IDisposable? rewardTimer, updateTimer;
 

@@ -42,8 +42,8 @@ public class HealthStation(IServiceProvider provider)
   }
 
   /// <summary>
-  /// Scan all props and build a map: Player -> list of (StationInfo, potentialHeal).
-  /// Also fills toRemove for invalid/expired props.
+  ///   Scan all props and build a map: Player -> list of (StationInfo, potentialHeal).
+  ///   Also fills toRemove for invalid/expired props.
   /// </summary>
   private
     Dictionary<CCSPlayerController, List<(StationInfo info, int potential)>>
@@ -90,8 +90,8 @@ public class HealthStation(IServiceProvider provider)
   }
 
   /// <summary>
-  /// Compute potential heal from a station given the distance.
-  /// Mirrors your original logic: ceil(HealthIncrements * healthScale).
+  ///   Compute potential heal from a station given the distance.
+  ///   Mirrors your original logic: ceil(HealthIncrements * healthScale).
   /// </summary>
   private int ComputePotentialHeal(double dist) {
     var healthScale = 1.0 - dist / _Config.MaxRange;
@@ -99,9 +99,9 @@ public class HealthStation(IServiceProvider provider)
   }
 
   /// <summary>
-  /// Apply heals to each player once per tick.
-  /// Distributes the actual heal proportionally across contributing stations,
-  /// updates station.Info.HealthGiven and emits a single pickup sound if needed.
+  ///   Apply heals to each player once per tick.
+  ///   Distributes the actual heal proportionally across contributing stations,
+  ///   updates station.Info.HealthGiven and emits a single pickup sound if needed.
   /// </summary>
   private void applyAccumulatedHeals(
     Dictionary<CCSPlayerController, List<(StationInfo info, int potential)>>
@@ -125,7 +125,7 @@ public class HealthStation(IServiceProvider provider)
         allocateProportionalInteger(totalHealAvailable, potentials);
 
       // safety clamp: never allocate more than a station's potential
-      for (int i = 0; i < allocations.Count; i++)
+      for (var i = 0; i < allocations.Count; i++)
         if (allocations[i] > potentials[i])
           allocations[i] = potentials[i];
 
@@ -164,9 +164,9 @@ public class HealthStation(IServiceProvider provider)
   }
 
   /// <summary>
-  /// Proportionally distribute an integer total across integer potentials.
-  /// Uses floor of shares and assigns leftover to largest fractional remainders.
-  /// Returns a list of allocations with same length as potentials.
+  ///   Proportionally distribute an integer total across integer potentials.
+  ///   Uses floor of shares and assigns leftover to largest fractional remainders.
+  ///   Returns a list of allocations with same length as potentials.
   /// </summary>
   private List<int>
     allocateProportionalInteger(int total, List<int> potentials) {

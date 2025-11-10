@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using System.Drawing;
 using System.Reactive.Concurrency;
 using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
@@ -36,25 +35,17 @@ public static class TripwireServiceCollection {
 
 public class TripwireItem(IServiceProvider provider)
   : RoleRestrictedItem<TraitorRole>(provider), IPluginModule, ITripwireTracker {
-  private TripwireConfig config
-    => Provider.GetService<IStorage<TripwireConfig>>()
-    ?.Load()
-     .GetAwaiter()
-     .GetResult() ?? new TripwireConfig();
-
   private readonly IPlayerConverter<CCSPlayerController> converter =
     provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
 
   private readonly IScheduler scheduler =
     provider.GetRequiredService<IScheduler>();
 
-  public List<TripwireInstance> ActiveTripwires { get; } = [];
-
-  public void RemoveTripwire(TripwireInstance instance) {
-    instance.Beam.Remove();
-    instance.TripwireProp.Remove();
-    ActiveTripwires.Remove(instance);
-  }
+  private TripwireConfig config
+    => Provider.GetService<IStorage<TripwireConfig>>()
+    ?.Load()
+     .GetAwaiter()
+     .GetResult() ?? new TripwireConfig();
 
   public override string Name => Locale[TripwireMsgs.SHOP_ITEM_TRIPWIRE];
 
@@ -69,6 +60,14 @@ public class TripwireItem(IServiceProvider provider)
     ?.RegisterListener<
         CounterStrikeSharp.API.Core.Listeners.OnServerPrecacheResources>(
         onPrecache);
+  }
+
+  public List<TripwireInstance> ActiveTripwires { get; } = [];
+
+  public void RemoveTripwire(TripwireInstance instance) {
+    instance.Beam.Remove();
+    instance.TripwireProp.Remove();
+    ActiveTripwires.Remove(instance);
   }
 
   private void onPrecache(ResourceManifest manifest) {

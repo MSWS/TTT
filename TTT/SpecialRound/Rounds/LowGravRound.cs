@@ -13,6 +13,7 @@ namespace SpecialRound.Rounds;
 
 public class LowGravRound(IServiceProvider provider)
   : AbstractSpecialRound(provider) {
+  private int originalGravity = 800;
   public override string Name => "Low Grav";
   public override IMsg Description => RoundMsgs.SPECIAL_ROUND_LOWGRAV;
   public override SpecialRoundConfig Config => config;
@@ -22,8 +23,6 @@ public class LowGravRound(IServiceProvider provider)
     ?.Load()
      .GetAwaiter()
      .GetResult() ?? new LowGravRoundConfig();
-
-  private int originalGravity = 800;
 
   public override void ApplyRoundEffects() {
     var cvar = ConVar.Find("sv_gravity");
