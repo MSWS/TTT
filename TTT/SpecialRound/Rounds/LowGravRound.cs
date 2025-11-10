@@ -28,7 +28,7 @@ public class LowGravRound(IServiceProvider provider)
     var cvar = ConVar.Find("sv_gravity");
     if (cvar == null) return;
 
-    originalGravity = cvar.GetPrimitiveValue<int>();
+    originalGravity = (int) Math.Round(cvar.GetPrimitiveValue<float>());
     var newGravity = (int)(originalGravity * config.GravityMultiplier);
     Server.NextWorldUpdate(()
       => Server.ExecuteCommand($"sv_gravity {newGravity}"));
