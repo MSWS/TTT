@@ -24,7 +24,7 @@ public class SpecialRoundCommand(IServiceProvider provider) : ICommand {
     }
 
     if (info.ArgCount == 1) {
-      tracker.TryStartSpecialRound();
+      Server.NextWorldUpdate(() => tracker.TryStartSpecialRound());
       info.ReplySync("Started a random special round.");
       return Task.FromResult(CommandResult.SUCCESS);
     }
