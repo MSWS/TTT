@@ -43,6 +43,7 @@ public class SpecialRoundStarter(IServiceProvider provider)
       round.ApplyRoundEffects();
     }
 
+    tracker.ActiveRounds.AddRange(rounds);
     tracker.RoundsSinceLastSpecial = 0;
     return rounds;
   }
