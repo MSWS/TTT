@@ -19,6 +19,8 @@ public abstract class AbstractSpecialRound(IServiceProvider provider)
 
   public abstract void ApplyRoundEffects();
 
+  public virtual bool ConflictsWith(AbstractSpecialRound _) { return false; }
+
   [UsedImplicitly]
   [EventHandler]
   public abstract void OnGameState(GameStateUpdateEvent ev);

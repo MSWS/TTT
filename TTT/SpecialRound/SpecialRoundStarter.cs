@@ -30,20 +30,22 @@ public class SpecialRoundStarter(IServiceProvider provider)
     plugin?.RegisterListener<Listeners.OnMapStart>(onMapChange);
   }
 
-  public AbstractSpecialRound?
-    TryStartSpecialRound(AbstractSpecialRound? round) {
-    round ??= getSpecialRound();
+  public List<AbstractSpecialRound> TryStartSpecialRound(
+    List<AbstractSpecialRound>? rounds = null) {
+    rounds ??= getSpecialRounds();
 
-    var roundStart = new SpecialRoundStartEvent(round);
-    Bus.Dispatch(roundStart);
+    Messenger.MessageAll(Locale[RoundMsgs.SPECIAL_ROUND_STARTED(rounds)]);
 
-    Messenger.MessageAll(Locale[RoundMsgs.SPECIAL_ROUND_STARTED(round)]);
-    Messenger.MessageAll(Locale[round.Description]);
+    foreach (var round in rounds) {
+      var roundStart = new SpecialRoundEnableEvent(round);
+      Bus.Dispatch(roundStart);
+      Messenger.MessageAll(Locale[round.Description]);
+      round.ApplyRoundEffects();
+    }
 
-    round.ApplyRoundEffects();
-    tracker.CurrentRound           = round;
+    tracker.ActiveRounds.AddRange(rounds);
     tracker.RoundsSinceLastSpecial = 0;
-    return round;
+    return rounds;
   }
 
   private void onMapChange(string mapName) { roundsSinceMapChange = 0; }
@@ -62,16 +64,32 @@ public class SpecialRoundStarter(IServiceProvider provider)
     if (roundsSinceMapChange < config.MinRoundsAfterMapChange) return;
     if (Random.Shared.NextSingle() > config.SpecialRoundChance) return;
 
-    var specialRound = getSpecialRound();
+    var specialRound = getSpecialRounds();
 
     TryStartSpecialRound(specialRound);
   }
 
-  private AbstractSpecialRound getSpecialRound() {
+  private List<AbstractSpecialRound> getSpecialRounds() {
+    var selectedRounds = new List<AbstractSpecialRound>();
+
+    do {
+      var round = pickWeightedRound(selectedRounds);
+      if (round == null) break;
+      selectedRounds.Add(round);
+    } while (config.MultiRoundChance > Random.Shared.NextSingle());
+
+    return selectedRounds;
+  }
+
+  private AbstractSpecialRound? pickWeightedRound(
+    List<AbstractSpecialRound> exclude) {
     var rounds = Provider.GetServices<ITerrorModule>()
      .OfType<AbstractSpecialRound>()
-     .Where(r => r.Config.Weight > 0)
+     .Where(r => r.Config.Weight > 0 && !exclude.Contains(r))
+     .Where(r
+        => !exclude.Any(er => er.ConflictsWith(r) && !r.ConflictsWith(er)))
      .ToList();
+    if (rounds.Count == 0) return null;
     var totalWeight = rounds.Sum(r => r.Config.Weight);
     var roll        = Random.Shared.NextDouble() * totalWeight;
     foreach (var round in rounds) {
@@ -79,7 +97,6 @@ public class SpecialRoundStarter(IServiceProvider provider)
       if (roll <= 0) return round;
     }
 
-    throw new InvalidOperationException(
-      "Failed to select a special round. This should never happen.");
+    return null;
   }
 }

@@ -14,19 +14,6 @@ namespace SpecialRound.Rounds;
 
 public class SuppressedRound(IServiceProvider provider)
   : AbstractSpecialRound(provider), IPluginModule {
-  private static readonly HashSet<uint> silencedWeapons = new() {
-    1,  // deagle
-    2,  // dual berettas
-    3,  // five seven
-    30, // tec9
-    32, // p2000
-    36, // p250
-    4,  // glock
-    61, // usp-s
-    63, // cz75 auto
-    64  // r8 revolver
-  };
-
   private BasePlugin? plugin;
   public override string Name => "Suppressed";
   public override IMsg Description => RoundMsgs.SPECIAL_ROUND_SUPPRESSED;
@@ -47,7 +34,8 @@ public class SuppressedRound(IServiceProvider provider)
   private HookResult onWeaponSound(UserMessage msg) {
     var defIndex = msg.ReadUInt("item_def_index");
 
-    if (!silencedWeapons.Contains(defIndex)) return HookResult.Continue;
+    if (!WeaponSoundIndex.PISTOLS.Contains(defIndex))
+      return HookResult.Continue;
 
     msg.Recipients.Clear();
     return HookResult.Handled;

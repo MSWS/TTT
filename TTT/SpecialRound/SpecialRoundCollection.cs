@@ -11,11 +11,13 @@ public static class SpecialRoundCollection {
     services.AddModBehavior<ISpecialRoundTracker, SpecialRoundTracker>();
     services.AddModBehavior<SpecialRoundSoundNotifier>();
 
-    services.AddModBehavior<SpeedRound>();
     services.AddModBehavior<BhopRound>();
-    services.AddModBehavior<VanillaRound>();
-    services.AddModBehavior<SuppressedRound>();
-    services.AddModBehavior<SilentRound>();
+    services.AddModBehavior<LowGravRound>();
     services.AddModBehavior<PistolRound>();
+    services.AddModBehavior<RichRound>();
+    services.AddModBehavior<SilentRound>();
+    services.AddModBehavior<SpeedRound>();
+    services.AddModBehavior<SuppressedRound>();
+    services.AddModBehavior<VanillaRound>();
   }
 }

@@ -21,9 +21,9 @@ public record TTTConfig {
     public int TraitorHealth { get; init; } = 100;
     public int DetectiveHealth { get; init; } = 100;
     public int InnocentHealth { get; init; } = 100;
-    public int TraitorArmor { get; init; } = 100;
-    public int DetectiveArmor { get; init; } = 100;
-    public int InnocentArmor { get; init; } = 100;
+    public int TraitorArmor { get; init; }
+    public int DetectiveArmor { get; init; }
+    public int InnocentArmor { get; init; }
 
     public string[]? TraitorWeapons { get; init; } = ["knife", "pistol"];
 

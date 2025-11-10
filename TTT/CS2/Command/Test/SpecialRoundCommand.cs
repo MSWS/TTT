@@ -24,16 +24,16 @@ public class SpecialRoundCommand(IServiceProvider provider) : ICommand {
     }
 
     if (info.ArgCount == 1) {
-      tracker.TryStartSpecialRound(null);
+      Server.NextWorldUpdate(() => tracker.TryStartSpecialRound());
       info.ReplySync("Started a random special round.");
       return Task.FromResult(CommandResult.SUCCESS);
     }
 
     var rounds = provider.GetServices<ITerrorModule>()
      .OfType<AbstractSpecialRound>()
-     .ToDictionary(r => r.Name.ToLower(), r => r);
+     .ToDictionary(r => r.Name.ToLower().Replace(" ", ""), r => r);
 
-    var roundName = info.Args[1].ToLower();
+    var roundName = string.Join("", info.Args.Skip(1)).ToLower();
     if (!rounds.TryGetValue(roundName, out var round)) {
       info.ReplySync($"No special round found with name '{roundName}'.");
       foreach (var name in rounds.Keys) info.ReplySync($"- {name}");
@@ -41,7 +41,7 @@ public class SpecialRoundCommand(IServiceProvider provider) : ICommand {
     }
 
     Server.NextWorldUpdate(() => {
-      tracker.TryStartSpecialRound(round);
+      tracker.TryStartSpecialRound([round]);
       info.ReplySync($"Started special round '{roundName}'.");
     });
     return Task.FromResult(CommandResult.SUCCESS);

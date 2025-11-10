@@ -58,11 +58,8 @@ public class Shop(IServiceProvider provider) : ITerrorModule, IShop {
     bus.Dispatch(purchaseEvent);
     if (purchaseEvent.IsCanceled) return PurchaseResult.PURCHASE_CANCELED;
 
-    AddBalance(player, -cost, item.Name);
+    AddBalance(player, -cost, item.Name, printReason);
     GiveItem(player, item);
-
-    if (printReason)
-      messenger?.Message(player, localizer[ShopMsgs.SHOP_PURCHASED(item)]);
     return PurchaseResult.SUCCESS;
   }
 

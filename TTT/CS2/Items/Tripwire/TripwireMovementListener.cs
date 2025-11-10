@@ -27,11 +27,11 @@ public class TripwireMovementListener(IServiceProvider provider)
   private readonly IPlayerConverter<CCSPlayerController> converter =
     provider.GetRequiredService<IPlayerConverter<CCSPlayerController>>();
 
-  private readonly ITripwireTracker? tripwireTracker =
-    provider.GetService<ITripwireTracker>();
-
   private readonly Dictionary<string, TripwireInstance> killedWithTripwire =
     new();
+
+  private readonly ITripwireTracker? tripwireTracker =
+    provider.GetService<ITripwireTracker>();
 
   private TripwireConfig config
     => Provider.GetService<IStorage<TripwireConfig>>()
@@ -42,6 +42,16 @@ public class TripwireMovementListener(IServiceProvider provider)
   public void Start(BasePlugin? plugin) {
     if (tripwireTracker == null) return;
     plugin?.AddTimer(0.2f, checkTripwires, TimerFlags.REPEAT);
+  }
+
+  public void ActivateTripwire(TripwireInstance instance) {
+    tripwireTracker?.RemoveTripwire(instance);
+    instance.TripwireProp.EmitSound("Flashbang.ExplodeDistant");
+
+    foreach (var player in Finder.GetOnline()) {
+      if (!dealTripwireDamage(instance, player, out var gamePlayer)) continue;
+      gamePlayer.EmitSound("Player.BurnDamage");
+    }
   }
 
   private void checkTripwires() {
@@ -94,16 +104,6 @@ public class TripwireMovementListener(IServiceProvider provider)
     if (ev.Body.Killer != null && ev.Body.Killer.Id != ev.Body.OfPlayer.Id)
       return;
     ev.Body.Killer = info.owner;
-  }
-
-  public void ActivateTripwire(TripwireInstance instance) {
-    tripwireTracker?.RemoveTripwire(instance);
-    instance.TripwireProp.EmitSound("Flashbang.ExplodeDistant");
-
-    foreach (var player in Finder.GetOnline()) {
-      if (!dealTripwireDamage(instance, player, out var gamePlayer)) continue;
-      gamePlayer.EmitSound("Player.BurnDamage");
-    }
   }
 
   private bool dealTripwireDamage(TripwireInstance instance,
