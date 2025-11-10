@@ -8,6 +8,6 @@ public interface ISpecialRoundStarter {
   /// </summary>
   /// <param name="round"></param>
   /// <returns></returns>
-  public AbstractSpecialRound?
-    TryStartSpecialRound(AbstractSpecialRound? round);
+  public List<AbstractSpecialRound>? TryStartSpecialRound(
+    List<AbstractSpecialRound>? round = null);
 }

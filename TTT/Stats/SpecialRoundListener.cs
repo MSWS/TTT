@@ -23,7 +23,7 @@ public class SpecialRoundListener(IServiceProvider provider)
 
   [UsedImplicitly]
   [EventHandler]
-  public void OnRoundStart(SpecialRoundStartEvent ev) { round = ev.Round; }
+  public void OnRoundStart(SpecialRoundEnableEvent ev) { round = ev.Round; }
 
   [UsedImplicitly]
   [EventHandler]

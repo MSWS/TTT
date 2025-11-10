@@ -41,7 +41,7 @@ public class SpecialRoundCommand(IServiceProvider provider) : ICommand {
     }
 
     Server.NextWorldUpdate(() => {
-      tracker.TryStartSpecialRound(round);
+      tracker.TryStartSpecialRound([round]);
       info.ReplySync($"Started special round '{roundName}'.");
     });
     return Task.FromResult(CommandResult.SUCCESS);

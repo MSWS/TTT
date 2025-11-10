@@ -11,6 +11,8 @@ public static class ShopMsgs {
   public static IMsg SHOP_INACTIVE => MsgFactory.Create(nameof(SHOP_INACTIVE));
 
   public static IMsg CREDITS_NAME => MsgFactory.Create(nameof(CREDITS_NAME));
+  
+  public static IMsg SHOP_EXPLORATION => MsgFactory.Create(nameof(SHOP_EXPLORATION));
 
   public static IMsg SHOP_CANNOT_PURCHASE
     => MsgFactory.Create(nameof(SHOP_CANNOT_PURCHASE));

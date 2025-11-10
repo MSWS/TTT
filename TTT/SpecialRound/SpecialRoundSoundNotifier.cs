@@ -10,7 +10,7 @@ public class SpecialRoundSoundNotifier(IServiceProvider provider)
   : BaseListener(provider) {
   [UsedImplicitly]
   [EventHandler]
-  public void OnSpecialRoundStart(SpecialRoundStartEvent ev) {
+  public void OnSpecialRoundStart(SpecialRoundEnableEvent ev) {
     foreach (var player in Utilities.GetPlayers())
       player.EmitSound("UI.XP.Star.Spend", null, 0.2f);
   }

@@ -25,7 +25,16 @@ public class RoundMsgs {
   public static IMsg SPECIAL_ROUND_PISTOL
     => MsgFactory.Create(nameof(SPECIAL_ROUND_PISTOL));
 
-  public static IMsg SPECIAL_ROUND_STARTED(AbstractSpecialRound round) {
-    return MsgFactory.Create(nameof(SPECIAL_ROUND_STARTED), round.Name);
+  public static IMsg SPECIAL_ROUND_RICH
+    => MsgFactory.Create(nameof(SPECIAL_ROUND_RICH));
+
+  public static IMsg SPECIAL_ROUND_LOWGRAV
+    => MsgFactory.Create(nameof(SPECIAL_ROUND_LOWGRAV));
+
+  public static IMsg SPECIAL_ROUND_STARTED(List<AbstractSpecialRound> round) {
+    var roundNames = round.Count == 1 ?
+      round[0].Name :
+      string.Join(", ", round.Select(r => r.Name));
+    return MsgFactory.Create(nameof(SPECIAL_ROUND_STARTED), roundNames);
   }
 }
