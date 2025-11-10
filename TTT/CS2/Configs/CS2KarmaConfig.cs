@@ -44,7 +44,7 @@ public class CS2KarmaConfig : IStorage<KarmaConfig>, IPluginModule {
   // Karma deltas
   public static readonly FakeConVar<int> CV_INNO_ON_TRAITOR = new(
     "css_ttt_karma_inno_on_traitor",
-    "Karma gained when Innocent kills a Traitor", 4, ConVarFlags.FCVAR_NONE,
+    "Karma gained when Innocent kills a Traitor", 2, ConVarFlags.FCVAR_NONE,
     new RangeValidator<int>(-50, 50));
 
   public static readonly FakeConVar<int> CV_TRAITOR_ON_DETECTIVE = new(
@@ -55,21 +55,21 @@ public class CS2KarmaConfig : IStorage<KarmaConfig>, IPluginModule {
   public static readonly FakeConVar<int> CV_INNO_ON_INNO_VICTIM = new(
     "css_ttt_karma_inno_on_inno_victim",
     "Karma gained or lost when Innocent kills another Innocent who was a victim",
-    -1, ConVarFlags.FCVAR_NONE, new RangeValidator<int>(-50, 50));
+    -2, ConVarFlags.FCVAR_NONE, new RangeValidator<int>(-50, 50));
 
   public static readonly FakeConVar<int> CV_INNO_ON_INNO = new(
     "css_ttt_karma_inno_on_inno",
-    "Karma lost when Innocent kills another Innocent", -5,
+    "Karma lost when Innocent kills another Innocent", -8,
     ConVarFlags.FCVAR_NONE, new RangeValidator<int>(-50, 50));
 
   public static readonly FakeConVar<int> CV_TRAITOR_ON_TRAITOR = new(
     "css_ttt_karma_traitor_on_traitor",
-    "Karma lost when Traitor kills another Traitor", -6, ConVarFlags.FCVAR_NONE,
+    "Karma lost when Traitor kills another Traitor", -12, ConVarFlags.FCVAR_NONE,
     new RangeValidator<int>(-50, 50));
 
   public static readonly FakeConVar<int> CV_INNO_ON_DETECTIVE = new(
     "css_ttt_karma_inno_on_detective",
-    "Karma lost when Innocent kills a Detective", -8, ConVarFlags.FCVAR_NONE,
+    "Karma lost when Innocent kills a Detective", -15, ConVarFlags.FCVAR_NONE,
     new RangeValidator<int>(-50, 50));
 
   public static readonly FakeConVar<int> CV_KARMA_PER_ROUND = new(

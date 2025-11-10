@@ -10,6 +10,7 @@ namespace SpecialRound;
 public class SpecialRoundTracker : ISpecialRoundTracker, ITerrorModule,
   IListener {
   public AbstractSpecialRound? CurrentRound { get; set; }
+  public List<AbstractSpecialRound> ActiveRounds { get; } = new();
   public int RoundsSinceLastSpecial { get; set; }
   public void Dispose() { }
   public void Start() { }
@@ -19,5 +20,6 @@ public class SpecialRoundTracker : ISpecialRoundTracker, ITerrorModule,
   public void OnRoundEnd(GameStateUpdateEvent ev) {
     if (ev.NewState != State.FINISHED) return;
     CurrentRound = null;
+    ActiveRounds.Clear();
   }
 }

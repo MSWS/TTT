@@ -2,6 +2,8 @@ SHOP_PREFIX: "{green}SHOP {grey}| "
 SHOP_INACTIVE: "%SHOP_PREFIX%The shop is currently closed."
 SHOP_ITEM_NOT_FOUND: "%SHOP_PREFIX%Could not find an item named \"{default}{0}{grey}\"."
 
+SHOP_EXPLORATION: "Exploration"
+
 SHOP_ITEM_DEAGLE: "One-Hit Revolver"
 SHOP_ITEM_DEAGLE_DESC: "If you hit an enemy, they will die instantly. Hitting a teammate will kill you instead"
 SHOP_ITEM_DEAGLE_HIT_FF: "%PREFIX%You hit a teammate!"
