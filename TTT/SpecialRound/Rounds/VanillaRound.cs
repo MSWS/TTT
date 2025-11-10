@@ -42,7 +42,7 @@ public class VanillaRound(IServiceProvider provider)
   [UsedImplicitly]
   [EventHandler(Priority = Priority.HIGH)]
   public void OnPurchase(PlayerPurchaseItemEvent ev) {
-    if (Tracker.ActiveRounds.Contains(this)) return;
+    if (!Tracker.ActiveRounds.Contains(this)) return;
     ev.IsCanceled = true;
 
     messenger.Message(ev.Player, locale[RoundMsgs.VANILLA_ROUND_REMINDER]);
