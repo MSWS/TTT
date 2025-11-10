@@ -8,54 +8,54 @@ AFK_MOVED: "%PREFIX%You were moved to spectators for being AFK."
 DEAD_MUTE_REMINDER: "%PREFIX%You are dead and cannot be heard."
 
 SHOP_ITEM_DNA: "DNA Scanner"
-SHOP_ITEM_DNA_DESC: "Scan bodies to reveal the person who killed them."
+SHOP_ITEM_DNA_DESC: "Scan bodies to reveal the person who killed them"
 SHOP_ITEM_DNA_SCANNED: "%DNA_PREFIX%You scanned {0}{1}'%s% {grey}body, their killer was {red}{2}{grey}."
 SHOP_ITEM_DNA_SCANNED_OTHER: "%DNA_PREFIX%You scanned {0}{1}'%s% {grey}body, {2}."
 SHOP_ITEM_DNA_EXPIRED: "%DNA_PREFIX%You scanned {0}{1}'%s% {grey}body, but the DNA has expired."
 
 SHOP_ITEM_STATION_HEALTH: "Health Station"
-SHOP_ITEM_STATION_HEALTH_DESC: "A health station that heals players around it."
+SHOP_ITEM_STATION_HEALTH_DESC: "The health station will heall all players around it"
 SHOP_ITEM_STATION_HURT: "Hurt Station"
-SHOP_ITEM_STATION_HURT_DESC: "A station that hurts non-Traitors around it."
+SHOP_ITEM_STATION_HURT_DESC: "The hurt station will damage all non-Traitors around it"
 
 SHOP_ITEM_CAMO: "Camouflage"
-SHOP_ITEM_CAMO_DESC: "Disguise yourself and make yourself harder to see."
+SHOP_ITEM_CAMO_DESC: "You are now harder to see"
 
 SHOP_ITEM_BODY_PAINT: "Body Paint"
-SHOP_ITEM_BODY_PAINT_DESC: "Paint bodies to make them appear identified."
+SHOP_ITEM_BODY_PAINT_DESC: "Interacting with bodies will now paint them, making them appear identified"
 SHOP_ITEM_BODY_PAINT_OUT: "%PREFIX% You ran out of body paint."
 
 SHOP_ITEM_POISON_SHOTS: "Poison Shots"
-SHOP_ITEM_POISON_SHOTS_DESC: "Your bullets are coated in a mildly poisonous substance."
+SHOP_ITEM_POISON_SHOTS_DESC: "The next 5 shots from your {red}pistols{grey} are coated with poison"
 SHOP_ITEM_POISON_HIT: "%PREFIX% You hit {green}{0}{grey} with a {lightpurple}poison shot{grey}."
 SHOP_ITEM_POISON_OUT: "%PREFIX% You are out of poison shots."
 
 SHOP_ITEM_POISON_SMOKE: "Poison Smoke"
-SHOP_ITEM_POISON_SMOKE_DESC: "Throw a grenade that releases poisonous gas."
+SHOP_ITEM_POISON_SMOKE_DESC: "The smoke grenade will damage all non-Traitors inside it over time"
 
 SHOP_ITEM_ARMOR: "Armor with Helmet"
-SHOP_ITEM_ARMOR_DESC: "Wear armor that reduces incoming damage."
+SHOP_ITEM_ARMOR_DESC: ""
 
 SHOP_ITEM_ONE_HIT_KNIFE: "One-Hit Knife"
-SHOP_ITEM_ONE_HIT_KNIFE_DESC: "Your next knife hit will be a guaranteed kill."
+SHOP_ITEM_ONE_HIT_KNIFE_DESC: "Your {red}next knife{grey} attack will instantly kill your target"
 
 SHOP_ITEM_COMPASS_PLAYER: "Player Compass"
-SHOP_ITEM_COMPASS_PLAYER_DESC: "Reveals the direction that the nearest non-Traitor is in."
+SHOP_ITEM_COMPASS_PLAYER_DESC: ""
 
 SHOP_ITEM_COMPASS_BODY: "Body Compass"
-SHOP_ITEM_COMPASS_BODY_DESC: "Reveals the direction that the nearest unidentified body is in."
+SHOP_ITEM_COMPASS_BODY_DESC: ""
 
 SHOP_ITEM_SILENT_AWP: "Silent AWP"
-SHOP_ITEM_SILENT_AWP_DESC: "Receive a silenced AWP with limited ammo."
+SHOP_ITEM_SILENT_AWP_DESC: ""
 
 SHOP_ITEM_CLUSTER_GRENADE: "Cluster Grenade"
-SHOP_ITEM_CLUSTER_GRENADE_DESC: "A grenade that splits into multiple smaller grenades."
+SHOP_ITEM_CLUSTER_GRENADE_DESC: ""
 
 SHOP_ITEM_TELEPORT_DECOY: "Teleport Decoy"
-SHOP_ITEM_TELEPORT_DECOY_DESC: "A decoy that teleports you to it upon explosion."
+SHOP_ITEM_TELEPORT_DECOY_DESC: "The decoy will teleport you to its location {default}once it explodes{grey}"
 
 SHOP_ITEM_TRIPWIRE: "Tripwire"
-SHOP_ITEM_TRIPWIRE_DESC: "A tripwire that explodes when triggered."
+SHOP_ITEM_TRIPWIRE_DESC: "The tripwire will activate once anyone crosses it"
 SHOP_ITEM_TRIPWIRE_TOOFAR: "%PREFIX%You are too far away to place the tripwire."
 SHOP_ITEM_TRIPWIRE_DEFUSING: "Defusing... ({0}, {1} second%s% left)."
 SHOP_ITEM_TRIPWIRE_DEFUSING_CANCELED: "%PREFIX%You stopped defusing the tripwire."
