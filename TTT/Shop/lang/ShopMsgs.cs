@@ -12,11 +12,18 @@ public static class ShopMsgs {
 
   public static IMsg CREDITS_NAME => MsgFactory.Create(nameof(CREDITS_NAME));
 
+  public static IMsg SHOP_EXPLORATION
+    => MsgFactory.Create(nameof(SHOP_EXPLORATION));
+
   public static IMsg SHOP_CANNOT_PURCHASE
     => MsgFactory.Create(nameof(SHOP_CANNOT_PURCHASE));
 
   public static IMsg SHOP_PURCHASED(IShopItem item) {
     return MsgFactory.Create(nameof(SHOP_PURCHASED), item.Name);
+  }
+
+  public static IMsg SHOP_PURCHASED_DETAIL(IShopItem item) {
+    return MsgFactory.Create(nameof(SHOP_PURCHASED_DETAIL), item.Description);
   }
 
   public static IMsg SHOP_ITEM_NOT_FOUND(string query) {

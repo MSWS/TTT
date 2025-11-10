@@ -10,6 +10,7 @@ using TTT.API.Game;
 using TTT.API.Player;
 using TTT.API.Storage;
 using TTT.CS2.Extensions;
+using TTT.Locale;
 
 namespace TTT.Shop;
 
@@ -22,6 +23,9 @@ public class PeriodicRewarder(IServiceProvider provider) : ITerrorModule {
 
   private readonly IGameManager games =
     provider.GetRequiredService<IGameManager>();
+
+  private readonly IMsgLocalizer localizer =
+    provider.GetRequiredService<IMsgLocalizer>();
 
   private readonly Dictionary<string, List<Vector>> playerPositions = new();
 
@@ -67,7 +71,8 @@ public class PeriodicRewarder(IServiceProvider provider) : ITerrorModule {
         var position = count == 1 ? 1f : (float)(count - i - 1) / (count - 1);
         var rewardAmount = scaleRewardAmount(position, config.MinRewardAmount,
           config.MaxRewardAmount);
-        shop.AddBalance(player, rewardAmount, "Exploration");
+        shop.AddBalance(player, rewardAmount,
+          localizer[ShopMsgs.SHOP_EXPLORATION]);
       }
     });
   }

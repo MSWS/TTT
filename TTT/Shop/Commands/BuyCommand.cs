@@ -51,9 +51,14 @@ public class BuyCommand(IServiceProvider provider) : ICommand {
     }
 
     var result = shop.TryPurchase(executor, item);
-    return Task.FromResult(result == PurchaseResult.SUCCESS ?
-      CommandResult.SUCCESS :
-      CommandResult.ERROR);
+    if (result == PurchaseResult.SUCCESS) {
+      info.ReplySync(locale[ShopMsgs.SHOP_PURCHASED(item)]);
+      if (!string.IsNullOrWhiteSpace(item.Description))
+        info.ReplySync(locale[ShopMsgs.SHOP_PURCHASED_DETAIL(item)]);
+      return Task.FromResult(CommandResult.SUCCESS);
+    }
+
+    return Task.FromResult(CommandResult.ERROR);
   }
 
   private IShopItem? searchItem(IOnlinePlayer? player, string query) {

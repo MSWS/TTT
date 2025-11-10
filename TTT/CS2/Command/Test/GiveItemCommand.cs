@@ -1,9 +1,7 @@
 ﻿using CounterStrikeSharp.API;
 using Microsoft.Extensions.DependencyInjection;
 using ShopAPI;
-using ShopAPI.Events;
 using TTT.API.Command;
-using TTT.API.Events;
 using TTT.API.Player;
 
 namespace TTT.CS2.Command.Test;
@@ -33,24 +31,14 @@ public class GiveItemCommand(IServiceProvider provider) : ICommand {
       return Task.FromResult(CommandResult.ERROR);
     }
 
-    var target = executor;
+    List<IOnlinePlayer> targets = [executor];
 
     Server.NextWorldUpdateAsync(() => {
-      if (info.ArgCount == 3) {
-        var result = finder.GetPlayerByName(info.Args[2]);
-        if (result == null) {
-          info.ReplySync($"Player '{info.Args[2]}' not found.");
-          return;
-        }
+      var name                        = executor.Name;
+      if (info.ArgCount == 3) targets = finder.GetMulti(info.Args[2], out name);
+      foreach (var player in targets) shop.GiveItem(player, item);
 
-        target = result;
-      }
-
-      var purchaseEv = new PlayerPurchaseItemEvent(target, item);
-      provider.GetRequiredService<IEventBus>().Dispatch(purchaseEv);
-
-      shop.GiveItem(target, item);
-      info.ReplySync($"Gave item '{item.Name}' to {target.Name}.");
+      info.ReplySync($"Gave item '{item.Name}' to {name}.");
     });
     return Task.FromResult(CommandResult.SUCCESS);
   }

@@ -40,7 +40,7 @@ public enum PurchaseResult {
   /// <summary>
   ///   The item cannot be purchased multiple times, and the player already owns it.
   /// </summary>
-  ALREADY_OWNED,
+  ALREADY_OWNED
 }
 
 public static class PurchaseResultExtensions {

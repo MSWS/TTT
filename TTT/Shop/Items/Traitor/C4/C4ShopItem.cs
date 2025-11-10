@@ -38,6 +38,7 @@ public class C4ShopItem(IServiceProvider provider)
   public override ShopItemConfig Config => config;
 
   public override void OnPurchase(IOnlinePlayer player) {
+    c4sBought++;
     Inventory.GiveWeapon(player, new BaseWeapon(config.Weapon));
   }
 
@@ -46,13 +47,10 @@ public class C4ShopItem(IServiceProvider provider)
       if (c4sBought > config.MaxC4PerRound)
         return PurchaseResult.ITEM_NOT_PURCHASABLE;
 
-    if (config.MaxC4AtOnce > 0) {
-      var count = 0;
-      if (finder.GetOnline()
-       .Where(p => Shop.HasItem<C4ShopItem>(p))
-       .Any(_ => count++ >= config.MaxC4AtOnce))
+    if (config.MaxC4AtOnce > 0)
+      if (finder.GetOnline().Count(p => Shop.HasItem<C4ShopItem>(p))
+        > config.MaxC4AtOnce)
         return PurchaseResult.ITEM_NOT_PURCHASABLE;
-    }
 
     return base.CanPurchase(player);
   }
