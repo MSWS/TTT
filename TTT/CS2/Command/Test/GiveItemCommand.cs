@@ -34,8 +34,9 @@ public class GiveItemCommand(IServiceProvider provider) : ICommand {
     List<IOnlinePlayer> targets = [executor];
 
     Server.NextWorldUpdateAsync(() => {
-      var name                        = executor.Name;
-      if (info.ArgCount == 3) targets = finder.GetMulti(info.Args[2], out name);
+      var name = executor.Name;
+      if (info.ArgCount == 3)
+        targets = finder.GetMulti(info.Args[2], out name, executor);
       foreach (var player in targets) shop.GiveItem(player, item);
 
       info.ReplySync($"Gave item '{item.Name}' to {name}.");
