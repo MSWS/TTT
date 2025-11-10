@@ -3,36 +3,37 @@ SHOP_INACTIVE: "%SHOP_PREFIX%The shop is currently closed."
 SHOP_ITEM_NOT_FOUND: "%SHOP_PREFIX%Could not find an item named \"{default}{0}{grey}\"."
 
 SHOP_ITEM_DEAGLE: "One-Hit Revolver"
-SHOP_ITEM_DEAGLE_DESC: "A one-hit kill revolver with a single bullet. Aim carefully!"
+SHOP_ITEM_DEAGLE_DESC: "If you hit an enemy, they will die instantly. Hitting a teammate will kill you instead."
 SHOP_ITEM_DEAGLE_HIT_FF: "%PREFIX%You hit a teammate!"
 SHOP_ITEM_DEAGLE_VICTIM: "%PREFIX%You were hit by a {yellow}One-Hit Revolver{grey}."
 
 SHOP_ITEM_STICKERS: "Stickers"
-SHOP_ITEM_STICKERS_DESC: "Reveal the roles of all players you taser to others."
-SHOP_ITEM_STICKERS_HIT: "%SHOP_PREFIX%You got stickered, your role is now visible to everyone."
+SHOP_ITEM_STICKERS_DESC: "When you tase a player, their role will be shown to everyone."
+SHOP_ITEM_STICKERS_HIT: "%SHOP_PREFIX%You got {green}stickered{grey}, your role is now visible to everyone."
 
 SHOP_ITEM_C4: "C4 Explosive"
-SHOP_ITEM_C4_DESC: "A powerful explosive that blows up after a delay."
+SHOP_ITEM_C4_DESC: "The bomb will deal damage to everyone including you and fellow {red}Traitors{grey}"
 
 SHOP_ITEM_M4A1: "M4A1 Rifle and USP-S"
-SHOP_ITEM_M4A1_DESC: "A fully automatic rifle with a silencer accompanied by a silenced pistol."
+SHOP_ITEM_M4A1_DESC: ""
 
 SHOP_ITEM_GLOVES: "Gloves"
-SHOP_ITEM_GLOVES_DESC: "Lets you kill without DNA being left behind, or move bodies without identifying the body."
+SHOP_ITEM_GLOVES_DESC: "You can now kill without leaving DNA behind, or move bodies without IDing them."
 SHOP_ITEM_GLOVES_USED_BODY: "%SHOP_PREFIX%You used your gloves to move a body without leaving DNA. ({yellow}{0}{grey}/{yellow}{1}{grey} use%s% left)."
 SHOP_ITEM_GLOVES_USED_KILL: "%SHOP_PREFIX%You used your gloves to kill without leaving DNA evidence. ({yellow}{0}{grey}/{yellow}{1}{grey} use%s% left)."
 SHOP_ITEM_GLOVES_WORN_OUT: "%SHOP_PREFIX%Your gloves wore out."
 
 SHOP_ITEM_TASER: "Taser"
-SHOP_ITEM_TASER_DESC: "A taser that allows you to identify the roles of players you hit."
+SHOP_ITEM_TASER_DESC: "Tasing a player will tell you their role."
 
 SHOP_ITEM_HEALTHSHOT: "Healthshot"
-SHOP_ITEM_HEALTHSHOT_DESC: "A healthshot that heals you gradually for 50 health."
+SHOP_ITEM_HEALTHSHOT_DESC: ""
 
 SHOP_INSUFFICIENT_BALANCE: "%SHOP_PREFIX%You cannot afford {white}{0}{grey}, it costs {yellow}{1}{grey} %CREDITS_NAME%%s%, and you have {yellow}{2}{grey}."
 SHOP_CANNOT_PURCHASE: "%SHOP_PREFIX%You cannot purchase this item."
 SHOP_CANNOT_PURCHASE_WITH_REASON: "%SHOP_PREFIX%You cannot purchase this item: {red}{0}{grey}."
 SHOP_PURCHASED: "%SHOP_PREFIX%You purchased {white}{0}{grey}."
+SHOP_PURCHASED_DETAIL: "%SHOP_PREFIX%{white}{0}{grey}."
 SHOP_LIST_FOOTER: "%SHOP_PREFIX%You are %an% {0}{grey}, you have {yellow}{1}{grey} %CREDITS_NAME%%s%."
 
 CREDITS_NAME: "point"

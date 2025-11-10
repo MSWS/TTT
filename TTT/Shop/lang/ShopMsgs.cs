@@ -19,6 +19,10 @@ public static class ShopMsgs {
     return MsgFactory.Create(nameof(SHOP_PURCHASED), item.Name);
   }
 
+  public static IMsg SHOP_PURCHASED_DETAIL(IShopItem item) {
+    return MsgFactory.Create(nameof(SHOP_PURCHASED_DETAIL), item.Description);
+  }
+
   public static IMsg SHOP_ITEM_NOT_FOUND(string query) {
     return MsgFactory.Create(nameof(SHOP_ITEM_NOT_FOUND), query);
   }
