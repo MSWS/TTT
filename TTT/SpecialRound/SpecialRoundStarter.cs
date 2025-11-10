@@ -86,8 +86,7 @@ public class SpecialRoundStarter(IServiceProvider provider)
     var rounds = Provider.GetServices<ITerrorModule>()
      .OfType<AbstractSpecialRound>()
      .Where(r => r.Config.Weight > 0 && !exclude.Contains(r))
-     .Where(r
-        => !exclude.Any(er => er.ConflictsWith(r) && !r.ConflictsWith(er)))
+     .Where(r => !exclude.Any(er => er.ConflictsWith(r) || r.ConflictsWith(er)))
      .ToList();
     if (rounds.Count == 0) return null;
     var totalWeight = rounds.Sum(r => r.Config.Weight);
