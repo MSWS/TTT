@@ -46,9 +46,6 @@ public class GiveItemCommand(IServiceProvider provider) : ICommand {
         target = result;
       }
 
-      var purchaseEv = new PlayerPurchaseItemEvent(target, item);
-      provider.GetRequiredService<IEventBus>().Dispatch(purchaseEv);
-
       shop.GiveItem(target, item);
       info.ReplySync($"Gave item '{item.Name}' to {target.Name}.");
     });
