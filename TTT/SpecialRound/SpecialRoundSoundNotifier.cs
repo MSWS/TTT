@@ -12,6 +12,6 @@ public class SpecialRoundSoundNotifier(IServiceProvider provider)
   [EventHandler]
   public void OnSpecialRoundStart(SpecialRoundStartEvent ev) {
     foreach (var player in Utilities.GetPlayers())
-      player.EmitSound("UI.XP.Star.Spend", null, 0.8f);
+      player.EmitSound("UI.XP.Star.Spend", null, 0.2f);
   }
 }
