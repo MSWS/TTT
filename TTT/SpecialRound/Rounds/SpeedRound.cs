@@ -82,7 +82,7 @@ public class SpeedRound(IServiceProvider provider)
   public void OnDeath(PlayerDeathEvent ev) {
     var game = games.ActiveGame;
     if (game == null) return;
-    if (Tracker.ActiveRounds.Contains(this)) return;
+    if (!Tracker.ActiveRounds.Contains(this)) return;
 
     var victimRoles = roles.GetRoles(ev.Victim);
     if (!victimRoles.Any(r => r is InnocentRole)) return;
