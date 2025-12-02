@@ -78,7 +78,7 @@ public class PoisonShotsListener(IServiceProvider provider)
     if (ev.Attacker == null) return;
     if (!poisonShots.TryGetValue(ev.Attacker, out var shot) || shot <= 0)
       return;
-    if (ev.Weapon == null || !Tag.GUNS.Contains(ev.Weapon)) return;
+    if (ev.Weapon == null || !Tag.PISTOLS.Contains(ev.Weapon)) return;
     Messenger.Message(ev.Attacker,
       Locale[PoisonShotMsgs.SHOP_ITEM_POISON_HIT(ev.Player)]);
     addPoisonEffect(ev.Player, ev.Attacker);

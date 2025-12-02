@@ -10,7 +10,7 @@ namespace TTT.CS2.Configs.ShopItems;
 
 public class CS2CamoConfig : IStorage<CamoConfig>, IPluginModule {
   public static readonly FakeConVar<int> CV_PRICE = new(
-    "css_ttt_shop_camo_price", "Price of the Camo item", 75,
+    "css_ttt_shop_camo_price", "Price of the Camo item", 65,
     ConVarFlags.FCVAR_NONE, new RangeValidator<int>(0, 10000));
 
   public static readonly FakeConVar<float> CV_CAMO_VISIBILITY = new(
