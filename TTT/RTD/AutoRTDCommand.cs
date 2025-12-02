@@ -25,6 +25,9 @@ public class AutoRTDCommand(IServiceProvider provider) : ICommand, IListener {
   private readonly IMsgLocalizer localizer =
     provider.GetRequiredService<IMsgLocalizer>();
 
+  private readonly IPermissionManager perms =
+    provider.GetRequiredService<IPermissionManager>();
+
   private readonly Dictionary<string, bool> playerStatuses = new();
   private ICookie? autoRtdCookie;
   public string Id => "autortd";
@@ -75,9 +78,10 @@ public class AutoRTDCommand(IServiceProvider provider) : ICommand, IListener {
   [UsedImplicitly]
   [EventHandler]
   public void OnRoundStart(GameInitEvent ev) {
-    var messenger = provider.GetRequiredService<IMessenger>();
     Task.Run(async () => {
       foreach (var player in finder.GetOnline()) {
+        if (!perms.HasFlags(player, RequiredFlags)) continue;
+
         if (!playerStatuses.TryGetValue(player.Id, out var status)) {
           await fetchCookie(player);
           status = playerStatuses.GetValueOrDefault(player.Id, false);
