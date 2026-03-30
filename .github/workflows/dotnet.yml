@@ -86,7 +86,7 @@ jobs:
         run: echo "CODE_COVERAGE=$(tail -n 1 code-coverage-results.md | grep -oP '(?<=\*\*Summary\*\* \|\s\*\*)[0-9]+(?=%)')" >> $GITHUB_ENV
 
       - name: Create Test Coverage Badge
-        uses: Schneegans/dynamic-badges-action@v1.7.0
+        uses: Schneegans/dynamic-badges-action@v1.8.0
         id: create_coverage_badge
         if: github.ref_name == 'main'
         with:
